@@ -640,3 +640,22 @@ body{padding-bottom:90px;}
     <strong>8 Nugent Street, Grafton, Auckland 1023</strong><br>
     Mon–Fri 5:00am–10:00pm · Sat–Sun 7:00am–7:00pm<br>
     <a href="tel:095581408">09 558 1408</a> · <a href="/cdn-cgi/l/email-protection#75011c18351847161900175b161a5b1b0f"><span class="__cf_email__
+
+<script>
+// Nav hamburger
+(function(){
+  var btn=document.getElementById('navHamburger');
+  var drawer=document.getElementById('navDrawer');
+  var close=document.getElementById('navDrawerClose');
+  var bg=document.getElementById('navDrawerBg');
+  function openDrawer(){drawer.classList.add('open');document.body.style.overflow='hidden';}
+  function closeDrawer(){drawer.classList.remove('open');document.body.style.overflow='';}
+  function handleOpen(e){e.preventDefault();e.stopPropagation();openDrawer();}
+  function handleClose(e){e.preventDefault();e.stopPropagation();closeDrawer();}
+  if(btn){btn.addEventListener('click',handleOpen);btn.addEventListener('touchstart',handleOpen,{passive:false});}
+  if(close){close.addEventListener('click',handleClose);close.addEventListener('touchstart',handleClose,{passive:false});}
+  if(bg){bg.addEventListener('click',closeDrawer);bg.addEventListener('touchstart',function(e){e.preventDefault();closeDrawer();},{passive:false});}
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
+  if(drawer) drawer.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeDrawer);});
+})();
+</script>
