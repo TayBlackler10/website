@@ -637,6 +637,64 @@ footer a:hover{color:var(--yellow);}
 @keyframes up{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
 .reveal{opacity:1;transform:none;}
 .reveal.on{opacity:1;transform:none;}
+
+/* ===== MOBILE OPTIMISATION ===== */
+html, body { overflow-x: hidden; max-width: 100vw; }
+img { max-width: 100%; height: auto; }
+* { box-sizing: border-box; }
+a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
+@media(max-width:480px) {
+  body { font-size: 16px; }
+  .nav { height: 52px; padding: 0 1rem; }
+  .nav-brand img { height: 30px; }
+  .section { padding: 2.5rem 0; }
+  .wrap { padding: 0 1rem; }
+  .sec-hdr { padding: 2rem 0 1rem; gap: .5rem; flex-direction: column; align-items: flex-start; }
+  .sec-ttl { font-size: clamp(1.6rem, 7vw, 2.2rem); line-height: 1.1; }
+  .sec-kick { font-size: .85rem; }
+  .hero, .hero-inner { padding-left: 1rem; padding-right: 1rem; }
+  .hero-headline-bar { padding: 1.5rem 1rem; gap: 1rem; grid-template-columns: 1fr; }
+  .btn, .btn-outline, .btn-dark, .nav-cta { padding: .75rem 1.25rem; font-size: .78rem; }
+  .hiw-grid, .trust-strip, .flexi-inner, .testi-grid, .trials-grid,
+  .trainer-cards, .class-grid, .schedule-grid, .contact-grid,
+  .pt-steps, .fp-grid, .perks-grid, .fac-grid, .plan-grid { grid-template-columns: 1fr !important; gap: 1rem; }
+  .testi-cell, .trust-cell, .hiw-step, .class-card, .trainer-card,
+  .plan-card, .perk-cell, .fp-card { padding: 1.25rem; }
+  .mosaic-hero { flex-direction: column !important; }
+  .mosaic-main, .mosaic-top { height: 56vw !important; min-height: 200px; }
+  .mosaic-main { flex: none !important; width: 100% !important; }
+  .mosaic-top { flex: none !important; width: 100% !important; }
+  h1, .hero-ttl, .big-ttl { font-size: clamp(2rem, 9vw, 3.5rem); line-height: 1; }
+  h2, .sec-ttl { font-size: clamp(1.5rem, 7vw, 2.2rem); }
+  h3 { font-size: clamp(1.1rem, 5vw, 1.4rem); }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
+  footer { padding: 2rem 1rem; }
+  .footer-cols, .fl { flex-direction: column; gap: 1.5rem; }
+  .mem-grid { grid-template-columns: 1fr !important; }
+  .mem-head, .mem-price, .mem-feats, .mem-cta, .mem-nudge, .mem-risk { padding-left: 1rem; padding-right: 1rem; }
+  .mem-price .price { font-size: 2.5rem; }
+  .annual-row { flex-direction: column !important; }
+  .annual-row-left, .annual-row-mid, .annual-row-right { width: 100% !important; min-width: 0; }
+  .trainer-strip { grid-template-columns: 1fr 1fr !important; }
+  .ts-panel { height: 44vw; }
+  .cta-band, .big-cta { padding: 2.5rem 1rem; text-align: center; }
+  .cta-band h2 { font-size: clamp(1.6rem, 7vw, 2.5rem); }
+  .contact-form input, .contact-form textarea, .contact-form select { font-size: 16px; }
+  .two-col, .split-layout { grid-template-columns: 1fr !important; flex-direction: column !important; }
+  .ticker-wrap { overflow: hidden; }
+  .schedule-table { display: block; overflow-x: auto; }
+  .photo-fac { grid-template-columns: repeat(2, 1fr) !important; }
+  .photo-fac-cell { height: 42vw; }
+  .community-photo img { height: 320px; }
+  .hero-stats { flex-wrap: wrap; }
+  .hs { flex: 0 0 50%; }
+}
+@media(max-width:360px) {
+  .sec-ttl { font-size: clamp(1.4rem, 8vw, 2rem); }
+  .trainer-strip { grid-template-columns: 1fr !important; }
+  .ts-panel { height: 60vw; }
+  .photo-fac { grid-template-columns: 1fr !important; }
+}
 </style>
 </head>
 <body>
