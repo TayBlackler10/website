@@ -416,64 +416,6 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 
 
 
-/* ── HYROX SLIDESHOW ── */
-.hyrox-slideshow { border-bottom:1px solid var(--line); background:var(--dark); }
-.hss-head {
-  display:flex; align-items:flex-end; justify-content:space-between;
-  padding:3rem 3.5rem 1.5rem; border-bottom:1px solid var(--line);
-}
-@media(max-width:700px){.hss-head{padding:2.5rem 1.2rem 1.25rem;}}
-.hss-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(1.9rem,4.5vw,2.8rem); letter-spacing:.02em; line-height:1; }
-.hss-btns { display:flex; gap:.5rem; }
-.hss-btn {
-  width:42px; height:42px; background:var(--card); border:1px solid var(--line2);
-  color:var(--white); font-size:1.2rem; cursor:pointer; display:flex;
-  align-items:center; justify-content:center; transition:background .18s,border-color .18s;
-  flex-shrink:0;
-}
-.hss-btn:hover { background:var(--yellow); color:#000; border-color:var(--yellow); }
-
-/* viewport */
-.hss-viewport {
-  overflow:hidden;
-  width:100%;
-}
-/* track — total width = n slides × 100% */
-.hss-track {
-  display:flex;
-  flex-direction:row;
-  flex-wrap:nowrap;
-  width:800%;
-  transition:transform .5s cubic-bezier(.4,0,.2,1);
-}
-/* each slide = 1/n of track = 1/6 × 6×100% = 100%/n of viewport */
-.hxs-item {
-  width:12.5000%;
-  flex-shrink:0;
-  position:relative;
-  overflow:hidden;
-}
-.hxs-item img {
-  width:100%; height:420px; object-fit:cover; object-position:center 20%;
-  display:block; filter:brightness(.82);
-  transition:transform .6s ease, filter .6s ease;
-}
-@media(max-width:700px){.hxs-item img{height:300px;object-position:center 20%;}}
-.hxs-item:hover img { transform:scale(1.04); filter:brightness(.92); }
-.hxs-badge {
-  position:absolute; bottom:0; left:0; right:0;
-  padding:1.25rem; background:linear-gradient(transparent,rgba(8,8,8,.88));
-}
-.hxs-time { display:block; font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--white); line-height:1; letter-spacing:.04em; }
-.hxs-ev { display:block; font-size:.7rem; font-weight:300; color:rgba(255,255,255,.4); margin-top:.1rem; }
-
-.hss-dots { display:flex; align-items:center; justify-content:center; gap:.5rem; padding:1.25rem; }
-.hss-dot {
-  width:6px; height:6px; border-radius:50%; background:var(--dim);
-  border:none; cursor:pointer; transition:background .2s,transform .2s;
-}
-.hss-dot.on { background:var(--yellow); transform:scale(1.5); }
-
 /* ── HYROX ── */
 .hyrox-grid{display:grid;grid-template-columns:55fr 45fr;min-height:500px;}
 @media(max-width:820px){.hyrox-grid{grid-template-columns:1fr;min-height:auto;}}
@@ -850,33 +792,6 @@ footer a:hover{color:var(--yellow);}
     </div>
   </div>
 </section>
-
-<!-- HYROX SLIDESHOW -->
-<div class="hyrox-slideshow reveal">
-  <div class="hss-head">
-    <div>
-      <div class="sec-kick">M2 Members · Race Day</div>
-      <h3 class="hss-title">Our People on the Course</h3>
-    </div>
-    <div class="hss-btns">
-      <button type="button" class="hss-btn" id="hss-prev">&#8592;</button>
-      <button type="button" class="hss-btn" id="hss-next">&#8594;</button>
-    </div>
-  </div>
-  <div class="hss-viewport">
-    <div class="hss-track" id="hss-track">
-      <div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/1EQOZ0odfiG_uQnLTOMUw8Mgp2Hj8Sm7f" alt="M2 Training Club member at HYROX Auckland — finish time 1:20:50" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:20:50</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-<div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/1CNQTbE6tSZLnrq6irBnzuFoRdymR3Wm5" alt="M2 Training Club member at HYROX Auckland — finish time 1:16:21" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:16:21</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-<div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/13sWNpFD4W9tmIBNlBFkxxwg-riIKypeB" alt="M2 Training Club member at HYROX Auckland — finish time 1:26:28" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:26:28</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-<div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/1FBnXWXgzUzuK4bqHgfL8eR4HQULZuyK9" alt="M2 Training Club member at HYROX Auckland — finish time 1:15:44" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:15:44</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-<div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/1mbIbK409tyQUXjYNbw7QwsaAhxGWiHaI" alt="M2 Training Club member at HYROX Auckland — finish time 1:37:29" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:37:29</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-<div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/1ZpYo5GOrZ5CCSOW2Df_0otCmW2OZ7CJB" alt="M2 Training Club member at HYROX Auckland — finish time 1:11:19" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:11:19</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-<div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/1015KOhnSib1oQrNhAurtc6QfpvGi8fNL" alt="M2 Training Club member at HYROX Auckland — finish time 1:1x:25" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:1x:25</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-<div class="hxs-item"><img src="https://lh3.googleusercontent.com/d/1nlx5jL1NR6Z3ocVG23-OwGFeMkLyTQdE" alt="M2 Training Club member at HYROX Auckland — finish time 1:11:19" loading="lazy" width="120" height="28"><div class="hxs-badge"><span class="hxs-time">1:11:19</span><span class="hxs-ev">HYROX Auckland</span></div></div>
-    </div>
-  </div>
-  <div class="hss-dots" id="hss-dots"><button type="button" class="hss-dot  on" data-i="0" aria-label="Slide 1"></button><button type="button" class="hss-dot" data-i="1" aria-label="Slide 2"></button><button type="button" class="hss-dot" data-i="2" aria-label="Slide 3"></button><button type="button" class="hss-dot" data-i="3" aria-label="Slide 4"></button><button type="button" class="hss-dot" data-i="4" aria-label="Slide 5"></button><button type="button" class="hss-dot" data-i="5" aria-label="Slide 6"></button><button type="button" class="hss-dot" data-i="6" aria-label="Slide 7"></button><button type="button" class="hss-dot" data-i="7" aria-label="Slide 8"></button></div>
-</div>
 
 <!-- COMMUNITY PHOTO -->
 <div class="community-photo">
