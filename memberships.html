@@ -1139,7 +1139,7 @@ footer a:hover { color: var(--yellow); }
 .nav-cta:hover{background:var(--y2);}
 .nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:.4rem;color:var(--white);position:relative;z-index:9999;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 @media(max-width:860px){.nav-hamburger{display:flex;align-items:center;justify-content:center;}}
-.nav-drawer{position:fixed;inset:0;z-index:400;visibility:hidden;pointer-events:none;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1),visibility .32s;}
+.nav-drawer{position:fixed;inset:0;z-index:600;visibility:hidden;pointer-events:none;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1),visibility .32s;}
 .nav-drawer.open{visibility:visible;pointer-events:auto;transform:translateX(0);}
 .nav-drawer-bg{position:absolute;inset:0;background:rgba(8,8,8,.7);backdrop-filter:blur(4px);pointer-events:none;}
 .nav-drawer.open .nav-drawer-bg{pointer-events:auto;}
@@ -3032,16 +3032,14 @@ footer a:hover { color: var(--yellow); }
 (function(){
   var btn=document.getElementById('navHamburger');
   var drawer=document.getElementById('navDrawer');
-  var close=document.getElementById('navDrawerClose');
-  var bg=document.getElementById('navDrawerBg');
+  var drawerBg=document.getElementById('navDrawerBg');
+  var closeBtn=document.getElementById('navDrawerClose');
   function openDrawer(){drawer.classList.add('open');document.body.style.overflow='hidden';}
   function closeDrawer(){drawer.classList.remove('open');document.body.style.overflow='';}
-  function handleOpen(e){e.preventDefault();e.stopPropagation();openDrawer();}
-  function handleClose(e){e.preventDefault();e.stopPropagation();closeDrawer();}
-  if(btn){btn.addEventListener('click',handleOpen);btn.addEventListener('touchstart',handleOpen,{passive:false});}
-  if(close){close.addEventListener('click',handleClose);close.addEventListener('touchstart',handleClose,{passive:false});}
-  if(bg){bg.addEventListener('click',closeDrawer);bg.addEventListener('touchstart',function(e){e.preventDefault();closeDrawer();},{passive:false});}
+  if(btn) btn.addEventListener('click',function(e){e.stopPropagation();openDrawer();});
+  if(closeBtn) closeBtn.addEventListener('click',closeDrawer);
+  if(drawerBg) drawerBg.addEventListener('click',closeDrawer);
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
-  if(drawer) drawer.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeDrawer);});
+  if(drawer) drawer.querySelectorAll('.nav-drawer-links a').forEach(function(a){a.addEventListener('click',closeDrawer);});
 })();
 </script>
