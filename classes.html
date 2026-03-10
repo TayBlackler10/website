@@ -31,13 +31,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:997;ba
 .nav-brand img{height:36px;width:auto;display:block;}
 .nav-links{display:flex;align-items:center;gap:2rem;list-style:none;}
 @media(max-width:860px){.nav-links{display:none;}}
-.nav-links a{font-size:.68rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);transition:color .2s;white-space:nowrap;}
+.nav-links a{font-size:.78rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);transition:color .2s;white-space:nowrap;}
 .nav-links a:hover,.nav-links a.active{color:var(--white);}
 .nav-links a.active{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--yellow);}
 .nav-right{display:flex;align-items:center;gap:1rem;}
 .nav-cta{display:inline-flex;align-items:center;padding:.55rem 1.2rem;background:var(--yellow);color:#000;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;transition:background .18s;white-space:nowrap;}
 .nav-cta:hover{background:var(--y2);}
-.nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:.4rem;color:var(--white);}
+.nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:.4rem;color:var(--white);position:relative;z-index:601;}
 @media(max-width:860px){.nav-hamburger{display:flex;align-items:center;justify-content:center;}}
 .nav-drawer{position:fixed;inset:0;z-index:600;visibility:hidden;pointer-events:none;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1),visibility .32s;}
 .nav-drawer.open{visibility:visible;pointer-events:auto;transform:translateX(0);}
@@ -693,7 +693,7 @@ body{padding-bottom:90px;}
 </main>
 <footer role="contentinfo">
   <div class="fl">M2 Training Club</div>
-  <p><strong>8 Nugent Street, Grafton, Auckland 1023</strong><br>MonÃ¢ÂÂFri 5:00amÃ¢ÂÂ10:00pm ÃÂ· SatÃ¢ÂÂSun 7:00amÃ¢ÂÂ7:00pm<br><a href="tel:095581408">09 558 1408</a> ÃÂ· <a href="/cdn-cgi/l/email-protection#41332422243135282e2f012c73222d34236f222e6f2f3b"><span class="__cf_email__" data-cfemail="c5b7a0a6a0b5b1acaaab85a8f7a6a9b0a7eba6aaebabbf">[email&#160;protected]</span></a></p>
+  <p><strong>8 Nugent Street, Grafton, Auckland 1023</strong><br>MonÃ¢ÂÂFri 5:00amÃ¢ÂÂ10:00pm ÃÂ· SatÃ¢ÂÂSun 7:00amÃ¢ÂÂ7:00pm<br><a href="tel:095581408">09 558 1408</a> ÃÂ· <a href="mailto:reception@m2club.co.nz">reception@m2club.co.nz</a></p>
 </footer>
 <div class="mob-cta">
   <span class="mob-cta-label">New Here?</span>
