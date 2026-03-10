@@ -96,7 +96,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:997;ba
 .sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.03em;line-height:1;}
 .trainer-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line2);}
 @media(max-width:1000px){.trainer-cards{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:600px){.trainer-cards{grid-template-columns:1fr;}}
+@media(max-width:600px){.trainer-cards{grid-template-columns:repeat(2,1fr);gap:2px;}.tc-photo{height:52vw;}.tc-info{padding:.8rem;}.tc-name{font-size:1.6rem;}.tc-tags{gap:.3rem;}.tc-tag{font-size:.55rem;padding:.2rem .5rem;}}
 .tc{background:var(--card);display:flex;flex-direction:column;overflow:hidden;transition:background .2s;}
 .tc:hover{background:var(--card2);}
 .tc-photo{position:relative;overflow:hidden;height:420px;}
