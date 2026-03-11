@@ -582,7 +582,10 @@ body{padding-bottom:90px;}
   <div class="contact-form-side">
     <h2 class="cf-title">Send a Message</h2>
     <p class="cf-sub">Membership questions, class bookings, PT enquiries, corporate packages — we'll get back to you within one business day.</p>
-    <div id="contact-form">
+    <form id="contact-form" action="https://formsubmit.co/taylor@m2club.co.nz" method="POST">
+      <input type="hidden" name="_subject" value="New enquiry via M2 Training Club website">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="https://tayblackler10.github.io/website/contact.html?sent=1">
       <div class="form-row">
         <div class="form-field">
           <label for="cf-fname">First Name</label>
@@ -620,8 +623,8 @@ body{padding-bottom:90px;}
         <label for="cf-msg">Message</label>
         <textarea id="cf-msg" name="message" placeholder="Tell us what you need..." required></textarea>
       </div>
-      <button type="button" class="submit-btn" id="cf-submit">Send Message →</button>
-    </div>
+      <button type="submit" class="submit-btn" id="cf-submit">Send Message →</button>
+    </form>
     <div class="form-success" id="form-success">
       <h3>Message Sent ✓</h3>
       <p>Thanks for reaching out. We'll get back to you within one business day.</p>
