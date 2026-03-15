@@ -910,6 +910,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
   </div>
 </section>
 
+
 <!-- HYROX RACE DAY RESULTS SLIDESHOW -->
 <section class="section reveal hyrox-results-section">
   <div class="wrap">
@@ -917,13 +918,14 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
   </div>
   <div class="hyrox-slider-outer">
     <div class="hyrox-slider" id="hyroxSlider">
-      <div class="hyrox-slide"><img src="https://drive.google.com/uc?export=view&id=13sWNpFD4W9tmIBNlBFkxxwg-riIKypeB" alt="HYROX Race Day" loading="lazy"></div>
-      <div class="hyrox-slide"><img src="https://drive.google.com/uc?export=view&id=1k1qwFXZx39M-6sfOoR7owRUxp3QLmUc3" alt="HYROX Race Day" loading="lazy"></div>
-      <div class="hyrox-slide"><img src="https://drive.google.com/uc?export=view&id=1EQOZ0odfiG_uQnLTOMUw8Mgp2Hj8Sm7f" alt="HYROX Race Day" loading="lazy"></div>
-      <div class="hyrox-slide"><img src="https://drive.google.com/uc?export=view&id=1_TqJ-lFUQiVPaNiefBkBSsb2JqDgVzhf" alt="HYROX Race Day" loading="lazy"></div>
-      <div class="hyrox-slide"><img src="https://drive.google.com/uc?export=view&id=15TWV4vI_OH6x9OOXCOYowJ-_XBfoSk7i" alt="HYROX Race Day" loading="lazy"></div>
-      <div class="hyrox-slide"><img src="https://drive.google.com/uc?export=view&id=1ZpYo5GOrZ5CCSOW2Df_0otCmW2OZ7CJB" alt="HYROX Race Day" loading="lazy"></div>
-      <div class="hyrox-slide"><img src="https://drive.google.com/uc?export=view&id=1nlx5jL1NR6Z3ocVG23-OwGFeMkLyTQdE" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=13sWNpFD4W9tmIBNlBFkxxwg-riIKypeB&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=1k1qwFXZx39M-6sfOoR7owRUxp3QLmUc3&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=1EQOZ0odfiG_uQnLTOMUw8Mgp2Hj8Sm7f&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=1_TqJ-lFUQiVPaNiefBkBSsb2JqDgVzhf&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=15TWV4vI_OH6x9OOXCOYowJ-_XBfoSk7i&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=1ZpYo5GOrZ5CCSOW2Df_0otCmW2OZ7CJB&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=1mbIbK409tyQUXjYNbw7QwsaAhxGWiHaI&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
+      <div class="hyrox-slide"><img src="https://drive.google.com/thumbnail?id=1nlx5jL1NR6Z3ocVG23-OwGFeMkLyTQdE&sz=w1200" alt="HYROX Race Day" loading="lazy"></div>
     </div>
     <button class="hyrox-prev" onclick="hyroxSlide(-1)" aria-label="Previous">&#8249;</button>
     <button class="hyrox-next" onclick="hyroxSlide(1)" aria-label="Next">&#8250;</button>
@@ -932,10 +934,10 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
 </section>
 <style>
 .hyrox-results-section{background:#0a0a0a;padding:4rem 0}
-.hyrox-slider-outer{position:relative;max-width:860px;margin:2rem auto 0;padding:0 52px}
+.hyrox-slider-outer{position:relative;max-width:900px;margin:2rem auto 0;padding:0 52px}
 .hyrox-slider{display:flex;border-radius:12px;overflow:hidden}
 .hyrox-slide{min-width:100%;transition:transform 0.5s cubic-bezier(.4,0,.2,1)}
-.hyrox-slide img{width:100%;max-height:520px;object-fit:cover;display:block;border-radius:12px}
+.hyrox-slide img{width:100%;max-height:560px;object-fit:cover;display:block;border-radius:12px;background:#111}
 .hyrox-prev,.hyrox-next{position:absolute;top:50%;transform:translateY(-60%);background:rgba(0,0,0,.6);color:#c8f000;border:2px solid #c8f000;border-radius:50%;width:44px;height:44px;font-size:1.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:2;padding:0}
 .hyrox-prev{left:0}.hyrox-next{right:0}
 .hyrox-prev:hover,.hyrox-next:hover{background:#c8f000;color:#000}
@@ -946,7 +948,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
 </style>
 <script>
 (function(){
-  var cur=0,total=7,auto;
+  var cur=0,total=8,auto;
   var slider=document.getElementById('hyroxSlider');
   var dotsEl=document.getElementById('hyroxDots');
   for(var i=0;i<total;i++){(function(idx){var d=document.createElement('button');d.className='hyrox-dot'+(idx===0?' active':'');d.setAttribute('aria-label','Slide '+(idx+1));d.onclick=function(){goTo(idx);};dotsEl.appendChild(d);})(i);}
