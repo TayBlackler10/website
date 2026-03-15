@@ -952,7 +952,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
   var slider=document.getElementById('hyroxSlider');
   var dotsEl=document.getElementById('hyroxDots');
   for(var i=0;i<total;i++){(function(idx){var d=document.createElement('button');d.className='hyrox-dot'+(idx===0?' active':'');d.setAttribute('aria-label','Slide '+(idx+1));d.onclick=function(){goTo(idx);};dotsEl.appendChild(d);})(i);}
-  function goTo(n){cur=((n%total)+total)%total;var s=slider.children;for(var i=0;i<s.length;i++){s[i].style.transform='translateX('+((i-cur)*100)+'%)';}var d=dotsEl.children;for(var i=0;i<d.length;i++){d[i].classList.toggle('active',i===cur);}}
+  function goTo(n){cur=((n%total)+total)%total;var s=slider.children;for(var k=0;k<s.length;k++){s[k].style.transform='translateX('+((k-cur)*100)+'%)'}var d=dotsEl.children;for(var k=0;k<d.length;k++){d[k].classList.toggle('active',k===cur)}}var d=dotsEl.children;for(var i=0;i<d.length;i++){d[i].classList.toggle('active',i===cur);}}
   window.hyroxSlide=function(dir){goTo(cur+dir);};
   goTo(0);
   auto=setInterval(function(){goTo(cur+1);},4000);
