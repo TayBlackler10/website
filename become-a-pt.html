@@ -599,35 +599,71 @@ body{padding-bottom:90px;}
     <div class="apply-right">
       <h3>Get Course Information</h3>
       <p>Fill in your details and we'll send you a full course prospectus and get in touch.</p>
-      <form action="mailto:tim@m2club.co.nz" method="post" enctype="text/plain">
+      <form id="pt-form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="2aaede0f-585b-484d-9c06-663e3a4f3c45">
+        <input type="hidden" name="subject" value="New PT Course Enquiry via M2 Website">
+        <input type="hidden" name="to" value="tim@m2club.co.nz">
+        <input type="hidden" name="redirect" value="false">
         <div class="form-field">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" name="name" placeholder="Your name" required>
+          <label for="pt-name">FULL NAME</label>
+          <input type="text" id="pt-name" name="name" placeholder="Your name" required>
         </div>
         <div class="form-field">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          <label for="pt-email">EMAIL ADDRESS</label>
+          <input type="email" id="pt-email" name="email" placeholder="your@email.com" required>
         </div>
         <div class="form-field">
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" name="phone" placeholder="021 000 0000">
+          <label for="pt-phone">PHONE NUMBER</label>
+          <input type="tel" id="pt-phone" name="phone" placeholder="021 000 0000">
         </div>
         <div class="form-field">
-          <label for="background">Fitness Background</label>
-          <select id="background" name="background">
+          <label for="pt-fitness">FITNESS BACKGROUND</label>
+          <select id="pt-fitness" name="fitness_background">
             <option value="">Select an option</option>
-            <option>No formal fitness background</option>
-            <option>Fitness enthusiast / gym-goer</option>
-            <option>Competitive athlete</option>
+            <option>Beginner — new to fitness</option>
+            <option>Intermediate — train regularly</option>
+            <option>Advanced — competitive / high performance</option>
             <option>Already working in fitness</option>
           </select>
         </div>
         <div class="form-field">
-          <label for="message">Anything else? (optional)</label>
-          <textarea id="message" name="message" placeholder="Questions, goals, current situation..."></textarea>
+          <label for="pt-msg">ANYTHING ELSE? (OPTIONAL)</label>
+          <textarea id="pt-msg" name="message" placeholder="Questions, goals, current situation..."></textarea>
         </div>
-        <button type="submit" class="submit-btn">Send Enquiry →</button>
+        <div id="pt-result"></div>
+        <button type="submit" class="submit-btn" id="pt-submit">SEND ENQUIRY →</button>
       </form>
+      <script>
+      (function(){
+        var form=document.getElementById('pt-form');
+        var result=document.getElementById('pt-result');
+        var btn=document.getElementById('pt-submit');
+        if(!form) return;
+        form.addEventListener('submit',function(e){
+          e.preventDefault();
+          btn.disabled=true;
+          btn.textContent='Sending...';
+          var data=new FormData(form);
+          fetch('https://api.web3forms.com/submit',{method:'POST',body:data})
+            .then(function(r){return r.json();})
+            .then(function(d){
+              if(d.success){
+                result.innerHTML='<p style="color:#c8f000;margin-top:1rem;">Thanks! We'll be in touch soon.</p>';
+                form.reset();
+              } else {
+                result.innerHTML='<p style="color:#ff4444;margin-top:1rem;">Something went wrong. Please try again.</p>';
+              }
+              btn.disabled=false;
+              btn.textContent='SEND ENQUIRY →';
+            })
+            .catch(function(){
+              result.innerHTML='<p style="color:#ff4444;margin-top:1rem;">Something went wrong. Please try again.</p>';
+              btn.disabled=false;
+              btn.textContent='SEND ENQUIRY →';
+            });
+        });
+      })();
+      </script>
     </div>
   </div>
 </div>
