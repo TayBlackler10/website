@@ -913,11 +913,10 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
 
 <!-- HYROX RACE DAY RESULTS SLIDESHOW -->
 <section class="hyrox-results-section">
-  <div class="container">
-    <div class="section-header">
-      <p class="sec-sub">OUR ATHLETES. RACE DAY.</p>
-      <h2 class="sec-ttl">HYROX Race Day Results</h2>
-    </div>
+  <div class="hyrox-section-header">
+    <p class="hyrox-eyebrow">OUR ATHLETES &bull; RACE DAY</p>
+    <h2 class="hyrox-title">HYROX Race Day Results</h2>
+    <div class="hyrox-title-bar"></div>
   </div>
   <div class="hyrox-slider-outer">
     <button class="hyrox-prev" onclick="hyroxSlide(-1)" aria-label="Previous">&#8249;</button>
@@ -932,43 +931,53 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
       <div class="hyrox-slide" style="transform:translateX(700%)"><img src="Hyrox%20Thomas.JPG" alt="Hyrox Thomas"></div>
     </div>
     <button class="hyrox-next" onclick="hyroxSlide(1)" aria-label="Next">&#8250;</button>
+    <div class="hyrox-counter" id="hyroxCounter">1 / 8</div>
     <div class="hyrox-dots" id="hyroxDots"></div>
   </div>
 </section>
 <style>
-.hyrox-results-section{background:#0a0a0a;padding:4rem 0}
-.hyrox-slider-outer{position:relative;max-width:900px;margin:2rem auto 0;padding:0 52px}
-.hyrox-slider{position:relative;overflow:hidden;border-radius:12px;height:560px}
-.hyrox-slide{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform 0.5s cubic-bezier(.4,0,.2,1)}
-.hyrox-slide img{width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;background:#111}
-.hyrox-prev,.hyrox-next{position:absolute;top:50%;transform:translateY(-60%);background:rgba(0,0,0,.6);color:#c8f000;border:2px solid #c8f000;border-radius:50%;width:44px;height:44px;font-size:1.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:10;padding:0}
-.hyrox-prev{left:0}.hyrox-next{right:0}
-.hyrox-prev:hover,.hyrox-next:hover{background:#c8f000;color:#000}
-.hyrox-dots{display:flex;justify-content:center;gap:8px;margin-top:1.2rem}
-.hyrox-dot{width:8px;height:8px;border-radius:50%;background:#444;cursor:pointer;transition:background .2s;border:none;padding:0}
-.hyrox-dot.active{background:#c8f000}
-@media(max-width:600px){.hyrox-slider-outer{padding:0 36px}.hyrox-slider{height:280px}.hyrox-prev,.hyrox-next{width:32px;height:32px;font-size:1.3rem}}
+.hyrox-results-section{background:#0a0a0a;padding:5rem 0 4rem;position:relative}
+.hyrox-results-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#c8f000 30%,#c8f000 70%,transparent)}
+.hyrox-section-header{text-align:center;padding:0 1rem 2.5rem}
+.hyrox-eyebrow{color:#c8f000;font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin:0 0 .75rem}
+.hyrox-title{color:#fff;font-size:clamp(1.8rem,4vw,3rem);font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin:0 0 1rem;font-family:inherit}
+.hyrox-title-bar{width:60px;height:3px;background:#c8f000;margin:0 auto}
+.hyrox-slider-outer{position:relative;max-width:860px;margin:0 auto;padding:0 60px}
+.hyrox-slider{position:relative;overflow:hidden;border-radius:16px;height:520px;box-shadow:0 0 60px rgba(200,240,0,.08)}
+.hyrox-slide{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform 0.55s cubic-bezier(.4,0,.2,1)}
+.hyrox-slide img{width:100%;height:100%;object-fit:cover;display:block;border-radius:16px}
+.hyrox-slide::after{content:'';position:absolute;inset:0;border-radius:16px;background:linear-gradient(to top,rgba(0,0,0,.45) 0%,transparent 50%);pointer-events:none}
+.hyrox-prev,.hyrox-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(10,10,10,.7);color:#c8f000;border:1.5px solid rgba(200,240,0,.5);border-radius:50%;width:46px;height:46px;font-size:1.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:10;padding:0;backdrop-filter:blur(4px)}
+.hyrox-prev{left:4px}.hyrox-next{right:4px}
+.hyrox-prev:hover,.hyrox-next:hover{background:#c8f000;color:#000;border-color:#c8f000;transform:translateY(-50%) scale(1.08)}
+.hyrox-counter{text-align:center;color:rgba(255,255,255,.4);font-size:.75rem;letter-spacing:.15em;margin-top:.9rem;font-weight:600}
+.hyrox-dots{display:flex;justify-content:center;gap:6px;margin-top:.6rem}
+.hyrox-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .25s;border:none;padding:0}
+.hyrox-dot.active{background:#c8f000;width:22px;border-radius:3px}
+@media(max-width:700px){.hyrox-slider-outer{padding:0 44px}.hyrox-slider{height:300px}.hyrox-prev,.hyrox-next{width:36px;height:36px;font-size:1.2rem}}
 </style>
 <script>
 (function(){
   var cur=0,total=8,auto;
   var slider=document.getElementById('hyroxSlider');
   var dotsEl=document.getElementById('hyroxDots');
+  var counter=document.getElementById('hyroxCounter');
   function goTo(n){
     cur=((n%total)+total)%total;
     var s=slider.querySelectorAll('.hyrox-slide');
     for(var k=0;k<s.length;k++){s[k].style.transform='translateX('+((k-cur)*100)+'%)';}
     var d=dotsEl.querySelectorAll('.hyrox-dot');
     for(var k=0;k<d.length;k++){d[k].classList.toggle('active',k===cur);}
+    counter.textContent=(cur+1)+' / '+total;
   }
-  for(var i=0;i<total;i++){(function(idx){var d=document.createElement('button');d.className='hyrox-dot'+(idx===0?' active':'');d.setAttribute('aria-label','Slide '+(idx+1));d.onclick=function(){goTo(idx);};dotsEl.appendChild(d);})(i);}
-  window.hyroxSlide=function(dir){clearInterval(auto);goTo(cur+dir);auto=setInterval(function(){goTo(cur+1);},4000);};
+  for(var i=0;i<total;i++){(function(idx){var d=document.createElement('button');d.className='hyrox-dot'+(idx===0?' active':'');d.setAttribute('aria-label','Slide '+(idx+1));d.onclick=function(){clearInterval(auto);goTo(idx);auto=setInterval(function(){goTo(cur+1);},4500);};dotsEl.appendChild(d);})(i);}
+  window.hyroxSlide=function(dir){clearInterval(auto);goTo(cur+dir);auto=setInterval(function(){goTo(cur+1);},4500);};
   goTo(0);
-  auto=setInterval(function(){goTo(cur+1);},4000);
+  auto=setInterval(function(){goTo(cur+1);},4500);
   slider.addEventListener('mouseenter',function(){clearInterval(auto);});
-  slider.addEventListener('mouseleave',function(){auto=setInterval(function(){goTo(cur+1);},4000);});
+  slider.addEventListener('mouseleave',function(){auto=setInterval(function(){goTo(cur+1);},4500);});
   var tx=0;slider.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
-  slider.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40){clearInterval(auto);goTo(cur+(dx<0?1:-1));auto=setInterval(function(){goTo(cur+1);},4000);}},{passive:true});
+  slider.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40){clearInterval(auto);goTo(cur+(dx<0?1:-1));auto=setInterval(function(){goTo(cur+1);},4500);}},{passive:true});
 })();
 </script>
 <!-- RECOVERY PHOTOS -->
