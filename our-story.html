@@ -649,12 +649,72 @@ body{padding-bottom:90px;}
 
 /* RESPONSIVE */
 @media(max-width:768px){
+  /* HERO */
+  .s-hero{min-height:85vh}
   .s-hero-bg{grid-template-columns:repeat(2,1fr)}
-  .s-name-inner,.s-pillars-inner,.s-close-inner{grid-template-columns:1fr;gap:2.5rem}
+  .s-hero-inner{padding-bottom:3rem}
+  .s-h1{font-size:clamp(3.2rem,18vw,6rem)}
+  .s-eye{margin:0 0 1rem}
+
+  /* SECTIONS */
+  .section{padding:3.5rem 0}
+  .s-statement{padding:3rem 0}
+  .s-statement-text{font-size:clamp(1.6rem,6vw,2.8rem)}
+
+  /* NAME */
+  .s-name-inner{grid-template-columns:1fr;gap:2rem}
+  .s-body{font-size:.95rem}
+  .s-callout{font-size:1.3rem}
+
+  /* PILLARS */
+  .s-pillars-inner{grid-template-columns:1fr;gap:2rem}
   .s-pillars-photo-col{display:none}
+  .s-pillar{gap:1rem;padding:1.2rem 0}
+  .s-pnum{font-size:1.8rem}
+  .s-ptitle{font-size:1.05rem}
+
+  /* COMMUNITY WALL */
+  .s-wall{padding-top:3rem}
   .s-wall-grid{grid-template-columns:repeat(2,1fr)}
-  .s-team-grid{grid-template-columns:1fr;gap:3px}
-  .s-h1{font-size:clamp(4rem,20vw,7rem)}
+  .s-wall-header{margin-bottom:1.5rem}
+
+  /* TEAM */
+  .s-team-grid{grid-template-columns:1fr 1fr;gap:3px;margin-top:2rem}
+  .s-tm-info{padding:1rem 1.2rem}
+  .s-tm-name{font-size:1.6rem}
+
+  /* HYROX */
+  .hr-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* CLOSE */
+  .s-close{padding:4rem 0}
+  .s-close-inner{grid-template-columns:1fr;gap:2rem}
+}
+
+@media(max-width:480px){
+  /* HERO */
+  .s-hero{min-height:80vh}
+  .s-hero-inner{padding-bottom:2.5rem}
+  .s-h1{font-size:clamp(3rem,16vw,5rem);line-height:.9}
+
+  /* SECTIONS */
+  .section{padding:2.8rem 0}
+  .s-statement{padding:2.5rem 0}
+
+  /* WALL */
+  .s-wall-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* TEAM */
+  .s-team-grid{grid-template-columns:1fr 1fr;gap:2px}
+  .s-tm-info{padding:.8rem 1rem}
+  .s-tm-name{font-size:1.4rem}
+  .s-tm-role{font-size:.6rem}
+
+  /* HYROX */
+  .hr-grid{grid-template-columns:1fr 1fr}
+
+  /* CLOSE */
+  .s-close{padding:3rem 0}
 }
 
 /* REVEAL */
