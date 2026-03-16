@@ -558,6 +558,24 @@ body{padding-bottom:90px;}
 </section>
 
 <!-- ⑥ TEAM — large photos, minimal text -->
+
+<!-- HYROX RACE DAY -->
+<section class="section hr-section reveal">
+  <div class="wrap">
+    <p class="sec-sub">HYROX RACE DAY</p>
+    <h2 class="sec-ttl">Our Athletes.<br>Race Day.</h2>
+  </div>
+  <div class="wrap hr-grid">
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Dre.JPG')"></div>
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Lydia.jpg')"></div>
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Meg.jpg')"></div>
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Patrick.JPG')"></div>
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Sam%20%26%20Will.jpg')"></div>
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Shane.JPG')"></div>
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Taylor%20%26%20Theo%20.JPG')"></div>
+    <div class="hr-cell" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Thomas.JPG')"></div>
+  </div>
+</section>
 <section class="s-close">
   <div class="wrap s-close-inner">
     <div class="s-close-text">
@@ -1014,6 +1032,12 @@ body{padding-bottom:90px;}
 .s-hyrox{background:var(--dark);padding-bottom:0}
 .s-hyrox .wrap{padding-bottom:2.5rem}
 @media(max-width:768px){.s-hyrox-grid{grid-template-columns:repeat(2,1fr)}.s-hyrox-mini-grid{display:none}}
+
+.hr-section .wrap:first-child{padding-bottom:2rem}
+.hr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding-top:0;padding-bottom:0}
+.hr-cell{aspect-ratio:1/1;background-size:cover;background-position:center top;transition:transform .4s ease;overflow:hidden;cursor:pointer}
+.hr-cell:hover{transform:scale(1.03)}
+@media(max-width:768px){.hr-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
