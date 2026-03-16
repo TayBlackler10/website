@@ -447,7 +447,12 @@ body{padding-bottom:90px;}
 <!-- ① HERO — full bleed community photo collage behind text -->
 <section class="s-hero">
   <div class="s-hero-bg">
-    <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Dre.JPG')"></div>
+    <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Community%202.JPG')"></div>
+    <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Community%203.jpg')"></div>
+    <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Community%204.jpg')"></div>
+    <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Community%205.jpg')"></div>
+    <div class="s-hero-overlay"></div>
+  </div>
     <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Lydia.jpg')"></div>
     <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Meg.jpg')"></div>
     <div class="s-hero-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Patrick.JPG')"></div>
@@ -516,7 +521,7 @@ body{padding-bottom:90px;}
 <section class="section s-pillars reveal">
   <div class="wrap s-pillars-inner">
     <div class="s-pillars-photo-col">
-      <div class="s-tall-photo" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Shane.JPG')"></div>
+      <div class="s-hyrox-mini-grid"><div class="s-hyrox-mini-ph" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Dre.JPG')"></div><div class="s-hyrox-mini-ph" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Lydia.jpg')"></div><div class="s-hyrox-mini-ph" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Meg.jpg')"></div><div class="s-hyrox-mini-ph" style="background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Patrick.JPG')"></div></div>
     </div>
     <div class="s-pillars-text-col">
       <p class="sec-sub">OUR PHILOSOPHY</p>
@@ -1000,6 +1005,15 @@ body{padding-bottom:90px;}
   padding: .4rem;
 }
 
+
+.s-hyrox-mini-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;aspect-ratio:3/4;border-radius:4px;overflow:hidden}
+.s-hyrox-mini-ph{background-size:cover;background-position:center top}
+.s-hyrox-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:2.5rem}
+.s-hyrox-ph{aspect-ratio:3/4;background-size:cover;background-position:center top;transition:transform .45s ease;overflow:hidden}
+.s-hyrox-ph:hover{transform:scale(1.03)}
+.s-hyrox{background:var(--dark);padding-bottom:0}
+.s-hyrox .wrap{padding-bottom:2.5rem}
+@media(max-width:768px){.s-hyrox-grid{grid-template-columns:repeat(2,1fr)}.s-hyrox-mini-grid{display:none}}
 </style>
 </head>
 <body>
