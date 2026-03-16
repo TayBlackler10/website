@@ -541,6 +541,43 @@ body{padding-bottom:90px;}
   </div>
 </section>
 
+
+<!-- THE TEAM -->
+<section class="section section--dark reveal">
+  <div class="wrap">
+    <p class="sec-sub">THE TEAM</p>
+    <h2 class="sec-ttl">The People<br>Behind M2</h2>
+    <div class="story-team-grid">
+      <div class="story-team-card">
+        <div class="story-team-img">
+          <img src="https://lh3.googleusercontent.com/d/1YCcy0tr3pYB6xHSzpwEP9QYvo1Tkr-mO" alt="Taylor Blackler - CEO M2 Training Club" loading="lazy" onerror="this.parentElement.classList.add('story-team-img--error')">
+        </div>
+        <div class="story-team-info">
+          <h3 class="story-team-name">TAYLOR</h3>
+          <p class="story-team-role">CEO</p>
+        </div>
+      </div>
+      <div class="story-team-card">
+        <div class="story-team-img">
+          <img src="https://lh3.googleusercontent.com/d/1YqubkvlF0HI1tHgDGnzLSJ9k-6zGvXl3" alt="Tim - Operations Manager M2 Training Club" loading="lazy" onerror="this.parentElement.classList.add('story-team-img--error')">
+        </div>
+        <div class="story-team-info">
+          <h3 class="story-team-name">TIM</h3>
+          <p class="story-team-role">Ops Manager</p>
+        </div>
+      </div>
+      <div class="story-team-card">
+        <div class="story-team-img">
+          <img src="https://lh3.googleusercontent.com/d/15bdwN-zef1bqlzK19cEP4TrFDcNKsQDO" alt="Bekka - Club Manager M2 Training Club" loading="lazy" onerror="this.parentElement.classList.add('story-team-img--error')">
+        </div>
+        <div class="story-team-info">
+          <h3 class="story-team-name">BEKKA</h3>
+          <p class="story-team-role">Club Manager</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <!-- CLOSING CTA -->
 <section class="section section--yellow reveal">
   <div class="wrap">
@@ -959,6 +996,17 @@ body{padding-bottom:90px;}
   padding: .4rem;
 }
 
+
+.story-team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;margin-top:3rem;border:1px solid var(--line2)}
+.story-team-card{background:var(--card);overflow:hidden}
+.story-team-img{aspect-ratio:3/4;overflow:hidden;background:var(--card2)}
+.story-team-img img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;transition:transform .45s ease}
+.story-team-card:hover .story-team-img img{transform:scale(1.04)}
+.story-team-img--error{background:var(--card2)}
+.story-team-info{padding:1.5rem 2rem;border-top:1px solid var(--line2)}
+.story-team-name{font-family:"Bebas Neue",sans-serif;font-size:1.8rem;letter-spacing:.06em;color:var(--white);margin:0 0 .2rem}
+.story-team-role{font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--yellow);margin:0}
+@media(max-width:768px){.story-team-grid{grid-template-columns:1fr;border:none;gap:3px}}
 </style>
 </head>
 <body>
