@@ -1,1 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reviews | M2 Training Club Auckland</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --lime: #dfff00;
+  --black: #080808;
+  --black2: #111111;
+  --black3: #1a1a1a;
+  --white: #ffffff;
+  --grey: #888888;
+  --border: rgba(255,255,255,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: var(--lime);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.nav-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  transition: background 0.2s;
+}
+
+/* MOBILE MENU */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--black);
+  flex-direction: column;
+  padding: 72px 32px 40px;
+}
+
+.mobile-menu.open { display: flex; }
+
+.mobile-close {
+  position: absolute;
+  top: 14px; right: 22px;
+  font-size: 32px;
+  color: var(--white);
+  cursor: pointer;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mobile-nav a {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+  transition: color 0.2s;
+}
+
+.mobile-nav a:hover,
+.mobile-nav a.active { color: var(--lime); }
+
+.mobile-cta {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-lime {
+  display: inline-block;
+  background: var(--lime);
+  color: var(--black);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 15px 28px;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+
+.btn-lime:hover { opacity: 0.85; }
+
+.btn-outline {
+  display: inline-block;
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.25);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  text-decoration: none;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.btn-outline:hover { border-color: var(--white); }
+
+/* TICKER */
+.ticker-wrap {
+  margin-top: 56px;
+  background: var(--lime);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px 0;
+}
+
+.ticker-track {
+  display: inline-block;
+  animation: marquee 32s linear infinite;
+}
+
+.ticker-track span {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--black);
+  padding: 0 28px;
+}
+
+.ticker-track span::after {
+  content: '·';
+  margin-left: 28px;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* HERO */
+.hero {
+  padding: 68px 40px 52px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 24px;
+}
+
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--lime);
+  flex-shrink: 0;
+}
+
+.hero-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 11vw, 120px);
+  line-height: 0.88;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+h1 .lime { color: var(--lime); }
+
+.rating-block { text-align: right; flex-shrink: 0; }
+
+.rating-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 84px;
+  line-height: 1;
+  color: var(--lime);
+  letter-spacing: 0.02em;
+}
+
+.stars-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 3px;
+  margin: 6px 0 5px;
+}
+
+.s { width: 14px; height: 14px; fill: var(--lime); }
+.s-h { fill: url(#hg); }
+
+.rating-sub { font-size: 12px; color: var(--grey); }
+.rating-sub a { color: var(--grey); text-decoration: underline; text-underline-offset: 3px; }
+
+/* DIVIDER */
+.hr { border: none; border-top: 1px solid var(--border); margin: 0 40px; }
+
+/* STATS */
+.stats {
+  display: flex;
+  overflow-x: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.stat {
+  flex: 1;
+  min-width: 130px;
+  padding: 28px 32px 28px 0;
+  border-right: 1px solid var(--border);
+  margin-right: 32px;
+}
+
+.stat:last-child { border-right: none; margin-right: 0; }
+
+.stat-lbl {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 6px;
+}
+
+.stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+
+.stat-val .lime { color: var(--lime); }
+
+/* SECTION HEAD */
+.sec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 60px auto 28px;
+  padding: 0 40px;
+  flex-wrap: wrap;
+}
+
+h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.g-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  border: 1px solid var(--border);
+  padding: 9px 18px;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.g-pill:hover { border-color: var(--lime); color: var(--white); }
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* CARD */
+.card {
+  background: var(--black);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: background 0.2s;
+}
+
+.card.in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease, background 0.2s;
+}
+
+.card:hover { background: var(--black2); }
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.av {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.av-a { background: var(--lime); color: var(--black); }
+.av-b { background: #0d3028; color: #2ecfa0; }
+.av-c { background: #1e1030; color: #9b6ef0; }
+.av-d { background: #0d1e30; color: #4a9ff5; }
+.av-e { background: var(--black3); color: var(--white); border: 1px solid var(--border); }
+
+.rv-info { flex: 1; min-width: 0; }
+
+.rv-name {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rv-sub { font-size: 11px; color: var(--grey); margin-top: 1px; }
+
+.rv-stars { display: flex; gap: 2px; flex-shrink: 0; }
+.rv-stars .s { width: 11px; height: 11px; }
+
+.card-time { font-size: 11px; color: var(--grey); letter-spacing: 0.04em; }
+
+.card-body {
+  font-size: 14px;
+  line-height: 1.78;
+  color: rgba(255,255,255,0.68);
+}
+
+.card-pull {
+  border-left: 2px solid var(--lime);
+  padding-left: 16px;
+  font-style: italic;
+  color: var(--white);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* CTA */
+.cta { max-width: 1200px; margin: 64px auto 80px; padding: 0 40px; }
+
+.cta-box {
+  border: 1px solid var(--border);
+  padding: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.cta-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--lime);
+  margin-bottom: 10px;
+}
+
+.cta-box h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  margin-bottom: 14px;
+}
+
+.cta-box p { font-size: 14px; color: var(--grey); max-width: 380px; }
+
+.cta-btns { display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.f-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: var(--lime);
+  text-decoration: none;
+}
+
+.f-links { display: flex; gap: 24px; flex-wrap: wrap; }
+
+.f-links a {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.f-links a:hover { color: var(--white); }
+
+.f-addr { font-size: 11px; color: var(--grey); }
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .hero, .hr, .stats, .sec-head, .grid, .cta, .footer { padding-left: 20px; padding-right: 20px; }
+  .hero { padding-top: 48px; padding-bottom: 36px; }
+  .hero-inner { flex-direction: column; align-items: flex-start; }
+  .rating-block { text-align: left; }
+  .stars-row { justify-content: flex-start; }
+  .grid { grid-template-columns: 1fr; }
+  .cta-box { padding: 32px 24px; }
+  .stat { min-width: 110px; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="hg" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="50%" stop-color="#dfff00"/>
+      <stop offset="50%" stop-color="#2a2a2a"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- NAV -->
+<header class="nav">
+  <a href="index.html" class="nav-logo">M2</a>
+  <button class="nav-hamburger" onclick="document.getElementById('mm').classList.add('open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mm">
+  <button class="mobile-close" onclick="document.getElementById('mm').classList.remove('open')">&#215;</button>
+  <nav class="mobile-nav">
+    <a href="index.html">Home</a>
+    <a href="memberships.html">Memberships</a>
+    <a href="classes.html">Classes</a>
+    <a href="trainers.html">Trainers</a>
+    <a href="recovery.html">Recovery</a>
+    <a href="our-story.html">Our Story</a>
+    <a href="reviews.html" class="active">Reviews</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="mobile-cta">
+    <a href="memberships.html" class="btn-lime">View Memberships</a>
+    <a href="contact.html" class="btn-outline">Get in Touch</a>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Grafton, Auckland</span><span>Since 2023</span><span>1,500+ Members</span><span>Train With Purpose</span><span>Mindset × Movement</span><span>Progress With Intention</span><span>Hyrox Training</span><span>20m Swimming Pool</span><span>Ice Bath</span><span>Sauna</span><span>Spa Pool</span><span>Recovery Zone</span>
+    <span>Grafton, Auckland</span><span>Since 2023</span><span>1,500+ Members</span><span>Train With Purpose</span><span>Mindset × Movement</span><span>Progress With Intention</span><span>Hyrox Training</span><span>20m Swimming Pool</span><span>Ice Bath</span><span>Sauna</span><span>Spa Pool</span><span>Recovery Zone</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="eyebrow">Google Reviews</p>
+  <div class="hero-inner">
+    <h1>What our<br><span class="lime">members say</span></h1>
+    <div class="rating-block">
+      <div class="rating-num">4.4</div>
+      <div class="stars-row">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5"/></svg>
+        <svg class="s s-h" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5"/></svg>
+      </div>
+      <p class="rating-sub"><a href="https://www.google.com/maps/place/M2+Training+Club" target="_blank">114 Google reviews</a></p>
+    </div>
+  </div>
+</section>
+
+<hr class="hr">
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-lbl">Overall rating</div>
+    <div class="stat-val"><span class="lime">4.4</span> / 5</div>
+  </div>
+  <div class="stat">
+    <div class="stat-lbl">Total reviews</div>
+    <div class="stat-val">114</div>
+  </div>
+  <div class="stat">
+    <div class="stat-lbl">5-star reviews</div>
+    <div class="stat-val"><span class="lime">72%</span></div>
+  </div>
+  <div class="stat">
+    <div class="stat-lbl">Members</div>
+    <div class="stat-val">1,500<span class="lime">+</span></div>
+  </div>
+</div>
+
+<hr class="hr" style="margin-top:0">
+
+<!-- SECTION HEADER -->
+<div class="sec-head">
+  <h2>Recent Reviews</h2>
+  <a class="g-pill" href="https://www.google.com/maps/place/M2+Training+Club" target="_blank">
+    <svg width="13" height="13" viewBox="0 0 24 24">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Verified Google Reviews
+  </a>
+</div>
+
+<!-- REVIEWS GRID -->
+<div class="grid" id="grid">
+
+  <!-- 1 Richmond Tan -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-a">RT</div>
+      <div class="rv-info">
+        <div class="rv-name">Richmond Tan</div>
+        <div class="rv-sub">Local Guide · 43 reviews · 27 photos</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">2 weeks ago</p>
+    <blockquote class="card-pull">"Best gym in Auckland — and I've trained around the world."</blockquote>
+    <p class="card-body">What really sets M2 apart is the integrity of the management team. The equipment is excellent, the floor never feels overcrowded, and the location is perfect. One of the most complete gyms in Auckland — sauna, steam room, pool, plunge pool, and jacuzzi. You'd be hard-pressed to find this combination anywhere else.</p>
+  </div>
+
+  <!-- 2 Mai Merimo -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-b">MM</div>
+      <div class="rv-info">
+        <div class="rv-name">Mai Merimo</div>
+        <div class="rv-sub">Local Guide · 25 reviews · 11 photos</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <p class="card-body">I've been training at M2 for almost two years now and it's honestly been one of the best decisions I've made for myself. The equipment is great and the staff are hugely supportive and welcoming. With a pool, cold plunge, sauna, and posing room — the facilities are genuinely next level.</p>
+  </div>
+
+  <!-- 3 Lydia Finch -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-e">LF</div>
+      <div class="rv-info">
+        <div class="rv-name">Lydia Finch</div>
+        <div class="rv-sub">1 review</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <p class="card-body">I have been a member since the gym first opened and can confidently say it is an outstanding facility. It offers a comprehensive range of equipment supporting various training styles, including Hyrox and functional fitness. The team is welcoming, knowledgeable, and always willing to assist — delivering high-quality classes that foster a strong sense of community and support.</p>
+  </div>
+
+  <!-- 4 Hannah Chapman -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-c">HC</div>
+      <div class="rv-info">
+        <div class="rv-name">Hannah Chapman</div>
+        <div class="rv-sub">1 review</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <blockquote class="card-pull">"Hands down the best training facility in Auckland."</blockquote>
+    <p class="card-body">The functional fitness and lifting setup are world class. The recovery facilities — ice bath, sauna, and pool — make it a complete package. Staff are always helpful and the community vibe is unmatched. Highly recommend.</p>
+  </div>
+
+  <!-- 5 Erena Waretini -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-d">EW</div>
+      <div class="rv-info">
+        <div class="rv-name">Erena Waretini</div>
+        <div class="rv-sub">1 review</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <p class="card-body">I have been part of M2 for several years and managed to convince people to join because of how much I like it. The vibe is inviting and while it isn't as big as a commercial gym, it's hardly ever busy and has more than enough equipment — including machines you won't find elsewhere. The sauna and steam room are accessible through the changing rooms and gender separated. Highly highly recommend.</p>
+  </div>
+
+  <!-- 6 Ian Pollard -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-a">IP</div>
+      <div class="rv-info">
+        <div class="rv-name">Ian Pollard</div>
+        <div class="rv-sub">9 reviews · 2 photos</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <p class="card-body">M2 is one of the best gyms in Auckland if you're serious about HYROX and functional fitness. The programming is excellent, the space is perfect for HYROX-style training, and the atmosphere is motivating without being intimidating. Coach Dave Blint brings great energy, deep HYROX knowledge, and real race experience. He knows exactly how to push athletes while keeping training smart and sustainable. Great gym, great coaching.</p>
+  </div>
+
+  <!-- 7 Aleisha Fee -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-b">AF</div>
+      <div class="rv-info">
+        <div class="rv-name">Aleisha Fee</div>
+        <div class="rv-sub">2 reviews</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <p class="card-body">Easily one of the best training spaces in Auckland. Incredibly well equipped — whether you're lifting heavy, doing classes, circuit training, or just training without feeling crammed. What really sets it apart is the recovery spaces: the saunas, cold plunge, and spa are unreal. Being able to train and recover properly all in one place is a game changer. If you're looking for a gym that has everything covered — this place is it.</p>
+  </div>
+
+  <!-- 8 Theo Stratford -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-e">TS</div>
+      <div class="rv-info">
+        <div class="rv-name">Theo Stratford</div>
+        <div class="rv-sub">1 review</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <p class="card-body">Great gym with a massive range of equipment. Very spacious for a central location — never feels too busy even when there's a lot of members in. Parking is provided which is super convenient. Staff are super friendly and welcoming. Overall one of the best gyms I've been to.</p>
+  </div>
+
+  <!-- 9 Niamh Elliott -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-c">NE</div>
+      <div class="rv-info">
+        <div class="rv-name">Niamh Elliott</div>
+        <div class="rv-sub">3 reviews</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <p class="card-body">I started training at M2 about 8 months ago for the Hyrox classes. While the sauna, ice baths, steam room, and swimming pool are a lovely treat, the Hyrox classes are by far my favourite part of the membership — far beyond the standard of any other gym I've been to for weekly classes.</p>
+  </div>
+
+  <!-- 10 Sophie Thompson -->
+  <div class="card">
+    <div class="card-top">
+      <div class="av av-d">ST</div>
+      <div class="rv-info">
+        <div class="rv-name">Sophie Thompson</div>
+        <div class="rv-sub">2 reviews</div>
+      </div>
+      <div class="rv-stars">
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+        <svg class="s" viewBox="0 0 16 16"><polygon points="8,1 10.2,5.5 15,6.3 11.5,9.6 12.4,14.4 8,12 3.6,14.4 4.5,9.6 1,6.3 5.8,5.5" fill="#dfff00"/></svg>
+      </div>
+    </div>
+    <p class="card-time">1 week ago</p>
+    <blockquote class="card-pull">"The sauna and ice bath are absolute game-changers after a workout."</blockquote>
+    <p class="card-body">Amazing gym with fantastic facilities and equipment. Special shoutout to Bekka — an incredible PT who brings great energy every single session. The whole M2 experience is genuinely next level.</p>
+  </div>
+
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <div class="cta-box">
+    <div>
+      <p class="cta-label">Share your experience</p>
+      <h3>Enjoyed<br>Training at M2?</h3>
+      <p>We'd love to hear from you. Leave us a review on Google — it means everything to our team.</p>
+    </div>
+    <div class="cta-btns">
+      <a href="https://g.page/r/m2club/review" target="_blank" class="btn-lime">Leave a Google Review</a>
+      <a href="memberships.html" class="btn-outline">View Memberships</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <a href="index.html" class="f-logo">M2</a>
+  <div class="f-links">
+    <a href="memberships.html">Memberships</a>
+    <a href="classes.html">Classes</a>
+    <a href="trainers.html">Trainers</a>
+    <a href="recovery.html">Recovery</a>
+    <a href="our-story.html">Our Story</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <p class="f-addr">8 Nugent St, Grafton, Auckland · m2club.co.nz</p>
+</footer>
+
+<script>
+const cards = document.querySelectorAll('.card');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('in'), i * 55);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+cards.forEach(c => io.observe(c));
+</script>
+
+</body>
+</html>
