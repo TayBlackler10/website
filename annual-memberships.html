@@ -818,6 +818,7 @@ footer a:hover { color: var(--yellow); }
   if(drawerBg) drawerBg.addEventListener('click',closeDrawer);
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
   if(drawer) drawer.querySelectorAll('.nav-drawer-links a').forEach(function(a){a.addEventListener('click',closeDrawer);});
+setTimeout(function(){ if(!isOpen){ btn.click(); } }, 2500);
 })();
 </script>
 undefined
