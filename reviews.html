@@ -1478,6 +1478,7 @@ cards.forEach(c => io.observe(c));
     .catch(function(){hideTyping();addMsg('Something went wrong. Please contact us at taylor@m2club.co.nz','bot');})
     .finally(function(){isLoading=false;snd.disabled=false;inp.focus();});
   }
+setTimeout(function(){ if(!isOpen){ btn.click(); } }, 2500);
 })();
 </script>
 <!-- End M2 Chatbot -->
