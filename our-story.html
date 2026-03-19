@@ -707,7 +707,14 @@ body{padding-bottom:90px;}
 (function(){
   var io=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.07});
   document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
-setTimeout(function(){ if(!isOpen){ btn.click(); } }, 2500);
+setTimeout(function(){
+    if(!isOpen){
+      isOpen=true;
+      btn.classList.add('open');
+      win.style.display='flex';
+      requestAnimationFrame(function(){ win.classList.add('open'); });
+    }
+  }, 2500);
 })();
 </script>
 
