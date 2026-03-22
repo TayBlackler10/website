@@ -716,6 +716,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
     <li><a href="https://tayblackler10.github.io/website/recovery.html">Recovery</a></li>
     <li><a href="https://tayblackler10.github.io/website/fitness-passport.html">Fitness Passport</a></li>
     <li><a href="https://tayblackler10.github.io/website/contact.html">Contact</a></li>
+                <li><a href="https://tayblackler10.github.io/website/free-trial.html" class="nav-link-trial">Free Trial</a></li>
                 <li><a href="reviews.html">Reviews</a></li>
   </ul>
   <div class="nav-right">
@@ -791,7 +792,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
       <h1>Save $700.<br><span class="y">Train All Year.</span></h1>
       <p class="hero-desc">Lock in full access to M2 for an entire year and save big. Gym floor, unlimited classes, HYROX training, 20m pool, sauna, ice bath and recovery  all under one roof. Limited spots available.</p>
       <div class="hero-actions">
-        
+        <a href="https://tayblackler10.github.io/website/free-trial.html" class="btn-trial-hero" aria-label="Start your free 3 day trial at M2">Start Free Trial →</a>
         <a href="https://tayblackler10.github.io/website/annual-memberships.html" class="btn-outline">View Annual Deal</a>
       </div>
     </div>
@@ -825,6 +826,22 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
     </div>
   </div>
 </section>
+
+<!-- FREE TRIAL BANNER -->
+<section class="trial-banner-strip reveal" aria-label="3 Days Free Trial">
+  <div class="trial-banner-inner">
+    <div class="trial-banner-left">
+      <div class="trial-banner-pill">NEW</div>
+      <div class="trial-banner-text">
+        <span class="trial-banner-big">3 Days Free</span>
+        <span class="trial-banner-sub">Unlimited access to everything — no credit card required</span>
+      </div>
+    </div>
+    <a href="https://tayblackler10.github.io/website/free-trial.html" class="trial-banner-btn" aria-label="Claim your 3 day free trial">Claim Free Trial →</a>
+  </div>
+</section>
+
+
 
 
 <!-- HYROX -->
@@ -1497,6 +1514,99 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   #m2-chat-send svg { width: 16px; height: 16px; }
   #m2-chat-footer { text-align: center; padding: 6px; font-size: 10px; color: #333; background: #0a0a0a; letter-spacing: 0.3px; }
   @media (max-width: 420px) { #m2-chat-window { width: calc(100vw - 20px); right: 10px; bottom: 90px; } #m2-chat-btn { right: 16px; bottom: 20px; } }
+
+/* ── Free Trial Banner Strip ── */
+.btn-trial-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: #c8f000;
+  color: #0a0a0a;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: .06em;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.btn-trial-hero:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(200,240,0,.3); }
+
+.trial-banner-strip {
+  background: rgba(200,240,0,.06);
+  border-top: 1px solid rgba(200,240,0,.15);
+  border-bottom: 1px solid rgba(200,240,0,.15);
+  padding: 28px 40px;
+}
+.trial-banner-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.trial-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.trial-banner-pill {
+  background: #c8f000;
+  color: #0a0a0a;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .85rem;
+  letter-spacing: .1em;
+  padding: 4px 12px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+.trial-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.trial-banner-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: #fff;
+  letter-spacing: .04em;
+  line-height: 1;
+}
+.trial-banner-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .82rem;
+  color: rgba(255,255,255,.5);
+}
+.trial-banner-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: #c8f000;
+  color: #0a0a0a;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: .06em;
+  border-radius: 4px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform .2s, box-shadow .2s;
+  flex-shrink: 0;
+}
+.trial-banner-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,240,0,.28); }
+@media (max-width: 640px) {
+  .trial-banner-strip { padding: 24px; }
+  .trial-banner-inner { flex-direction: column; align-items: flex-start; }
+}
+
+
+.nav-link-trial {
+  color: #c8f000 !important;
+  font-weight: 600;
+}
+
 </style>
 <button id="m2-chat-btn" aria-label="Chat with M2">
   <svg class="m2-chat-icon" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
