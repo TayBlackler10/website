@@ -1188,6 +1188,7 @@ footer a:hover { color: var(--yellow); }
     <li><a href="https://tayblackler10.github.io/website/recovery.html">Recovery</a></li>
     <li><a href="https://tayblackler10.github.io/website/fitness-passport.html">Fitness Passport</a></li>
     <li><a href="https://tayblackler10.github.io/website/contact.html">Contact</a></li>
+                <li><a href="https://tayblackler10.github.io/website/free-trial.html" class="nav-link-trial">Free Trial</a></li>
                 <li><a href="reviews.html">Reviews</a></li>
   </ul>
   <div class="nav-right">
@@ -1237,6 +1238,19 @@ footer a:hover { color: var(--yellow); }
 </div>
 
 <hr class="rule">
+<!-- FREE TRIAL BANNER -->
+<div class="mem-trial-banner">
+  <div class="mem-trial-banner-inner">
+    <div class="mem-trial-content">
+      <div class="mem-trial-tag">New Member Offer</div>
+      <div class="mem-trial-heading">Not Ready to Commit? Start with 3 Days Free.</div>
+      <div class="mem-trial-desc">Get unlimited access to everything M2 has to offer — completely free for 3 days. No credit card. No lock-in.</div>
+    </div>
+    <a href="https://tayblackler10.github.io/website/free-trial.html" class="mem-trial-btn" aria-label="Claim your free 3 day trial">Claim Free Trial →</a>
+  </div>
+</div>
+
+
 
 <div class="wrap">
 
@@ -1551,6 +1565,82 @@ footer a:hover { color: var(--yellow); }
   #m2-chat-send svg { width: 16px; height: 16px; }
   #m2-chat-footer { text-align: center; padding: 6px; font-size: 10px; color: #333; background: #0a0a0a; letter-spacing: 0.3px; }
   @media (max-width: 420px) { #m2-chat-window { width: calc(100vw - 20px); right: 10px; bottom: 90px; } #m2-chat-btn { right: 16px; bottom: 20px; } }
+
+/* ── Memberships Free Trial Banner ── */
+.mem-trial-banner {
+  background: rgba(200,240,0,.06);
+  border: 1px solid rgba(200,240,0,.2);
+  border-radius: 12px;
+  margin: 40px 0 48px;
+  padding: 40px 44px;
+  position: relative;
+  overflow: hidden;
+}
+.mem-trial-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: #c8f000;
+}
+.mem-trial-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.mem-trial-tag {
+  display: inline-block;
+  background: rgba(200,240,0,.12);
+  border: 1px solid rgba(200,240,0,.3);
+  color: #c8f000;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+.mem-trial-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: #fff;
+  letter-spacing: .03em;
+  margin-bottom: 8px;
+}
+.mem-trial-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .88rem;
+  color: rgba(255,255,255,.55);
+  line-height: 1.55;
+  max-width: 520px;
+}
+.mem-trial-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 32px;
+  background: #c8f000;
+  color: #0a0a0a;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: .06em;
+  border-radius: 4px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform .2s, box-shadow .2s;
+}
+.mem-trial-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,240,0,.28); }
+@media (max-width: 640px) {
+  .mem-trial-banner { padding: 28px 24px; margin: 28px 0 36px; }
+  .mem-trial-banner-inner { flex-direction: column; align-items: flex-start; }
+}
+.nav-link-trial { color: #c8f000 !important; font-weight: 600; }
+
 </style>
 <button id="m2-chat-btn" aria-label="Chat with M2">
   <svg class="m2-chat-icon" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
