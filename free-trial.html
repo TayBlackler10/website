@@ -227,6 +227,19 @@ body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif
   .ft-steps { grid-template-columns:1fr; }
   .ft-how, .ft-faq, .ft-cta-bottom, .ft-card-section { padding:60px 24px; }
 }
+
+/* Nav fix */
+.nav-wrap { max-width:1400px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:60px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,8,8,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06); }
+.nav-logo { font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#c8f000;text-decoration:none;letter-spacing:.04em; }
+.nav-links { display:flex;align-items:center;gap:28px;list-style:none;padding:0;margin:0; }
+.nav-links a { font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);text-decoration:none;transition:color .2s; }
+.nav-links a:hover { color:#fff; }
+.nav-right { display:flex;align-items:center;gap:16px; }
+.nav-hamburger { display:none;background:none;border:none;cursor:pointer;padding:4px; }
+@media(max-width:1024px){ .nav-links{display:none;} .nav-hamburger{display:flex;} }
+.ft-hero { padding-top: 100px; }
+
 .nav-link-trial { color:#c8f000 !important; font-weight:600; }
 </style>
 </head>
