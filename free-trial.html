@@ -1,16 +1,4 @@
-<!DOC
-
-    <div class="trial-photo-mosaic">
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Community%202.JPG" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Community%203.jpg" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Community%205.jpg" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Community%206.jpg" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Community%209.jpg" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Community%2010.jpg" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Dre.JPG" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Lydia.jpg" alt="M2 Training Club" loading="lazy"></div>
-  <div class="pm-item"><img class="pm-img" src="https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Patrick.JPG" alt="M2 Training Club" loading="lazy"></div>
-    </div>TYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -20,6 +8,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1PW3XYQ1F8');
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -577,347 +573,32 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
   .ts-panel { height: 60vw; }
   .photo-fac { grid-template-columns: 1fr !important; }
 }
-</style>
-<style>
-/* ── Free Trial page extras ── */
-.trial-hero {
-  position: relative;
-  min-height: 92vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  background: #0a0a0a;
-}
-.trial-hero-bg {
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(200,240,0,.13) 0%, transparent 70%);
-  pointer-events: none;
-}
-.trial-hero-grid {
-  position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(200,240,0,.04) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(200,240,0,.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
-}
-.trial-hero-inner {
-  position: relative;
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 120px 40px 80px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px;
-  align-items: start;
-}
-.trial-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.trial-eyebrow-line {
-  width: 40px; height: 2px;
-  background: #c8f000;
-}
-.trial-eyebrow-txt {
-  font-family: 'DM Sans', sans-serif;
-  font-size: .78rem;
-  font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: #c8f000;
-}
-.trial-h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4rem, 9vw, 7.5rem);
-  line-height: .95;
-  color: #fff;
-  margin: 0 0 24px;
-}
-.trial-h1 .y { color: #c8f000; }
-.trial-sub {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.1rem;
-  line-height: 1.65;
-  color: rgba(255,255,255,.68);
-  max-width: 480px;
-  margin: 0 0 40px;
-}
-.trial-cta-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.btn-trial-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 18px 42px;
-  background: #c8f000;
-  color: #0a0a0a;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.35rem;
-  letter-spacing: .06em;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: transform .2s, box-shadow .2s;
-  width: fit-content;
-}
-.btn-trial-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,240,0,.35); }
-.trial-note {
-  font-family: 'DM Sans', sans-serif;
-  font-size: .82rem;
-  color: rgba(255,255,255,.4);
-  letter-spacing: .04em;
-}
-.trial-card {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(200,240,0,.18);
-  border-radius: 12px;
-  padding: 48px 44px;
-  position: relative;
-  overflow: hidden;
-}
-.trial-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: #c8f000;
-}
-.trial-card-badge {
-  display: inline-block;
-  background: rgba(200,240,0,.12);
-  border: 1px solid rgba(200,240,0,.3);
-  color: #c8f000;
-  font-family: 'DM Sans', sans-serif;
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  padding: 5px 14px;
-  border-radius: 100px;
-  margin-bottom: 28px;
-}
-.trial-card-price {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 5rem;
-  line-height: 1;
-  color: #fff;
-  margin-bottom: 4px;
-}
-.trial-card-price span {
-  font-size: 2rem;
-  color: #c8f000;
-}
-.trial-card-duration {
-  font-family: 'DM Sans', sans-serif;
-  font-size: .9rem;
-  color: rgba(255,255,255,.45);
-  margin-bottom: 32px;
-}
-.trial-includes-label {
-  font-family: 'DM Sans', sans-serif;
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.4);
-  margin-bottom: 16px;
-}
-.trial-includes-list {
-  list-style: none;
-  padding: 0; margin: 0 0 36px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.trial-includes-list li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: .95rem;
-  color: rgba(255,255,255,.8);
-}
-.trial-includes-list li::before {
-  content: '';
-  width: 20px; height: 20px; flex-shrink: 0;
-  background: rgba(200,240,0,.1);
-  border: 1px solid rgba(200,240,0,.4);
-  border-radius: 50%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='9' viewBox='0 0 12 9'%3E%3Cpath d='M1 4l3.5 3.5L11 1' stroke='%23c8f000' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-}
-/* How it works */
-.trial-how {
-  background: #111;
-  padding: 100px 40px;
-}
-.trial-how-inner {
-  max-width: 1160px;
-  margin: 0 auto;
-}
-.trial-how h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  color: #fff;
-  margin: 0 0 60px;
-  text-align: center;
-}
-.trial-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-}
-.trial-step {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 10px;
-  padding: 40px 36px;
-  position: relative;
-}
-.trial-step-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 4rem;
-  color: rgba(200,240,0,.15);
-  line-height: 1;
-  margin-bottom: 16px;
-}
-.trial-step h3 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  color: #fff;
-  margin: 0 0 10px;
-  letter-spacing: .04em;
-}
-.trial-step p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: .9rem;
-  line-height: 1.6;
-  color: rgba(255,255,255,.5);
-  margin: 0;
-}
-/* FAQ */
-.trial-faq {
-  padding: 100px 40px;
-  background: #0a0a0a;
-}
-.trial-faq-inner {
-  max-width: 760px;
-  margin: 0 auto;
-}
-.trial-faq h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  color: #fff;
-  margin: 0 0 50px;
-  text-align: center;
-}
-.trial-faq-item {
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  padding: 24px 0;
-}
-.trial-faq-item:first-of-type { border-top: 1px solid rgba(255,255,255,.08); }
-.trial-faq-q {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-  margin: 0 0 10px;
-}
-.trial-faq-a {
-  font-family: 'DM Sans', sans-serif;
-  font-size: .9rem;
-  line-height: 1.65;
-  color: rgba(255,255,255,.5);
-  margin: 0;
-}
-/* Bottom CTA */
-.trial-bottom-cta {
-  background: #c8f000;
-  padding: 100px 40px;
-  text-align: center;
-}
-.trial-bottom-cta h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(3rem, 7vw, 5.5rem);
-  color: #0a0a0a;
-  line-height: .95;
-  margin: 0 0 24px;
-}
-.trial-bottom-cta p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.05rem;
-  color: rgba(0,0,0,.6);
-  max-width: 480px;
-  margin: 0 auto 36px;
-  line-height: 1.6;
-}
-.btn-trial-dark {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 18px 48px;
-  background: #0a0a0a;
-  color: #c8f000;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.35rem;
-  letter-spacing: .06em;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: transform .2s, box-shadow .2s;
-}
-.btn-trial-dark:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
 
-/* Mobile */
-@media (max-width: 768px) {
-  .trial-hero-inner { grid-template-columns: 1fr; gap: 40px; padding: 100px 24px 60px; }
-  .trial-steps { grid-template-columns: 1fr; }
-  .trial-how, .trial-faq, .trial-bottom-cta { padding: 70px 24px; }
-  .trial-card { padding: 36px 28px; }
-}
-
-/* ── Trial Hero Photo Mosaic ── */
+/* ── Photo Mosaic ── */
 .trial-photo-mosaic {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 160px 160px 160px;
+  grid-template-rows: 170px 170px 170px;
   gap: 6px;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
+  flex-shrink: 0;
 }
-.trial-photo-mosaic .pm-item {
-  overflow: hidden;
-  position: relative;
-  height: 160px;
-}
-.trial-photo-mosaic .pm-img {
-  object-fit: cover;
-  width: 100%;
-  height: 160px;
-  display: block;
-  transition: transform .4s ease, filter .4s ease;
-  filter: brightness(.85);
-}
-.trial-photo-mosaic .pm-img:hover { transform: scale(1.04); filter: brightness(1); }
-@media (max-width: 768px) {
-  .trial-photo-mosaic { display: none; }
+.pm-item { overflow: hidden; }
+.pm-item:nth-child(1) { grid-column: span 2; }
+.pm-item:nth-child(5) { grid-column: span 2; }
+.pm-img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .4s; filter:brightness(.88); }
+.pm-img:hover { transform:scale(1.05); filter:brightness(1); }
+.trial-hero-inner { grid-template-columns: 1fr 1fr 1fr !important; gap: 28px !important; align-items: start !important; }
+.nav-link-trial { color: #c8f000 !important; font-weight: 600; }
+@media(max-width:900px){
+  .trial-hero-inner { grid-template-columns: 1fr !important; }
+  .trial-photo-mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: 140px 140px 140px; }
+  .pm-item:nth-child(1) { grid-column: span 2; }
+  .pm-item:nth-child(5) { grid-column: span 1; }
 }
 
 </style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-1PW3XYQ1F8');
-</script>
-<!-- deploy -->
 </head>
 <body>
 
@@ -951,6 +632,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
   <div class="trial-hero-bg" aria-hidden="true"></div>
   <div class="trial-hero-grid" aria-hidden="true"></div>
   <div class="trial-hero-inner">
+
     <div class="trial-hero-left">
       <div class="trial-eyebrow">
         <span class="trial-eyebrow-line"></span>
@@ -993,3 +675,84 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
       </ul>
       <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" class="btn-trial-primary" style="width:100%;box-sizing:border-box;" aria-label="Start free trial">Start Your Free Trial →</a>
     </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="trial-how reveal" aria-labelledby="how-heading">
+  <div class="trial-how-inner">
+    <h2 id="how-heading">How It Works</h2>
+    <div class="trial-steps">
+      <div class="trial-step">
+        <div class="trial-step-num">01</div>
+        <h3>Claim Online</h3>
+        <p>Hit the button, fill in your details, and you're in. Takes less than 2 minutes — no payment info required.</p>
+      </div>
+      <div class="trial-step">
+        <div class="trial-step-num">02</div>
+        <h3>Show Up &amp; Train</h3>
+        <p>Come into M2 at 8 Nugent Street, Grafton. Our team will get you set up and show you around the club.</p>
+      </div>
+      <div class="trial-step">
+        <div class="trial-step-num">03</div>
+        <h3>3 Days On Us</h3>
+        <p>Train as much as you want across your 3 days. Classes, HYROX, pool, recovery — all of it, all yours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="trial-faq reveal" aria-labelledby="faq-heading">
+  <div class="trial-faq-inner">
+    <h2 id="faq-heading">Common Questions</h2>
+    <div class="trial-faq-item">
+      <p class="trial-faq-q">Do I need a credit card to sign up?</p>
+      <p class="trial-faq-a">No. Your 3-day free trial is completely free — no credit card required and no automatic billing once the trial ends.</p>
+    </div>
+    <div class="trial-faq-item">
+      <p class="trial-faq-q">What exactly is included in the trial?</p>
+      <p class="trial-faq-a">Everything. Full gym floor, all group classes, HYROX training sessions, 20m pool, sauna, ice bath and all club facilities. You get the full M2 experience.</p>
+    </div>
+    <div class="trial-faq-item">
+      <p class="trial-faq-q">Can I use the trial on consecutive days?</p>
+      <p class="trial-faq-a">Yes — your 3 days run from the date you first check in and can be used on any 3 days within that period.</p>
+    </div>
+    <div class="trial-faq-item">
+      <p class="trial-faq-q">What happens after my trial ends?</p>
+      <p class="trial-faq-a">Nothing automatic. If you want to keep training, our team will walk you through the membership options. No pressure.</p>
+    </div>
+    <div class="trial-faq-item">
+      <p class="trial-faq-q">Is the trial available to anyone?</p>
+      <p class="trial-faq-a">New members only — one free trial per person. You'll need to be 16 or older. Under 18s require a parent or guardian signature.</p>
+    </div>
+    <div class="trial-faq-item">
+      <p class="trial-faq-q">Where is M2 Training Club?</p>
+      <p class="trial-faq-a">We're at 8 Nugent Street, Grafton, Auckland. Easy parking available and close to the CBD.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="trial-bottom-cta reveal" aria-labelledby="bottom-cta-heading">
+  <h2 id="bottom-cta-heading">Ready to<br>Start?</h2>
+  <p>Come train with Auckland's top gym community for 3 days — completely free. No catch, no commitment.</p>
+  <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" class="btn-trial-dark" aria-label="Claim free trial">Claim Your Free Trial →</a>
+</section>
+
+<hr class="rule">
+<div class="wrap" style="padding:60px 40px;text-align:center;">
+  <p style="font-family:'DM Sans',sans-serif;font-size:.85rem;color:rgba(255,255,255,.35);">© 2024 M2 Training Club · 8 Nugent Street, Grafton, Auckland</p>
+</div>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.1 });
+reveals.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
