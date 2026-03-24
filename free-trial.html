@@ -243,21 +243,28 @@ nav { position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,8,8,.95
 
 .nav-link-trial { color:#c8f000 !important; font-weight:600; }
 
-/* Recovery section */
+  .ft-recovery-img-wrap { order: -1; }
+}
+
+/* Recovery section - updated */
 .ft-recovery { background: #111; padding: 80px 24px; }
 .ft-recovery-inner { max-width: 1100px; margin: 0 auto; }
 .ft-recovery h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 5vw, 3.5rem); color: #fff; margin: 8px 0 16px; line-height: 1; }
-.ft-recovery-sub { color: #aaa; font-size: 1.05rem; max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
-.ft-recovery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-.ft-recovery-img-wrap img { width: 100%; border-radius: 12px; object-fit: cover; aspect-ratio: 4/3; display: block; }
-.ft-recovery-features { display: flex; flex-direction: column; gap: 32px; }
-.ft-recovery-item { display: flex; gap: 16px; align-items: flex-start; }
-.ft-recovery-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
-.ft-recovery-item strong { display: block; color: #c8f000; font-size: 1.05rem; margin-bottom: 4px; }
-.ft-recovery-item p { color: #aaa; font-size: 0.95rem; margin: 0; line-height: 1.5; }
-@media (max-width: 768px) {
-  .ft-recovery-grid { grid-template-columns: 1fr; }
-  .ft-recovery-img-wrap { order: -1; }
+.ft-recovery-sub { color: #aaa; font-size: 1.05rem; max-width: 660px; margin-bottom: 40px; line-height: 1.6; }
+.ft-rec-img-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 48px; }
+.ft-rec-img-item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 10px; display: block; }
+.ft-recovery-features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.ft-recovery-item { display: flex; gap: 12px; align-items: flex-start; }
+.ft-recovery-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+.ft-recovery-item strong { display: block; color: #c8f000; font-size: 1rem; margin-bottom: 4px; }
+.ft-recovery-item p { color: #aaa; font-size: 0.9rem; margin: 0; line-height: 1.5; }
+@media (max-width: 900px) {
+  .ft-rec-img-grid { grid-template-columns: repeat(2, 1fr); }
+  .ft-recovery-features { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .ft-rec-img-grid { grid-template-columns: repeat(2, 1fr); }
+  .ft-recovery-features { grid-template-columns: 1fr; }
 }
 </style>
 
@@ -368,37 +375,54 @@ nav { position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,8,8,.95
   <div class="ft-recovery-inner">
     <p class="ft-section-label">Recovery Area</p>
     <h2>Train Hard. Recover Harder.</h2>
-    <p class="ft-recovery-sub">Your free trial includes full access to M2's recovery facilities — ice bath, sauna, and more. Built to get you back in the gym faster.</p>
-    <div class="ft-recovery-grid">
-      <div class="ft-recovery-img-wrap">
-        <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Ice%20bath%20image%20%20(3).jpg" alt="Ice bath recovery area at M2 Training Club" loading="lazy">
+    <p class="ft-recovery-sub">Your free trial includes full access to M2's recovery facilities — ice bath, sauna, spa pool and 20m pool. Built to get you back in the gym faster.</p>
+    <div class="ft-rec-img-grid">
+        <div class="ft-rec-img-item">
+          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/20m%20pool.jpeg" alt="20m indoor pool at M2 Training Club" loading="lazy">
+        </div>
+        <div class="ft-rec-img-item">
+          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/spa%20pool%20(1)%20(3).jpg" alt="Spa pool recovery at M2 Training Club" loading="lazy">
+        </div>
+        <div class="ft-rec-img-item">
+          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Sauna%20(1)%20(4).jpg" alt="Sauna at M2 Training Club" loading="lazy">
+        </div>
+        <div class="ft-rec-img-item">
+          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Ice%20bath%20image%20%20(3).jpg" alt="Ice bath at M2 Training Club" loading="lazy">
+        </div>
+    </div>
+    <div class="ft-recovery-features">
+      <div class="ft-recovery-item">
+        <span class="ft-recovery-icon">🧊</span>
+        <div>
+          <strong>Ice Bath</strong>
+          <p>Cold water immersion to reduce inflammation and accelerate muscle recovery.</p>
+        </div>
       </div>
-      <div class="ft-recovery-features">
-        <div class="ft-recovery-item">
-          <span class="ft-recovery-icon">🧊</span>
-          <div>
-            <strong>Ice Bath</strong>
-            <p>Cold water immersion to reduce inflammation and accelerate muscle recovery.</p>
-          </div>
+      <div class="ft-recovery-item">
+        <span class="ft-recovery-icon">♨️</span>
+        <div>
+          <strong>Spa Pool</strong>
+          <p>Hydrotherapy jets to ease muscle tension and aid active recovery.</p>
         </div>
-        <div class="ft-recovery-item">
-          <span class="ft-recovery-icon">🌡️</span>
-          <div>
-            <strong>Sauna</strong>
-            <p>Heat therapy to relax muscles, improve circulation and aid recovery.</p>
-          </div>
+      </div>
+      <div class="ft-recovery-item">
+        <span class="ft-recovery-icon">🌡️</span>
+        <div>
+          <strong>Sauna</strong>
+          <p>Heat therapy to relax muscles, improve circulation and aid recovery.</p>
         </div>
-        <div class="ft-recovery-item">
-          <span class="ft-recovery-icon">🏊</span>
-          <div>
-            <strong>20m Indoor Pool</strong>
-            <p>Active recovery laps or a cool-down swim — available every session.</p>
-          </div>
+      </div>
+      <div class="ft-recovery-item">
+        <span class="ft-recovery-icon">🏊</span>
+        <div>
+          <strong>20m Indoor Pool</strong>
+          <p>Active recovery laps or a cool-down swim — available every session.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 
 <section class="ft-how reveal">
   <div class="ft-how-inner">
