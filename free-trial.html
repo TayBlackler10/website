@@ -242,6 +242,23 @@ nav { position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,8,8,.95
 .ft-hero { padding-top: 100px; }
 
 .nav-link-trial { color:#c8f000 !important; font-weight:600; }
+
+/* Recovery section */
+.ft-recovery { background: #111; padding: 80px 24px; }
+.ft-recovery-inner { max-width: 1100px; margin: 0 auto; }
+.ft-recovery h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 5vw, 3.5rem); color: #fff; margin: 8px 0 16px; line-height: 1; }
+.ft-recovery-sub { color: #aaa; font-size: 1.05rem; max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
+.ft-recovery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.ft-recovery-img-wrap img { width: 100%; border-radius: 12px; object-fit: cover; aspect-ratio: 4/3; display: block; }
+.ft-recovery-features { display: flex; flex-direction: column; gap: 32px; }
+.ft-recovery-item { display: flex; gap: 16px; align-items: flex-start; }
+.ft-recovery-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+.ft-recovery-item strong { display: block; color: #c8f000; font-size: 1.05rem; margin-bottom: 4px; }
+.ft-recovery-item p { color: #aaa; font-size: 0.95rem; margin: 0; line-height: 1.5; }
+@media (max-width: 768px) {
+  .ft-recovery-grid { grid-template-columns: 1fr; }
+  .ft-recovery-img-wrap { order: -1; }
+}
 </style>
 
     <meta property="og:title" content="Free Gym Trial Auckland | M2 Training Club">
@@ -347,6 +364,42 @@ nav { position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(8,8,8,.95
 </section>
 
 <!-- HOW IT WORKS -->
+<section class="ft-recovery reveal">
+  <div class="ft-recovery-inner">
+    <p class="ft-section-label">Recovery Area</p>
+    <h2>Train Hard. Recover Harder.</h2>
+    <p class="ft-recovery-sub">Your free trial includes full access to M2's recovery facilities — ice bath, sauna, and more. Built to get you back in the gym faster.</p>
+    <div class="ft-recovery-grid">
+      <div class="ft-recovery-img-wrap">
+        <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Ice%20bath%20image%20%20(3).jpg" alt="Ice bath recovery area at M2 Training Club" loading="lazy">
+      </div>
+      <div class="ft-recovery-features">
+        <div class="ft-recovery-item">
+          <span class="ft-recovery-icon">🧊</span>
+          <div>
+            <strong>Ice Bath</strong>
+            <p>Cold water immersion to reduce inflammation and accelerate muscle recovery.</p>
+          </div>
+        </div>
+        <div class="ft-recovery-item">
+          <span class="ft-recovery-icon">🌡️</span>
+          <div>
+            <strong>Sauna</strong>
+            <p>Heat therapy to relax muscles, improve circulation and aid recovery.</p>
+          </div>
+        </div>
+        <div class="ft-recovery-item">
+          <span class="ft-recovery-icon">🏊</span>
+          <div>
+            <strong>20m Indoor Pool</strong>
+            <p>Active recovery laps or a cool-down swim — available every session.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="ft-how reveal">
   <div class="ft-how-inner">
     <h2>How It Works</h2>
