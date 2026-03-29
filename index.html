@@ -834,10 +834,6 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
   </div>
 </section>
 
-<!-- FREE TRIAL BANNER -->
-<section class="trial-banner-strip reveal" aria-label="3 Days Free Trial">
-  
-</section>
 
 
 
@@ -1497,74 +1493,7 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 }
 .btn-trial-hero:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(200,240,0,.3); }
 
-.trial-banner-strip {
-  background: #ffffff;
-  border-top: none;
-  border-bottom: none;
-  padding: 42px 60px;
-}
-.trial-banner-inner {
-  max-width: 1160px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-.trial-banner-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-.trial-banner-pill {
-  background: #0a0a0a;
-  color: #c8f000;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.275rem;
-  letter-spacing: .1em;
-  padding: 6px 18px;
-  border-radius: 100px;
-  flex-shrink: 0;
-}
-.trial-banner-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.trial-banner-big {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.4rem;
-  color: #0a0a0a;
-  letter-spacing: .04em;
-  line-height: 1;
-}
-.trial-banner-sub {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1.23rem;
-  color: rgba(0,0,0,.6);
-}
-.trial-banner-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 18px 42px;
-  background: #0a0a0a;
-  color: #c8f000;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.5rem;
-  letter-spacing: .06em;
-  border-radius: 4px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: transform .2s, box-shadow .2s;
-  flex-shrink: 0;
-}
-.trial-banner-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(200,240,0,.28); }
-@media (max-width: 640px) {
-  .trial-banner-strip { padding: 36px; }
-  .trial-banner-inner { flex-direction: column; align-items: flex-start; }
-}
+
 
 
 .nav-link-trial {
