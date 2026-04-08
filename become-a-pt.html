@@ -44,66 +44,14 @@
       line-height: 1.6;
     }
 
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(10,10,10,0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-      height: 64px;
-    }
-
-    .nav-logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 22px;
-      letter-spacing: 0.08em;
-      color: var(--white);
-      text-decoration: none;
-    }
-
-    .nav-logo span { color: var(--lime); }
-
-    .nav-links {
-      display: flex;
-      gap: 28px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: #bbb;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--lime); }
-
-    .nav-cta {
-      background: var(--lime);
-      color: var(--black) !important;
-      font-weight: 700 !important;
-      padding: 10px 20px;
-      border-radius: 4px;
-      transition: opacity 0.2s !important;
-    }
-
-    .nav-cta:hover { opacity: 0.85; }
+    /* Nav loaded dynamically from site */
 
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding: 64px 0 0;
+      padding: 100px 0 0;
       position: relative;
       overflow: hidden;
     }
@@ -947,19 +895,46 @@
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <a href="/" class="nav-logo">M<span>2</span></a>
-    <ul class="nav-links">
-      <li><a href="/memberships.html">Memberships</a></li>
-      <li><a href="/group-fitness.html">Classes</a></li>
-      <li><a href="/hyrox.html">HYROX</a></li>
-      <li><a href="/recovery.html">Recovery</a></li>
-      <li><a href="/personal-trainers.html">PTs</a></li>
-      <li><a href="/become-a-pt.html" style="color:var(--lime)">PT Course</a></li>
-      <li><a href="/3-days-free.html" class="nav-cta">3 Days Free</a></li>
-    </ul>
-  </nav>
+  <!-- NAV - matches site nav -->
+  <div id="site-nav-placeholder"></div>
+  <script>
+    // Load nav from index page to keep consistent
+    fetch('/')
+      .then(r => r.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const nav = doc.querySelector('nav');
+        const bar = doc.querySelector('.announcement-bar, [class*="announcement"], [class*="banner"]');
+        const placeholder = document.getElementById('site-nav-placeholder');
+        if (bar) placeholder.parentNode.insertBefore(bar.cloneNode(true), placeholder);
+        if (nav) placeholder.parentNode.insertBefore(nav.cloneNode(true), placeholder);
+        placeholder.remove();
+      })
+      .catch(() => {
+        // Fallback nav if fetch fails
+        document.getElementById('site-nav-placeholder').outerHTML = `
+        <div style="background:#C8FF00;text-align:center;padding:10px;font-size:13px;font-weight:700;color:#000;letter-spacing:0.05em;">
+          🔥 Sign up with a mate and you both get 2 weeks free
+        </div>
+        <nav style="position:fixed;top:36px;left:0;right:0;z-index:100;background:rgba(10,10,10,0.97);border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:60px;">
+          <a href="/" style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:#C8FF00;text-decoration:none;letter-spacing:0.05em;">M2</a>
+          <ul style="display:flex;gap:20px;list-style:none;margin:0;padding:0;">
+            <li><a href="/3-days-free.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Free Trial</a></li>
+            <li><a href="/our-story.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Our Story</a></li>
+            <li><a href="/memberships.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Memberships</a></li>
+            <li><a href="/annual.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Annual</a></li>
+            <li><a href="/group-fitness.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Classes</a></li>
+            <li><a href="/personal-trainers.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Trainers</a></li>
+            <li><a href="/become-a-pt.html" style="color:#C8FF00;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Become a PT</a></li>
+            <li><a href="/recovery.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Recovery</a></li>
+            <li><a href="/fitness-passport.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Fitness Passport</a></li>
+            <li><a href="/contact.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Contact</a></li>
+            <li><a href="/reviews.html" style="color:#fff;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Reviews</a></li>
+          </ul>
+        </nav>`;
+      });
+  </script>
 
   <!-- HERO -->
   <section class="hero">
