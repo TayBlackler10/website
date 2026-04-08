@@ -44,92 +44,14 @@
       line-height: 1.6;
     }
 
-    /* ── SITE NAV (matches rest of site) ── */
-    .site-announcement-bar {
-      background: var(--lime);
-      color: var(--black);
-      text-align: center;
-      padding: 10px 16px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 101;
-    }
-
-    .site-nav {
-      position: fixed;
-      top: 37px; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(10,10,10,0.97);
-      border-bottom: 1px solid var(--border);
-      display: flex !important;
-      flex-direction: row !important;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      height: 52px;
-      overflow-x: auto;
-    }
-
-    .site-nav-logo {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 900;
-      font-size: 26px;
-      color: var(--lime);
-      text-decoration: none;
-      letter-spacing: 0.05em;
-      flex-shrink: 0;
-      margin-right: 16px;
-    }
-
-    .site-nav-links {
-      display: flex !important;
-      flex-direction: row !important;
-      gap: 0;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      flex-wrap: nowrap;
-      align-items: center;
-      height: 52px;
-    }
-
-    .site-nav-links li {
-      display: inline-flex !important;
-      align-items: center;
-      height: 52px;
-    }
-
-    .site-nav-links a {
-      color: #ccc;
-      text-decoration: none;
-      font-size: 11.5px;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      padding: 0 10px;
-      height: 52px;
-      display: inline-flex !important;
-      align-items: center;
-      border-bottom: 2px solid transparent;
-      transition: color 0.15s, border-color 0.15s;
-      white-space: nowrap;
-    }
-
-    .site-nav-links a:hover { color: var(--white); }
-
-    .site-nav-links a.active {
-      color: var(--white);
-      border-bottom-color: var(--lime);
-    }
+    /* Nav uses site stylesheet */
 
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding: 89px 0 0;
+      padding: 80px 0 0;
       position: relative;
       overflow: hidden;
     }
@@ -973,25 +895,29 @@
 </head>
 <body>
 
-  <!-- NAV - matches site exactly -->
-  <div class="site-announcement-bar">
-    🔥 Sign up with a mate and you both get 2 weeks free
-  </div>
-  <nav class="site-nav">
-    <a href="/" class="site-nav-logo">M2</a>
-    <ul class="site-nav-links">
-      <li><a href="/3-days-free.html">FREE TRIAL</a></li>
-      <li><a href="/our-story.html">OUR STORY</a></li>
-      <li><a href="/memberships.html">MEMBERSHIPS</a></li>
-      <li><a href="/annual.html">ANNUAL</a></li>
-      <li><a href="/group-fitness.html">CLASSES</a></li>
-      <li><a href="/personal-trainers.html">TRAINERS</a></li>
-      <li><a href="/become-a-pt.html" class="active">BECOME A PT</a></li>
-      <li><a href="/recovery.html">RECOVERY</a></li>
-      <li><a href="/fitness-passport.html">FITNESS PASSPORT</a></li>
-      <li><a href="/contact.html">CONTACT</a></li>
-      <li><a href="/reviews.html">REVIEWS</a></li>
+  <!-- NAV - exact site nav markup + site stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="https://m2club.co.nz/" class="nav-brand">
+      <img src="/assets/images/m2-logo.png" alt="M2 Training Club" onerror="this.parentElement.innerHTML='<span style=\'font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:26px;color:#C8FF00;letter-spacing:0.05em;\'>M2</span>'" />
+    </a>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="/3-days-free.html" class="nav-link">FREE TRIAL</a></li>
+      <li class="nav-item"><a href="/our-story.html" class="nav-link">OUR STORY</a></li>
+      <li class="nav-item"><a href="/memberships.html" class="nav-link">MEMBERSHIPS</a></li>
+      <li class="nav-item"><a href="/annual.html" class="nav-link">ANNUAL</a></li>
+      <li class="nav-item"><a href="/group-fitness.html" class="nav-link">CLASSES</a></li>
+      <li class="nav-item"><a href="/personal-trainers.html" class="nav-link">TRAINERS</a></li>
+      <li class="nav-item"><a href="/become-a-pt.html" class="nav-link active">BECOME A PT</a></li>
+      <li class="nav-item"><a href="/recovery.html" class="nav-link">RECOVERY</a></li>
+      <li class="nav-item"><a href="/fitness-passport.html" class="nav-link">FITNESS PASSPORT</a></li>
+      <li class="nav-item"><a href="/contact.html" class="nav-link">CONTACT</a></li>
+      <li class="nav-item"><a href="/reviews.html" class="nav-link">REVIEWS</a></li>
     </ul>
+    <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
   </nav>
 
   <!-- HERO -->
