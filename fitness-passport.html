@@ -874,9 +874,25 @@ body{padding-bottom:90px;}
 })();
 </script>
 <!-- End M2 Chatbot -->
+
+<script>
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var a=btn.nextElementSibling;
+    var isOpen=btn.classList.contains('open');
+    document.querySelectorAll('.faq-q').forEach(function(b){
+      b.classList.remove('open');
+      b.setAttribute('aria-expanded','false');
+      var ans=b.nextElementSibling;
+      if(ans){ans.classList.remove('open');}
+    });
+    if(!isOpen){
+      btn.classList.add('open');
+      btn.setAttribute('aria-expanded','true');
+      if(a){a.classList.add('open');}
+    }
+  });
+});
+</script>
 </body>
-</html><script>
-document.querySelectorAll('.faq-q').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const a=btn.nextElementSibling;const isOpen=btn.classList.contains('open');
-    document.querySelectorAll('.faq-q').forEach(b=>{b.classList.
+</html>
