@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M2 Training Club — Marketing Command Centre</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --y:#C8FF00;--yd:#a8d600;
+  --b:#080808;--s:#111;--s2:#181818;--s3:#202020;
+  --br:rgba(200,255,0,0.12);--br2:rgba(255,255,255,0.06);
+  --t:#f2f2f2;--t2:#bbb;--m:#888;
+  --g:#4ade80;--r:#f87171;--blue:#60a5fa;--purple:#a78bfa
+}
+html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--s);border-bottom:1px solid var(--br);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);letter-spacing:3px}
+.logo span{font-size:13px;color:var(--m);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:.5px;margin-left:12px;vertical-align:middle}
+.topdate{font-size:12px;color:var(--m);background:var(--s2);padding:5px 12px;border-radius:20px;border:1px solid var(--br2)}
+
+/* ── SECTION NAV ── */
+.section-nav{display:flex;gap:3px;background:var(--s);padding:10px 28px;border-bottom:1px solid var(--br2);overflow-x:auto;position:sticky;top:60px;z-index:99;scrollbar-width:none}
+.section-nav::-webkit-scrollbar{display:none}
+.snb{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:7px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .15s}
+.snb.on{background:var(--y);color:#000;font-weight:500}
+.snb:hover:not(.on){color:var(--t);background:var(--s3)}
+
+/* ── SECTIONS ── */
+.section{display:none;padding:32px 28px;max-width:1100px;margin:0 auto}
+.section.on{display:block}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--y);letter-spacing:2px;margin-bottom:6px}
+.section-sub{font-size:13px;color:var(--m);margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--br2)}
+
+/* ── INNER TABS ── */
+.tab-nav{display:flex;gap:3px;background:var(--s2);padding:5px;border-radius:10px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tnb{font-size:13px;font-weight:500;padding:7px 16px;border-radius:7px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .15s;font-family:'DM Sans',sans-serif}
+.tnb.on{background:var(--s3);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.tnb:hover:not(.on){color:var(--t2)}
+.tab-pnl{display:none}
+.tab-pnl.on{display:block}
+
+/* ── KPI GRID ── */
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--s);border:1px solid var(--br2);border-radius:12px;padding:18px 20px;transition:border-color .2s}
+.kpi:hover{border-color:var(--br)}
+.kl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:500}
+.kv{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--y);line-height:1;margin-bottom:4px}
+.ks{font-size:12px;color:var(--m)}
+.ks.g{color:var(--g)}.ks.r{color:var(--r)}.ks.y{color:var(--y)}
+
+/* ── CARDS ── */
+.card{background:var(--s);border:1px solid var(--br2);border-radius:12px;padding:20px 22px;margin-bottom:16px}
+.card:last-child{margin-bottom:0}
+.ct{font-size:11px;font-weight:500;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ct::after{content:'';flex:1;height:1px;background:var(--br2)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--br2);font-size:14px;gap:12px}
+.row:last-child{border-bottom:none}
+.rl{color:var(--t2)}.rv{font-weight:500;color:var(--t);text-align:right}
+.rv.g{color:var(--g)}.rv.r{color:var(--r)}.rv.y{color:var(--y)}
+
+/* ── GRIDS ── */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:750px){.two{grid-template-columns:1fr}.three{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.three{grid-template-columns:1fr}}
+
+/* ── BARS ── */
+.bar-wrap{display:flex;align-items:center;gap:10px;padding:6px 0}
+.bl{font-size:12px;color:var(--t2);width:140px;flex-shrink:0;text-align:right}
+.bt{flex:1;height:22px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;position:relative}
+.bf{height:100%;border-radius:4px;position:absolute;left:0;top:0;display:flex;align-items:center;padding-left:8px}
+.bval{font-size:10px;font-weight:500;color:rgba(0,0,0,.9);white-space:nowrap}
+.bv2{font-size:12px;font-weight:500;min-width:55px;text-align:right;flex-shrink:0;color:var(--t2)}
+
+/* ── INSIGHT / ALERT / REC ── */
+.insight{background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.15);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.it{font-size:13px;font-weight:500;color:var(--y);margin-bottom:5px}
+.ib{font-size:13px;color:var(--t2);line-height:1.65}
+.alert{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.at{font-size:13px;font-weight:500;color:var(--r);margin-bottom:5px}
+.ab{font-size:13px;color:var(--t2);line-height:1.65}
+.good-box{background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.18);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.gt{font-size:13px;font-weight:500;color:var(--g);margin-bottom:5px}
+.gb{font-size:13px;color:var(--t2);line-height:1.65}
+.rec{background:var(--s2);border:1px solid var(--br2);border-left:3px solid var(--y);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:10px}
+.rt{font-size:13px;font-weight:500;color:var(--t);margin-bottom:4px}
+.rb{font-size:13px;color:var(--t2);line-height:1.6}
+
+/* ── STATUS BADGES ── */
+.badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500}
+.b-active{background:rgba(74,222,128,.15);color:var(--g)}
+.b-off{background:rgba(136,136,136,.12);color:var(--m)}
+.b-hot{background:rgba(200,255,0,.15);color:var(--y)}
+.b-warn{background:rgba(248,113,113,.15);color:var(--r)}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:10px 12px;font-size:11px;font-weight:500;color:var(--m);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--br2)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--br2);vertical-align:middle;color:var(--t2)}
+.tbl td:first-child{color:var(--t);font-weight:500}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl-divider td{background:rgba(200,255,0,.05);font-weight:500;color:var(--y);font-size:11px;padding:7px 12px;letter-spacing:.5px}
+
+/* ── PROG BAR ── */
+.prog{height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:6px;overflow:hidden}
+.pf{height:100%;border-radius:3px;background:var(--y);transition:width .5s}
+.pf.g{background:var(--g)}.pf.r{background:var(--r)}
+
+/* ── CONTENT CHECKLIST ── */
+.ci{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--br2)}
+.ci:last-child{border-bottom:none}
+.ci-check{width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ci-check:hover:not(.done){border-color:var(--y)}
+.ci-check.done{background:var(--y);border-color:var(--y)}
+.ci-check.done::after{content:'✓';font-size:11px;color:#000;font-weight:700}
+.ci-title{font-size:14px;font-weight:500;color:var(--t)}
+.ci-title.done-text{text-decoration:line-through;color:var(--m)}
+.ci-tag{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(200,255,0,.12);color:var(--y);margin-left:6px;font-weight:500}
+.ci-who{font-size:12px;color:var(--m);margin-top:3px}
+
+/* ── INPUTS ── */
+.inp{background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:10px 14px;font-size:14px;color:var(--t);font-family:'DM Sans',sans-serif;width:100%;transition:border-color .15s}
+.inp:focus{outline:none;border-color:var(--y);background:var(--s3)}
+.inp::placeholder{color:var(--m)}
+select.inp{cursor:pointer}
+.inp-lbl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;font-weight:500}
+.add-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn{background:var(--y);color:#000;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;white-space:nowrap}
+.btn:hover{background:var(--yd)}
+.btn-ghost{background:transparent;border:1px solid var(--br2);border-radius:8px;padding:9px 16px;font-size:13px;color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.btn-ghost:hover{border-color:var(--y);color:var(--y)}
+
+/* ── FUNNEL ── */
+.funnel-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--br2)}
+.funnel-row:last-child{border-bottom:none}
+.fn{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--y);min-width:55px}
+.fl{font-size:13px;color:var(--t2);flex:1}
+.fb{font-size:13px;font-weight:500;min-width:42px;text-align:right}
+
+/* ── NO-SHOW LIST ── */
+.ns-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--br2);font-size:13px}
+.ns-item:last-child{border-bottom:none}
+.ns-name{font-weight:500;color:var(--t);min-width:160px}
+.ns-src{color:var(--m);font-size:12px;min-width:90px}
+.ns-email{color:var(--blue);font-size:12px}
+
+/* ── TEXTAREA ── */
+.note-area{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:8px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--t);resize:vertical;min-height:100px;line-height:1.6;transition:border-color .15s}
+.note-area:focus{outline:none;border-color:var(--y)}
+.note-area::placeholder{color:var(--m)}
+
+/* ── OFFER CARDS ── */
+.offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:540px){.offer-grid{grid-template-columns:1fr}}
+.offer{background:var(--s);border:1px solid var(--br2);border-radius:12px;padding:18px 20px;position:relative;transition:border-color .2s}
+.offer:hover{border-color:rgba(255,255,255,.12)}
+.offer.hot{border-color:rgba(200,255,0,.3)}
+.otag{position:absolute;top:-1px;right:14px;background:var(--y);color:#000;font-size:10px;font-weight:700;padding:3px 10px;border-radius:0 0 6px 6px;text-transform:uppercase;letter-spacing:.5px}
+.on-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y);margin-bottom:4px;letter-spacing:.5px}
+.o-price{font-size:28px;font-weight:500;color:var(--t);margin-bottom:4px}
+.o-sub{font-size:13px;color:var(--m)}
+.o-save{font-size:13px;color:var(--g);margin-top:6px;font-weight:500}
+
+/* ── SAVE BUTTON ── */
+.save-btn{background:transparent;border:1px solid var(--br2);border-radius:7px;padding:8px 16px;font-size:12px;color:var(--m);cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;transition:all .15s}
+.save-btn:hover{border-color:var(--y);color:var(--y)}
+.save-btn.saved{color:var(--g);border-color:var(--g)}
+
+footer{text-align:center;padding:48px 28px 28px;color:var(--m);font-size:12px;border-top:1px solid var(--br2);margin-top:48px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <span class="logo">M2 <span>Marketing Command Centre</span></span>
+  </div>
+  <div class="topdate" id="topdate"></div>
+</div>
+
+<div class="section-nav">
+  <button class="snb on" onclick="showSection('overview')">Overview</button>
+  <button class="snb" onclick="showSection('scorecard')">Weekly Scorecard</button>
+  <button class="snb" onclick="showSection('meta')">Meta Ads</button>
+  <button class="snb" onclick="showSection('trials')">Trial Analytics</button>
+  <button class="snb" onclick="showSection('members')">Member Base</button>
+  <button class="snb" onclick="showSection('financials')">Financials</button>
+  <button class="snb" onclick="showSection('offers')">Offers & Revenue</button>
+  <button class="snb" onclick="showSection('calendar')">Social Calendar</button>
+  <button class="snb" onclick="showSection('campaigns')">Campaigns</button>
+  <button class="snb" onclick="showSection('pt')">PT Pipeline</button>
+  <button class="snb" onclick="showSection('seo')">SEO & Web</button>
+  <button class="snb" onclick="showSection('content')">Content</button>
+  <button class="snb" onclick="showSection('notes')">Notes</button>
+</div>
+
+<!-- ===== OVERVIEW ===== -->
+<div id="s-overview" class="section on">
+  <div class="section-title">Business Overview</div>
+  <div class="section-sub">May 2026 · M2 Training Club · Grafton, Auckland</div>
+  <div class="kg">
+    <div class="kpi"><div class="kl">Current Members</div><div class="kv">1,692</div><div class="ks g">+3% vs last period</div></div>
+    <div class="kpi"><div class="kl">New May (5 days)</div><div class="kv">17</div><div class="ks y">~105/mo pace</div></div>
+    <div class="kpi"><div class="kl">Apr Trading</div><div class="kv">$105K</div><div class="ks g">+5.9% YoY run rate</div></div>
+    <div class="kpi"><div class="kl">Daily Ad Spend</div><div class="kv">$80</div><div class="ks">3 active campaigns</div></div>
+    <div class="kpi"><div class="kl">Apr PP Visits</div><div class="kv">2,772</div><div class="ks g">Record high</div></div>
+    <div class="kpi"><div class="kl">Apr Churn</div><div class="kv">1.41%</div><div class="ks g">Best ever</div></div>
+    <div class="kpi"><div class="kl">Visits Today</div><div class="kv">201</div><div class="ks">5 May 2026</div></div>
+    <div class="kpi"><div class="kl">Cancellations</div><div class="kv">27</div><div class="ks r">Upcoming this month</div></div>
+  </div>
+
+  <div class="good-box"><div class="gt">April was a strong month — net +50 members, 1.41% churn (best ever), $105K trading</div><div class="gb">Your growth is accelerating. 2026 run rate of $1.26M is up 5.9% on 2025's $1.19M full year. The combination of strong trial volume (131 in April), improving churn, and record Passport visits puts you in a strong position heading into May/June.</div></div>
+
+  <div class="alert"><div class="at">Membership income is down 9.6% YoY despite more members</div><div class="ab">More members but lower average revenue per member — driven by the shift toward Fitness Passport (average $24/mo) replacing owned memberships ($108–195/mo). Your 235 Premium members generate more revenue than your 903 Passport members combined. Every new Perform/Gateway member is worth 8× a Passport member.</div></div>
+
+  <div class="two">
+    <div class="card">
+      <div class="ct">Active campaigns</div>
+      <div class="row"><span class="rl">3 Day Trial</span><span><span class="badge b-hot">Hot</span> $1,441/mo · $0.59/view</span></div>
+      <div class="row"><span class="rl">$45 a Week</span><span><span class="badge b-active">Active</span> $591/mo · $0.26/view</span></div>
+      <div class="row"><span class="rl">PT Course</span><span><span class="badge b-active">Active</span> $408/mo · $0.65/view</span></div>
+    </div>
+    <div class="card">
+      <div class="ct">Net member target — May 2026</div>
+      <div class="row"><span class="rl">Net target</span><span class="rv y">+45 members</span></div>
+      <div class="row"><span class="rl">Gross needed (~27% churn)</span><span class="rv">~55 joins</span></div>
+      <div class="row"><span class="rl">Current pace (17 in 5 days)</span><span class="rv y">~105/mo projected</span></div>
+      <div class="row"><span class="rl">On track?</span><span class="rv g">Yes — ahead of pace</span></div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <div class="ct">Top 3 priorities right now</div>
+      <div class="row"><span class="rl">1. Upsell Daily→Perform</span><span class="rv y">+$4,936/mo potential</span></div>
+      <div class="row"><span class="rl">2. Fix source tracking</span><span class="rv r">77% unknown</span></div>
+      <div class="row"><span class="rl">3. No-show follow-up SMS</span><span class="rv">26/mo not attending</span></div>
+    </div>
+    <div class="card">
+      <div class="ct">Revenue mix (April 2026)</div>
+      <div class="row"><span class="rl">Membership income</span><span class="rv">$68,000 (65%)</span></div>
+      <div class="row"><span class="rl">Passport income</span><span class="rv">$21,700 (21%)</span></div>
+      <div class="row"><span class="rl">Other trading</span><span class="rv">$15,300 (15%)</span></div>
+      <div class="row"><span class="rl">Total</span><span class="rv y">$105,000</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== META ADS ===== -->
+<div id="s-meta" class="section">
+  <div class="section-title">Meta Ads</div>
+  <div class="section-sub">Last 30 days · 5 Apr – 4 May 2026 · M2 Training Club (177730...)</div>
+  <div class="tab-nav">
+    <button class="tnb on" onclick="innerTab('meta','summary')">Summary</button>
+    <button class="tnb" onclick="innerTab('meta','campaigns')">Campaigns</button>
+    <button class="tnb" onclick="innerTab('meta','insights')">Insights</button>
+    <button class="tnb" onclick="innerTab('meta','actions')">Actions</button>
+  </div>
+
+  <div id="meta-summary" class="tab-pnl on">
+    <div class="kg">
+      <div class="kpi"><div class="kl">Total spent</div><div class="kv">$2,440</div><div class="ks">3 active campaigns</div></div>
+      <div class="kpi"><div class="kl">Impressions</div><div class="kv">407K</div><div class="ks">Active only</div></div>
+      <div class="kpi"><div class="kl">Unique reach</div><div class="kv">168K</div><div class="ks">People</div></div>
+      <div class="kpi"><div class="kl">Landing views</div><div class="kv">5,320</div><div class="ks">All 3 campaigns</div></div>
+      <div class="kpi"><div class="kl">Best CPV</div><div class="kv">$0.26</div><div class="ks y">$45/wk campaign</div></div>
+      <div class="kpi"><div class="kl">Frequency</div><div class="kv">2.42×</div><div class="ks">Avg per person</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Spend by campaign</div>
+      <div class="bar-wrap"><div class="bl">3 Day Trial</div><div class="bt"><div class="bf" style="width:100%;background:var(--y)"><span class="bval">$1,440.88 · 59%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">$45 a Week</div><div class="bt"><div class="bf" style="width:41%;background:var(--blue)"><span class="bval">$591.09 · 24%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">PT Course</div><div class="bt"><div class="bf" style="width:28%;background:var(--purple)"><span class="bval">$408.05 · 17%</span></div></div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct">CPV comparison</div>
+        <div class="bar-wrap"><div class="bl">$45 a Week</div><div class="bt"><div class="bf" style="width:40%;background:var(--g)"><span class="bval">$0.26 ✓ best</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">3 Day Trial</div><div class="bt"><div class="bf" style="width:91%;background:var(--y)"><span class="bval">$0.59</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">PT Course</div><div class="bt"><div class="bf" style="width:100%;background:var(--r)"><span class="bval">$0.65 worst</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Views per $100 spent</div>
+        <div class="bar-wrap"><div class="bl">$45 a Week</div><div class="bt"><div class="bf" style="width:100%;background:var(--g)"><span class="bval">385 views</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">3 Day Trial</div><div class="bt"><div class="bf" style="width:44%;background:var(--y)"><span class="bval">170 views</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">PT Course</div><div class="bt"><div class="bf" style="width:40%;background:var(--r)"><span class="bval">153 views</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="meta-campaigns" class="tab-pnl">
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="tbl">
+        <thead><tr><th>Campaign</th><th>Status</th><th>Spent</th><th>Results</th><th>CPV</th><th>Impressions</th><th>Reach</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:500">3 Day Trial</td><td><span class="badge b-hot">High performing</span></td><td style="color:var(--y)">$1,440.88</td><td>2,453 views</td><td style="color:var(--g)">$0.59</td><td>260,759</td><td>85,491</td></tr>
+          <tr><td style="font-weight:500">$45 a Week</td><td><span class="badge b-active">Active</span></td><td style="color:var(--y)">$591.09</td><td>2,243 views</td><td style="color:var(--g)">$0.26</td><td>84,760</td><td>53,033</td></tr>
+          <tr><td style="font-weight:500">PT Course</td><td><span class="badge b-active">Active</span></td><td style="color:var(--y)">$408.05</td><td>624 views</td><td style="color:var(--r)">$0.65</td><td>61,499</td><td>29,607</td></tr>
+          <tr><td style="color:var(--m)">PIF Campaign</td><td><span class="badge b-off">Off</span></td><td>$523.59</td><td>1,520 clicks</td><td>$0.34</td><td>105,314</td><td>43,944</td></tr>
+          <tr><td style="color:var(--m)">M2 Brand Awareness</td><td><span class="badge b-off">Off</span></td><td>$122.63</td><td>38,624 reach</td><td>$3.17/1K</td><td>68,595</td><td>38,624</td></tr>
+          <tr><td style="color:var(--m)">PT Course (old)</td><td><span class="badge b-off">Off</span></td><td>$216.07</td><td>597 views</td><td>$0.36</td><td>56,439</td><td>40,096</td></tr>
+          <tr><td style="color:var(--m)">Fitness Passport</td><td><span class="badge b-off">Draft</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="meta-insights" class="tab-pnl">
+    <div class="insight"><div class="it">$45 a Week is your most efficient campaign — $0.26/view</div><div class="ib">385 views per $100 spent. Scale from $35/day to $50/day immediately. This campaign should get more budget, not less.</div></div>
+    <div class="insight"><div class="it">3 Day Trial uses 59% of budget but converts downstream</div><div class="ib">$11 cost per trial sign-up is strong. 131 trials in April from this spend. Marked "High performing" by Meta. Reduce slightly to $30/day and redistribute to $45 Week.</div></div>
+    <div class="alert"><div class="at">PT Course has 4 Meta recommendations — needs new creative urgently</div><div class="ab">$0.65/view is 2.5× worse than your best campaign. At $4,000/$3,000 ticket price, high-quality creative matters most here. Try video testimonial or results-focused angle.</div></div>
+    <div class="insight"><div class="it">Frequency at 2.42× — plan new creative every 3–4 weeks</div><div class="ib">Your Grafton/Auckland audience is finite. The Trial Reels (Bekka, Tay) are perfectly timed. Refresh creative before frequency hits 3.5×.</div></div>
+  </div>
+
+  <div id="meta-actions" class="tab-pnl">
+    <div class="rec"><div class="rt">1. Scale $45 a Week → $50/day</div><div class="rb">Best CPV at $0.26. Monitor — if stays below $0.35, keep scaling.</div></div>
+    <div class="rec"><div class="rt">2. Reduce 3 Day Trial → $30/day</div><div class="rb">Still your volume driver but over-weighted at 59% of budget.</div></div>
+    <div class="rec"><div class="rt">3. Refresh PT Course creative</div><div class="rb">Check Meta's 4 recommendations. Try testimonial video. High value offer needs high quality creative.</div></div>
+    <div class="rec"><div class="rt">4. Activate Fitness Passport draft</div><div class="rb">Test at $20/day — corporate audience, low competition.</div></div>
+    <div class="rec"><div class="rt">5. New creative in 2–3 weeks</div><div class="rb">Trial Reels (Bekka $45 week, Tay trial, Tay recovery) are ready. Get them live.</div></div>
+    <div class="rec"><div class="rt">6. Target non-corporate audiences</div><div class="rb">FP is a corporate benefit. Target: self-employed, tradies, students, hospitality — people without employer gym benefits.</div></div>
+    <div class="card">
+      <div class="ct">Suggested budget reallocation</div>
+      <div class="row"><span class="rl">3 Day Trial</span><span class="rv">$30/day ↓ from $48/day</span></div>
+      <div class="row"><span class="rl">$45 a Week</span><span class="rv y">$50/day ↑ from $35/day</span></div>
+      <div class="row"><span class="rl">PT Course</span><span class="rv y">$20/day + new creative</span></div>
+      <div class="row"><span class="rl">Fitness Passport (new)</span><span class="rv">$20/day test</span></div>
+      <div class="row"><span class="rl" style="color:var(--t);font-weight:500">New daily total</span><span class="rv y">$120/day · $3,600/mo</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TRIAL ANALYTICS ===== -->
+<div id="s-trials" class="section">
+  <div class="section-title">Trial Analytics</div>
+  <div class="section-sub">April 2026 · 131 FREE 3 DAY TRIAL records from GymMaster</div>
+  <div class="tab-nav">
+    <button class="tnb on" onclick="innerTab('trial','funnel')">Funnel</button>
+    <button class="tnb" onclick="innerTab('trial','sources')">Sources</button>
+    <button class="tnb" onclick="innerTab('trial','audience')">Audience</button>
+    <button class="tnb" onclick="innerTab('trial','noshows')">No-shows (26)</button>
+    <button class="tnb" onclick="innerTab('trial','actions')">Actions</button>
+  </div>
+
+  <div id="trial-funnel" class="tab-pnl on">
+    <div class="kg">
+      <div class="kpi"><div class="kl">Trials started</div><div class="kv">131</div><div class="ks">April 1–30</div></div>
+      <div class="kpi"><div class="kl">Showed up</div><div class="kv">105</div><div class="ks g">80.2% show rate</div></div>
+      <div class="kpi"><div class="kl">No-shows</div><div class="kv">26</div><div class="ks r">19.8%</div></div>
+      <div class="kpi"><div class="kl">3+ visits</div><div class="kv">43</div><div class="ks y">Strong convert signal</div></div>
+      <div class="kpi"><div class="kl">Cost per trial</div><div class="kv">$11</div><div class="ks g">$1,441 ÷ 131</div></div>
+      <div class="kpi"><div class="kl">Est. conversion</div><div class="kv">~23%</div><div class="ks">Of all trials</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Funnel stages</div>
+      <div class="funnel-row"><div class="fn">131</div><div class="fl">Trial sign-ups<div class="prog"><div class="pf" style="width:100%"></div></div></div><div class="fb" style="color:var(--y)">100%</div></div>
+      <div class="funnel-row"><div class="fn">105</div><div class="fl">Attended at least once<div class="prog"><div class="pf" style="width:80%"></div></div></div><div class="fb" style="color:var(--g)">80.2%</div></div>
+      <div class="funnel-row"><div class="fn">43</div><div class="fl">High engagement (3+ visits)<div class="prog"><div class="pf" style="width:33%"></div></div></div><div class="fb" style="color:var(--y)">32.8%</div></div>
+      <div class="funnel-row"><div class="fn">~30</div><div class="fl">Estimated converted to paid member<div class="prog"><div class="pf g" style="width:23%"></div></div></div><div class="fb" style="color:var(--g)">~23%</div></div>
+      <div class="funnel-row"><div class="fn">26</div><div class="fl">No-shows — never visited<div class="prog"><div class="pf r" style="width:20%"></div></div></div><div class="fb" style="color:var(--r)">19.8%</div></div>
+    </div>
+    <div class="two">
+      <div class="card">
+        <div class="ct">Weekly trial volume</div>
+        <div class="bar-wrap"><div class="bl">Week 1 (Apr 1)</div><div class="bt"><div class="bf" style="width:100%;background:var(--y)"><span class="bval">34</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Week 2 (Apr 8)</div><div class="bt"><div class="bf" style="width:82%;background:var(--blue)"><span class="bval">28</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Week 3 (Apr 15)</div><div class="bt"><div class="bf" style="width:82%;background:var(--blue)"><span class="bval">28</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Week 4 (Apr 22)</div><div class="bt"><div class="bf" style="width:85%;background:var(--blue)"><span class="bval">29</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Week 5 (Apr 29)</div><div class="bt"><div class="bf" style="width:35%;background:var(--m)"><span class="bval">12</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Visit depth</div>
+        <div class="bar-wrap"><div class="bl">0 visits</div><div class="bt"><div class="bf" style="width:100%;background:var(--r)"><span class="bval">26 no-shows</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">1 visit</div><div class="bt"><div class="bf" style="width:100%;background:#facc15"><span class="bval">41</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">2 visits</div><div class="bt"><div class="bf" style="width:51%;background:#facc15"><span class="bval">21</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">3–5 visits</div><div class="bt"><div class="bf" style="width:62%;background:var(--g)"><span class="bval">28</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">6+ visits</div><div class="bt"><div class="bf" style="width:37%;background:var(--y)"><span class="bval">15</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="trial-sources" class="tab-pnl">
+    <div class="card">
+      <div class="ct">Source breakdown — 131 trials</div>
+      <div class="bar-wrap"><div class="bl">Unknown/Direct</div><div class="bt"><div class="bf" style="width:100%;background:var(--m)"><span class="bval">74 — 57%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Google</div><div class="bt"><div class="bf" style="width:26%;background:var(--blue)"><span class="bval">19 — 15%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Referral</div><div class="bt"><div class="bf" style="width:18%;background:var(--g)"><span class="bval">13 — 10%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Word of mouth</div><div class="bt"><div class="bf" style="width:14%;background:var(--g)"><span class="bval">10 — 8%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Instagram</div><div class="bt"><div class="bf" style="width:9%;background:var(--purple)"><span class="bval">7 — 5%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">In person</div><div class="bt"><div class="bf" style="width:9%;background:var(--y)"><span class="bval">7 — 5%</span></div></div></div>
+    </div>
+    <div class="alert"><div class="at">57% of trial sources are untracked</div><div class="ab">74 people signed up with no source recorded. Brief every staff member: ask every trial "how did you hear about us?" before signing them in. This data is worth thousands in better ad targeting.</div></div>
+    <div class="two">
+      <div class="card">
+        <div class="ct">Taylor Blackler sign-ups</div>
+        <div class="row"><span class="rl">Trials signed by Taylor</span><span class="rv y">71 (54%)</span></div>
+        <div class="row"><span class="rl">Self sign-up / walk-in</span><span class="rv">59 (45%)</span></div>
+        <div class="row"><span class="rl">Charlotte Dodd</span><span class="rv">1</span></div>
+      </div>
+      <div class="card">
+        <div class="ct">Free (organic) channels</div>
+        <div class="row"><span class="rl">WOM + referral combined</span><span class="rv g">23 trials at $0</span></div>
+        <div class="row"><span class="rl">% of total</span><span class="rv g">17.6%</span></div>
+        <div class="row"><span class="rl">Referral programme potential</span><span class="rv y">2× this easily</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="trial-audience" class="tab-pnl">
+    <div class="two">
+      <div class="card">
+        <div class="ct">Gender split</div>
+        <div class="bar-wrap"><div class="bl">Male</div><div class="bt"><div class="bf" style="width:100%;background:var(--blue)"><span class="bval">76 — 58%</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Female</div><div class="bt"><div class="bf" style="width:62%;background:#f472b6"><span class="bval">47 — 36%</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Not recorded</div><div class="bt"><div class="bf" style="width:10%;background:var(--m)"><span class="bval">8 — 6%</span></div></div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Age stats</div>
+        <div class="row"><span class="rl">Average age</span><span class="rv y">31.7 years</span></div>
+        <div class="row"><span class="rl">Core demographic</span><span class="rv y">25–34</span></div>
+        <div class="row"><span class="rl">Youngest</span><span class="rv">15</span></div>
+        <div class="row"><span class="rl">Oldest</span><span class="rv">64</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Age band breakdown</div>
+      <div class="bar-wrap"><div class="bl">18–24</div><div class="bt"><div class="bf" style="width:48%;background:var(--purple)"><span class="bval">31 — 24%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">25–34</div><div class="bt"><div class="bf" style="width:100%;background:var(--y)"><span class="bval">64 — 49%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">35–44</div><div class="bt"><div class="bf" style="width:30%;background:var(--blue)"><span class="bval">19 — 15%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">45–54</div><div class="bt"><div class="bf" style="width:17%;background:var(--g)"><span class="bval">11 — 8%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">55+</div><div class="bt"><div class="bf" style="width:9%;background:var(--m)"><span class="bval">6 — 5%</span></div></div></div>
+    </div>
+    <div class="insight"><div class="it">Female trials underrepresented at 36% — industry average is 45–55%</div><div class="ib">Female-led creative (Bekka, Tay recovery) in a dedicated female ad set targeting women 25–40 in Auckland could close this gap significantly.</div></div>
+  </div>
+
+  <div id="trial-noshows" class="tab-pnl">
+    <div class="alert"><div class="at">26 people signed up and never walked through the door</div><div class="ab">At 23% conversion, these 26 represent ~6 lost members. At $45/week that's $270/wk or $14,040/year. An automated "we're saving your spot" SMS the day after sign-up would recover 30–40%.</div></div>
+    <div class="card">
+      <div class="ct">No-show list — April 2026</div>
+      <div class="ns-item"><div class="ns-name">Joseph Zawko</div><div class="ns-src">Google</div><div class="ns-email">jzawko9@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Dejaa Prangley</div><div class="ns-src">Instagram</div><div class="ns-email">dejaa.p@hotmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Mara Kosac</div><div class="ns-src">Google</div><div class="ns-email">mara.kosac@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Moiho Leaupepe</div><div class="ns-src">Unknown</div><div class="ns-email">moiholeaupepe@yahoo.com</div></div>
+      <div class="ns-item"><div class="ns-name">Sahrita Wilson</div><div class="ns-src">Unknown</div><div class="ns-email">sahritawilsonn@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Jacob Van Pelt</div><div class="ns-src">Unknown</div><div class="ns-email">jacob.vanpelt23@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Celine Mathews</div><div class="ns-src">Referral</div><div class="ns-email">celinemathewshill@outlook.com</div></div>
+      <div class="ns-item"><div class="ns-name">Ryan Dunlop</div><div class="ns-src">Referral</div><div class="ns-email">lmtlscoaching@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Jacqui Dillon</div><div class="ns-src">Referral</div><div class="ns-email">jaxdillon@me.con</div></div>
+      <div class="ns-item"><div class="ns-name">Sebastian Atkinson</div><div class="ns-src">Unknown</div><div class="ns-email">sebastian13_@hotmail.co.nz</div></div>
+      <div class="ns-item"><div class="ns-name">Alex Luckett</div><div class="ns-src">Referral</div><div class="ns-email">luckett23@hotmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Sione Tupou</div><div class="ns-src">Unknown</div><div class="ns-email">eziboyz101@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Giovanni Moataane-Mika</div><div class="ns-src">Unknown</div><div class="ns-email">giovanimm@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Andre Xavier</div><div class="ns-src">Referral</div><div class="ns-email">adxavier@live.co.uk</div></div>
+      <div class="ns-item"><div class="ns-name">Lee De-St-Aubin</div><div class="ns-src">Referral</div><div class="ns-email">leedsa85@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Sarah Whetter</div><div class="ns-src">Unknown</div><div class="ns-email">sarahwhetter1@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Lucia Norrie</div><div class="ns-src">Google</div><div class="ns-email">lucia.norrie@icloud.com</div></div>
+      <div class="ns-item"><div class="ns-name">TeMana Wichman-Evans</div><div class="ns-src">Google</div><div class="ns-email">temanaw@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Nyah Tahitahi</div><div class="ns-src">Word of mouth</div><div class="ns-email">nyah@grpdgear.com</div></div>
+      <div class="ns-item"><div class="ns-name">Dhruv Bhatia</div><div class="ns-src">Google</div><div class="ns-email">bhatiadhruv8@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Joseph Daniels</div><div class="ns-src">Google</div><div class="ns-email">jjdaniels1225@icloud.com</div></div>
+      <div class="ns-item"><div class="ns-name">Mena Mounsouphom</div><div class="ns-src">Instagram</div><div class="ns-email">blessedmumnz@gmail.com</div></div>
+      <div class="ns-item"><div class="ns-name">Moses Day</div><div class="ns-src">Unknown</div><div class="ns-email" style="color:var(--m)">No email</div></div>
+      <div class="ns-item"><div class="ns-name">Lemuel le Hane</div><div class="ns-src">Unknown</div><div class="ns-email" style="color:var(--m)">No email</div></div>
+      <div class="ns-item"><div class="ns-name">Olivia Walbran</div><div class="ns-src">Unknown</div><div class="ns-email" style="color:var(--m)">No email</div></div>
+      <div class="ns-item"><div class="ns-name">Joe Elliott</div><div class="ns-src">Unknown</div><div class="ns-email" style="color:var(--m)">No email</div></div>
+    </div>
+  </div>
+
+  <div id="trial-actions" class="tab-pnl">
+    <div class="rec"><div class="rt">1. Automated no-show SMS — set up this week</div><div class="rb">Day after sign-up with no visit: "Hey [name], your 3-day trial is ready — come in any time this week, we'd love to meet you!" Could recover 6–8 members/month.</div></div>
+    <div class="rec"><div class="rt">2. Fix source tracking — brief all staff today</div><div class="rb">Ask every trial sign-up "how did you hear about us?" Record it in GymMaster before completing signup. Make it a required step.</div></div>
+    <div class="rec"><div class="rt">3. Launch a referral programme</div><div class="rb">23 free trials from WOM already. "Refer a mate, get a week free" could add 15–20 extra trials/month at $0 ad spend.</div></div>
+    <div class="rec"><div class="rt">4. Female-targeted ad set</div><div class="rb">Only 36% of trials are female vs 45–55% industry average. Dedicated female creative (Bekka content) targeting women 25–40 Auckland.</div></div>
+    <div class="rec"><div class="rt">5. Taylor dependency — build team capability</div><div class="rb">Taylor signs up 54% of all trials. Train Tim, Charlotte and others to execute the same sign-up process consistently.</div></div>
+  </div>
+</div>
+
+<!-- ===== MEMBERS ===== -->
+<div id="s-members" class="section">
+  <div class="section-title">Member Base</div>
+  <div class="section-sub">1,699 total records · As of 5 May 2026 · GymMaster export</div>
+  <div class="kg">
+    <div class="kpi"><div class="kl">Total records</div><div class="kv">1,699</div></div>
+    <div class="kpi"><div class="kl">Fitness Passport</div><div class="kv">903</div><div class="ks r">53% of database</div></div>
+    <div class="kpi"><div class="kl">Owned M2</div><div class="kv">796</div><div class="ks y">Your real base</div></div>
+    <div class="kpi"><div class="kl">Avg age</div><div class="kv">34</div><div class="ks">Core: 25–34</div></div>
+    <div class="kpi"><div class="kl">Avg visits</div><div class="kv">94</div><div class="ks">All-time per member</div></div>
+    <div class="kpi"><div class="kl">Apr joins</div><div class="kv">110</div><div class="ks g">2nd best month ever</div></div>
+  </div>
+  <div class="two" style="margin-bottom:12px">
+    <div class="card">
+      <div class="ct">Gender — full base</div>
+      <div class="bar-wrap"><div class="bl">Male</div><div class="bt"><div class="bf" style="width:100%;background:var(--blue)"><span class="bval">1,022 — 60%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Female</div><div class="bt"><div class="bf" style="width:64%;background:#f472b6"><span class="bval">655 — 39%</span></div></div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Sales rep — all-time</div>
+      <div class="bar-wrap"><div class="bl">Self/Walk-in</div><div class="bt"><div class="bf" style="width:100%;background:var(--blue)"><span class="bval">713 — 42%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Taylor Blackler</div><div class="bt"><div class="bf" style="width:85%;background:var(--y)"><span class="bval">609 — 36%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Tim Fox</div><div class="bt"><div class="bf" style="width:35%;background:var(--purple)"><span class="bval">247 — 15%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Rebekka Schulze</div><div class="bt"><div class="bf" style="width:12%;background:#f472b6"><span class="bval">83 — 5%</span></div></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Age distribution — all 1,697 members</div>
+    <div class="bar-wrap"><div class="bl">Under 18</div><div class="bt"><div class="bf" style="width:4%;background:var(--m)"><span class="bval">33</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">18–24</div><div class="bt"><div class="bf" style="width:24%;background:var(--purple)"><span class="bval">200 — 12%</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">25–34</div><div class="bt"><div class="bf" style="width:100%;background:var(--y)"><span class="bval">833 — 49% — CORE</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">35–44</div><div class="bt"><div class="bf" style="width:45%;background:var(--blue)"><span class="bval">373 — 22%</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">45–54</div><div class="bt"><div class="bf" style="width:17%;background:var(--g)"><span class="bval">146 — 9%</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">55+</div><div class="bt"><div class="bf" style="width:10%;background:var(--m)"><span class="bval">112 — 7%</span></div></div></div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <div class="ct">Engagement health</div>
+      <div class="row"><span class="rl">0 visits (never attended)</span><span class="rv r">29 members</span></div>
+      <div class="row"><span class="rl">1–5 visits (at risk)</span><span class="rv r">242 members</span></div>
+      <div class="row"><span class="rl">6–49 visits (moderate)</span><span class="rv y">637 members</span></div>
+      <div class="row"><span class="rl">50+ visits (loyal)</span><span class="rv g">791 members</span></div>
+    </div>
+    <div class="card">
+      <div class="ct">Monthly growth — 2026</div>
+      <div class="row"><span class="rl">January</span><span class="rv g">+46 net</span></div>
+      <div class="row"><span class="rl">February</span><span class="rv g">+46 net · 114 gross</span></div>
+      <div class="row"><span class="rl">March</span><span class="rv r">+14 net · 42 cancels</span></div>
+      <div class="row"><span class="rl">April</span><span class="rv g">+50 net · 1.41% churn</span></div>
+    </div>
+  </div>
+  <div class="insight"><div class="it">271 members with 5 or fewer visits are churn risk</div><div class="ib">A re-engagement campaign targeting low-visit members ("we miss you — free class this week") could save 50–60 of them. At $45/week that's $2,250+/week preserved.</div></div>
+</div>
+
+<!-- ===== FINANCIALS ===== -->
+<div id="s-financials" class="section">
+  <div class="section-title">Financials</div>
+  <div class="section-sub">16 months · January 2025 to April 2026 · Trading, Membership & Passport income</div>
+  <div class="kg">
+    <div class="kpi"><div class="kl">2025 full year</div><div class="kv">$1.19M</div><div class="ks">Trading income</div></div>
+    <div class="kpi"><div class="kl">2026 run rate</div><div class="kv">$1.26M</div><div class="ks g">+5.9% YoY</div></div>
+    <div class="kpi"><div class="kl">Best month ever</div><div class="kv">$112.9K</div><div class="ks y">Feb 2026</div></div>
+    <div class="kpi"><div class="kl">Membership YoY</div><div class="kv">-9.6%</div><div class="ks r">Jan–Apr vs prior</div></div>
+    <div class="kpi"><div class="kl">Passport YoY</div><div class="kv">+63.5%</div><div class="ks g">Jan–Apr vs prior</div></div>
+    <div class="kpi"><div class="kl">Apr PP income</div><div class="kv">$21.7K</div><div class="ks g">Record high</div></div>
+  </div>
+  <div class="card" style="padding:10px 16px">
+    <div class="ct">Monthly trading income</div>
+    <div class="bar-wrap"><div class="bl">Jan 25</div><div class="bt"><div class="bf" style="width:84%;background:var(--blue)"><span class="bval">$95.5K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Feb 25</div><div class="bt"><div class="bf" style="width:84%;background:var(--m)"><span class="bval">$94.9K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Mar 25</div><div class="bt"><div class="bf" style="width:98%;background:var(--g)"><span class="bval">$110.8K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Apr 25</div><div class="bt"><div class="bf" style="width:97%;background:var(--g)"><span class="bval">$109.8K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">May 25</div><div class="bt"><div class="bf" style="width:87%;background:var(--m)"><span class="bval">$98.2K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Jun 25</div><div class="bt"><div class="bf" style="width:88%;background:var(--m)"><span class="bval">$99.1K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Jul 25</div><div class="bt"><div class="bf" style="width:89%;background:var(--m)"><span class="bval">$100.8K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Aug 25</div><div class="bt"><div class="bf" style="width:85%;background:var(--m)"><span class="bval">$96K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Sep 25</div><div class="bt"><div class="bf" style="width:89%;background:var(--m)"><span class="bval">$100.3K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Oct 25</div><div class="bt"><div class="bf" style="width:89%;background:var(--m)"><span class="bval">$100.5K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Nov 25</div><div class="bt"><div class="bf" style="width:80%;background:var(--r)"><span class="bval">$90.8K — worst</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Dec 25</div><div class="bt"><div class="bf" style="width:85%;background:var(--m)"><span class="bval">$95.6K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Jan 26</div><div class="bt"><div class="bf" style="width:81%;background:var(--r)"><span class="bval">$91.9K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Feb 26</div><div class="bt"><div class="bf" style="width:100%;background:var(--y)"><span class="bval">$112.9K — BEST EVER</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Mar 26</div><div class="bt"><div class="bf" style="width:98%;background:var(--g)"><span class="bval">$111K</span></div></div></div>
+    <div class="bar-wrap"><div class="bl">Apr 26</div><div class="bt"><div class="bf" style="width:93%;background:var(--g)"><span class="bval">$105K</span></div></div></div>
+  </div>
+  <div class="card">
+    <div class="ct">Member base actuals — net growth vs target (45/month)</div>
+    <table class="tbl">
+      <thead><tr><th>Month</th><th>Base</th><th>Gross +</th><th>Cancels</th><th>Net</th><th>Churn</th><th>vs +45 Target</th></tr></thead>
+      <tbody>
+        <tr class="tbl-divider"><td colspan="7">2025</td></tr>
+        <tr><td>Jan</td><td>~1,185</td><td style="color:var(--g)">148</td><td>29</td><td style="color:var(--g)">+50</td><td>—</td><td style="color:var(--g)">+5 ✓</td></tr>
+        <tr><td>Feb</td><td>1,235</td><td>110</td><td style="color:var(--r)">50</td><td style="color:#facc15">+30</td><td style="color:var(--r)">4.05%</td><td style="color:var(--r)">-15 ✗</td></tr>
+        <tr><td>Mar</td><td>1,246</td><td>102</td><td>36</td><td style="color:var(--r)">+11</td><td>2.89%</td><td style="color:var(--r)">-34 ✗</td></tr>
+        <tr><td>Apr</td><td>1,257</td><td style="color:var(--g)">133</td><td>38</td><td style="color:var(--g)">+60</td><td>3.02%</td><td style="color:var(--g)">+15 ✓</td></tr>
+        <tr><td>May</td><td>1,317</td><td>96</td><td>36</td><td style="color:var(--g)">+36</td><td>2.73%</td><td style="color:var(--r)">-9 ✗</td></tr>
+        <tr><td>Jun</td><td>1,353</td><td style="color:var(--g)">117</td><td style="color:var(--g)">22</td><td style="color:var(--g)">+46</td><td style="color:var(--g)">1.63%</td><td style="color:var(--g)">+1 ✓</td></tr>
+        <tr><td>Sep</td><td>1,484</td><td style="color:var(--r)">37</td><td>30</td><td style="color:var(--r)">+14</td><td>2.02%</td><td style="color:var(--r)">-31 ✗ danger</td></tr>
+        <tr><td>Nov</td><td>1,540</td><td>71</td><td style="color:var(--g)">22</td><td>+35</td><td style="color:var(--g)">1.43%</td><td style="color:var(--r)">-10 ✗</td></tr>
+        <tr class="tbl-divider"><td colspan="7">2026</td></tr>
+        <tr><td>Jan</td><td>1,528</td><td>84</td><td>25</td><td style="color:var(--g)">+46</td><td>1.64%</td><td style="color:var(--g)">+1 ✓</td></tr>
+        <tr><td>Feb</td><td>1,574</td><td style="color:var(--g)">114</td><td>33</td><td style="color:var(--g)">+46</td><td>2.10%</td><td style="color:var(--g)">+1 ✓</td></tr>
+        <tr><td>Mar</td><td>1,620</td><td>91</td><td style="color:var(--r)">42</td><td style="color:#facc15">+14</td><td style="color:var(--r)">2.59%</td><td style="color:var(--r)">-31 ✗</td></tr>
+        <tr><td>Apr</td><td>1,634</td><td>100</td><td style="color:var(--g)">23</td><td style="color:var(--g)">+50</td><td style="color:var(--g)">1.41% ★ best ever</td><td style="color:var(--g)">+5 ✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="rec"><div class="rt">September is your danger month — plan campaigns now</div><div class="rb">Sep 25 had only +14 net (37 gross joins). Pre-empt Sep 2026 with a spring campaign planned in August. Don't wait until you're in it.</div></div>
+  <div class="rec"><div class="rt">Protect April's 1.41% churn — understand what drove it</div><div class="rb">Down from 4.05% in Feb 25. Whatever you're doing in your onboarding and community right now is working. Identify it and systematise it.</div></div>
+</div>
+
+<!-- ===== OFFERS & REVENUE ===== -->
+<div id="s-offers" class="section">
+  <div class="section-title">Offers & Revenue</div>
+  <div class="section-sub">Current offer suite · Tier analysis · Upsell opportunities · Passport impact</div>
+  <div class="tab-nav">
+    <button class="tnb on" onclick="innerTab('offers','suite')">Offer Suite</button>
+    <button class="tnb" onclick="innerTab('offers','tiers')">Tier Analysis</button>
+    <button class="tnb" onclick="innerTab('offers','upsell')">Upsell</button>
+    <button class="tnb" onclick="innerTab('offers','passport')">Passport Impact</button>
+  </div>
+
+  <div id="offers-suite" class="tab-pnl on">
+    <div class="offer-grid">
+      <div class="offer hot"><div class="otag">Main offer</div><div class="on-name">PT Course</div><div class="o-price">$4,000</div><div class="o-sub">Full personal training course</div><div class="o-save">25% off promo → $3,000</div></div>
+      <div class="offer hot"><div class="otag">Best value</div><div class="on-name">Annual Membership</div><div class="o-price">From $25/wk</div><div class="o-sub">Pay annually, save up to $702</div><div class="o-save">m2club.co.nz/annual-memberships</div></div>
+      <div class="offer"><div class="on-name">Perform / Gateway</div><div class="o-price">$45/wk</div><div class="o-sub">Premium tier — full access</div><div class="o-save">+$5 for Flexi → $50/wk</div></div>
+      <div class="offer"><div class="on-name">Daily / Entry</div><div class="o-price">$25/wk</div><div class="o-sub">Standard gym access</div><div class="o-save">+$5 for Flexi → $30/wk</div></div>
+      <div class="offer"><div class="on-name">Classes</div><div class="o-price">$30/wk</div><div class="o-sub">Class-only membership</div></div>
+      <div class="offer"><div class="on-name">3 Day Free Trial</div><div class="o-price">$0</div><div class="o-sub">Entry point — no commitment</div><div class="o-save">Convert to $45/wk or annual</div></div>
+    </div>
+  </div>
+
+  <div id="offers-tiers" class="tab-pnl">
+    <div class="kg">
+      <div class="kpi"><div class="kl">Premium members</div><div class="kv">235</div><div class="ks y">$45–50/wk</div></div>
+      <div class="kpi"><div class="kl">Standard members</div><div class="kv">284</div><div class="ks">$25/wk</div></div>
+      <div class="kpi"><div class="kl">Avg rate/member</div><div class="kv">$31.86</div><div class="ks">/week owned base</div></div>
+      <div class="kpi"><div class="kl">Passport members</div><div class="kv">903</div><div class="ks r">$24/mo avg</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Revenue contribution by tier</div>
+      <div class="bar-wrap"><div class="bl">Premium (235)</div><div class="bt"><div class="bf" style="width:100%;background:var(--y)"><span class="bval">$42,660/mo — 41% of Apr trading</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Standard (284)</div><div class="bt"><div class="bf" style="width:72%;background:var(--blue)"><span class="bval">$30,743/mo — 29%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Passport (903)</div><div class="bt"><div class="bf" style="width:51%;background:var(--r)"><span class="bval">$21,700/mo — 21%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Other (277)</div><div class="bt"><div class="bf" style="width:24%;background:var(--m)"><span class="bval">$22,600/mo — 22%</span></div></div></div>
+    </div>
+    <div class="insight"><div class="it">235 Premium members generate more revenue than 903 Passport members</div><div class="ib">Premium = $42,660/mo. Passport = $21,700/mo. A Perform member is worth 8× a Passport member. Every marketing effort should prioritise attracting $45/week Perform/Gateway members.</div></div>
+  </div>
+
+  <div id="offers-upsell" class="tab-pnl">
+    <div class="insight"><div class="it">284 Daily/Entry members at $25/wk — biggest upsell pool</div><div class="ib">Converting 20% to Perform ($45/wk) = 57 members × $20/wk extra = $1,140/wk = $4,936/month. No new members, no ad spend.</div></div>
+    <div class="card">
+      <div class="ct">Daily → Perform upsell ($25 → $45/wk)</div>
+      <div class="row"><span class="rl">Daily/Entry members</span><span class="rv">284</span></div>
+      <div class="row"><span class="rl">Revenue gap per member</span><span class="rv y">+$20/wk</span></div>
+      <div class="row"><span class="rl">Convert 10% (28 members)</span><span class="rv g">+$2,425/mo</span></div>
+      <div class="row"><span class="rl">Convert 20% (57 members)</span><span class="rv g">+$4,936/mo</span></div>
+      <div class="row"><span class="rl">Convert 30% (85 members)</span><span class="rv g">+$7,361/mo</span></div>
+    </div>
+    <div class="card">
+      <div class="ct">Flexi add-on (+$5/wk to 480 eligible)</div>
+      <div class="row"><span class="rl">Convert 20% (96 members)</span><span class="rv g">+$2,078/mo</span></div>
+    </div>
+    <div class="rec"><div class="rt">Combined realistic 15% upsell target = +$5,239/month</div><div class="rb">Daily→Perform: 43 members × $20 = +$860/wk. Flexi: 70 × $5 = +$350/wk. Total: +$1,210/wk = +$5,239/month from existing members.</div></div>
+  </div>
+
+  <div id="offers-passport" class="tab-pnl">
+    <div class="alert"><div class="at">903 FP members average $24/month — vs $108–195/month for owned members</div><div class="ab">FP pays $7.83/visit (excl. GST from $9). At April's average of 3.07 visits/member, that's $24/month. The same person on Daily ($25/wk) would pay $108/month. On Perform ($45/wk): $195/month. You earn less than a quarter per FP member.</div></div>
+    <div class="two">
+      <div class="card">
+        <div class="ct">FP value by visit frequency</div>
+        <div class="row"><span class="rl">3×/week (12 visits/mo)</span><span class="rv r">$94/mo</span></div>
+        <div class="row"><span class="rl">2×/week (8 visits/mo)</span><span class="rv r">$63/mo</span></div>
+        <div class="row"><span class="rl">1×/week (4 visits/mo)</span><span class="rv r">$31/mo</span></div>
+        <div class="row"><span class="rl">0 visits</span><span class="rv r">$0</span></div>
+        <div class="row"><span class="rl">Owned Daily $25/wk</span><span class="rv g">$108/mo</span></div>
+        <div class="row"><span class="rl">Owned Perform $45/wk</span><span class="rv g">$195/mo</span></div>
+      </div>
+      <div class="card">
+        <div class="ct">Strategy</div>
+        <div class="row"><span class="rl">Use FP for off-peak fill</span><span class="rv y">Don't displace full payers</span></div>
+        <div class="row"><span class="rl">Target non-corporate ads</span><span class="rv">Tradies, self-employed, students</span></div>
+        <div class="row"><span class="rl">FP income Apr 2026</span><span class="rv g">$21,700 — record</span></div>
+        <div class="row"><span class="rl">PP visits Apr 2026</span><span class="rv g">2,772 — record</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== WEEKLY SCORECARD ===== -->
+<div id="s-scorecard" class="section">
+  <div class="section-title">Weekly Scorecard</div>
+  <div class="section-sub">Fill in every Monday morning — 5 minutes, keeps you honest on what's actually happening</div>
+
+  <div class="two" style="margin-bottom:12px">
+    <div class="card">
+      <div class="ct">Select week</div>
+      <div class="inp-lbl">Week starting</div>
+      <input class="inp" type="date" id="sc-week" style="margin-bottom:10px">
+      <button class="btn" onclick="saveScorecard()" style="width:100%">Save this week's scorecard</button>
+    </div>
+    <div class="card">
+      <div class="ct">Targets (fixed)</div>
+      <div class="row"><span class="rl">Net members/month</span><span class="rv y">+45</span></div>
+      <div class="row"><span class="rl">Gross joins needed</span><span class="rv y">~55/month</span></div>
+      <div class="row"><span class="rl">Max churn target</span><span class="rv y">&lt;2%</span></div>
+      <div class="row"><span class="rl">Ad spend/day</span><span class="rv y">$80–120</span></div>
+    </div>
+  </div>
+
+  <div class="three" style="margin-bottom:12px">
+    <div><div class="inp-lbl">New trials this week</div><input class="inp" type="number" id="sc-trials" placeholder="e.g. 28"></div>
+    <div><div class="inp-lbl">New members converted</div><input class="inp" type="number" id="sc-newmem" placeholder="e.g. 8"></div>
+    <div><div class="inp-lbl">Cancellations</div><input class="inp" type="number" id="sc-cancel" placeholder="e.g. 5"></div>
+    <div><div class="inp-lbl">PP visits this week</div><input class="inp" type="number" id="sc-ppvisits" placeholder="e.g. 650"></div>
+    <div><div class="inp-lbl">Total gym visits</div><input class="inp" type="number" id="sc-visits" placeholder="e.g. 1200"></div>
+    <div><div class="inp-lbl">Ad spend this week ($)</div><input class="inp" type="number" id="sc-adspend" placeholder="e.g. 560"></div>
+    <div><div class="inp-lbl">Est. revenue this week ($)</div><input class="inp" type="number" id="sc-rev" placeholder="e.g. 24000"></div>
+    <div><div class="inp-lbl">PT Course leads</div><input class="inp" type="number" id="sc-ptleads" placeholder="e.g. 2"></div>
+    <div><div class="inp-lbl">PT Course sales</div><input class="inp" type="number" id="sc-ptsales" placeholder="e.g. 1"></div>
+  </div>
+  <div style="margin-bottom:12px"><div class="inp-lbl">Key wins this week</div><input class="inp" type="text" id="sc-wins" placeholder="e.g. Launched Tay reel, signed 2 PTs, churn down"></div>
+  <div style="margin-bottom:12px"><div class="inp-lbl">Issues / blockers</div><input class="inp" type="text" id="sc-issues" placeholder="e.g. PT Course campaign underperforming, need new creative"></div>
+
+  <div class="card">
+    <div class="ct">Scorecard history</div>
+    <div id="sc-history"><div style="font-size:12px;color:var(--m);padding:8px 0">No scorecards saved yet. Fill in the form above and save.</div></div>
+  </div>
+</div>
+
+<!-- ===== SOCIAL CALENDAR ===== -->
+<div id="s-calendar" class="section">
+  <div class="section-title">Social Media Calendar</div>
+  <div class="section-sub">Click any day to add a post · Colour coded by type · Navigate months with arrows</div>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+    <button class="btn-ghost" onclick="prevMonth()">← Prev</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);letter-spacing:2px" id="cal-title"></div>
+    <button class="btn-ghost" onclick="nextMonth()">Next →</button>
+    <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+      <span style="font-size:10px;background:rgba(200,255,0,.15);color:var(--y);padding:3px 8px;border-radius:4px">Reel</span>
+      <span style="font-size:10px;background:rgba(96,165,250,.15);color:var(--blue);padding:3px 8px;border-radius:4px">Story</span>
+      <span style="font-size:10px;background:rgba(167,139,250,.15);color:var(--purple);padding:3px 8px;border-radius:4px">Carousel</span>
+      <span style="font-size:10px;background:rgba(74,222,128,.15);color:var(--g);padding:3px 8px;border-radius:4px">Static</span>
+      <span style="font-size:10px;background:rgba(248,113,113,.15);color:var(--r);padding:3px 8px;border-radius:4px">Meta Ad</span>
+    </div>
+  </div>
+
+  <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px"></div>
+
+  <!-- Add post modal -->
+  <div id="cal-modal" style="display:none;background:var(--s);border:1px solid var(--br);border-radius:10px;padding:16px;margin-bottom:12px">
+    <div class="ct" id="cal-modal-title">Add post</div>
+    <div class="three" style="margin-bottom:10px">
+      <div><div class="inp-lbl">Type</div>
+        <select class="inp" id="cal-type">
+          <option value="Reel">Reel</option>
+          <option value="Story">Story</option>
+          <option value="Carousel">Carousel</option>
+          <option value="Static">Static</option>
+          <option value="Meta Ad">Meta Ad</option>
+        </select>
+      </div>
+      <div><div class="inp-lbl">Platform</div>
+        <select class="inp" id="cal-platform">
+          <option>Instagram</option>
+          <option>Facebook</option>
+          <option>Both</option>
+        </select>
+      </div>
+      <div><div class="inp-lbl">Status</div>
+        <select class="inp" id="cal-status">
+          <option value="draft">Draft</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="posted">Posted</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px"><div class="inp-lbl">Caption / description</div><input class="inp" type="text" id="cal-caption" placeholder="e.g. Tay recovery reel — sauna + ice bath routine"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="savePost()">Save post</button>
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">All posts this month</div>
+    <div id="cal-post-list"><div style="font-size:12px;color:var(--m);padding:8px 0">Click any day to add a post.</div></div>
+  </div>
+</div>
+
+<!-- ===== CAMPAIGN PLANNER ===== -->
+<div id="s-campaigns" class="section">
+  <div class="section-title">Campaign Planner</div>
+  <div class="section-sub">Plan and track campaigns · Click status badge to update · Pre-loaded with 5 priority campaigns</div>
+  <div class="add-row" style="margin-bottom:12px;flex-wrap:wrap">
+    <div style="flex:3;min-width:160px"><div class="inp-lbl">Campaign name</div><input class="inp" type="text" id="camp-name" placeholder="e.g. September Spring Push"></div>
+    <div style="flex:1;min-width:110px"><div class="inp-lbl">Objective</div>
+      <select class="inp" id="camp-obj"><option>Trial sign-ups</option><option>Member upsell</option><option>PT Course leads</option><option>Brand awareness</option><option>Referrals</option><option>Retention</option></select>
+    </div>
+    <div style="flex:1;min-width:110px"><div class="inp-lbl">Channel</div>
+      <select class="inp" id="camp-channel"><option>Meta Ads</option><option>Instagram Organic</option><option>Both</option><option>Email/SMS</option><option>In-gym</option></select>
+    </div>
+    <div style="flex:1;min-width:100px"><div class="inp-lbl">Start date</div><input class="inp" type="date" id="camp-start"></div>
+    <div style="flex:1;min-width:80px"><div class="inp-lbl">Budget ($)</div><input class="inp" type="number" id="camp-budget" placeholder="e.g. 1500"></div>
+    <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addCampaign()">+ Add</button></div>
+  </div>
+  <div id="camp-list">
+    <!-- Pre-populated with known planned campaigns -->
+  </div>
+</div>
+
+<!-- ===== PT PIPELINE ===== -->
+<div id="s-pt" class="section">
+  <div class="section-title">PT Course Pipeline</div>
+  <div class="section-sub">Track leads from interest to signed · $3,000 (25% off) or $4,000 full price · Target: 2–3 sales/month</div>
+  <div class="kg">
+    <div class="kpi"><div class="kl">Full price</div><div class="kv">$4,000</div></div>
+    <div class="kpi"><div class="kl">25% off promo</div><div class="kv">$3,000</div></div>
+    <div class="kpi"><div class="kl">Target sales/month</div><div class="kv">2–3</div><div class="ks y">$6–9K/month</div></div>
+    <div class="kpi"><div class="kl">Pipeline value</div><div class="kv" id="pt-pipeline-val">$0</div><div class="ks">Active leads</div></div>
+  </div>
+  <div class="add-row" style="margin-bottom:12px;flex-wrap:wrap">
+    <div style="flex:2;min-width:140px"><div class="inp-lbl">Lead name</div><input class="inp" type="text" id="pt-name" placeholder="e.g. John Smith"></div>
+    <div style="flex:1;min-width:100px"><div class="inp-lbl">Stage</div>
+      <select class="inp" id="pt-stage">
+        <option value="interested">Interested</option>
+        <option value="quoted">Quoted</option>
+        <option value="signed">Signed ✓</option>
+        <option value="completed">Completed</option>
+      </select>
+    </div>
+    <div style="flex:1;min-width:90px"><div class="inp-lbl">Price ($)</div>
+      <select class="inp" id="pt-price"><option value="3000">$3,000 (25% off)</option><option value="4000">$4,000 (full)</option></select>
+    </div>
+    <div style="flex:1;min-width:100px"><div class="inp-lbl">Source</div>
+      <select class="inp" id="pt-source"><option>Trial</option><option>Walk-in</option><option>Instagram</option><option>Referral</option><option>Meta Ad</option><option>Other</option></select>
+    </div>
+    <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addPTLead()">+ Add lead</button></div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <div class="ct">Active pipeline</div>
+      <div id="pt-active-list"><div style="font-size:12px;color:var(--m);padding:8px 0">No active leads yet.</div></div>
+    </div>
+    <div class="card">
+      <div class="ct">Signed & completed</div>
+      <div id="pt-signed-list"><div style="font-size:12px;color:var(--m);padding:8px 0">No signed leads yet.</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Monthly PT revenue tracker</div>
+    <div id="pt-revenue-breakdown">
+      <div class="row"><span class="rl">May 2026 signed</span><span class="rv y" id="pt-may-rev">$0</span></div>
+      <div class="row"><span class="rl">Monthly target (2 sales @ $3K)</span><span class="rv">$6,000</span></div>
+      <div class="row"><span class="rl">Monthly target (3 sales @ $3K)</span><span class="rv">$9,000</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SEO & WEB ===== -->
+<div id="s-seo" class="section">
+  <div class="section-title">SEO & Website</div>
+  <div class="section-sub">m2club.co.nz · Keyword rankings · Website tasks · Analytics</div>
+  <div class="two" style="margin-bottom:12px">
+    <div class="card">
+      <div class="ct">Quick links</div>
+      <div class="row"><span class="rl">Website</span><a href="https://m2club.co.nz" target="_blank" style="color:var(--y);font-size:12px">m2club.co.nz ↗</a></div>
+      <div class="row"><span class="rl">Annual memberships</span><a href="https://m2club.co.nz/annual-memberships.html" target="_blank" style="color:var(--y);font-size:12px">annual-memberships.html ↗</a></div>
+      <div class="row"><span class="rl">Memberships page</span><a href="https://m2club.co.nz/memberships.html" target="_blank" style="color:var(--y);font-size:12px">memberships.html ↗</a></div>
+      <div class="row"><span class="rl">Trial sign-up</span><a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" target="_blank" style="color:var(--y);font-size:12px">GymMaster trial link ↗</a></div>
+      <div class="row"><span class="rl">Instagram</span><a href="https://www.instagram.com/m2trainingclub/" target="_blank" style="color:var(--y);font-size:12px">@m2trainingclub ↗</a></div>
+    </div>
+    <div class="card">
+      <div class="ct">Website analytics (manual entry)</div>
+      <div style="margin-bottom:8px"><div class="inp-lbl">Monthly sessions</div><input class="inp" type="number" id="seo-sessions" placeholder="e.g. 3200" oninput="saveSEO()"></div>
+      <div style="margin-bottom:8px"><div class="inp-lbl">Avg session duration (sec)</div><input class="inp" type="number" id="seo-duration" placeholder="e.g. 95" oninput="saveSEO()"></div>
+      <div><div class="inp-lbl">Top traffic source</div><input class="inp" type="text" id="seo-topsource" placeholder="e.g. Google Organic" oninput="saveSEO()"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Keyword tracker — Grafton / Auckland gym</div>
+    <div id="seo-kw-list">
+      <div class="row"><span class="rl">m2 training club</span><span class="rv g">#1</span></div>
+      <div class="row"><span class="rl">grafton's best kept secret</span><span class="rv g">#1</span></div>
+      <div class="row"><span class="rl">gym grafton auckland</span><span class="rv y">Tracking</span></div>
+      <div class="row"><span class="rl">personal training auckland</span><span class="rv y">Tracking</span></div>
+      <div class="row"><span class="rl">hyrox training auckland</span><span class="rv y">Tracking</span></div>
+      <div class="row"><span class="rl">gym auckland cbd</span><span class="rv y">Tracking</span></div>
+    </div>
+    <div class="add-row" style="margin-top:10px">
+      <input class="inp" type="text" id="seo-kw" placeholder="Keyword..." style="flex:3">
+      <select class="inp" id="seo-rank" style="flex:1">
+        <option>#1</option><option>Top 3</option><option>Top 10</option><option>Tracking</option><option>Not ranking</option>
+      </select>
+      <button class="btn" onclick="addKeyword()">+ Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Website tasks</div>
+    <div id="seo-tasks">
+      <div class="ci"><div class="ci-check" onclick="toggleSEOTask(this)"></div><div><div class="ci-title">Add team/trainers page with photos and bios</div><div class="ci-who">High priority — builds trust with trial prospects</div></div></div>
+      <div class="ci"><div class="ci-check" onclick="toggleSEOTask(this)"></div><div><div class="ci-title">Update trial page CTA — make button more prominent</div><div class="ci-who">Conversion optimisation</div></div></div>
+      <div class="ci"><div class="ci-check" onclick="toggleSEOTask(this)"></div><div><div class="ci-title">Add member testimonials / success stories page</div><div class="ci-who">Social proof for PT Course prospects</div></div></div>
+      <div class="ci"><div class="ci-check" onclick="toggleSEOTask(this)"></div><div><div class="ci-title">Add Hyrox training landing page</div><div class="ci-who">SEO opportunity — growing Auckland search term</div></div></div>
+      <div class="ci"><div class="ci-check" onclick="toggleSEOTask(this)"></div><div><div class="ci-title">Google Business profile — add recent photos</div><div class="ci-who">Local SEO — boosts map ranking</div></div></div>
+      <div class="ci"><div class="ci-check" onclick="toggleSEOTask(this)"></div><div><div class="ci-title">Set up Google Search Console</div><div class="ci-who">Start tracking real keyword rankings</div></div></div>
+    </div>
+    <div class="add-row" style="margin-top:10px">
+      <input class="inp" type="text" id="seo-task-inp" placeholder="Add website task..." style="flex:1">
+      <button class="btn" onclick="addSEOTask()">+ Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div id="s-content" class="section">
+  <div class="section-title">Content Pipeline</div>
+  <div class="section-sub">May 2026 · Tick off items as completed · Data saves in your browser</div>
+  <div class="add-row" style="margin-bottom:12px">
+    <div style="flex:3"><div class="inp-lbl">Content title</div><input class="inp" type="text" id="ct-title" placeholder="Content title..."></div>
+    <div style="flex:1"><div class="inp-lbl">Assignee</div>
+      <select class="inp" id="ct-who"><option>Taylor</option><option>Bekka</option><option>Tay</option><option>Videographer</option><option>Tim</option><option>Me</option></select>
+    </div>
+    <div style="flex:1"><div class="inp-lbl">Type</div>
+      <select class="inp" id="ct-type"><option>Reel</option><option>Story</option><option>Meta Ad</option><option>Graphic</option><option>Website</option></select>
+    </div>
+    <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addContent()">+ Add</button></div>
+  </div>
+  <div class="card">
+    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(200,255,0,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:20px;margin-left:4px"></span></div>
+    <div id="ct-todo"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Completed</div>
+    <div id="ct-done"></div>
+  </div>
+</div>
+
+<!-- ===== NOTES ===== -->
+<div id="s-notes" class="section">
+  <div class="section-title">Strategy Notes</div>
+  <div class="section-sub">Weekly focus · Ideas · Competitor notes · Retention · All saves automatically in your browser</div>
+  <div class="two">
+    <div>
+      <div class="card">
+        <div class="ct">Weekly focus</div>
+        <textarea class="note-area" id="n-weekly" placeholder="This week's priorities..."></textarea>
+        <button class="save-btn" id="save-weekly" onclick="saveNote('weekly')">Save</button>
+      </div>
+      <div class="card">
+        <div class="ct">Campaign ideas</div>
+        <textarea class="note-area" id="n-ideas" placeholder="Ideas to test, future campaigns, creative angles..."></textarea>
+        <button class="save-btn" id="save-ideas" onclick="saveNote('ideas')">Save</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="ct">Competitor notes</div>
+        <textarea class="note-area" id="n-comp" placeholder="What are other Auckland gyms doing?"></textarea>
+        <button class="save-btn" id="save-comp" onclick="saveNote('comp')">Save</button>
+      </div>
+      <div class="card">
+        <div class="ct">Retention notes</div>
+        <textarea class="note-area" id="n-ret" placeholder="Follow-up plans, at-risk members, re-engagement..."></textarea>
+        <button class="save-btn" id="save-ret" onclick="saveNote('ret')">Save</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:4px">
+    <div class="ct">Quick links</div>
+    <div class="row"><span class="rl">Website</span><a href="https://m2club.co.nz" target="_blank" style="color:var(--y);font-size:12px">m2club.co.nz ↗</a></div>
+    <div class="row"><span class="rl">Instagram</span><a href="https://www.instagram.com/m2trainingclub/" target="_blank" style="color:var(--y);font-size:12px">@m2trainingclub ↗</a></div>
+    <div class="row"><span class="rl">GymMaster</span><a href="https://m2trainingclub.gymmasteronline.com" target="_blank" style="color:var(--y);font-size:12px">GymMaster Portal ↗</a></div>
+    <div class="row"><span class="rl">Trial sign-up page</span><a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" target="_blank" style="color:var(--y);font-size:12px">Free Trial Link ↗</a></div>
+    <div class="row"><span class="rl">Annual memberships</span><a href="https://m2club.co.nz/annual-memberships.html" target="_blank" style="color:var(--y);font-size:12px">Annual page ↗</a></div>
+  </div>
+</div>
+
+<footer>M2 Training Club — Marketing Command Centre · Built 5 May 2026 · All data from GymMaster & Meta Ads Manager</footer>
+
+<script>
+// DATE
+document.getElementById('topdate').textContent = new Date().toLocaleDateString('en-NZ',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+
+// SECTION NAV
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.snb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  event.target.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// INNER TABS
+function innerTab(group, id) {
+  const section = event.target.closest('.section, .tab-pnl')?.parentElement || document;
+  const navContainer = event.target.closest('.tab-nav');
+  const contentArea = navContainer?.parentElement;
+  if(!contentArea) return;
+  contentArea.querySelectorAll('.tab-pnl').forEach(p=>p.classList.remove('on'));
+  navContainer.querySelectorAll('.tnb').forEach(b=>b.classList.remove('on'));
+  const pnl = document.getElementById(group+'-'+id);
+  if(pnl) pnl.classList.add('on');
+  event.target.classList.add('on');
+}
+
+// CONTENT
+const defaultContent = [
+  {id:1,title:'Introducing the trainers',who:'Videographer',type:'Reel',done:false},
+  {id:2,title:'PT Course video',who:'Videographer',type:'Meta Ad',done:false},
+  {id:3,title:'Member testimonial',who:'Taylor',type:'Reel',done:false},
+  {id:4,title:'The gym you never knew you needed',who:'Videographer',type:'Reel',done:false},
+  {id:5,title:'$45 a week video',who:'Bekka',type:'Reel',done:false},
+  {id:6,title:'Free trial video',who:'Videographer',type:'Reel',done:false},
+  {id:7,title:'Can I ask you out — get out video',who:'Taylor',type:'Reel',done:false},
+  {id:8,title:'Rage bait Tim',who:'Taylor',type:'Reel',done:false},
+  {id:9,title:'Tay Trial video',who:'Tay',type:'Reel',done:false},
+  {id:10,title:'Tay Recovery video',who:'Tay',type:'Reel',done:false},
+  {id:11,title:'5 graphics for PT Course campaign',who:'Me',type:'Graphic',done:false},
+  {id:12,title:'2 Hyrox videos for 3 Day Trial',who:'Videographer',type:'Reel',done:false},
+];
+let contentItems = [];
+
+function loadContent() {
+  const saved = localStorage.getItem('m2-content');
+  contentItems = saved ? JSON.parse(saved) : [...defaultContent];
+  renderContent();
+}
+function saveContent() { localStorage.setItem('m2-content', JSON.stringify(contentItems)); }
+function addContent() {
+  const title = document.getElementById('ct-title').value.trim();
+  if(!title) return;
+  contentItems.unshift({id:Date.now(),title,who:document.getElementById('ct-who').value,type:document.getElementById('ct-type').value,done:false});
+  document.getElementById('ct-title').value='';
+  saveContent(); renderContent();
+}
+function toggleContent(id) {
+  const item = contentItems.find(c=>c.id===id);
+  if(item) item.done=!item.done;
+  saveContent(); renderContent();
+}
+function renderContent() {
+  const todo = contentItems.filter(c=>!c.done);
+  const done = contentItems.filter(c=>c.done);
+  document.getElementById('ct-todo-count').textContent = todo.length;
+  const renderList = arr => arr.map(c=>`
+    <div class="ci">
+      <div class="ci-check ${c.done?'done':''}" onclick="toggleContent(${c.id})"></div>
+      <div>
+        <div class="ci-title ${c.done?'done-text':''}">${c.title} <span class="ci-tag">${c.type}</span></div>
+        <div class="ci-who">${c.who}</div>
+      </div>
+    </div>`).join('') || '<div style="padding:12px 0;font-size:12px;color:var(--m)">None yet</div>';
+  document.getElementById('ct-todo').innerHTML = renderList(todo);
+  document.getElementById('ct-done').innerHTML = renderList(done);
+}
+
+// NOTES
+function saveNote(key) {
+  const val = document.getElementById('n-'+key).value;
+  localStorage.setItem('m2-note-'+key, val);
+  const btn = document.getElementById('save-'+key);
+  btn.textContent='Saved ✓'; btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='Save';btn.classList.remove('saved');},2000);
+}
+function loadNotes() {
+  ['weekly','ideas','comp','ret'].forEach(k=>{
+    const val = localStorage.getItem('m2-note-'+k);
+    if(val) document.getElementById('n-'+k).value = val;
+  });
+}
+
+loadContent();
+loadNotes();
+
+// ── WEEKLY SCORECARD ──────────────────────────────────────
+let scorecards = JSON.parse(localStorage.getItem('m2-scorecards')||'[]');
+function saveScorecard() {
+  const week = document.getElementById('sc-week').value;
+  if(!week){alert('Please select a week date');return;}
+  const entry = {
+    week, trials:+document.getElementById('sc-trials').value||0,
+    newmem:+document.getElementById('sc-newmem').value||0,
+    cancel:+document.getElementById('sc-cancel').value||0,
+    ppvisits:+document.getElementById('sc-ppvisits').value||0,
+    visits:+document.getElementById('sc-visits').value||0,
+    adspend:+document.getElementById('sc-adspend').value||0,
+    rev:+document.getElementById('sc-rev').value||0,
+    ptleads:+document.getElementById('sc-ptleads').value||0,
+    ptsales:+document.getElementById('sc-ptsales').value||0,
+    wins:document.getElementById('sc-wins').value,
+    issues:document.getElementById('sc-issues').value
+  };
+  const idx = scorecards.findIndex(s=>s.week===week);
+  if(idx>-1) scorecards[idx]=entry; else scorecards.unshift(entry);
+  localStorage.setItem('m2-scorecards',JSON.stringify(scorecards));
+  renderScorecards();
+  ['trials','newmem','cancel','ppvisits','visits','adspend','rev','ptleads','ptsales','wins','issues'].forEach(id=>{ const el=document.getElementById('sc-'+id); if(el) el.value=''; });
+  document.getElementById('sc-week').value='';
+}
+function renderScorecards() {
+  const el = document.getElementById('sc-history');
+  if(!scorecards.length){el.innerHTML='<div style="font-size:12px;color:var(--m);padding:8px 0">No scorecards yet.</div>';return;}
+  el.innerHTML = scorecards.map(s=>`
+    <div style="border:1px solid var(--br);border-radius:8px;padding:12px 14px;margin-bottom:10px">
+      <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y);margin-bottom:8px">Week of ${s.week}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:8px">
+        ${sc_kpi('Trials',s.trials)} ${sc_kpi('New members',s.newmem,'g')} ${sc_kpi('Cancellations',s.cancel,'r')} ${sc_kpi('PP visits',s.ppvisits)} ${sc_kpi('Ad spend','$'+s.adspend)} ${sc_kpi('Revenue','$'+s.rev.toLocaleString(),'g')} ${sc_kpi('PT leads',s.ptleads)} ${sc_kpi('PT sales',s.ptsales,'g')}
+      </div>
+      ${s.wins?`<div style="font-size:11px;margin-bottom:4px"><span style="color:var(--g)">Wins: </span><span style="color:var(--m)">${s.wins}</span></div>`:''}
+      ${s.issues?`<div style="font-size:11px"><span style="color:var(--r)">Issues: </span><span style="color:var(--m)">${s.issues}</span></div>`:''}
+    </div>`).join('');
+}
+function sc_kpi(label,val,col=''){return `<div style="background:var(--s2);border-radius:6px;padding:8px 10px"><div style="font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">${label}</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:${col==='g'?'var(--g)':col==='r'?'var(--r)':'var(--y)'}">${val}</div></div>`;}
+renderScorecards();
+
+// ── SOCIAL CALENDAR ───────────────────────────────────────
+let calYear=2026, calMonth=4; // 0-indexed, so 4=May
+let calPosts=JSON.parse(localStorage.getItem('m2-cal-posts')||'{}');
+let selectedDay=null;
+const typeColors={'Reel':'rgba(200,255,0,.2)','Story':'rgba(96,165,250,.2)','Carousel':'rgba(167,139,250,.2)','Static':'rgba(74,222,128,.2)','Meta Ad':'rgba(248,113,113,.2)'};
+const typeTextColors={'Reel':'var(--y)','Story':'var(--blue)','Carousel':'var(--purple)','Static':'var(--g)','Meta Ad':'var(--r)'};
+const statusDot={'draft':'⚪','scheduled':'🟡','posted':'🟢'};
+
+function renderCalendar() {
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-title').textContent = months[calMonth]+' '+calYear;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = dayNames.map(d=>`<div style="text-align:center;font-size:10px;color:var(--m);font-weight:500;padding:6px 2px">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++) html+=`<div></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const posts=calPosts[key]||[];
+    const isToday=d===5&&calMonth===4&&calYear===2026;
+    const postPips=posts.slice(0,3).map(p=>`<div style="font-size:8px;padding:1px 4px;border-radius:3px;background:${typeColors[p.type]||'rgba(255,255,255,.1)'};color:${typeTextColors[p.type]||'var(--t)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px">${statusDot[p.status]||''} ${p.type}</div>`).join('');
+    html+=`<div onclick="openDay('${key}',${d})" style="background:${isToday?'rgba(200,255,0,.08)':'var(--s)'};border:1px solid ${isToday?'var(--y)':'var(--br)'};border-radius:6px;padding:5px;min-height:64px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--y)'" onmouseout="this.style.borderColor='${isToday?'var(--y)':'var(--br)'}'">
+      <div style="font-size:11px;font-weight:500;color:${isToday?'var(--y)':'var(--t)'};margin-bottom:3px">${d}</div>
+      ${postPips}
+      ${posts.length>3?`<div style="font-size:8px;color:var(--m)">+${posts.length-3} more</div>`:''}
+      <div style="font-size:8px;color:var(--m);margin-top:2px;opacity:.5">+ add</div>
+    </div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  renderPostList();
+}
+function openDay(key,d){
+  selectedDay=key;
+  document.getElementById('cal-modal-title').textContent=`Add post — ${key}`;
+  document.getElementById('cal-modal').style.display='block';
+  document.getElementById('cal-caption').focus();
+}
+function closeModal(){document.getElementById('cal-modal').style.display='none';selectedDay=null;}
+function savePost(){
+  if(!selectedDay)return;
+  if(!calPosts[selectedDay]) calPosts[selectedDay]=[];
+  calPosts[selectedDay].push({
+    type:document.getElementById('cal-type').value,
+    platform:document.getElementById('cal-platform').value,
+    status:document.getElementById('cal-status').value,
+    caption:document.getElementById('cal-caption').value
+  });
+  localStorage.setItem('m2-cal-posts',JSON.stringify(calPosts));
+  document.getElementById('cal-caption').value='';
+  closeModal(); renderCalendar();
+}
+function prevMonth(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function nextMonth(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+function renderPostList(){
+  const prefix=`${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+  const allPosts=[];
+  Object.entries(calPosts).filter(([k])=>k.startsWith(prefix)).forEach(([k,posts])=>posts.forEach(p=>allPosts.push({...p,date:k})));
+  allPosts.sort((a,b)=>a.date.localeCompare(b.date));
+  const el=document.getElementById('cal-post-list');
+  if(!allPosts.length){el.innerHTML='<div style="font-size:12px;color:var(--m);padding:8px 0">No posts this month yet. Click any day to add one.</div>';return;}
+  el.innerHTML=allPosts.map(p=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px">
+      <div style="font-size:9px;color:var(--m);min-width:60px">${p.date.slice(5)}</div>
+      <div style="font-size:9px;padding:2px 7px;border-radius:4px;background:${typeColors[p.type]||'rgba(255,255,255,.1)'};color:${typeTextColors[p.type]||'var(--t)'};min-width:55px;text-align:center">${p.type}</div>
+      <div style="flex:1;color:var(--t)">${p.caption||'(no caption)'}</div>
+      <div style="font-size:10px;color:var(--m)">${p.platform}</div>
+      <div style="font-size:11px">${statusDot[p.status]||''} ${p.status}</div>
+    </div>`).join('');
+}
+renderCalendar();
+
+// ── CAMPAIGN PLANNER ──────────────────────────────────────
+let campaigns=JSON.parse(localStorage.getItem('m2-campaigns')||'null');
+if(!campaigns) campaigns=[
+  {id:1,name:'September Spring Push',obj:'Trial sign-ups',channel:'Meta Ads',start:'2026-08-24',budget:3600,status:'planned',notes:'Pre-empt the Sep danger month. Start last week Aug.'},
+  {id:2,name:'Referral Programme Launch',obj:'Referrals',channel:'In-gym',start:'2026-05-15',budget:0,status:'planned',notes:'Refer a mate = 1 week free. Target: double WOM from 23 to 45+ trials/month.'},
+  {id:3,name:'Daily→Perform Upsell Campaign',obj:'Member upsell',channel:'Email/SMS',start:'2026-05-12',budget:0,status:'planned',notes:'Target 284 Daily/Entry members. Upgrade to Perform. +$20/wk. 20% conversion = +$4,936/mo.'},
+  {id:4,name:'Female Audience Ad Set',obj:'Trial sign-ups',channel:'Meta Ads',start:'2026-05-15',budget:600,status:'planned',notes:'Bekka content. Target women 25–40 Auckland. Close gender gap (currently 36% female trials).'},
+  {id:5,name:'Low-Visit Re-engagement',obj:'Retention',channel:'Email/SMS',start:'2026-05-08',budget:0,status:'planned',notes:'271 members with <5 visits. "We miss you — free class this week." Target 20% response.'},
+];
+const statusColors={planned:'rgba(250,204,21,.15)',active:'rgba(74,222,128,.15)',completed:'rgba(136,136,136,.15)',paused:'rgba(248,113,113,.15)'};
+const statusText={planned:'#facc15',active:'var(--g)',completed:'var(--m)',paused:'var(--r)'};
+function addCampaign(){
+  const name=document.getElementById('camp-name').value.trim();
+  if(!name)return;
+  campaigns.unshift({id:Date.now(),name,obj:document.getElementById('camp-obj').value,channel:document.getElementById('camp-channel').value,start:document.getElementById('camp-start').value,budget:+document.getElementById('camp-budget').value||0,status:'planned',notes:''});
+  document.getElementById('camp-name').value='';
+  saveCampaigns(); renderCampaigns();
+}
+function toggleCampStatus(id){
+  const c=campaigns.find(x=>x.id===id);
+  if(!c)return;
+  const order=['planned','active','completed','paused'];
+  c.status=order[(order.indexOf(c.status)+1)%order.length];
+  saveCampaigns(); renderCampaigns();
+}
+function saveCampaigns(){localStorage.setItem('m2-campaigns',JSON.stringify(campaigns));}
+function renderCampaigns(){
+  const el=document.getElementById('camp-list');
+  if(!el)return;
+  el.innerHTML=campaigns.map(c=>`
+    <div style="background:var(--s);border:1px solid var(--br);border-radius:8px;padding:13px 15px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+        <div style="font-family:\'Bebas Neue\',sans-serif;font-size:16px;color:var(--y);flex:1">${c.name}</div>
+        <button onclick="toggleCampStatus(${c.id})" style="font-size:10px;padding:3px 10px;border-radius:20px;border:none;cursor:pointer;background:${statusColors[c.status]};color:${statusText[c.status]};font-family:\'DM Sans\',sans-serif;font-weight:500">${c.status}</button>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--m)">
+        <span>Objective: <strong style="color:var(--t)">${c.obj}</strong></span>
+        <span>Channel: <strong style="color:var(--t)">${c.channel}</strong></span>
+        ${c.start?`<span>Start: <strong style="color:var(--t)">${c.start}</strong></span>`:''}
+        ${c.budget?`<span>Budget: <strong style="color:var(--y)">$${c.budget.toLocaleString()}</strong></span>`:'<span>Budget: <strong style="color:var(--g)">$0 organic</strong></span>'}
+      </div>
+      ${c.notes?`<div style="margin-top:8px;font-size:11px;color:var(--m);border-top:1px solid rgba(255,255,255,.05);padding-top:8px">${c.notes}</div>`:''}
+    </div>`).join('');
+}
+renderCampaigns();
+
+// ── PT PIPELINE ───────────────────────────────────────────
+let ptLeads=JSON.parse(localStorage.getItem('m2-pt-leads')||'[]');
+function addPTLead(){
+  const name=document.getElementById('pt-name').value.trim();
+  if(!name)return;
+  ptLeads.unshift({id:Date.now(),name,stage:document.getElementById('pt-stage').value,price:+document.getElementById('pt-price').value,source:document.getElementById('pt-source').value,date:new Date().toISOString().slice(0,10)});
+  document.getElementById('pt-name').value='';
+  savePT(); renderPT();
+}
+function advancePT(id){
+  const l=ptLeads.find(x=>x.id===id);
+  if(!l)return;
+  const stages=['interested','quoted','signed','completed'];
+  const idx=stages.indexOf(l.stage);
+  if(idx<stages.length-1) l.stage=stages[idx+1];
+  savePT(); renderPT();
+}
+function savePT(){localStorage.setItem('m2-pt-leads',JSON.stringify(ptLeads));}
+const ptColors={interested:'rgba(96,165,250,.15)',quoted:'rgba(250,204,21,.15)',signed:'rgba(74,222,128,.15)',completed:'rgba(136,136,136,.15)'};
+const ptText={interested:'var(--blue)',quoted:'#facc15',signed:'var(--g)',completed:'var(--m)'};
+function renderPT(){
+  const active=ptLeads.filter(l=>l.stage==='interested'||l.stage==='quoted');
+  const signed=ptLeads.filter(l=>l.stage==='signed'||l.stage==='completed');
+  const pipelineVal=active.reduce((s,l)=>s+l.price,0);
+  const signedVal=signed.filter(l=>l.stage==='signed').reduce((s,l)=>s+l.price,0);
+  const el1=document.getElementById('pt-active-list');
+  const el2=document.getElementById('pt-signed-list');
+  const pvEl=document.getElementById('pt-pipeline-val');
+  const mayEl=document.getElementById('pt-may-rev');
+  if(pvEl) pvEl.textContent='$'+pipelineVal.toLocaleString();
+  if(mayEl) mayEl.textContent='$'+signedVal.toLocaleString();
+  const renderCard=l=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px">
+    <div style="flex:1;font-weight:500;color:var(--t)">${l.name}</div>
+    <div style="font-size:10px;color:var(--m)">${l.source}</div>
+    <button onclick="advancePT(${l.id})" style="font-size:9px;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${ptColors[l.stage]};color:${ptText[l.stage]};font-family:\'DM Sans\',sans-serif">${l.stage} →</button>
+    <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y)">$${l.price.toLocaleString()}</div>
+  </div>`;
+  if(el1) el1.innerHTML=active.length?active.map(renderCard).join(''):'<div style="font-size:12px;color:var(--m);padding:8px 0">No active leads.</div>';
+  if(el2) el2.innerHTML=signed.length?signed.map(renderCard).join(''):'<div style="font-size:12px;color:var(--m);padding:8px 0">No signed leads yet.</div>';
+}
+renderPT();
+
+// ── SEO & WEB ─────────────────────────────────────────────
+let seoKwList=JSON.parse(localStorage.getItem('m2-seo-kw')||'null');
+if(!seoKwList) seoKwList=[
+  {kw:'m2 training club',rank:'#1'},{kw:"grafton's best kept secret",rank:'#1'},
+  {kw:'gym grafton auckland',rank:'Tracking'},{kw:'personal training auckland',rank:'Tracking'},
+  {kw:'hyrox training auckland',rank:'Tracking'},{kw:'gym auckland cbd',rank:'Tracking'},
+];
+function addKeyword(){
+  const kw=document.getElementById('seo-kw').value.trim();
+  if(!kw)return;
+  seoKwList.push({kw,rank:document.getElementById('seo-rank').value});
+  document.getElementById('seo-kw').value='';
+  localStorage.setItem('m2-seo-kw',JSON.stringify(seoKwList));
+  renderSEOKw();
+}
+function renderSEOKw(){
+  const rankColor={'\#1':'var(--g)','Top 3':'var(--g)','Top 10':'#facc15','Tracking':'var(--blue)','Not ranking':'var(--r)'};
+  const el=document.getElementById('seo-kw-list');
+  if(el) el.innerHTML=seoKwList.map(k=>`<div class="row"><span class="rl">${k.kw}</span><span class="rv" style="color:${rankColor[k.rank]||'var(--m)'}">${k.rank}</span></div>`).join('');
+}
+renderSEOKw();
+function toggleSEOTask(el){el.classList.toggle('done');}
+function addSEOTask(){
+  const t=document.getElementById('seo-task-inp').value.trim();
+  if(!t)return;
+  const cont=document.getElementById('seo-tasks');
+  const div=document.createElement('div');
+  div.className='ci';
+  div.innerHTML=`<div class="ci-check" onclick="toggleSEOTask(this)"></div><div><div class="ci-title">${t}</div></div>`;
+  cont.appendChild(div);
+  document.getElementById('seo-task-inp').value='';
+}
+function saveSEO(){
+  const data={sessions:document.getElementById('seo-sessions').value,duration:document.getElementById('seo-duration').value,topsource:document.getElementById('seo-topsource').value};
+  localStorage.setItem('m2-seo-analytics',JSON.stringify(data));
+}
+function loadSEO(){
+  const d=JSON.parse(localStorage.getItem('m2-seo-analytics')||'{}');
+  if(d.sessions) document.getElementById('seo-sessions').value=d.sessions;
+  if(d.duration) document.getElementById('seo-duration').value=d.duration;
+  if(d.topsource) document.getElementById('seo-topsource').value=d.topsource;
+}
+loadSEO();
+</script>
+</body>
+</html>
