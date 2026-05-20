@@ -51,11 +51,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:997;ba
 .nav-drawer-bg{position:absolute;inset:0;background:rgba(8,8,8,.7);backdrop-filter:blur(4px);pointer-events:none;}
 .nav-drawer.open .nav-drawer-bg{pointer-events:auto;}
 .nav-drawer-panel{position:absolute;right:0;top:0;bottom:0;width:min(320px,90vw);background:var(--black);border-left:1px solid var(--line);display:flex;flex-direction:column;padding:2rem 1.8rem;}
-.nav-drawer-close{align-self:flex-end;background:none;border:none;color:var(--white);cursor:pointer;font-size:1.4rem;margin-bottom:2rem;padding:.3rem;}
+.nav-drawer-close{align-self:flex-end;background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:1.6rem;font-weight:300;margin-bottom:2.5rem;padding:.3rem;line-height:1;}
 .nav-drawer-links{list-style:none;display:flex;flex-direction:column;gap:0;}
-.nav-drawer-links a{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:var(--white);padding:.5rem 0;border-bottom:1px solid var(--line);display:block;transition:color .18s;}
-.nav-drawer-links a:hover,.nav-drawer-links a.active{color:var(--yellow);}
-.nav-drawer-cta{margin-top:2rem;display:block;text-align:center;padding:1rem;background:var(--yellow);color:#000;font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.nav-drawer-links a{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,0.75);padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,0.07);text-decoration:none;text-transform:none;transition:color .15s;}
+.nav-drawer-links a:hover,.nav-drawer-links a.active{color:#c8f026;font-weight:600;}
+.nav-drawer-cta{margin-top:2rem;display:block;text-align:center;padding:.9rem 1rem;background:#c8f026;color:#000;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;border-radius:4px;text-decoration:none;}
 
 .ticker{background:var(--yellow);overflow:hidden;padding:.58rem 0;}
 .tick-track{display:inline-flex;white-space:nowrap;animation:tick 32s linear infinite;}
@@ -555,16 +555,17 @@ body{padding-bottom:90px;}
   <div class="nav-drawer-bg" id="navDrawerBg"></div>
   <div class="nav-drawer-panel">
     <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close menu">✕</button>
-    <ul class="nav-drawer-links">
-      <li><a href="https://m2club.co.nz/">Home</a></li>
-      <li><a href="https://m2club.co.nz/memberships.html">Memberships</a></li>
-      <li><a href="https://m2club.co.nz/annual-memberships.html">Annual Memberships</a></li>
-      <li><a href="https://m2club.co.nz/classes.html">Classes</a></li>
-      <li><a href="https://m2club.co.nz/trainers.html">Trainers</a></li>
-      <li><a href="https://m2club.co.nz/become-a-pt.html">Become a PT</a></li>
-      <li><a href="https://m2club.co.nz/recovery.html">Recovery</a></li>
+        <ul class="nav-drawer-links">
+      <li><a href="https://m2club.co.nz/8-week-challenge.html" >8 Week Challenge</a></li>
+      <li><a href="https://m2club.co.nz/" >Home</a></li>
+      <li><a href="https://m2club.co.nz/memberships.html" >Memberships</a></li>
+      <li><a href="https://m2club.co.nz/annual-memberships.html" >Annual</a></li>
+      <li><a href="https://m2club.co.nz/classes.html" >Classes</a></li>
+      <li><a href="https://m2club.co.nz/trainers.html" >Trainers</a></li>
+      <li><a href="https://m2club.co.nz/become-a-pt.html" >Become a PT</a></li>
+      <li><a href="https://m2club.co.nz/recovery.html" >Recovery</a></li>
       <li><a href="https://m2club.co.nz/fitness-passport.html" class="active">Fitness Passport</a></li>
-      <li><a href="https://m2club.co.nz/contact.html">Contact</a></li>
+      <li><a href="https://m2club.co.nz/contact.html" >Contact</a></li>
     </ul>
     
   </div>
