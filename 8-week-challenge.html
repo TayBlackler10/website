@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8 Week Challenge | M2 Training Club</title>
+  <meta name="description" content="M2's 8 Week Challenge kicks off June 22nd. Set your own goal, win your own way. Over $4,200 in prizes up for grabs. Early bird $49 for members." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-1PW3XYQ1F8');
+  </script>
+
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','1173983798207057');
+    fbq('track','PageView');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lime: #c8f026;
+      --bg: #0e0e0e;
+      --bg2: #141414;
+      --bg3: #1a1a1a;
+      --text: #ffffff;
+      --muted: #a0a0a0;
+      --card-border: rgba(200,240,38,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(14,14,14,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0 20px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    nav a.logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--lime);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    nav a.nav-cta {
+      background: var(--lime);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    nav a.nav-cta:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      margin-top: 60px;
+      min-height: calc(100svh - 60px);
+      background: linear-gradient(160deg, #0e0e0e 40%, #1a1f0a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 340px; height: 340px;
+      background: radial-gradient(circle, rgba(200,240,38,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.4rem, 14vw, 7rem);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .hero h1 span { color: var(--lime); }
+
+    .hero-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .hero-desc {
+      max-width: 520px;
+      color: #c8c8c8;
+      font-size: 1rem;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    /* EARLY BIRD BADGE */
+    .earlybird {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(200,240,38,0.08);
+      border: 1px solid rgba(200,240,38,0.3);
+      border-radius: 8px;
+      padding: 20px 28px;
+      margin-bottom: 32px;
+    }
+
+    .earlybird-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 6px;
+    }
+
+    .earlybird-price {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .price-now {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem;
+      color: var(--lime);
+      line-height: 1;
+    }
+
+    .price-was {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--muted);
+      text-decoration: line-through;
+      line-height: 1;
+    }
+
+    .earlybird-note {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    /* COUNTDOWN */
+    .countdown-wrap {
+      margin-bottom: 36px;
+    }
+
+    .countdown-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .countdown {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .cd-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--bg3);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      padding: 10px 14px;
+      min-width: 60px;
+    }
+
+    .cd-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: var(--lime);
+      line-height: 1;
+    }
+
+    .cd-unit {
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* CTA BUTTON */
+    .btn-primary {
+      display: inline-block;
+      background: var(--lime);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    .btn-secondary {
+      display: inline-block;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      margin-top: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .btn-secondary:hover { color: var(--text); }
+
+    .hero-actions { display: flex; flex-direction: column; align-items: center; }
+
+    /* SECTIONS */
+    section {
+      padding: 72px 24px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--lime);
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 8vw, 3.6rem);
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .section-body {
+      color: #c0c0c0;
+      font-weight: 300;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 0 24px;
+    }
+
+    /* WHAT YOU GET */
+    .includes {
+      background: var(--bg2);
+    }
+
+    .includes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .include-card {
+      background: var(--bg3);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 22px 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .include-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(200,240,38,0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .include-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--lime);
+    }
+
+    .include-title {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .include-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* PRIZES */
+    .prizes-section { background: var(--bg); }
+
+    .prize-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .prize-card {
+      background: var(--bg3);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .prize-card.featured {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #1a2200 0%, #0e1800 100%);
+      border-color: var(--card-border);
+    }
+
+    .prize-amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      color: var(--lime);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .prize-card.featured .prize-amount {
+      font-size: 2rem;
+    }
+
+    .prize-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .prize-total {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .prize-total strong {
+      color: var(--lime);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* HOW IT WORKS */
+    .how-section { background: var(--bg2); }
+
+    .steps {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 20px;
+      padding-bottom: 32px;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: 0;
+      width: 2px;
+      background: rgba(200,240,38,0.15);
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      background: var(--lime);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    .step-content {}
+    .step-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* BOTTOM CTA */
+    .bottom-cta {
+      background: linear-gradient(160deg, #111 0%, #1a2200 100%);
+      text-align: center;
+      padding: 80px 24px;
+    }
+
+    .bottom-cta .section-title { margin-bottom: 14px; }
+    .bottom-cta .section-body { margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    .bottom-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .bottom-price-now {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--lime);
+      line-height: 1;
+    }
+
+    .bottom-price-was {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--muted);
+      text-decoration: line-through;
+      line-height: 1;
+    }
+
+    .bottom-cta-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #080808;
+      padding: 28px 24px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    footer p {
+      font-size: 0.75rem;
+      color: #555;
+    }
+
+    footer a { color: #555; text-decoration: none; }
+    footer a:hover { color: var(--muted); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .fade-up:nth-child(1) { animation-delay: 0.05s; }
+    .fade-up:nth-child(2) { animation-delay: 0.15s; }
+    .fade-up:nth-child(3) { animation-delay: 0.25s; }
+    .fade-up:nth-child(4) { animation-delay: 0.35s; }
+    .fade-up:nth-child(5) { animation-delay: 0.45s; }
+    .fade-up:nth-child(6) { animation-delay: 0.55s; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="logo" href="/">M2</a>
+    <a class="nav-cta" href="https://widgets.mywellness.com/shop/fitnessportalakl" target="_blank" rel="noopener">Sign Up — $49</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow fade-up">M2 Training Club · Auckland</p>
+    <h1 class="fade-up">8 Week<br /><span>Challenge</span></h1>
+    <p class="hero-date fade-up">Kicks Off June 22nd, 2025</p>
+
+    <div class="earlybird fade-up">
+      <span class="earlybird-label">⚡ Early Bird — Members Only</span>
+      <div class="earlybird-price">
+        <span class="price-now">$49</span>
+        <span class="price-was">$99</span>
+      </div>
+      <span class="earlybird-note">Early bird closes in 14 days · Price doubles after</span>
+    </div>
+
+    <div class="countdown-wrap fade-up">
+      <p class="countdown-label">Early bird ends in</p>
+      <div class="countdown">
+        <div class="cd-block"><span class="cd-num" id="cd-d">14</span><span class="cd-unit">Days</span></div>
+        <div class="cd-block"><span class="cd-num" id="cd-h">00</span><span class="cd-unit">Hrs</span></div>
+        <div class="cd-block"><span class="cd-num" id="cd-m">00</span><span class="cd-unit">Min</span></div>
+        <div class="cd-block"><span class="cd-num" id="cd-s">00</span><span class="cd-unit">Sec</span></div>
+      </div>
+    </div>
+
+    <div class="hero-actions fade-up">
+      <a class="btn-primary" href="https://widgets.mywellness.com/shop/fitnessportalakl" target="_blank" rel="noopener">Sign Up for $49</a>
+      <a class="btn-secondary" href="#what-you-get">See what's included ↓</a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- DIFFERENT SECTION -->
+  <section>
+    <div class="container">
+      <p class="section-label">Why This Is Different</p>
+      <h2 class="section-title">Your goal.<br/>Your way.</h2>
+      <p class="section-body">
+        No one-size-fits-all goal. No cookie-cutter program. No obsessing over the scale.
+        You choose your own goal — whether that's building strength, losing fat, running further, or just building better habits — and we build everything around that.
+      </p>
+      <br/>
+      <p class="section-body">
+        While most challenges focus on weight loss alone, ours is focused on your overall wellness. Healthy, educated relationships with food and exercise. Lifelong habits. Real results.
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- WHAT YOU GET -->
+  <section class="includes" id="what-you-get">
+    <div class="container">
+      <p class="section-label">What You Get</p>
+      <h2 class="section-title">Everything<br/>you need.</h2>
+
+      <div class="includes-grid">
+
+        <div class="include-card">
+          <div class="include-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 8C8 10 5.9 16.17 3.82 21.58L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 2h-1zm-5 8a5 5 0 0 0-1.89-.38L12 13c0 0 .89 1.66 0 3z"/></svg>
+          </div>
+          <div>
+            <p class="include-title">All Group Fitness Classes</p>
+            <p class="include-desc">Full access to every class on the timetable for the entire 8 weeks. Keep momentum high in a fun, social environment.</p>
+          </div>
+        </div>
+
+        <div class="include-card">
+          <div class="include-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9h-4v4h-2v-4H9V9h4V5h2v4h4v2z"/></svg>
+          </div>
+          <div>
+            <p class="include-title">Training Program via App</p>
+            <p class="include-desc">A structured program through our training app, built to get you from where you are to where you want to be — without the guesswork.</p>
+          </div>
+        </div>
+
+        <div class="include-card">
+          <div class="include-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+          </div>
+          <div>
+            <p class="include-title">Weekly Check-ins & Team Support</p>
+            <p class="include-desc">Regular communications from the M2 team to keep you motivated, on track, and learning throughout the 8 weeks.</p>
+          </div>
+        </div>
+
+        <div class="include-card">
+          <div class="include-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17.93V18a1 1 0 0 0-2 0v1.93A8 8 0 0 1 4.07 13H6a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V6a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H18a1 1 0 0 0 0 2h1.93A8 8 0 0 1 13 19.93z"/></svg>
+          </div>
+          <div>
+            <p class="include-title">4x Tanita Body Scans</p>
+            <p class="include-desc">First and final scans are mandatory to compete. Two additional optional scans to help you and your trainer track progress throughout.</p>
+          </div>
+        </div>
+
+        <div class="include-card">
+          <div class="include-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z"/></svg>
+          </div>
+          <div>
+            <p class="include-title">Supplement Guidance</p>
+            <p class="include-desc">Not essential, but if you want to maximise your results, our team will guide you through what's worth using and why.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PRIZES -->
+  <section class="prizes-section" id="prizes">
+    <div class="container">
+      <p class="section-label">Prizes</p>
+      <h2 class="section-title">Over $4,200<br/>up for grabs.</h2>
+      <p class="section-body">Points are scored across three elements: achieving your goal, muscle gain, and fat loss. Most points wins.</p>
+
+      <div class="prize-cards">
+        <div class="prize-card">
+          <div class="prize-amount">$500</div>
+          <div class="prize-label">1st Place<br/>Female Under 40</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-amount">$500</div>
+          <div class="prize-label">1st Place<br/>Male Under 40</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-amount">$500</div>
+          <div class="prize-label">1st Place<br/>Female 40+</div>
+        </div>
+        <div class="prize-card">
+          <div class="prize-amount">$500</div>
+          <div class="prize-label">1st Place<br/>Male 40+</div>
+        </div>
+        <div class="prize-card featured">
+          <div class="prize-amount">6-Month Perform</div>
+          <div class="prize-label">Overall Winner — Perform Membership</div>
+        </div>
+      </div>
+
+      <p class="prize-total">Plus spot prizes throughout · <strong>$4,200+ total value</strong></p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section">
+    <div class="container">
+      <p class="section-label">How It Works</p>
+      <h2 class="section-title">Simple.<br/>Structured.</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <p class="step-title">Sign Up & Lock In Your Goal</p>
+            <p class="step-desc">Register online and set your personal goal — the one that excites you most. We'll build everything around it.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <p class="step-title">Onboarding Day</p>
+            <p class="step-desc">Meet the team, do your initial Tanita body scan, and get briefed on training, nutrition, and supplements.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <p class="step-title">8 Weeks of Support</p>
+            <p class="step-desc">Train in classes, follow your app program, check in weekly, and stay supported by the whole M2 team.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <p class="step-title">Final Scan & Prize Giving</p>
+            <p class="step-desc">Complete your final body scan, celebrate with everyone at the prize-giving, and walk away stronger than you started.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="bottom-cta">
+    <div class="container">
+      <p class="section-label">Early Bird — 14 Days Only</p>
+      <h2 class="section-title">Ready to<br/>go?</h2>
+      <p class="section-body">The challenge kicks off June 22nd. Early bird pricing is on for the next two weeks — after that, the price doubles. Lock it in now.</p>
+
+      <div class="bottom-price">
+        <span class="bottom-price-now">$49</span>
+        <span class="bottom-price-was">$99</span>
+      </div>
+
+      <a class="btn-primary" href="https://widgets.mywellness.com/shop/fitnessportalakl" target="_blank" rel="noopener">Sign Up Now</a>
+      <p class="bottom-cta-note">Questions? Come chat to us at the gym or email <a href="mailto:taylor@m2club.co.nz" style="color:var(--muted)">taylor@m2club.co.nz</a></p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 M2 Training Club · 8 Nugent Street, Grafton, Auckland · <a href="/">m2club.co.nz</a></p>
+  </footer>
+
+  <!-- COUNTDOWN SCRIPT -->
+  <script>
+    (function() {
+      // Early bird ends 14 days from today (May 20 2026 → June 3 2026)
+      var now = new Date();
+      var end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14, 23, 59, 59);
+
+      function pad(n) { return String(n).padStart(2, '0'); }
+
+      function tick() {
+        var diff = end - new Date();
+        if (diff <= 0) {
+          document.getElementById('cd-d').textContent = '00';
+          document.getElementById('cd-h').textContent = '00';
+          document.getElementById('cd-m').textContent = '00';
+          document.getElementById('cd-s').textContent = '00';
+          return;
+        }
+        var days  = Math.floor(diff / 86400000);
+        var hours = Math.floor((diff % 86400000) / 3600000);
+        var mins  = Math.floor((diff % 3600000)  / 60000);
+        var secs  = Math.floor((diff % 60000)    / 1000);
+        document.getElementById('cd-d').textContent = pad(days);
+        document.getElementById('cd-h').textContent = pad(hours);
+        document.getElementById('cd-m').textContent = pad(mins);
+        document.getElementById('cd-s').textContent = pad(secs);
+      }
+
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
+
+</body>
+</html>
