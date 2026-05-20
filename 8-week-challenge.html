@@ -594,6 +594,47 @@
 .nav-brand img { height: 30px; }
 .btn, .btn-outline, .btn-dark, .nav-cta { padding: .75rem 1.25rem; font-size: .78rem; }
 
+
+/* ── Mobile fixes ── */
+@media (max-width: 600px) {
+  .section-title {
+    font-size: clamp(2rem, 10vw, 2.8rem) !important;
+    white-space: normal !important;
+  }
+  .container {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  section {
+    padding: 48px 20px !important;
+  }
+  .earlybird {
+    width: 100% !important;
+    padding: 16px !important;
+  }
+  .countdown {
+    gap: 6px !important;
+  }
+  .cd-block {
+    min-width: 48px !important;
+    padding: 8px 8px !important;
+  }
+  .cd-num {
+    font-size: 1.6rem !important;
+  }
+  .prize-cards {
+    gap: 8px !important;
+  }
+  .prize-amount {
+    font-size: 1.8rem !important;
+  }
+  .bottom-cta {
+    padding: 56px 20px !important;
+  }
+  .bottom-price-now {
+    font-size: 2.8rem !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -686,8 +727,8 @@
         No one-size-fits-all goal. No cookie-cutter program. No obsessing over the scale.
         You choose your own goal — whether that's building strength, losing fat, running further, or just building better habits — and we build everything around that.
       </p>
-      <br/>
-      <p class="section-body">
+      
+      <p class="section-body" style="margin-top:1rem;">
         While most challenges focus on weight loss alone, ours is focused on your overall wellness. Healthy, educated relationships with food and exercise. Lifelong habits. Real results.
       </p>
     </div>
