@@ -4111,7 +4111,7 @@ async function buildMemberSplit() {
   try {
     const d = await gmFetch('kpi.member_today');
     if (d && d.primary) {
-      _renderMemberSplit([...MS_HIST, { m: 'May 26 (live)', total: d.primary, fp: 909, live: true }]);
+      _renderMemberSplit([...MS_HIST, { m: 'May 26 (live)', total: d.primary, fp: 936, live: true }]);
     }
   } catch(e) {}
 }
