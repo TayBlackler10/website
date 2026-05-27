@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avalon Strang — Ironman 70.3 40-Week Plan</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#1a1a1a;font-size:14px;line-height:1.5}
+  .page-wrap{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+
+  /* Header */
+  .hero{background:#0a0a0a;color:#fff;border-radius:16px;padding:2.5rem 2rem;margin-bottom:2rem;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.03)}
+  .client-tag{display:inline-block;font-size:11px;font-weight:600;background:rgba(255,255,255,.1);color:#ccc;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase}
+  .hero h1{font-size:28px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px}
+  .hero p{font-size:13px;color:#888}
+  .hero-meta{display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap}
+  .hm{border-left:2px solid #333;padding-left:1rem}
+  .hm .ml{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.06em}
+  .hm .mv{font-size:15px;font-weight:500;color:#fff;margin-top:2px}
+
+  /* Stats */
+  .stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:2rem}
+  .stat{background:#fff;border-radius:10px;padding:.9rem 1rem;border:1px solid #eee}
+  .stat .sl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .stat .sv{font-size:20px;font-weight:600;color:#0a0a0a}
+
+  /* Legend */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center;padding:.75rem 1rem;background:#fff;border-radius:10px;border:1px solid #eee}
+  .li{display:flex;align-items:center;gap:6px;font-size:12px;color:#555}
+  .ld{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+  /* Phase tabs */
+  .phase-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+  .ptab{padding:6px 14px;border-radius:8px;border:1px solid #e0e0e0;font-size:12px;cursor:pointer;background:#fff;color:#666;transition:all .15s;font-weight:500}
+  .ptab.active{background:#0a0a0a;color:#fff;border-color:#0a0a0a}
+  .ptab:hover:not(.active){background:#f0f0f0;border-color:#ccc}
+
+  /* Week cards */
+  .week-grid{display:flex;flex-direction:column;gap:8px}
+  .wcard{background:#fff;border:1px solid #eee;border-radius:12px;overflow:hidden}
+  .whead{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;user-select:none;transition:background .1s}
+  .whead:hover{background:#fafafa}
+  .wnum{font-size:11px;font-weight:600;color:#999;min-width:56px}
+  .wlabel{font-size:13px;font-weight:600;color:#0a0a0a;flex:1}
+  .wdate{font-size:11px;color:#bbb;margin-right:4px}
+  .badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:.04em}
+  .vols{display:flex;gap:5px;align-items:center}
+  .vp{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+  .sp{background:#dbeafe;color:#1e40af}
+  .bp{background:#dcfce7;color:#166534}
+  .rp{background:#fef3c7;color:#92400e}
+  .chev{font-size:16px;color:#ccc;transition:transform .2s;font-weight:300}
+
+  /* Expanded body */
+  .wbody{display:none;padding:0 16px 16px}
+  .wbody.open{display:block}
+  .dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:4px}
+  .dc .dn{font-size:9px;color:#bbb;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;text-align:center}
+  .s{font-size:10px;border-radius:6px;padding:5px 6px;margin-bottom:4px;line-height:1.4;font-weight:500}
+  .s.swim{background:#dbeafe;color:#1e40af}
+  .s.bike{background:#dcfce7;color:#166534}
+  .s.run{background:#fef3c7;color:#92400e}
+  .s.brick{background:#fce7f3;color:#9d174d}
+  .s.rest{background:#f5f5f5;color:#aaa}
+  .s.race{background:#fee2e2;color:#991b1b;font-weight:700;text-align:center}
+  .s.strength{background:#ede9fe;color:#5b21b6}
+  .s.test{background:#d1fae5;color:#065f46}
+  .tip{background:#f8f7f4;border-radius:8px;padding:10px 12px;margin-top:10px;font-size:11px;color:#666;line-height:1.6;border-left:3px solid #e0e0e0}
+  .tip strong{color:#0a0a0a;font-weight:600}
+
+  /* Phase divider */
+  .pdiv{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.1em;padding:6px 0 8px;border-bottom:1px solid #eee;margin-bottom:8px}
+  .pdiv span{background:#0a0a0a;color:#fff;padding:3px 10px;border-radius:20px;font-size:9px}
+
+  /* Footer */
+  .footer{margin-top:2.5rem;padding:1.5rem;background:#fff;border-radius:12px;border:1px solid #eee;font-size:12px;color:#888;line-height:1.7}
+  .footer strong{color:#0a0a0a}
+
+  @media(max-width:700px){
+    .stats-row{grid-template-columns:repeat(3,1fr)}
+    .dgrid{grid-template-columns:repeat(4,1fr)}
+    .hero-meta{gap:1rem}
+  }
+  @media(max-width:500px){
+    .dgrid{grid-template-columns:repeat(2,1fr)}
+    .stats-row{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="hero">
+    <div class="client-tag">Training Plan — Avalon Strang</div>
+    <h1>Ironman 70.3 — 40-Week Plan</h1>
+    <p>Female, 22 yrs &nbsp;·&nbsp; Intermediate level &nbsp;·&nbsp; Created May 2026</p>
+    <div class="hero-meta">
+      <div class="hm"><div class="ml">Start date</div><div class="mv">1 June 2026</div></div>
+      <div class="hm"><div class="ml">Race day</div><div class="mv">6 March 2027</div></div>
+      <div class="hm"><div class="ml">Swim</div><div class="mv">1.9 km</div></div>
+      <div class="hm"><div class="ml">Bike</div><div class="mv">90 km</div></div>
+      <div class="hm"><div class="ml">Run</div><div class="mv">21.1 km</div></div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="sl">Total weeks</div><div class="sv">40</div></div>
+    <div class="stat"><div class="sl">Phases</div><div class="sv">4</div></div>
+    <div class="stat"><div class="sl">Sessions/wk</div><div class="sv">6–9</div></div>
+    <div class="stat"><div class="sl">Recovery wks</div><div class="sv">6</div></div>
+    <div class="stat"><div class="sl">Fitness tests</div><div class="sv">3</div></div>
+    <div class="stat"><div class="sl">Full sim</div><div class="sv">Wk 30</div></div>
+  </div>
+
+  <div class="legend">
+    <div class="li"><div class="ld" style="background:#3b82f6"></div>Swim</div>
+    <div class="li"><div class="ld" style="background:#22c55e"></div>Bike</div>
+    <div class="li"><div class="ld" style="background:#f59e0b"></div>Run</div>
+    <div class="li"><div class="ld" style="background:#ec4899"></div>Brick</div>
+    <div class="li"><div class="ld" style="background:#8b5cf6"></div>Strength</div>
+    <div class="li"><div class="ld" style="background:#10b981"></div>Test / TT</div>
+    <div class="li"><div class="ld" style="background:#ef4444"></div>Race</div>
+  </div>
+
+  <div class="phase-tabs">
+    <div class="ptab active" onclick="showPhase('all',event)">All 40 weeks</div>
+    <div class="ptab" onclick="showPhase('p1',event)">Phase 1 — General fitness (wks 1–8)</div>
+    <div class="ptab" onclick="showPhase('p2',event)">Phase 2 — Sport-specific base (wks 9–20)</div>
+    <div class="ptab" onclick="showPhase('p3',event)">Phase 3 — Build (wks 21–32)</div>
+    <div class="ptab" onclick="showPhase('p4',event)">Phase 4 — Peak &amp; taper (wks 33–40)</div>
+  </div>
+
+  <div class="week-grid" id="wg"></div>
+
+  <div class="footer">
+    <strong>Key principles for Avalon:</strong><br>
+    Zone 2 is conversational — if you can't hold a full sentence, slow down. Strength sessions are non-negotiable through Phase 1 and 2. Nutrition practice on rides over 90min starts Week 9 — target 60–90g carbs/hr. Recovery weeks are training — do not add sessions. The full simulation in Week 30 is your most important session. Taper is normal — feeling fresh by Week 38 is the goal, not the problem.
+  </div>
+
+</div>
+
+<script>
+const DN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const phaseLabels={p1:'Phase 1 — General fitness (Weeks 1–8)',p2:'Phase 2 — Sport-specific base (Weeks 9–20)',p3:'Phase 3 — Build (Weeks 21–32)',p4:'Phase 4 — Peak & taper (Weeks 33–40)'};
+const bStyle={'Recovery':{bg:'#d1fae5',col:'#065f46'},'Taper':{bg:'#fef3c7',col:'#92400e'},'Race':{bg:'#fee2e2',col:'#991b1b'},'Test':{bg:'#d1fae5',col:'#065f46'}};
+
+function weekStart(n){
+  const d=new Date(2026,5,1);
+  d.setDate(d.getDate()+(n-1)*7);
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+}
+
+const weeks=[
+{n:1,phase:'p1',label:'Aerobic foundation — movement quality',vol:{s:'3km',b:'55km',r:'20km'},note:'Establish routine. All aerobic — no intensity. Strength twice per week is mandatory throughout Phase 1.',days:[[{type:'swim',text:'35min easy Z2'},{type:'strength',text:'30min full body'}],[{type:'run',text:'35min easy'}],[{type:'bike',text:'60min easy spin'}],[{type:'swim',text:'35min drills + pull'}],[{type:'strength',text:'30min lower body + core'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'75min long easy'}]]},
+{n:2,phase:'p1',label:'Aerobic foundation',vol:{s:'3.5km',b:'65km',r:'23km'},note:'Add a short run off the bike. Keep all effort easy and conversational throughout.',days:[[{type:'swim',text:'40min easy'},{type:'strength',text:'30min upper + core'}],[{type:'run',text:'35min easy'}],[{type:'bike',text:'65min easy'}],[{type:'swim',text:'40min technique'}],[{type:'run',text:'40min easy'},{type:'strength',text:'25min hips + glutes'}],[{type:'rest',text:'Rest'}],[{type:'brick',text:'45min bike → 15min run'}]]},
+{n:3,phase:'p1',label:'Aerobic foundation',vol:{s:'4km',b:'70km',r:'26km'},note:'Long run reaches 60min for first time. Swim adds short pace efforts to develop feel for the water.',days:[[{type:'swim',text:'45min (4×100 fast)'},{type:'strength',text:'30min full body'}],[{type:'run',text:'40min easy'}],[{type:'bike',text:'70min Z2'}],[{type:'swim',text:'40min easy pull'}],[{type:'run',text:'40min easy'},{type:'strength',text:'30min lower body'}],[{type:'rest',text:'Rest'}],[{type:'run',text:'60min long easy'}]]},
+{n:4,phase:'p1',label:'Recovery',badge:'Recovery',vol:{s:'2.5km',b:'40km',r:'15km'},note:'Full recovery week. Light movement only. Prioritise sleep and nutrition this week.',days:[[{type:'swim',text:'25min easy'}],[{type:'run',text:'25min easy'}],[{type:'bike',text:'40min easy spin'}],[{type:'swim',text:'25min easy'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'50min easy'}]]},
+{n:5,phase:'p1',label:'Aerobic push',vol:{s:'4km',b:'75km',r:'28km'},note:'Bike volume steps up. First proper tempo run. Swim gets a sustained effort set.',days:[[{type:'swim',text:'45min (3×400 steady)'},{type:'strength',text:'30min full body'}],[{type:'run',text:'40min w/ 2×8min tempo'}],[{type:'bike',text:'75min Z2'}],[{type:'swim',text:'40min easy'}],[{type:'run',text:'40min easy'},{type:'strength',text:'30min core + stability'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'90min long easy'}]]},
+{n:6,phase:'p1',label:'Aerobic foundation',vol:{s:'4.5km',b:'80km',r:'30km'},note:'Longest run yet. Brick extended. Swim adding distance consistently each week.',days:[[{type:'swim',text:'50min (500m steady + sets)'},{type:'strength',text:'30min lower body'}],[{type:'run',text:'45min w/ 2×10min tempo'}],[{type:'bike',text:'80min Z2'}],[{type:'swim',text:'45min easy pull'}],[{type:'brick',text:'50min bike → 20min run'}],[{type:'rest',text:'Rest'}],[{type:'run',text:'70min long easy'}]]},
+{n:7,phase:'p1',label:'Fitness test week',badge:'Test',vol:{s:'4.5km',b:'80km',r:'28km'},note:'CSS swim test + 20min bike FTP effort + 3km run time trial. Establish baselines — all zones built from these numbers.',days:[[{type:'test',text:'CSS swim test (400 + 200m TT)'}],[{type:'run',text:'40min easy'}],[{type:'test',text:'20min bike FTP effort'}],[{type:'swim',text:'40min easy'}],[{type:'test',text:'3km run time trial'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'90min easy long'}]]},
+{n:8,phase:'p1',label:'Recovery + transition',badge:'Recovery',vol:{s:'2.5km',b:'45km',r:'16km'},note:'Recovery week to close Phase 1. Review test results, set training zones, prepare for Phase 2.',days:[[{type:'swim',text:'25min easy'}],[{type:'run',text:'25min easy'}],[{type:'bike',text:'45min easy'}],[{type:'swim',text:'25min easy'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'55min easy'}]]},
+{n:9,phase:'p2',label:'Sport-specific base — swim focus',vol:{s:'5km',b:'80km',r:'28km'},note:'All three sports now structured around your zones. Swim gets dedicated technique and endurance sets.',days:[[{type:'swim',text:'55min (6×200 at CSS)'}],[{type:'run',text:'45min Z2'},{type:'strength',text:'30min full body'}],[{type:'bike',text:'80min Z2'}],[{type:'swim',text:'50min easy pull + drills'}],[{type:'run',text:'45min easy'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'100min long Z2'}]]},
+{n:10,phase:'p2',label:'Sport-specific base',vol:{s:'5km',b:'90km',r:'30km'},note:'Brick sessions become a weekly fixture from here. Bike volume growing steadily each week.',days:[[{type:'swim',text:'55min (4×300 CSS pace)'}],[{type:'run',text:'45min w/ 3×6min tempo'},{type:'strength',text:'30min lower body'}],[{type:'bike',text:'85min Z2'}],[{type:'swim',text:'50min easy'}],[{type:'brick',text:'55min bike → 20min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'110min long'}]]},
+{n:11,phase:'p2',label:'Sport-specific base',vol:{s:'5.5km',b:'95km',r:'32km'},note:'Run long reaches 75min. Open water swim if possible. Brick pace picks up slightly.',days:[[{type:'swim',text:'60min open water or 1km TT'}],[{type:'run',text:'45min w/ 4×5min tempo'},{type:'strength',text:'30min core'}],[{type:'bike',text:'90min Z2'}],[{type:'swim',text:'50min easy technique'}],[{type:'brick',text:'60min bike → 25min run'}],[{type:'rest',text:'Rest'}],[{type:'run',text:'75min long easy'}]]},
+{n:12,phase:'p2',label:'Recovery',badge:'Recovery',vol:{s:'3.5km',b:'55km',r:'20km'},note:'Third recovery week. Volume drops 30%. Trust the process — this is where adaptation happens.',days:[[{type:'swim',text:'35min easy'}],[{type:'run',text:'30min easy'}],[{type:'bike',text:'55min easy'}],[{type:'swim',text:'30min easy'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'65min easy'}]]},
+{n:13,phase:'p2',label:'Sport-specific base — bike focus',vol:{s:'5.5km',b:'105km',r:'32km'},note:'Bike steps up with first sustained Z3 efforts. Long ride hits 2hrs for the first time in the program.',days:[[{type:'swim',text:'60min (CSS intervals)'}],[{type:'run',text:'50min Z2'},{type:'strength',text:'30min hips + glutes'}],[{type:'bike',text:'90min w/ 2×12min Z3'}],[{type:'swim',text:'55min easy pull'}],[{type:'brick',text:'65min bike → 25min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr long Z2'}]]},
+{n:14,phase:'p2',label:'Sport-specific base',vol:{s:'5.5km',b:'110km',r:'34km'},note:'Half marathon distance run for the first time. Swim nears race distance in volume.',days:[[{type:'swim',text:'60min (1.5km time trial)'}],[{type:'run',text:'50min w/ 4×6min tempo'},{type:'strength',text:'30min full body'}],[{type:'bike',text:'90min Z2'}],[{type:'swim',text:'55min easy'}],[{type:'brick',text:'70min bike → 30min run'}],[{type:'rest',text:'Rest'}],[{type:'run',text:'90min long easy (21km)'}]]},
+{n:15,phase:'p2',label:'Sport-specific base',vol:{s:'6km',b:'115km',r:'35km'},note:'1.9km swim TT — first full race distance in the water. Record time for progression tracking.',days:[[{type:'test',text:'1.9km swim TT (race distance)'}],[{type:'run',text:'50min w/ 5×5min tempo'},{type:'strength',text:'30min lower body'}],[{type:'bike',text:'95min Z2-Z3'}],[{type:'swim',text:'55min easy technique'}],[{type:'brick',text:'70min bike → 30min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr 15min long'}]]},
+{n:16,phase:'p2',label:'Recovery',badge:'Recovery',vol:{s:'3.5km',b:'65km',r:'22km'},note:'Recovery week. Review swim TT result. Adjust zones if needed. Sleep and eat well this week.',days:[[{type:'swim',text:'35min easy'}],[{type:'run',text:'30min easy'}],[{type:'bike',text:'60min easy'}],[{type:'swim',text:'35min easy drills'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'75min easy'}]]},
+{n:17,phase:'p2',label:'Sport-specific base — run focus',vol:{s:'6km',b:'115km',r:'38km'},note:'Run volume peaks in this phase. Two quality run sessions per week from here through Phase 3.',days:[[{type:'swim',text:'65min (6×300 CSS)'}],[{type:'run',text:'50min w/ 6×3min Z4'},{type:'strength',text:'30min core'}],[{type:'bike',text:'95min Z2'}],[{type:'swim',text:'60min easy'}],[{type:'brick',text:'75min bike → 35min run'}],[{type:'rest',text:'Rest'}],[{type:'run',text:'95min long easy'}]]},
+{n:18,phase:'p2',label:'Sport-specific base',vol:{s:'6km',b:'120km',r:'38km'},note:'Long bike exceeds 2.5hrs for first time. Nutrition practice on long rides is mandatory now.',days:[[{type:'swim',text:'65min race-pace sets'}],[{type:'run',text:'50min w/ 4×8min tempo'},{type:'strength',text:'30min lower body'}],[{type:'bike',text:'100min Z2-Z3'}],[{type:'swim',text:'60min easy'}],[{type:'brick',text:'80min bike → 35min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr 30min long'}]]},
+{n:19,phase:'p2',label:'Fitness re-test week',badge:'Test',vol:{s:'6km',b:'110km',r:'35km'},note:'Re-test CSS swim + 20min FTP bike + 3km run TT. Compare to Week 7 benchmarks — significant improvement expected.',days:[[{type:'test',text:'CSS swim re-test'}],[{type:'run',text:'45min easy'}],[{type:'test',text:'20min bike FTP re-test'}],[{type:'swim',text:'55min easy'}],[{type:'test',text:'3km run TT'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr easy long'}]]},
+{n:20,phase:'p2',label:'Recovery + Phase 2 close',badge:'Recovery',vol:{s:'3.5km',b:'65km',r:'22km'},note:'Recovery to close Phase 2. Review all test improvements, update zones, prepare for the Build phase.',days:[[{type:'swim',text:'35min easy'}],[{type:'run',text:'30min easy'}],[{type:'bike',text:'60min easy'}],[{type:'swim',text:'35min easy'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'75min easy'}]]},
+{n:21,phase:'p3',label:'Build — intensity entry',vol:{s:'6km',b:'120km',r:'38km'},note:'Intensity lifts across all three sports. Bike gets Z4 intervals. Run has threshold blocks. Swim race-pace sets.',days:[[{type:'swim',text:'65min (8×200 race pace)'}],[{type:'run',text:'55min w/ 3×10min tempo'},{type:'strength',text:'25min activation'}],[{type:'bike',text:'100min w/ 3×8min Z4'}],[{type:'swim',text:'60min easy pull'}],[{type:'brick',text:'75min bike → 30min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr 30min long'}]]},
+{n:22,phase:'p3',label:'Build',vol:{s:'6.5km',b:'125km',r:'40km'},note:'Long run hits 100min. Brick gets longer. Swim volume approaches race distance regularly.',days:[[{type:'swim',text:'70min (2×900 race pace)'}],[{type:'run',text:'55min w/ 4×8min tempo'},{type:'strength',text:'25min core'}],[{type:'bike',text:'105min Z2-Z3'}],[{type:'swim',text:'60min easy'}],[{type:'brick',text:'80min bike → 35min run'}],[{type:'rest',text:'Rest'}],[{type:'run',text:'100min long easy'}]]},
+{n:23,phase:'p3',label:'Build',vol:{s:'6.5km',b:'130km',r:'40km'},note:'Over-distance bike hits 2hr 45min. Brick increasingly race-specific in effort and duration.',days:[[{type:'swim',text:'70min race-pace sets'}],[{type:'run',text:'55min w/ 5×6min Z4'},{type:'strength',text:'25min hips + glutes'}],[{type:'bike',text:'110min w/ 4×10min Z3'}],[{type:'swim',text:'60min easy technique'}],[{type:'brick',text:'85min bike → 35min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr 45min long'}]]},
+{n:24,phase:'p3',label:'Recovery',badge:'Recovery',vol:{s:'4km',b:'75km',r:'25km'},note:'Mandatory recovery. Muscle repair and hormonal restoration are happening — do not skip this week.',days:[[{type:'swim',text:'40min easy'}],[{type:'run',text:'30min easy'}],[{type:'bike',text:'70min easy'}],[{type:'swim',text:'40min easy'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'80min easy'}]]},
+{n:25,phase:'p3',label:'Build — race specificity',vol:{s:'6.5km',b:'130km',r:'42km'},note:'Sessions mimic race conditions more closely. Practice T1 and T2 transitions in brick sessions.',days:[[{type:'swim',text:'70min (1.9km race simulation)'}],[{type:'run',text:'55min w/ race-pace miles'},{type:'strength',text:'20min activation'}],[{type:'bike',text:'110min race effort'}],[{type:'swim',text:'60min open water'}],[{type:'brick',text:'90min bike → 40min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'3hr long over-distance'}]]},
+{n:26,phase:'p3',label:'Build',vol:{s:'6.5km',b:'130km',r:'42km'},note:'Back-to-back quality days Tuesday-Wednesday. Managing cumulative fatigue is key skill for race day.',days:[[{type:'swim',text:'70min race-pace sets'}],[{type:'run',text:'60min w/ 5×8min tempo'},{type:'strength',text:'20min core'}],[{type:'bike',text:'110min w/ 5×10min Z3-Z4'}],[{type:'swim',text:'60min easy'}],[{type:'brick',text:'90min bike → 40min run'}],[{type:'rest',text:'Rest'}],[{type:'run',text:'110min long easy'}]]},
+{n:27,phase:'p3',label:'Build',vol:{s:'7km',b:'135km',r:'42km'},note:'Highest swim volume week. 1.9km TT again — track your improvement from Week 15.',days:[[{type:'test',text:'1.9km swim TT (compare wk 15)'}],[{type:'run',text:'55min w/ 4×8min tempo'},{type:'strength',text:'20min full body'}],[{type:'bike',text:'110min race effort'}],[{type:'swim',text:'65min easy pull'}],[{type:'brick',text:'90min bike → 40min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'3hr long'}]]},
+{n:28,phase:'p3',label:'Recovery',badge:'Recovery',vol:{s:'4km',b:'80km',r:'26km'},note:'Recovery. Legs will feel heavy early in the week — completely normal. Feel fresh by the weekend.',days:[[{type:'swim',text:'40min easy'}],[{type:'run',text:'35min easy'}],[{type:'bike',text:'75min easy'}],[{type:'swim',text:'40min easy'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'85min easy'}]]},
+{n:29,phase:'p3',label:'Build — peak volume block',vol:{s:'6.5km',b:'135km',r:'44km'},note:'Biggest volume week in the program. Three quality sessions plus long bike and extended brick.',days:[[{type:'swim',text:'70min race-pace sets'}],[{type:'run',text:'60min w/ 6km at race pace'},{type:'strength',text:'20min activation'}],[{type:'bike',text:'115min w/ 4×12min Z3'}],[{type:'swim',text:'65min easy'}],[{type:'brick',text:'95min bike → 45min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'3hr 15min long'}]]},
+{n:30,phase:'p3',label:'Full race simulation',vol:{s:'6.5km',b:'130km',r:'42km'},note:'Saturday is full race simulation: 1.9km swim → 90km bike → 21km run. Dial in all nutrition. This is your dress rehearsal.',days:[[{type:'swim',text:'65min easy recovery swim'}],[{type:'run',text:'55min w/ 3×8min tempo'}],[{type:'bike',text:'100min Z2-Z3'}],[{type:'swim',text:'60min easy'}],[{type:'rest',text:'Rest'}],[{type:'race',text:'Full 70.3 simulation'}],[{type:'rest',text:'Full rest + refuel'}]]},
+{n:31,phase:'p3',label:'Recovery from simulation',vol:{s:'5km',b:'100km',r:'32km'},note:'Easy week after simulation. Process what worked and what did not. Minor adjustments to race plan.',days:[[{type:'swim',text:'55min easy'}],[{type:'run',text:'45min easy'}],[{type:'bike',text:'90min easy'}],[{type:'swim',text:'50min easy'}],[{type:'brick',text:'60min bike → 20min easy run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr easy'}]]},
+{n:32,phase:'p3',label:'Final hard week',vol:{s:'6.5km',b:'125km',r:'40km'},note:'Last true hard week before taper. Finish strong — this is the last time you push this hard before race day.',days:[[{type:'swim',text:'70min race-pace sets'}],[{type:'run',text:'55min w/ 4×8min tempo'}],[{type:'bike',text:'105min w/ 4×10min Z3'}],[{type:'swim',text:'60min easy'}],[{type:'brick',text:'85min bike → 35min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr 45min'}]]},
+{n:33,phase:'p4',label:'Taper begins',badge:'Taper',vol:{s:'5km',b:'100km',r:'32km'},note:'Volume drops 20%. Keep race-pace touches in every session — 2–3 short sharp efforts per sport.',days:[[{type:'swim',text:'60min easy + 4×100 race pace'}],[{type:'run',text:'45min w/ 3×6min tempo'}],[{type:'bike',text:'85min w/ 2×8min Z3'}],[{type:'swim',text:'50min easy'}],[{type:'brick',text:'65min bike → 25min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'2hr easy-steady'}]]},
+{n:34,phase:'p4',label:'Taper',badge:'Taper',vol:{s:'4.5km',b:'90km',r:'28km'},note:'Another volume step down. Body should start feeling fresher. Legs may feel heavy mid-week — completely normal.',days:[[{type:'swim',text:'55min easy + 4×100 race pace'}],[{type:'run',text:'40min w/ 2×8min tempo'}],[{type:'bike',text:'80min w/ 2×6min Z3'}],[{type:'swim',text:'45min easy'}],[{type:'brick',text:'55min bike → 20min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'100min easy'}]]},
+{n:35,phase:'p4',label:'Taper',badge:'Taper',vol:{s:'4km',b:'75km',r:'24km'},note:'Reduced further. Run sharpness maintained with strides. Everything should feel controlled and confident.',days:[[{type:'swim',text:'50min easy + 6×50 race pace'}],[{type:'run',text:'35min w/ 6×30sec strides'}],[{type:'bike',text:'70min w/ 3×5min Z3'}],[{type:'swim',text:'40min easy'}],[{type:'brick',text:'50min bike → 15min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'85min easy'}]]},
+{n:36,phase:'p4',label:'Taper',badge:'Taper',vol:{s:'3.5km',b:'65km',r:'20km'},note:'Significant volume reduction. Sessions short and sharp. Confidence should be building noticeably.',days:[[{type:'swim',text:'45min easy + 4×50 race pace'}],[{type:'run',text:'30min easy + strides'}],[{type:'bike',text:'60min w/ 2×5min Z3'}],[{type:'swim',text:'35min easy'}],[{type:'run',text:'30min easy'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'75min easy'}]]},
+{n:37,phase:'p4',label:'Taper',badge:'Taper',vol:{s:'3km',b:'55km',r:'16km'},note:'Three weeks to race. Short and precise. Gear check this week — sort any kit issues now, not later.',days:[[{type:'swim',text:'40min easy + 4×100 race pace'}],[{type:'run',text:'25min easy + strides'}],[{type:'bike',text:'55min + 3×4min Z3'}],[{type:'swim',text:'30min easy'}],[{type:'brick',text:'35min bike → 15min run'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'60min easy'}]]},
+{n:38,phase:'p4',label:'Final sharpener',badge:'Taper',vol:{s:'2km',b:'40km',r:'12km'},note:'Two weeks out. Final fitness sharpener. Three short race-pace efforts per sport then back off completely.',days:[[{type:'swim',text:'30min easy + 4×50 race pace'}],[{type:'run',text:'25min easy'}],[{type:'bike',text:'40min + 3×3min Z4'}],[{type:'swim',text:'20min easy'}],[{type:'run',text:'20min easy + 4 strides'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'40min shakeout'}]]},
+{n:39,phase:'p4',label:'Race prep week',badge:'Taper',vol:{s:'1.5km',b:'25km',r:'8km'},note:'Race week minus 1. Travel if needed. Short sessions only. Confirm nutrition, transitions, and race plan.',days:[[{type:'swim',text:'20min easy + 4×25 race pace'}],[{type:'run',text:'20min easy'}],[{type:'bike',text:'25min + 2×2min Z3'}],[{type:'swim',text:'15min easy'}],[{type:'rest',text:'Rest'}],[{type:'rest',text:'Rest'}],[{type:'bike',text:'25min shakeout'}]]},
+{n:40,phase:'p4',label:'Race week — 6 March 2027',badge:'Race',vol:{s:'0.5km',b:'10km',r:'4km'},note:'Arrive early. Hydrate constantly. Eat well. Sleep. Visualise your race. You have done 40 weeks of work — trust every single one of them.',days:[[{type:'swim',text:'15min easy'}],[{type:'run',text:'15min shakeout'}],[{type:'bike',text:'20min easy spin'}],[{type:'swim',text:'10min course preview'}],[{type:'rest',text:'Gear rack + rest'}],[{type:'rest',text:'REST — carb load'}],[{type:'race',text:'RACE DAY'}]]}
+];
+
+function buildWeek(w){
+  const bs=w.badge?bStyle[w.badge]:null;
+  const badgeHtml=bs?`<span class="badge" style="background:${bs.bg};color:${bs.col}">${w.badge}</span>`:'';
+  const daysHtml=w.days.map((ss,i)=>
+    `<div class="dc"><div class="dn">${DN[i]}</div>${ss.map(s=>`<div class="s ${s.type}">${s.text}</div>`).join('')}</div>`
+  ).join('');
+  return `<div class="wcard" data-phase="${w.phase}">
+  <div class="whead" onclick="tw(${w.n})">
+    <span class="wnum">Week ${w.n}</span>
+    <span class="wlabel">${w.label}</span>
+    ${badgeHtml}
+    <span class="wdate">${weekStart(w.n)}</span>
+    <div class="vols">
+      <span class="vp sp">${w.vol.s}</span>
+      <span class="vp bp">${w.vol.b}</span>
+      <span class="vp rp">${w.vol.r}</span>
+    </div>
+    <span class="chev" id="ch${w.n}">&#8250;</span>
+  </div>
+  <div class="wbody" id="wb${w.n}">
+    <div class="dgrid">${daysHtml}</div>
+    <div class="tip"><strong>Focus:</strong> ${w.note}</div>
+  </div>
+</div>`;
+}
+
+function tw(n){
+  const b=document.getElementById('wb'+n),c=document.getElementById('ch'+n);
+  b.classList.toggle('open');
+  c.style.transform=b.classList.contains('open')?'rotate(90deg)':'';
+}
+
+function render(phase){
+  const filtered=phase==='all'?weeks:weeks.filter(w=>w.phase===phase);
+  let html='',last=null;
+  filtered.forEach(w=>{
+    if(phase==='all'&&w.phase!==last){
+      html+=`<div class="pdiv"><span>${phaseLabels[w.phase]}</span></div>`;
+      last=w.phase;
+    }
+    html+=buildWeek(w);
+  });
+  document.getElementById('wg').innerHTML=html;
+}
+
+function showPhase(p,e){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+  render(p);
+}
+
+render('all');
+</script>
+</body>
+</html>
