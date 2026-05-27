@@ -113,7 +113,7 @@ undefined
 (function(){
   var a='sk-ant-api03-2GhtLjV',b='j5qpFfn_0recTpNH9OVuv10kSlorRdPE4v5WWO5E',c='ztnnagEJNBQ_ksh85k3ZI9aC8Xe9AOzbbloFi0w-cqw_gQAA';
   var KEY=a+b+c;
-  var SYS='You are the friendly assistant for M2 Training Club, a premium fitness club in Grafton, Auckland, NZ. Website: m2club.co.nz. Email: taylor@m2club.co.nz. Instagram: @m2trainingclub. Hours: Mon-Fri 5am-10pm, Sat-Sun 7am-7pm. Memberships: weekly, 10 Trip Pass, 24 Hour Access Pass, annual memberships — direct to Memberships page for pricing. Services: personal training, group fitness classes, strength & conditioning, recovery facilities. Free consultation available with trainers. Fitness Passport accepted. Become a PT pathway available. Be warm, energetic and concise (2-4 sentences). For specific pricing or bookings direct to the website or taylor@m2club.co.nz. Never make up details you are unsure about.';
+  var SYS='You are the friendly assistant for M2 Training Club, a premium fitness club in Grafton, Auckland, NZ. Website: m2club.co.nz. Email: taylor@m2club.co.nz. Instagram: @m2trainingclub. Hours: Mon-Fri 5am-10pm, Sat-Sun 7am-7pm. Memberships: weekly, 10 Trip Pass, 24 Hour Access Pass, annual memberships  direct to Memberships page for pricing. Services: personal training, group fitness classes, strength & conditioning, recovery facilities. Free consultation available with trainers. Fitness Passport accepted. Become a PT pathway available. Be warm, energetic and concise (2-4 sentences). For specific pricing or bookings direct to the website or taylor@m2club.co.nz. Never make up details you are unsure about.';
   var history=[],isLoading=false,isOpen=false;
   var btn=document.getElementById('m2-chat-btn'),win=document.getElementById('m2-chat-window'),msgs=document.getElementById('m2-chat-messages'),inp=document.getElementById('m2-chat-input'),snd=document.getElementById('m2-chat-send');
   btn.addEventListener('click',function(){isOpen=!isOpen;btn.classList.toggle('open',isOpen);if(isOpen){win.style.display='flex';requestAnimationFrame(function(){win.classList.add('open');});inp.focus();}else{win.classList.remove('open');setTimeout(function(){win.style.display='none';},220);}});
@@ -230,7 +230,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .mod-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.03em;margin-bottom:.8rem;}
 .mod-topics{list-style:none;display:flex;flex-direction:column;gap:.4rem;}
 .mod-topics li{font-size:.85rem;font-weight:300;color:rgba(255,255,255,.5);padding-left:1.2rem;position:relative;}
-.mod-topics li::before{content:'—';position:absolute;left:0;color:var(--yellow);opacity:.6;}
+.mod-topics li::before{content:'';position:absolute;left:0;color:var(--yellow);opacity:.6;}
 .mod-tag{display:inline-block;margin-top:1.2rem;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(223,255,0,.3);color:var(--yellow);padding:.3rem .7rem;}
 
 /* BENEFITS */
@@ -283,7 +283,7 @@ body{padding-bottom:90px;}
 .reveal.fallback{opacity:1;transform:none;}
 
 /* ═══════════════════════════════════════════
-   GLOBAL NAV — all pages
+   GLOBAL NAV  all pages
    ═══════════════════════════════════════════ */
 .nav {
   position: sticky;
@@ -593,7 +593,7 @@ body{padding-bottom:90px;}
     <div>
       <span class="pg-kick">M2 Trainer Pathway · Auckland</span>
       <h1 class="pg-h1">Turn Your<br>Passion<br>Into a<br><em>Career.</em></h1>
-      <p class="pg-sub">Level 4 Personal Training Certification delivered at M2. $4,000 total — payment plans available. Real-world coaching experience from day one.</p>
+      <p class="pg-sub">Level 4 Personal Training Certification delivered at M2. $4,000 total  payment plans available. Real-world coaching experience from day one.</p>
       <a href="/cdn-cgi/l/email-protection#6a1e03072a075809061f0844090544041055191f08000f091e573a3e4a29051f18190f4a0f041b1f031813" class="btn-y">Enquire About the Course</a>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);">
@@ -622,7 +622,7 @@ body{padding-bottom:90px;}
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#DFFF00" stroke-width="1.5" style="flex-shrink:0;opacity:.8"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l3 2"/></svg>
     <span style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;color:var(--yellow);">Investment</span>
   </div>
-  <p style="font-size:.88rem;font-weight:300;color:rgba(255,255,255,.65);line-height:1.6;"><strong style="color:var(--white);">$4,000 total course fee.</strong> Flexible <strong style="color:var(--yellow);">payment plans available</strong> — weekly, fortnightly or monthly payments to suit your budget.</p>
+  <p style="font-size:.88rem;font-weight:300;color:rgba(255,255,255,.65);line-height:1.6;"><strong style="color:var(--white);">$4,000 total course fee.</strong> Flexible <strong style="color:var(--yellow);">payment plans available</strong>  weekly, fortnightly or monthly payments to suit your budget.</p>
   <a href="/cdn-cgi/l/email-protection#98ecf1f5d8f5aafbf4edfab6fbf7b6f6e2a7ebedfaf2fdfbeca5c8ccb8dbf7edeaebfdb8e8f9e1f5fdf6ecb8e8f4f9f6b8fdf6e9edf1eae1" style="margin-left:auto;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--yellow);white-space:nowrap;flex-shrink:0;">Ask about payment plans →</a>
 </div>
 
@@ -695,12 +695,12 @@ body{padding-bottom:90px;}
       <div class="benefit-cell">
         <svg class="benefit-icon" viewBox="0 0 36 36" fill="none" stroke="#DFFF00" stroke-width="1.5"><circle cx="18" cy="18" r="14"/><path d="M12 18l4 4 8-8"/></svg>
         <div class="benefit-title">Real-World Experience</div>
-        <p class="benefit-body">You're learning in an active commercial gym with real members — not a classroom. Practical sessions mean you're coaching real people from the very first week.</p>
+        <p class="benefit-body">You're learning in an active commercial gym with real members  not a classroom. Practical sessions mean you're coaching real people from the very first week.</p>
       </div>
       <div class="benefit-cell">
         <svg class="benefit-icon" viewBox="0 0 36 36" fill="none" stroke="#DFFF00" stroke-width="1.5"><rect x="4" y="4" width="28" height="28" rx="3"/><path d="M12 18h12M18 12v12"/></svg>
         <div class="benefit-title">Flexible Study</div>
-        <p class="benefit-body">Self-paced online theory modules combined with in-person practical sessions at M2. Designed to work around your existing commitments — whether you're working full time or not.</p>
+        <p class="benefit-body">Self-paced online theory modules combined with in-person practical sessions at M2. Designed to work around your existing commitments  whether you're working full time or not.</p>
       </div>
 
       <div class="benefit-cell">
@@ -711,7 +711,7 @@ body{padding-bottom:90px;}
       <div class="benefit-cell">
         <svg class="benefit-icon" viewBox="0 0 36 36" fill="none" stroke="#DFFF00" stroke-width="1.5"><path d="M8 28V16l10-8 10 8v12"/><rect x="14" y="20" width="8" height="8"/></svg>
         <div class="benefit-title">Job Pathway</div>
-        <p class="benefit-body">Top graduates have a genuine pathway to join the M2 training team. We hire from within and prefer trainers who've come through our programme — because we know what we're getting.</p>
+        <p class="benefit-body">Top graduates have a genuine pathway to join the M2 training team. We hire from within and prefer trainers who've come through our programme  because we know what we're getting.</p>
       </div>
       <div class="benefit-cell">
         <svg class="benefit-icon" viewBox="0 0 36 36" fill="none" stroke="#DFFF00" stroke-width="1.5"><circle cx="18" cy="18" r="10"/><path d="M18 8v2M18 26v2M8 18h2M26 18h2"/><circle cx="18" cy="18" r="4" fill="#DFFF00" stroke="none"/></svg>
@@ -731,7 +731,7 @@ body{padding-bottom:90px;}
       <p style="font-size:.9rem;font-weight:300;color:rgba(255,255,255,.5);line-height:1.8;margin-bottom:2rem;">Send us your details and Tim will get back to you within 24 hours to discuss the course, answer your questions and help you figure out if this is the right step.</p>
       <div style="background:var(--card);padding:1.5rem;margin-bottom:1.5rem;">
         <div style="font-size:.6rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--yellow);margin-bottom:.5rem;">Course Contact</div>
-        <p style="font-size:.9rem;font-weight:300;color:rgba(255,255,255,.6);">Tim — Head Coach<br><a href="tel:095581408" style="color:var(--yellow);">09 558 1408</a><br><a href="/cdn-cgi/l/email-protection#d5a1bcb895b8e7b6b9a0b7fbb6bafbbbaf" style="color:var(--yellow);"><span class="__cf_email__" data-cfemail="9beff2f6dbf6a9f8f7eef9b5f8f4b5f5e1">[email&#160;protected]</span></a></p>
+        <p style="font-size:.9rem;font-weight:300;color:rgba(255,255,255,.6);">Tim  Head Coach<br><a href="tel:095581408" style="color:var(--yellow);">09 558 1408</a><br><a href="/cdn-cgi/l/email-protection#d5a1bcb895b8e7b6b9a0b7fbb6bafbbbaf" style="color:var(--yellow);"><span class="__cf_email__" data-cfemail="9beff2f6dbf6a9f8f7eef9b5f8f4b5f5e1">[email&#160;protected]</span></a></p>
       </div>
     </div>
     <div class="apply-right">
@@ -758,9 +758,9 @@ body{padding-bottom:90px;}
           <label for="pt-fitness">FITNESS BACKGROUND</label>
           <select id="pt-fitness" name="fitness_background">
             <option value="">Select an option</option>
-            <option>Beginner — new to fitness</option>
-            <option>Intermediate — train regularly</option>
-            <option>Advanced — competitive / high performance</option>
+            <option>Beginner  new to fitness</option>
+            <option>Intermediate  train regularly</option>
+            <option>Advanced  competitive / high performance</option>
             <option>Already working in fitness</option>
           </select>
         </div>
