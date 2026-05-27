@@ -2387,10 +2387,26 @@ function toggleNav(group) {
   const isOpen = dd.classList.contains('open');
 
   // Close all first
-  document.querySelectorAll('.nav-dropdown').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.nav-dropdown').forEach(d=>{
+    d.classList.remove('open');
+    d.style.position='';
+    d.style.top='';
+    d.style.left='';
+    d.style.right='';
+  });
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('open'));
 
   if(!isOpen) {
+    // On mobile the nav-bar has overflow-x:auto which clips absolute children.
+    // Fix: use position:fixed so the dropdown escapes the overflow container.
+    if(window.innerWidth <= 768) {
+      const rect = btn.getBoundingClientRect();
+      dd.style.position = 'fixed';
+      dd.style.top = rect.bottom + 'px';
+      const leftPos = Math.min(rect.left, window.innerWidth - 200);
+      dd.style.left = Math.max(4, leftPos) + 'px';
+      dd.style.right = 'auto';
+    }
     dd.classList.add('open');
     btn.classList.add('open');
     overlay.style.display = 'block';
@@ -2400,7 +2416,13 @@ function toggleNav(group) {
 }
 
 function closeNav() {
-  document.querySelectorAll('.nav-dropdown').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.nav-dropdown').forEach(d=>{
+    d.classList.remove('open');
+    d.style.position='';
+    d.style.top='';
+    d.style.left='';
+    d.style.right='';
+  });
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('open'));
   const overlay = document.getElementById('nav-overlay');
   if(overlay) overlay.style.display = 'none';
