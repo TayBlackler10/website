@@ -69,6 +69,21 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 .kv{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--y);line-height:1;margin-bottom:8px;letter-spacing:1px}
 .ks{font-size:12px;color:var(--m);line-height:1.5}
 .ks.g{color:var(--g)}.ks.r{color:var(--r)}.ks.y{color:var(--y)}
+/* Source provenance badges */
+.src{position:absolute;top:12px;right:12px;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;line-height:1.4}
+.src-live{color:var(--g);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.4)}
+.src-live::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--g);margin-right:4px;vertical-align:middle;animation:pulse 2s infinite}
+.src-hist{color:var(--t2);background:rgba(176,176,176,.1);border:1px solid rgba(176,176,176,.3)}
+.src-target{color:var(--y);background:rgba(200,255,0,.1);border:1px solid rgba(200,255,0,.35)}
+/* Movement panel */
+.move-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
+.move{background:var(--s);border:1px solid var(--br2);border-radius:14px;padding:16px 18px}
+.move-l{font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:8px}
+.move-row{display:flex;align-items:baseline;gap:8px}
+.move-now{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;color:var(--t)}
+.move-delta{font-size:13px;font-weight:700}
+.move-delta.up{color:var(--g)}.move-delta.down{color:var(--r)}.move-delta.flat{color:var(--m)}
+.move-prev{font-size:10px;color:var(--m);margin-top:5px}
 
 /* ── CARDS ── */
 .card{background:var(--s);border:1px solid var(--br2);border-radius:18px;padding:28px 28px;margin-bottom:20px;transition:border-color .2s}
@@ -488,6 +503,13 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Business Overview</div>
   <div class="section-sub">M2 Training Club · Grafton, Auckland · <span id="overview-updated" style="color:var(--g)">Loading live data...</span></div>
 
+  <!-- WHAT CHANGED · month-over-month movement -->
+  <div class="card" style="margin-bottom:18px;border-left:3px solid var(--y)">
+    <div class="ct">What changed <span style="color:var(--m);font-weight:400;font-size:11px">· month on month, most recent completed months</span></div>
+    <div class="move-grid" id="movement-grid"></div>
+    <div style="font-size:11px;color:var(--m);margin-top:10px" id="movement-note"></div>
+  </div>
+
   <!-- LIVE DATA BANNER -->
   <div id="live-error" style="display:none" class="alert">
     <div class="at">GymMaster connection issue</div>
@@ -495,47 +517,47 @@ button,a{-webkit-tap-highlight-color:transparent}
   </div>
 
   <div class="kg">
-    <div class="kpi">
+    <div class="kpi"><div class="src src-live">Live</div>
       <div class="kl">Current Members</div>
       <div class="kv" id="kv-members"></div>
       <div class="ks" id="ks-members">Loading...</div>
     </div>
-    <div class="kpi">
+    <div class="kpi"><div class="src src-live">Live</div>
       <div class="kl">Visits Today</div>
       <div class="kv" id="kv-visits-today"></div>
       <div class="ks" id="ks-visits-today">Loading...</div>
     </div>
-    <div class="kpi">
-      <div class="kl">New Members (May)</div>
+    <div class="kpi"><div class="src src-live">Live</div>
+      <div class="kl curmonth" data-tpl="New Members ({M})">New Members (May)</div>
       <div class="kv" id="kv-new-members"></div>
       <div class="ks" id="ks-new-members">Loading...</div>
     </div>
-    <div class="kpi">
+    <div class="kpi"><div class="src src-live">Live</div>
       <div class="kl">Visits This Month</div>
       <div class="kv" id="kv-visits-month"></div>
       <div class="ks" id="ks-visits-month">Loading...</div>
     </div>
-    <div class="kpi">
-      <div class="kl">Cancellations (May)</div>
+    <div class="kpi"><div class="src src-live">Live</div>
+      <div class="kl curmonth" data-tpl="Cancellations ({M})">Cancellations (May)</div>
       <div class="kv" id="kv-cancels"></div>
       <div class="ks" id="ks-cancels">Loading...</div>
     </div>
-    <div class="kpi">
+    <div class="kpi"><div class="src src-live">Live</div>
       <div class="kl">Upcoming Cancels</div>
       <div class="kv" id="kv-upcoming-cancels"></div>
       <div class="ks" id="ks-upcoming-cancels">Loading...</div>
     </div>
-    <div class="kpi">
+    <div class="kpi"><div class="src src-live">Live</div>
       <div class="kl">Churn Rate</div>
       <div class="kv" id="kv-churn"></div>
       <div class="ks" id="ks-churn">Loading...</div>
     </div>
-    <div class="kpi">
-      <div class="kl">Payments (May)</div>
+    <div class="kpi"><div class="src src-live">Live</div>
+      <div class="kl curmonth" data-tpl="Payments ({M})">Payments (May)</div>
       <div class="kv" id="kv-payments"></div>
       <div class="ks" id="ks-payments">Loading...</div>
     </div>
-    <div class="kpi">
+    <div class="kpi"><div class="src src-live">Live</div>
       <div class="kl">Expiring (30 days)</div>
       <div class="kv" id="kv-expiring"></div>
       <div class="ks" id="ks-expiring">Loading...</div>
@@ -4336,6 +4358,68 @@ async function _renderMemberSplit(dataset) {
       .replace(/\{M\}/g, M)
       .replace(/\{Y\}/g, Y);
   });
+})();
+
+// ── WHAT CHANGED · month-over-month movement ───────────────
+// Sourced from the monthly history already recorded in this dashboard.
+// When daily snapshot logging is live in the worker, swap this array for
+// the snapshot feed and the same render logic applies.
+(function renderMovement(){
+  // Most recent completed months. Keep this list updated as months close,
+  // or replace with a live snapshot feed later.
+  const history = [
+    {m:'Jan 26', trading:91900,  net:46, churn:1.64},
+    {m:'Feb 26', trading:112900, net:46, churn:2.10},
+    {m:'Mar 26', trading:111000, net:14, churn:2.59},
+    {m:'Apr 26', trading:105000, net:50, churn:1.41},
+  ];
+  const grid = document.getElementById('movement-grid');
+  if(!grid || history.length < 2) return;
+  const cur = history[history.length-1];
+  const prev = history[history.length-2];
+
+  // metric: lower-is-better flips the colour logic (churn)
+  function card(label, now, was, opts){
+    opts = opts || {};
+    const fmt = opts.fmt || (v=>v);
+    const lowerBetter = !!opts.lowerBetter;
+    const diff = now - was;
+    const pctChange = was !== 0 ? (diff/Math.abs(was))*100 : 0;
+    let cls='flat', arrow='→';
+    if(Math.abs(diff) > (opts.flatBand||0)){
+      const good = lowerBetter ? diff<0 : diff>0;
+      cls = good ? 'up' : 'down';
+      arrow = diff>0 ? '↑' : '↓';
+    }
+    const deltaTxt = opts.deltaFmt
+      ? opts.deltaFmt(diff, pctChange)
+      : `${arrow} ${pctChange>0?'+':''}${pctChange.toFixed(1)}%`;
+    return `<div class="move">
+      <div class="move-l">${label}</div>
+      <div class="move-row">
+        <span class="move-now">${fmt(now)}</span>
+        <span class="move-delta ${cls}">${deltaTxt}</span>
+      </div>
+      <div class="move-prev">was ${fmt(was)} in ${prev.m}</div>
+    </div>`;
+  }
+
+  grid.innerHTML = [
+    card('Trading income', cur.trading, prev.trading, {
+      fmt:v=>'$'+(v/1000).toFixed(0)+'K', flatBand:500
+    }),
+    card('Net members', cur.net, prev.net, {
+      fmt:v=>(v>0?'+':'')+v,
+      deltaFmt:(d)=>`${d>0?'↑ +':d<0?'↓ ':'→ '}${d}`, flatBand:0
+    }),
+    card('Churn rate', cur.churn, prev.churn, {
+      fmt:v=>v.toFixed(2)+'%', lowerBetter:true,
+      deltaFmt:(d)=>`${d<0?'↓ ':d>0?'↑ +':'→ '}${d.toFixed(2)}pt`, flatBand:0.01
+    }),
+  ].join('');
+
+  document.getElementById('movement-note').textContent =
+    `Comparing ${cur.m} vs ${prev.m}. Churn shown as percentage-point change. Source: recorded monthly figures.`;
 })();
 
 </script>
