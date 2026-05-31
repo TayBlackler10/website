@@ -4170,15 +4170,23 @@ const MS_HIST = [
   { m:'Apr 26', ym:'2026-04', total:1685, fp:903, est:false },
 ];
 
+// Current Fitness Passport member count. GymMaster's kpi.* endpoints expose the
+// live TOTAL but not the FP-only count (that needs a member-type query the worker
+// does not yet proxy). Update this one number when FP changes; M2 Direct is then
+// derived live as (live total − FP) and tracks the live total automatically.
+const FP_CURRENT = 950;
+
 async function buildMemberSplit() {
   // Render immediately with historical data  never blank
   _renderMemberSplit([...MS_HIST]);
 
-  // Then try live GymMaster total and re-render
+  // Then try live GymMaster total and re-render. M2 Direct = live total − FP.
   try {
     const d = await gmFetch('kpi.member_today');
     if (d && d.primary) {
-      _renderMemberSplit([...MS_HIST, { m: 'May 26 (live)', total: d.primary, fp: 936, live: true }]);
+      const now = new Date();
+      const label = now.toLocaleString('en-NZ',{month:'short'}) + ' ' + String(now.getFullYear()).slice(2) + ' (live)';
+      _renderMemberSplit([...MS_HIST, { m: label, total: d.primary, fp: FP_CURRENT, live: true }]);
     }
   } catch(e) {}
 }
@@ -4198,9 +4206,9 @@ async function _renderMemberSplit(dataset) {
   const jan26 = rows.find(r => r.m === 'Oct 24'); // Oct 24 vs Oct 23 YoY
 
   document.getElementById('ms-m2-latest').textContent = latest.m2.toLocaleString();
-  document.getElementById('ms-m2-sub').textContent = (latest.live ? '⬤ Live · ' : '') + latest.m + ' · ' + (latest.m2 - prev.m2 >= 0 ? '+' : '') + (latest.m2 - prev.m2) + ' vs prev month';
+  document.getElementById('ms-m2-sub').textContent = (latest.live ? '⬤ Live (total − FP) · ' : '') + latest.m + ' · ' + (latest.m2 - prev.m2 >= 0 ? '+' : '') + (latest.m2 - prev.m2) + ' vs prev month';
   document.getElementById('ms-fp-latest').textContent = latest.fp.toLocaleString();
-  document.getElementById('ms-fp-sub').textContent = (latest.live ? '⬤ Live · ' : '') + latest.m + ' · ' + (latest.fp - prev.fp >= 0 ? '+' : '') + (latest.fp - prev.fp) + ' vs prev month';
+  document.getElementById('ms-fp-sub').textContent = (latest.live ? 'Set figure · ' : '') + latest.m + ' · ' + (latest.fp - prev.fp >= 0 ? '+' : '') + (latest.fp - prev.fp) + ' vs prev month';
   document.getElementById('ms-total-latest').textContent = latest.total.toLocaleString();
   document.getElementById('ms-total-sub').textContent = (latest.live ? '⬤ Live · ' : '') + latest.m;
   document.getElementById('ms-fp-pct').textContent = latest.fpPct + '%';
