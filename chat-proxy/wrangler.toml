@@ -1,0 +1,14 @@
+name = "m2-chat-proxy"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# This makes the Worker respond on m2club.co.nz/api/chat.
+# The zone (m2club.co.nz) must be on your Cloudflare account for this to work.
+# If you don't move DNS to Cloudflare, delete this [[routes]] block and instead
+# use the workers.dev URL the deploy step prints, then point the widget at it.
+[[routes]]
+pattern = "m2club.co.nz/api/chat"
+zone_name = "m2club.co.nz"
+
+# The API key is NOT stored here. It is set as an encrypted secret:
+#   npx wrangler secret put ANTHROPIC_API_KEY
