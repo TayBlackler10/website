@@ -4372,7 +4372,7 @@ async function _renderMemberSplit(dataset) {
     {m:'Feb 26', trading:112900, net:46, churn:2.10},
     {m:'Mar 26', trading:111000, net:14, churn:2.59},
     {m:'Apr 26', trading:105000, net:50, churn:1.41},
-    {m:'May 26', trading:null,   net:69, churn:2.73},
+    {m:'May 26', trading:null,   net:69, churn:1.77},
   ];
   const grid = document.getElementById('movement-grid');
   if(!grid || history.length < 2) return;
@@ -4399,6 +4399,12 @@ async function _renderMemberSplit(dataset) {
       cls = good ? 'up' : 'down';
       arrow = diff>0 ? '↑' : '↓';
     }
+    // Optional: colour by a target threshold instead of by month-on-month
+    // direction. Used for churn, where being under target is the real signal.
+    if(opts.target !== undefined){
+      const underTarget = lowerBetter ? now <= opts.target : now >= opts.target;
+      cls = underTarget ? 'up' : 'down';
+    }
     const deltaTxt = opts.deltaFmt
       ? opts.deltaFmt(diff, pctChange)
       : `${arrow} ${pctChange>0?'+':''}${pctChange.toFixed(1)}%`;
@@ -4421,13 +4427,13 @@ async function _renderMemberSplit(dataset) {
       deltaFmt:(d)=>`${d>0?'↑ +':d<0?'↓ ':'→ '}${d}`, flatBand:0
     }),
     card('Churn rate', cur.churn, prev.churn, {
-      fmt:v=>v.toFixed(2)+'%', lowerBetter:true,
+      fmt:v=>v.toFixed(2)+'%', lowerBetter:true, target:2.0,
       deltaFmt:(d)=>`${d<0?'↓ ':d>0?'↑ +':'→ '}${d.toFixed(2)}pt`, flatBand:0.01
     }),
   ].join('');
 
   document.getElementById('movement-note').textContent =
-    `Comparing ${cur.m} vs ${prev.m}. Churn shown as percentage-point change. Source: recorded monthly figures.`;
+    `Comparing ${cur.m} vs ${prev.m}. Churn shows the month-on-month change but is coloured green when under the 2% target. Source: recorded monthly figures.`;
 })();
 
 </script>
