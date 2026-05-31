@@ -4184,9 +4184,18 @@ async function buildMemberSplit() {
   try {
     const d = await gmFetch('kpi.member_today');
     if (d && d.primary) {
+      // Try to get FP live from the worker's fp_count endpoint. If the worker
+      // doesn't have it yet (or it errors), fall back to the manual figure.
+      let fp = FP_CURRENT, fpLive = false;
+      try {
+        const fpRes = await gmFetch('fp_count');
+        if (fpRes && typeof fpRes.fp === 'number' && fpRes.fp > 0) {
+          fp = fpRes.fp; fpLive = true;
+        }
+      } catch(e) {}
       const now = new Date();
       const label = now.toLocaleString('en-NZ',{month:'short'}) + ' ' + String(now.getFullYear()).slice(2) + ' (live)';
-      _renderMemberSplit([...MS_HIST, { m: label, total: d.primary, fp: FP_CURRENT, live: true }]);
+      _renderMemberSplit([...MS_HIST, { m: label, total: d.primary, fp, live: true, fpLive }]);
     }
   } catch(e) {}
 }
@@ -4208,7 +4217,7 @@ async function _renderMemberSplit(dataset) {
   document.getElementById('ms-m2-latest').textContent = latest.m2.toLocaleString();
   document.getElementById('ms-m2-sub').textContent = (latest.live ? '⬤ Live (total − FP) · ' : '') + latest.m + ' · ' + (latest.m2 - prev.m2 >= 0 ? '+' : '') + (latest.m2 - prev.m2) + ' vs prev month';
   document.getElementById('ms-fp-latest').textContent = latest.fp.toLocaleString();
-  document.getElementById('ms-fp-sub').textContent = (latest.live ? 'Set figure · ' : '') + latest.m + ' · ' + (latest.fp - prev.fp >= 0 ? '+' : '') + (latest.fp - prev.fp) + ' vs prev month';
+  document.getElementById('ms-fp-sub').textContent = (latest.fpLive ? '⬤ Live · ' : latest.live ? 'Set figure · ' : '') + latest.m + ' · ' + (latest.fp - prev.fp >= 0 ? '+' : '') + (latest.fp - prev.fp) + ' vs prev month';
   document.getElementById('ms-total-latest').textContent = latest.total.toLocaleString();
   document.getElementById('ms-total-sub').textContent = (latest.live ? '⬤ Live · ' : '') + latest.m;
   document.getElementById('ms-fp-pct').textContent = latest.fpPct + '%';
