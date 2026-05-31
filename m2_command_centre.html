@@ -4372,6 +4372,7 @@ async function _renderMemberSplit(dataset) {
     {m:'Feb 26', trading:112900, net:46, churn:2.10},
     {m:'Mar 26', trading:111000, net:14, churn:2.59},
     {m:'Apr 26', trading:105000, net:50, churn:1.41},
+    {m:'May 26', trading:null,   net:69, churn:2.73},
   ];
   const grid = document.getElementById('movement-grid');
   if(!grid || history.length < 2) return;
@@ -4382,6 +4383,13 @@ async function _renderMemberSplit(dataset) {
   function card(label, now, was, opts){
     opts = opts || {};
     const fmt = opts.fmt || (v=>v);
+    if(now === null || now === undefined){
+      return `<div class="move">
+        <div class="move-l">${label}</div>
+        <div class="move-row"><span class="move-now" style="color:var(--m);font-size:20px">Figure pending</span></div>
+        <div class="move-prev">was ${was!=null?fmt(was):'—'} in ${prev.m}</div>
+      </div>`;
+    }
     const lowerBetter = !!opts.lowerBetter;
     const diff = now - was;
     const pctChange = was !== 0 ? (diff/Math.abs(was))*100 : 0;
