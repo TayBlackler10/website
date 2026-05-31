@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gym Reviews Auckland | M2 Training Club Grafton  1,500+ Members</title>
+<title>Gym Reviews Auckland | M2 Training Club Grafton  1,700+ Members</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -854,10 +854,11 @@ body{padding-bottom:90px;}
 </script>
 
     <meta name="description" content="See what members say about M2 Training Club in Grafton, Auckland. Real reviews from real people  HYROX training, group classes, recovery, personal training and more.">
+<link rel="canonical" href="https://m2club.co.nz/reviews.html">
 
     <meta property="og:title" content="Member Reviews | M2 Training Club Auckland">
 
-    <meta property="og:description" content="Real reviews from 1,500+ members of M2 Training Club, Grafton Auckland.">
+    <meta property="og:description" content="Real reviews from 1,700+ members of M2 Training Club, Grafton Auckland.">
 
     <meta property="og:url" content="https://m2club.co.nz/reviews.html">
   <!-- Meta Pixel Code -->
@@ -956,7 +957,7 @@ body{padding-bottom:90px;}
 
 <!-- TICKER -->
 <div class="ticker" aria-hidden="true"><div class="tick-track">
-  <span>Mindset x Movement</span><span class="dot">&middot;</span><span>Grafton Auckland</span><span class="dot">&middot;</span><span>Since 2023</span><span class="dot">&middot;</span><span>Train With Purpose</span><span class="dot">&middot;</span><span>1,500+ Members</span><span class="dot">&middot;</span><span>Progress With Intention</span><span class="dot">&middot;</span><span>Mindset x Movement</span><span class="dot">&middot;</span><span>Grafton Auckland</span><span class="dot">&middot;</span><span>Since 2023</span><span class="dot">&middot;</span><span>Train With Purpose</span><span class="dot">&middot;</span><span>1,500+ Members</span><span class="dot">&middot;</span><span>Progress With Intention</span></div></div>
+  <span>Mindset x Movement</span><span class="dot">&middot;</span><span>Grafton Auckland</span><span class="dot">&middot;</span><span>Since 2023</span><span class="dot">&middot;</span><span>Train With Purpose</span><span class="dot">&middot;</span><span>1,700+ Members</span><span class="dot">&middot;</span><span>Progress With Intention</span><span class="dot">&middot;</span><span>Mindset x Movement</span><span class="dot">&middot;</span><span>Grafton Auckland</span><span class="dot">&middot;</span><span>Since 2023</span><span class="dot">&middot;</span><span>Train With Purpose</span><span class="dot">&middot;</span><span>1,700+ Members</span><span class="dot">&middot;</span><span>Progress With Intention</span></div></div>
 </div>
 <!-- HERO -->
 <section class="hero">
@@ -995,7 +996,7 @@ body{padding-bottom:90px;}
   </div>
   <div class="stat">
     <div class="stat-lbl">Members</div>
-    <div class="stat-val">1,500<span class="lime">+</span></div>
+    <div class="stat-val">1,700<span class="lime">+</span></div>
   </div>
 </div>
 
@@ -1543,6 +1544,8 @@ body{padding-bottom:90px;}
   </div>
 
   <p class="f-addr">8 Nugent St, Grafton, Auckland · m2club.co.nz</p>
+
+  <p class="footer-copyright" style="font-size:.72rem;color:rgba(255,255,255,.3);margin-top:1rem;width:100%;">© 2026 M2 Training Club · 8 Nugent Street, Grafton, Auckland</p>
 </footer>
 
 <script>
@@ -1637,8 +1640,6 @@ cards.forEach(c => io.observe(c));
 </div>
 <script>
 (function(){
-  var a='sk-ant-api03-2GhtLjV',b='j5qpFfn_0recTpNH9OVuv10kSlorRdPE4v5WWO5E',c='ztnnagEJNBQ_ksh85k3ZI9aC8Xe9AOzbbloFi0w-cqw_gQAA';
-  var KEY=a+b+c;
   var SYS='You are the friendly assistant for M2 Training Club, a premium fitness club in Grafton, Auckland, NZ. Website: m2club.co.nz. Email: taylor@m2club.co.nz. Instagram: @m2trainingclub. Hours: Mon-Fri 5am-10pm, Sat-Sun 7am-7pm. Memberships: weekly, 10 Trip Pass, 24 Hour Access Pass, annual memberships  direct to Memberships page for pricing. Services: personal training, group fitness classes, strength & conditioning, recovery facilities. Free consultation available with trainers. Fitness Passport accepted. Become a PT pathway available. Be warm, energetic and concise (2-4 sentences). For specific pricing or bookings direct to the website or taylor@m2club.co.nz. Never make up details you are unsure about.';
   var history=[],isLoading=false,isOpen=false;
   var btn=document.getElementById('m2-chat-btn'),win=document.getElementById('m2-chat-window'),msgs=document.getElementById('m2-chat-messages'),inp=document.getElementById('m2-chat-input'),snd=document.getElementById('m2-chat-send');
@@ -1653,20 +1654,11 @@ cards.forEach(c => io.observe(c));
     var text=inp.value.trim();if(!text||isLoading)return;
     inp.value='';inp.style.height='auto';isLoading=true;snd.disabled=true;
     addMsg(text,'user');history.push({role:'user',content:text});showTyping();
-    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:400,system:SYS,messages:history})})
+    fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:SYS,messages:history})})
     .then(function(r){return r.json();}).then(function(data){hideTyping();var reply=(data.content&&data.content[0])?data.content[0].text:"Sorry, couldn't get a response. Please email taylor@m2club.co.nz";history.push({role:'assistant',content:reply});addMsg(reply,'bot');})
     .catch(function(){hideTyping();addMsg('Something went wrong. Please contact us at taylor@m2club.co.nz','bot');})
     .finally(function(){isLoading=false;snd.disabled=false;inp.focus();});
   }
-// auto-open immediately on load
-  window.addEventListener('load', function(){
-    if(!isOpen){
-      isOpen=true;
-      btn.classList.add('open');
-      win.style.display='flex';
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ win.classList.add('open'); }); });
-    }
-  });
 })();
 </script>
 <!-- End M2 Chatbot -->

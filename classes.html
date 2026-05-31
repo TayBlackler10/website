@@ -730,6 +730,8 @@ body{padding-bottom:90px;}
 <footer role="contentinfo">
   <div class="fl">M2 Training Club</div>
   <p><strong>8 Nugent Street, Grafton, Auckland 1023</strong><br>Mon–Fri 5:00am–10:00pm · Sat–Sun 7:00am–7:00pm<br><a href="tel:095581408">09 558 1408</a> · <a href="mailto:reception@m2club.co.nz">reception@m2club.co.nz</a></p>
+
+  <p class="footer-copyright" style="font-size:.72rem;color:rgba(255,255,255,.3);margin-top:1rem;width:100%;">© 2026 M2 Training Club · 8 Nugent Street, Grafton, Auckland</p>
 </footer>
 <div class="mob-cta">
   <span class="mob-cta-label">New Here?</span>
@@ -754,15 +756,7 @@ body{padding-bottom:90px;}
   if(bg){bg.addEventListener('click',closeDrawer);bg.addEventListener('touchstart',function(e){e.preventDefault();closeDrawer();},{passive:false});}
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
   if(drawer) drawer.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeDrawer);});
-// auto-open immediately on load
-  window.addEventListener('load', function(){
-    if(!isOpen){
-      isOpen=true;
-      btn.classList.add('open');
-      win.style.display='flex';
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ win.classList.add('open'); }); });
-    }
-  });
+
 })();
 </script>
 
@@ -844,8 +838,6 @@ body{padding-bottom:90px;}
 </div>
 <script>
 (function(){
-  var a='sk-ant-api03-2GhtLjV',b='j5qpFfn_0recTpNH9OVuv10kSlorRdPE4v5WWO5E',c='ztnnagEJNBQ_ksh85k3ZI9aC8Xe9AOzbbloFi0w-cqw_gQAA';
-  var KEY=a+b+c;
   var SYS='You are the friendly assistant for M2 Training Club, a premium fitness club in Grafton, Auckland, NZ. Website: m2club.co.nz. Email: taylor@m2club.co.nz. Instagram: @m2trainingclub. Hours: Mon-Fri 5am-10pm, Sat-Sun 7am-7pm. Memberships: weekly, 10 Trip Pass, 24 Hour Access Pass, annual memberships  direct to Memberships page for pricing. Services: personal training, group fitness classes, strength & conditioning, recovery facilities. Free consultation available with trainers. Fitness Passport accepted. Become a PT pathway available. Be warm, energetic and concise (2-4 sentences). For specific pricing or bookings direct to the website or taylor@m2club.co.nz. Never make up details you are unsure about.';
   var history=[],isLoading=false,isOpen=false;
   var btn=document.getElementById('m2-chat-btn'),win=document.getElementById('m2-chat-window'),msgs=document.getElementById('m2-chat-messages'),inp=document.getElementById('m2-chat-input'),snd=document.getElementById('m2-chat-send');
@@ -860,7 +852,7 @@ body{padding-bottom:90px;}
     var text=inp.value.trim();if(!text||isLoading)return;
     inp.value='';inp.style.height='auto';isLoading=true;snd.disabled=true;
     addMsg(text,'user');history.push({role:'user',content:text});showTyping();
-    fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:400,system:SYS,messages:history})})
+    fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:SYS,messages:history})})
     .then(function(r){return r.json();}).then(function(data){hideTyping();var reply=(data.content&&data.content[0])?data.content[0].text:"Sorry, couldn't get a response. Please email taylor@m2club.co.nz";history.push({role:'assistant',content:reply});addMsg(reply,'bot');})
     .catch(function(){hideTyping();addMsg('Something went wrong. Please contact us at taylor@m2club.co.nz','bot');})
     .finally(function(){isLoading=false;snd.disabled=false;inp.focus();});
