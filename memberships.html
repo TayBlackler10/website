@@ -428,13 +428,19 @@ body::before {
   line-height: 1;
   color: var(--white);
   margin-bottom: 0.8rem;
+  white-space: nowrap;
 }
 
 .mem-desc {
   font-size: 0.95rem;
   font-weight: 300;
   color: #bbb;
-  line-height: 1.65;
+  line-height: 1.55;
+  min-height: 2.95em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Price block */
@@ -503,7 +509,6 @@ body::before {
 .mem-feats {
   list-style: none;
   padding: 1.5rem 2.5rem;
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -534,22 +539,24 @@ body::before {
 
 /* Nudge */
 .mem-nudge {
-  margin: 0 2.5rem 1.5rem;
-  padding: 1rem 1.25rem;
-  background: rgba(223,255,0,0.05);
+  margin: auto 2.5rem 1.5rem;
+  padding: 0.85rem 1rem;
+  background: rgba(223,255,0,0.06);
   border-left: 3px solid var(--yellow);
-  font-size: 0.88rem;
-  color: #ccc;
-  line-height: 1.55;
-  min-height: 88px;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.82rem;
+  color: #bdbdbd;
+  line-height: 1.45;
+  height: 72px;
   display: flex;
   align-items: center;
   text-align: left;
 }
-.mem-nudge strong { color: var(--yellow); }
+.mem-nudge span { display: block; }
+.mem-nudge strong { color: var(--yellow); font-weight: 700; }
 
 /* Spacer so cards without a nudge (e.g. Perform) keep CTA aligned */
-.mem-nudge-spacer { margin: 0 2.5rem 1.5rem; min-height: 88px; }
+.mem-nudge-spacer { margin: auto 2.5rem 1.5rem; height: 72px; }
 
 /* CTA */
 .mem-cta {
@@ -1316,7 +1323,7 @@ footer a:hover { color: var(--yellow); }
       <div class="mem-head">
         <div class="mem-tag">Full Access <span class="pop-badge">MOST POPULAR</span></div>
         <div class="mem-name">Perform</div>
-        <div class="mem-desc">The full M2 experience. Gym, classes, pool, sauna, ice bath. Everything.</div>
+        <div class="mem-desc">The full M2 experience. Everything, all access.</div>
       </div>
       <div class="mem-price">
         <div class="price-main">
@@ -1370,7 +1377,7 @@ footer a:hover { color: var(--yellow); }
         <li class="no"><span class="fi no-i"><svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg></span>Free towel hire</li>
       </ul>
       <div class="mem-nudge">
-        <strong>Only $7.50 more/week</strong> to add unlimited classes with M2 Class.
+<span><strong>+ $7.50/week</strong> adds unlimited classes (M2 Class)</span>
       </div>
       <div class="mem-cta">
         <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/4c7b0cdd282ccf6e5b6cd6104417aa13" class="btn-solid">Sign Up Now</a>
@@ -1385,7 +1392,7 @@ footer a:hover { color: var(--yellow); }
       <div class="mem-head">
         <div class="mem-tag">Gym + Classes</div>
         <div class="mem-name">M2 Class</div>
-        <div class="mem-desc">Everything in Daily, plus unlimited access to all group fitness classes.</div>
+        <div class="mem-desc">Everything in Daily, plus unlimited group classes.</div>
       </div>
       <div class="mem-price">
         <div class="price-main">
@@ -1405,7 +1412,7 @@ footer a:hover { color: var(--yellow); }
         <li class="no"><span class="fi no-i"><svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg></span>Free towel hire</li>
       </ul>
       <div class="mem-nudge">
-        <strong>Only $14.50 more/week</strong> unlocks the full recovery suite, pool, and towel hire with Perform.
+<span><strong>+ $14.50/week</strong> unlocks pool, sauna &amp; recovery (Perform)</span>
       </div>
       <div class="mem-cta">
         <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/f6f757e0a30b8878edc58262d9fad95b" class="btn-solid">Sign Up Now</a>
@@ -1440,7 +1447,7 @@ footer a:hover { color: var(--yellow); }
         <li class="no"><span class="fi no-i"><svg viewBox="0 0 10 10"><line x1="2" y1="2" x2="8" y2="8"/><line x1="8" y1="2" x2="2" y2="8"/></svg></span>Free towel hire</li>
       </ul>
       <div class="mem-nudge">
-        <strong>Only $14.50 more/week</strong> adds the gym floor and all classes with Perform.
+<span><strong>+ $14.50/week</strong> adds gym floor &amp; all classes (Perform)</span>
       </div>
       <div class="mem-cta">
         <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/4a7958cdb4e7d5990827fcb4547ff1f2" class="btn-solid">Sign Up Now</a>
