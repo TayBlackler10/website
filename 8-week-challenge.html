@@ -692,7 +692,7 @@
   <section class="hero">
     <p class="hero-eyebrow fade-up">M2 Training Club · Auckland</p>
     <h1 class="fade-up">8 Week<br /><span>Challenge</span></h1>
-    <p class="hero-date fade-up">Kicks Off June 22nd, 2025</p>
+    <p class="hero-date fade-up">Kicks Off June 22nd, 2026</p>
 
     <div class="earlybird fade-up">
       <span class="earlybird-label">⚡ Early Bird  Members Only</span>
@@ -700,17 +700,7 @@
         <span class="price-now">$49</span>
         <span class="price-was">$99</span>
       </div>
-      <span class="earlybird-note">Early bird closes in 14 days · Price doubles after</span>
-    </div>
-
-    <div class="countdown-wrap fade-up">
-      <p class="countdown-label">Early bird ends in</p>
-      <div class="countdown">
-        <div class="cd-block"><span class="cd-num" id="cd-d">14</span><span class="cd-unit">Days</span></div>
-        <div class="cd-block"><span class="cd-num" id="cd-h">00</span><span class="cd-unit">Hrs</span></div>
-        <div class="cd-block"><span class="cd-num" id="cd-m">00</span><span class="cd-unit">Min</span></div>
-        <div class="cd-block"><span class="cd-num" id="cd-s">00</span><span class="cd-unit">Sec</span></div>
-      </div>
+      <span class="earlybird-note">Members $49 · Price doubles to $99 after early bird</span>
     </div>
 
     <div class="hero-actions fade-up">
@@ -869,7 +859,7 @@
     <div class="container">
       <p class="section-label">Early Bird  14 Days Only</p>
       <h2 class="section-title">Ready to<br/>go?</h2>
-      <p class="section-body">The challenge kicks off June 22nd. Early bird pricing is on for the next two weeks  after that, the price doubles. Lock it in now.</p>
+      <p class="section-body">The challenge kicks off June 22nd. Early bird pricing is on now  after that, the price doubles. Lock it in now.</p>
 
       <div class="bottom-price">
         <span class="bottom-price-now">$49</span>
@@ -887,37 +877,6 @@
   </footer>
 
   <!-- COUNTDOWN SCRIPT -->
-  <script>
-    (function() {
-      // Early bird ends June 3 2026 (7 days from May 27 2026)
-      var now = new Date();
-      var end = new Date(2026, 5, 3, 23, 59, 59);
-
-      function pad(n) { return String(n).padStart(2, '0'); }
-
-      function tick() {
-        var diff = end - new Date();
-        if (diff <= 0) {
-          document.getElementById('cd-d').textContent = '00';
-          document.getElementById('cd-h').textContent = '00';
-          document.getElementById('cd-m').textContent = '00';
-          document.getElementById('cd-s').textContent = '00';
-          return;
-        }
-        var days  = Math.floor(diff / 86400000);
-        var hours = Math.floor((diff % 86400000) / 3600000);
-        var mins  = Math.floor((diff % 3600000)  / 60000);
-        var secs  = Math.floor((diff % 60000)    / 1000);
-        document.getElementById('cd-d').textContent = pad(days);
-        document.getElementById('cd-h').textContent = pad(hours);
-        document.getElementById('cd-m').textContent = pad(mins);
-        document.getElementById('cd-s').textContent = pad(secs);
-      }
-
-      tick();
-      setInterval(tick, 1000);
-    })();
-  </script>
 
 <script>
 // Animated number counters
