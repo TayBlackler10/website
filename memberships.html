@@ -393,6 +393,10 @@ body::before {
 .mem-head {
   padding: 2.5rem 2.5rem 2rem;
   border-bottom: 1px solid var(--line);
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .mem-tag {
@@ -440,6 +444,8 @@ body::before {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  min-height: 200px;
+  justify-content: flex-end;
 }
 
 .price-main {
@@ -535,8 +541,15 @@ body::before {
   font-size: 0.88rem;
   color: #ccc;
   line-height: 1.55;
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  text-align: left;
 }
 .mem-nudge strong { color: var(--yellow); }
+
+/* Spacer so cards without a nudge (e.g. Perform) keep CTA aligned */
+.mem-nudge-spacer { margin: 0 2.5rem 1.5rem; min-height: 88px; }
 
 /* CTA */
 .mem-cta {
@@ -1393,6 +1406,7 @@ footer a:hover { color: var(--yellow); }
         <li><span class="fi yes"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2"/></svg></span>Sauna</li>
         <li><span class="fi yes"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2"/></svg></span>Free towel hire</li>
       </ul>
+      <div class="mem-nudge-spacer"></div>
       <div class="mem-cta">
         <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/859a3d87d55035773e98297ac5c46085" class="btn-solid">Sign Up Now</a>
         <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/a09d7a2301cd116ef7fe1bd818825c21" class="btn-ghost">Not ready? Start flexi →</a>
