@@ -833,22 +833,6 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
   </div>
 </section>
 
-<script>
-(function(){
-  var now = new Date();
-  var end = new Date(now.getFullYear(), now.getMonth(), now.getDate()+14, 23, 59, 59);
-  function pad(n){return String(n).padStart(2,'0');}
-  function tick(){
-    var diff = end - new Date();
-    if(diff<=0){['d','h','m','s'].forEach(function(x){var el=document.getElementById('idx-cd-'+x);if(el)el.textContent='00';});return;}
-    var d=document.getElementById('idx-cd-d'); if(d)d.textContent=pad(Math.floor(diff/86400000));
-    var h=document.getElementById('idx-cd-h'); if(h)h.textContent=pad(Math.floor((diff%86400000)/3600000));
-    var m=document.getElementById('idx-cd-m'); if(m)m.textContent=pad(Math.floor((diff%3600000)/60000));
-    var s=document.getElementById('idx-cd-s'); if(s)s.textContent=pad(Math.floor((diff%60000)/1000));
-  }
-  tick(); setInterval(tick,1000);
-})();
-</script>
 
 
 
@@ -1090,7 +1074,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
       <span class="y" style="display:block;">Challenge</span>
     </h2>
 
-    <p style="font-family:'Bebas Neue',sans-serif;font-size:clamp(1rem,3vw,1.3rem);letter-spacing:.15em;color:#a0a0a0;margin:0 0 2rem;text-transform:uppercase;">Kicks Off June 22nd, 2025</p>
+    <p style="font-family:'Bebas Neue',sans-serif;font-size:clamp(1rem,3vw,1.3rem);letter-spacing:.15em;color:#a0a0a0;margin:0 0 2rem;text-transform:uppercase;">Kicks Off June 22nd, 2026</p>
 
     <!-- Early bird box -->
     <div style="display:inline-flex;flex-direction:column;align-items:center;background:rgba(200,240,38,0.07);border:1px solid rgba(200,240,38,0.28);border-radius:8px;padding:1.2rem 2rem;margin-bottom:1.8rem;">
@@ -1099,30 +1083,7 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
         <span style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:#c8f026;line-height:1;">$49</span>
         <span style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#a0a0a0;text-decoration:line-through;line-height:1;">$99</span>
       </div>
-      <span style="font-size:.7rem;color:#a0a0a0;margin-top:.5rem;">Early bird closes in 14 days · Price doubles after</span>
-    </div>
-
-    <!-- Countdown -->
-    <div style="margin-bottom:2rem;">
-      <p style="font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#a0a0a0;margin-bottom:.7rem;">Early bird ends in</p>
-      <div style="display:flex;gap:.6rem;justify-content:center;">
-        <div style="display:flex;flex-direction:column;align-items:center;background:#1a1a1a;border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:.6rem .9rem;min-width:52px;">
-          <span id="idx-cd-d" style="font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:#c8f026;line-height:1;">14</span>
-          <span style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#a0a0a0;margin-top:2px;">Days</span>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;background:#1a1a1a;border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:.6rem .9rem;min-width:52px;">
-          <span id="idx-cd-h" style="font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:#c8f026;line-height:1;">00</span>
-          <span style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#a0a0a0;margin-top:2px;">Hrs</span>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;background:#1a1a1a;border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:.6rem .9rem;min-width:52px;">
-          <span id="idx-cd-m" style="font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:#c8f026;line-height:1;">00</span>
-          <span style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#a0a0a0;margin-top:2px;">Min</span>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;background:#1a1a1a;border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:.6rem .9rem;min-width:52px;">
-          <span id="idx-cd-s" style="font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:#c8f026;line-height:1;">00</span>
-          <span style="font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#a0a0a0;margin-top:2px;">Sec</span>
-        </div>
-      </div>
+      <span style="font-size:.7rem;color:#a0a0a0;margin-top:.5rem;">Members $49 · Price doubles to $99 after early bird</span>
     </div>
 
     <!-- CTA -->

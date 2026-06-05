@@ -199,10 +199,12 @@ body{padding-bottom:90px;}
 .faq-a.open{max-height:300px;}
 .faq-a p{font-size:.88rem;font-weight:300;color:rgba(255,255,255,.5);line-height:1.8;padding-bottom:1.4rem;}
 
-.cta-band{background:var(--black);padding:5rem 3.5rem;text-align:center;}
+.cta-band{background:var(--yellow);padding:5rem 3.5rem;text-align:center;position:relative;overflow:hidden;}
 @media(max-width:700px){.cta-band{padding:3.5rem 1.2rem;}}
-.cta-band h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,5rem);color:#fff;letter-spacing:.04em;line-height:1;margin-bottom:.8rem;}
-.cta-band p{font-size:1rem;color:rgba(255,255,255,.62);margin-bottom:2rem;}
+.cta-band::before{content:'M2';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bebas Neue',sans-serif;font-size:20rem;color:rgba(0,0,0,0.04);line-height:1;pointer-events:none;white-space:nowrap;}
+.cta-band h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,5rem);color:#000;letter-spacing:.04em;line-height:1;margin-bottom:.8rem;position:relative;}
+.cta-band p{font-size:1rem;color:rgba(0,0,0,.72);margin-bottom:2rem;position:relative;}
+.cta-band .btn-dark{position:relative;}
 
 .hero-text-bar {
   background:var(--black);
