@@ -193,70 +193,101 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* ── HERO ── */
-.hero{position:relative;overflow:hidden;background:linear-gradient(160deg,#0e0e0e 40%,#1a1f0a 100%);min-height:100svh;display:flex;flex-direction:column;justify-content:center;}
+.hero{position:relative;overflow:hidden;background:#080808;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;}
 
-/* animated grid bg */
+/* photo background */
 .hero-grid-bg{
   position:absolute;inset:0;
   pointer-events:none;
-  background:radial-gradient(ellipse at 80% 20%,rgba(200,240,38,0.06) 0%,transparent 60%);
+  background-image:url('https://raw.githubusercontent.com/TayBlackler10/website/main/hero-bg.jpg');
+  background-size:cover;
+  background-position:center 30%;
+  transform:scale(1.04);
+  animation:heroZoom 18s ease-out forwards;
 }
-/* dark overlay so text stays readable */
+@keyframes heroZoom{to{transform:scale(1);}}
+/* layered gradient overlay: darker left for text, fade to black bottom */
 .hero-grid-bg::before{
   content:'';position:absolute;inset:0;
-  background:rgba(8,8,8,0.72);
+  background:
+    linear-gradient(90deg, rgba(8,8,8,0.94) 0%, rgba(8,8,8,0.80) 38%, rgba(8,8,8,0.45) 70%, rgba(8,8,8,0.30) 100%),
+    radial-gradient(ellipse at 75% 25%, rgba(223,255,0,0.10) 0%, transparent 55%);
 }
-/* fade to black at bottom */
+/* fade to black at bottom for seamless join to next section */
 .hero-grid-bg::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:55%;
+  content:'';position:absolute;bottom:0;left:0;right:0;height:45%;
   background:linear-gradient(transparent,var(--black));
-}
-
-/* large bg number */
-.hero-bg-num{
-  position:absolute;right:-1rem;bottom:-2rem;
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(16rem,38vw,34rem);
-  color:rgba(223,255,0,.035);
-  line-height:1;letter-spacing:-.02em;
-  pointer-events:none;user-select:none;z-index:0;
 }
 
 .hero-inner{
   position:relative;z-index:1;
-  max-width:900px;margin:0 auto;
-  padding:6rem 2rem 4rem;
-  display:flex;flex-direction:column;
-  align-items:center;text-align:center;
+  width:100%;max-width:1240px;margin:0 auto;
+  padding:0 3.5rem 7vh;
+  display:flex;flex-direction:column;align-items:flex-start;text-align:left;
 }
-@media(max-width:960px){.hero-inner{padding:4rem 1.2rem 3rem;}}
+@media(max-width:960px){.hero-inner{padding:0 1.4rem 6vh;}}
 
-/* left */
-.hero-eyebrow{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:1.5rem;opacity:0;animation:up .7s ease forwards .1s;}
-.ey-line{width:28px;height:1px;background:var(--yellow);flex-shrink:0;}
-.ey-txt{font-size:.66rem;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--yellow);opacity:.7;}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:.7rem;margin-bottom:1.4rem;
+  font-size:.72rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--yellow);
+  opacity:0;animation:up .7s ease forwards .15s;
+}
+.hero-eyebrow-dot{width:8px;height:8px;background:var(--yellow);border-radius:50%;flex-shrink:0;box-shadow:0 0 12px rgba(223,255,0,.6);}
 
-.hero h1{
+.hero-h1{
   font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(4.8rem,14vw,11rem);
-  line-height:.9;letter-spacing:.01em;text-transform:uppercase;
-  opacity:0;animation:up .8s ease forwards .2s;
-  margin-bottom:2rem;
-  text-align:center;
+  font-size:clamp(4.5rem,13vw,10.5rem);
+  line-height:.86;letter-spacing:.005em;text-transform:uppercase;
+  margin:0 0 1.6rem;
 }
-.hero h1 .y{color:var(--yellow);}
+.hero-h1-top{display:block;color:#fff;opacity:0;animation:up .8s ease forwards .25s;}
+.hero-h1-bot{display:block;color:var(--yellow);opacity:0;animation:up .8s ease forwards .38s;text-shadow:0 0 60px rgba(223,255,0,.25);}
 
-.hero-desc{
-  font-size:clamp(.98rem,1.8vw,1.12rem);font-weight:300;
-  color:var(--mid);max-width:500px;line-height:1.9;
-  margin-bottom:2rem;opacity:0;animation:up .8s ease forwards .32s;
-;text-align:center;max-width:560px;margin-left:auto;margin-right:auto;}
+.hero-sub{
+  font-size:clamp(1rem,1.7vw,1.18rem);font-weight:300;line-height:1.65;
+  color:rgba(255,255,255,.82);max-width:560px;margin:0 0 2.4rem;
+  opacity:0;animation:up .8s ease forwards .5s;
+}
+.hero-sub strong{color:#fff;font-weight:600;}
 
 .hero-actions{
-  display:flex;gap:1rem;flex-wrap:wrap;
-  opacity:0;animation:up .8s ease forwards .42s;
-  margin-bottom:0;
-;justify-content:center;}
+  display:flex;gap:1rem;flex-wrap:wrap;align-items:center;
+  margin-bottom:3rem;
+  opacity:0;animation:up .8s ease forwards .62s;
+}
+.hero-btn-primary{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:1.15rem 2.4rem;background:var(--yellow);color:#000;
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:.92rem;letter-spacing:.06em;
+  text-decoration:none;border-radius:2px;
+  transition:transform .2s ease,box-shadow .2s ease,background .18s;
+  box-shadow:0 8px 30px rgba(223,255,0,.18);
+}
+.hero-btn-primary:hover{background:#fff;transform:translateY(-2px);box-shadow:0 12px 36px rgba(223,255,0,.3);}
+.hero-btn-secondary{
+  display:inline-flex;align-items:center;
+  color:rgba(255,255,255,.85);font-family:'DM Sans',sans-serif;font-weight:600;
+  font-size:.86rem;letter-spacing:.04em;text-decoration:none;
+  padding:1.15rem .4rem;border-bottom:1px solid rgba(255,255,255,.25);
+  transition:color .18s,border-color .18s;
+}
+.hero-btn-secondary:hover{color:var(--yellow);border-color:var(--yellow);}
+
+/* trust bar */
+.hero-trust{
+  display:flex;align-items:center;gap:1.8rem;flex-wrap:wrap;
+  opacity:0;animation:up .8s ease forwards .74s;
+}
+.hero-trust-item{display:flex;flex-direction:column;gap:.15rem;}
+.hero-trust-num{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.02em;color:#fff;line-height:1;}
+.hero-trust-star{color:var(--yellow);font-size:1.1rem;}
+.hero-trust-lbl{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.hero-trust-divider{width:1px;height:34px;background:rgba(255,255,255,.18);}
+@media(max-width:560px){
+  .hero-trust{gap:1.1rem;}
+  .hero-trust-divider{display:none;}
+  .hero-trust-num{font-size:1.25rem;}
+}
 
 .btn-y{display:inline-flex;align-items:center;padding:1.05rem 2.2rem;background:var(--yellow);color:#000;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.86rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:background .18s;}
 .btn-y:hover{background:var(--y2);}
@@ -811,23 +842,28 @@ a, button, .btn, .nav-cta, .btn-outline, .btn-dark { min-height: 44px; }
 <section class="hero" aria-label="M2 Training Club  10 Days for $10 Trial">
   <div class="hero-grid-bg" aria-hidden="true"></div>
 
-  <div class="hero-inner" style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:6rem 2rem 4rem;max-width:900px;margin:0 auto;position:relative;z-index:1;">
+  <div class="hero-inner">
 
-    <p class="hero-eyebrow" style="justify-content:center;font-size:.7rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#c8f026;margin-bottom:1.2rem;">M2 Training Club · Grafton, Auckland</p>
+    <p class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>M2 Training Club · Grafton, Auckland</p>
 
-    <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(4.8rem,14vw,11rem);line-height:.9;letter-spacing:.01em;text-transform:uppercase;margin-bottom:1rem;text-align:center;">
-      <span style="color:#ffffff;display:block;">10 Days</span>
-      <span class="y" style="display:block;">For $10</span>
+    <h1 class="hero-h1">
+      <span class="hero-h1-top">10 Days</span>
+      <span class="y hero-h1-bot">For $10</span>
     </h1>
 
-    <p style="font-family:'Bebas Neue',sans-serif;font-size:clamp(1rem,3vw,1.3rem);letter-spacing:.15em;color:#a0a0a0;margin-bottom:2rem;text-transform:uppercase;">Full Access · No Lock-In</p>
+    <p class="hero-sub">Ten full days of everything M2 has to offer. Gym floor, classes, HYROX training, 20m pool, sauna and ice bath. <strong>Full access, no lock-in.</strong></p>
 
-    <p style="font-size:1rem;line-height:1.6;color:rgba(255,255,255,.7);max-width:540px;margin-bottom:2.2rem;">Ten full days of everything M2 has to offer. Gym floor, classes, HYROX training, 20m pool, sauna and ice bath. All for ten bucks.</p>
+    <div class="hero-actions">
+      <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/a343010c309369f3a536cce61c30fca5" class="hero-btn-primary">Get 10 Days for $10 →</a>
+      <a href="https://m2club.co.nz/10-day-trial.html" class="hero-btn-secondary">See what's included</a>
+    </div>
 
-    <!-- CTA -->
-    <div class="hero-actions" style="justify-content:center;flex-direction:column;align-items:center;gap:.8rem;">
-      <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/a343010c309369f3a536cce61c30fca5" class="btn-trial-hero" style="font-size:.95rem;letter-spacing:.1em;">Get 10 Days for $10 →</a>
-      <a href="https://m2club.co.nz/10-day-trial.html" style="color:#a0a0a0;font-size:.82rem;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.18);padding-bottom:2px;">See what's included ↓</a>
+    <div class="hero-trust">
+      <div class="hero-trust-item"><span class="hero-trust-num">1,700+</span><span class="hero-trust-lbl">Active Members</span></div>
+      <div class="hero-trust-divider"></div>
+      <div class="hero-trust-item"><span class="hero-trust-num">4.4 <span class="hero-trust-star">★</span></span><span class="hero-trust-lbl">114 Google Reviews</span></div>
+      <div class="hero-trust-divider"></div>
+      <div class="hero-trust-item"><span class="hero-trust-num">Auckland's #1</span><span class="hero-trust-lbl">HYROX Training Club</span></div>
     </div>
 
   </div>
