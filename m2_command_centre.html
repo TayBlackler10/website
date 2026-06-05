@@ -4449,9 +4449,10 @@ async function _renderMemberSplit(dataset) {
     card('Trading income', cur.trading, prev.trading, {
       fmt:v=>'$'+(v/1000).toFixed(0)+'K', flatBand:500
     }),
-    card('Net members', cur.net, prev.net, {
+  card('Net members', cur.net, prev.net, {
       fmt:v=>(v>0?'+':'')+v,
-      deltaFmt:(d)=>`${d>0?'↑ +':d<0?'↓ ':'→ '}${d}`, flatBand:0
+      deltaFmt:(d)=>`${cur.m.split(' ')[0]}: ${cur.net>0?'+':''}${cur.net} / ${prev.m.split(' ')[0]}: ${prev.net>0?'+':''}${prev.net}`, flatBand:0
+    }),
     }),
     card('Churn rate', cur.churn, prev.churn, {
       fmt:v=>v.toFixed(2)+'%', lowerBetter:true, target:2.0,
