@@ -4453,7 +4453,6 @@ async function _renderMemberSplit(dataset) {
       fmt:v=>(v>0?'+':'')+v,
       deltaFmt:(d)=>`${cur.m.split(' ')[0]}: ${cur.net>0?'+':''}${cur.net} / ${prev.m.split(' ')[0]}: ${prev.net>0?'+':''}${prev.net}`, flatBand:0
     }),
-    }),
     card('Churn rate', cur.churn, prev.churn, {
       fmt:v=>v.toFixed(2)+'%', lowerBetter:true, target:2.0,
       deltaFmt:(d)=>`${d<0?'↓ ':d>0?'↑ +':'→ '}${d.toFixed(2)}pt`, flatBand:0.01
