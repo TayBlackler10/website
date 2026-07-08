@@ -236,6 +236,37 @@ footer{text-align:center;padding:60px 40px 36px;color:var(--m);font-size:13px;bo
 .nav-btn,.nav-dd-item,.tnb,.btn,.btn-ghost{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button,a{-webkit-tap-highlight-color:transparent}
 
+/* ── HERO SNAPSHOT ── */
+.hero-snap{background:linear-gradient(135deg,rgba(74,222,128,.07),rgba(200,255,0,.03) 60%);border:1px solid rgba(74,222,128,.28);border-radius:20px;padding:28px 28px 26px;margin-bottom:22px}
+.hero-snap-badge{display:inline-block;background:rgba(200,255,0,.12);color:var(--y);font-size:11.5px;font-weight:700;letter-spacing:.6px;padding:6px 14px;border-radius:20px;margin-bottom:14px}
+.hero-snap-headline{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--t);line-height:1;letter-spacing:.5px}
+.hero-snap-headline .hs-sub{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--m);font-weight:400;margin-left:10px;letter-spacing:0}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:22px 0 20px}
+.hstat{background:rgba(0,0,0,.22);border:1px solid var(--br2);border-radius:14px;padding:16px 18px}
+.hstat-l{font-size:10.5px;color:var(--m);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:7px}
+.hstat-v{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--t);line-height:1}
+.hstat-v.up{color:var(--g)}.hstat-v.down{color:var(--r)}
+.hstat-d{font-size:12px;color:var(--m);margin-top:7px;line-height:1.4}
+.hstat-d.up{color:var(--g)}.hstat-d.down{color:var(--r)}.hstat-d.flat{color:var(--t2)}
+.hero-flags{display:flex;flex-wrap:wrap;gap:9px}
+.flag{font-size:12.5px;padding:8px 14px;border-radius:10px;font-weight:600;line-height:1.3}
+.flag.win{background:rgba(74,222,128,.1);color:var(--g);border:1px solid rgba(74,222,128,.25)}
+.flag.watch{background:rgba(248,113,113,.09);color:var(--r);border:1px solid rgba(248,113,113,.22)}
+.hero-foot{font-size:11px;color:var(--m);margin-top:16px}
+
+/* ── KPI DELTA + STREAK BADGE ── */
+.kd{font-size:11.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--br2);color:var(--m)}
+.kd.up{color:var(--g)}.kd.down{color:var(--r)}.kd.flat{color:var(--t2)}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:var(--g);font-size:12px;font-weight:700;padding:7px 14px;border-radius:20px;margin-bottom:16px}
+
+/* ── SPARKLINES ── */
+.spark{display:block;margin-top:8px}
+
+/* ── MINI BAR (table trend column) ── */
+.mbar-wrap{display:flex;align-items:center;gap:8px}
+.mbar-track{flex:1;min-width:50px;height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
+.mbar-fill{height:100%;border-radius:3px}
+
 /* ── MOBILE ── */
 @media(max-width:768px){
   .topbar{padding:0 16px;height:54px}
@@ -314,6 +345,14 @@ button,a{-webkit-tap-highlight-color:transparent}
   #todo-live-strip > div > div:first-child{font-size:26px}
 
   footer{padding:32px 16px 24px;margin-top:32px}
+
+  .hero-snap{padding:18px 16px 20px;border-radius:14px}
+  .hero-snap-headline{font-size:32px}
+  .hero-stats{grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 14px}
+  .hstat{padding:12px 14px}
+  .hstat-v{font-size:26px}
+  .flag{font-size:11.5px;padding:7px 12px}
+  .streak-badge{font-size:11px;padding:6px 12px}
 }
 </style>
 </head>
@@ -503,6 +542,44 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Business Overview</div>
   <div class="section-sub">M2 Training Club · Grafton, Auckland · <span id="overview-updated" style="color:var(--g)">Loading live data...</span></div>
 
+  <!-- HERO SNAPSHOT · at-a-glance business position -->
+  <div class="hero-snap">
+    <div class="hero-snap-badge">🔥 Best-ever net member month, 3 profitable months running</div>
+    <div class="hero-snap-headline">1,824 members<span class="hs-sub">as of 1 July 2026</span></div>
+
+    <div class="hero-stats">
+      <div class="hstat">
+        <div class="hstat-l">Net Members (Jun)</div>
+        <div class="hstat-v up">+71</div>
+        <div class="hstat-d up">▲ best ever · was +69 in May</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-l">Revenue (Jun)</div>
+        <div class="hstat-v">$108.5K</div>
+        <div class="hstat-d flat">≈ flat · was $108.9K in May</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-l">Net Profit (Jun)</div>
+        <div class="hstat-v up">$9,492</div>
+        <div class="hstat-d flat">3rd straight profitable month</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-l">2026 Run Rate</div>
+        <div class="hstat-v up">$1.28M</div>
+        <div class="hstat-d up">▲ +7.1% vs 2025's $1.19M</div>
+      </div>
+    </div>
+
+    <div class="hero-flags">
+      <div class="flag win">✓ Best-ever net member month  +71 (139 joins, 27 cancels)</div>
+      <div class="flag win">✓ Apr, May, Jun all profitable  the first 3-month run in the last 12 months</div>
+      <div class="flag win">✓ Rent down to 42.5% of revenue, from 53.8% in April</div>
+      <div class="flag watch">⚠ Rent is still cost #1  need ~$180K/mo revenue or renegotiated rent to hit target margins</div>
+      <div class="flag watch">⚠ Fitness Passport is 54% of members  above the &lt;45% dependency target</div>
+    </div>
+    <div class="hero-foot">Full detail in Member Base, Profit & Loss and Financials below. Live KPIs update from GymMaster every time you open this page.</div>
+  </div>
+
   <!-- WHAT CHANGED · month-over-month movement -->
   <div class="card" style="margin-bottom:18px;border-left:3px solid var(--y)">
     <div class="ct">What changed <span style="color:var(--m);font-weight:400;font-size:11px">· month on month, most recent completed months</span></div>
@@ -647,8 +724,6 @@ button,a{-webkit-tap-highlight-color:transparent}
     }
     .trial-ring { animation: ringPulse 1s ease-out 3; }
   </style>
-
-  <div class="good-box"><div class="gt">June 2026  net +71 members, 1.77% churn, $108.5K trading, $9.5K net profit</div><div class="gb">2026 run rate of $1.28M is up 7.1% on 2025's $1.19M full year. June was your best-ever net member month  +71 net (139 gross joins vs 27 cancels, 1.77% churn), edging out May's +69 and taking the member base to 1,824 as of 1 July. Net profit was $9,492 (8.7% margin), a step down from May's record $11,627 but still a solid month. The KPIs above update live from GymMaster every time you open this page.</div></div>
 
   <div class="alert"><div class="at">Membership income is down 9.6% YoY despite more members</div><div class="ab">More members but lower average revenue per member  driven by the shift toward Fitness Passport ($24/mo avg) replacing owned memberships ($108–195/mo). Your 235 Premium members generate more revenue than your 936 Passport members combined. Every new Perform/Gateway member is worth 8× a Passport member.</div></div>
 
@@ -1482,21 +1557,21 @@ button,a{-webkit-tap-highlight-color:transparent}
       <thead><tr><th>Month</th><th>Base</th><th>Gross +</th><th>Cancels</th><th>Net</th><th>Churn</th><th>vs +45 Target</th></tr></thead>
       <tbody>
         <tr class="tbl-divider"><td colspan="7">2025</td></tr>
-        <tr><td>Jan</td><td>~1,185</td><td style="color:var(--g)">148</td><td>29</td><td style="color:var(--g)">+50</td><td></td><td style="color:var(--g)">+5 ✓</td></tr>
-        <tr><td>Feb</td><td>1,235</td><td>110</td><td style="color:var(--r)">50</td><td style="color:#facc15">+30</td><td style="color:var(--r)">4.05%</td><td style="color:var(--r)">-15 ✗</td></tr>
-        <tr><td>Mar</td><td>1,246</td><td>102</td><td>36</td><td style="color:var(--r)">+11</td><td>2.89%</td><td style="color:var(--r)">-34 ✗</td></tr>
-        <tr><td>Apr</td><td>1,257</td><td style="color:var(--g)">133</td><td>38</td><td style="color:var(--g)">+60</td><td>3.02%</td><td style="color:var(--g)">+15 ✓</td></tr>
-        <tr><td>May</td><td>1,317</td><td>96</td><td>36</td><td style="color:var(--g)">+36</td><td>2.73%</td><td style="color:var(--r)">-9 ✗</td></tr>
-        <tr><td>Jun</td><td>1,353</td><td style="color:var(--g)">117</td><td style="color:var(--g)">22</td><td style="color:var(--g)">+46</td><td style="color:var(--g)">1.63%</td><td style="color:var(--g)">+1 ✓</td></tr>
-        <tr><td>Sep</td><td>1,484</td><td style="color:var(--r)">37</td><td>30</td><td style="color:var(--r)">+14</td><td>2.02%</td><td style="color:var(--r)">-31 ✗ danger</td></tr>
-        <tr><td>Nov</td><td>1,540</td><td>71</td><td style="color:var(--g)">22</td><td>+35</td><td style="color:var(--g)">1.43%</td><td style="color:var(--r)">-10 ✗</td></tr>
+        <tr><td>Jan</td><td>~1,185</td><td style="color:var(--g)">148</td><td>29</td><td><div class="mbar-wrap"><span style="color:var(--g)">+50</span><div class="mbar-track"><div class="mbar-fill" style="width:70.4%;background:var(--g)"></div></div></div></td><td></td><td style="color:var(--g)">+5 ✓</td></tr>
+        <tr><td>Feb</td><td>1,235</td><td>110</td><td style="color:var(--r)">50</td><td><div class="mbar-wrap"><span style="color:#facc15">+30</span><div class="mbar-track"><div class="mbar-fill" style="width:42.3%;background:#facc15"></div></div></div></td><td style="color:var(--r)">4.05%</td><td style="color:var(--r)">-15 ✗</td></tr>
+        <tr><td>Mar</td><td>1,246</td><td>102</td><td>36</td><td><div class="mbar-wrap"><span style="color:var(--r)">+11</span><div class="mbar-track"><div class="mbar-fill" style="width:15.5%;background:var(--r)"></div></div></div></td><td>2.89%</td><td style="color:var(--r)">-34 ✗</td></tr>
+        <tr><td>Apr</td><td>1,257</td><td style="color:var(--g)">133</td><td>38</td><td><div class="mbar-wrap"><span style="color:var(--g)">+60</span><div class="mbar-track"><div class="mbar-fill" style="width:84.5%;background:var(--g)"></div></div></div></td><td>3.02%</td><td style="color:var(--g)">+15 ✓</td></tr>
+        <tr><td>May</td><td>1,317</td><td>96</td><td>36</td><td><div class="mbar-wrap"><span style="color:var(--g)">+36</span><div class="mbar-track"><div class="mbar-fill" style="width:50.7%;background:var(--g)"></div></div></div></td><td>2.73%</td><td style="color:var(--r)">-9 ✗</td></tr>
+        <tr><td>Jun</td><td>1,353</td><td style="color:var(--g)">117</td><td style="color:var(--g)">22</td><td><div class="mbar-wrap"><span style="color:var(--g)">+46</span><div class="mbar-track"><div class="mbar-fill" style="width:64.8%;background:var(--g)"></div></div></div></td><td style="color:var(--g)">1.63%</td><td style="color:var(--g)">+1 ✓</td></tr>
+        <tr><td>Sep</td><td>1,484</td><td style="color:var(--r)">37</td><td>30</td><td><div class="mbar-wrap"><span style="color:var(--r)">+14</span><div class="mbar-track"><div class="mbar-fill" style="width:19.7%;background:var(--r)"></div></div></div></td><td>2.02%</td><td style="color:var(--r)">-31 ✗ danger</td></tr>
+        <tr><td>Nov</td><td>1,540</td><td>71</td><td style="color:var(--g)">22</td><td><div class="mbar-wrap"><span>+35</span><div class="mbar-track"><div class="mbar-fill" style="width:49.3%;background:var(--m)"></div></div></div></td><td style="color:var(--g)">1.43%</td><td style="color:var(--r)">-10 ✗</td></tr>
         <tr class="tbl-divider"><td colspan="7">2026</td></tr>
-        <tr><td>Jan</td><td>1,528</td><td>84</td><td>25</td><td style="color:var(--g)">+46</td><td>1.64%</td><td style="color:var(--g)">+1 ✓</td></tr>
-        <tr><td>Feb</td><td>1,574</td><td style="color:var(--g)">114</td><td>33</td><td style="color:var(--g)">+46</td><td>2.10%</td><td style="color:var(--g)">+1 ✓</td></tr>
-        <tr><td>Mar</td><td>1,620</td><td>91</td><td style="color:var(--r)">42</td><td style="color:#facc15">+14</td><td style="color:var(--r)">2.59%</td><td style="color:var(--r)">-31 ✗</td></tr>
-        <tr><td>Apr</td><td>1,634</td><td>100</td><td style="color:var(--g)">23</td><td style="color:var(--g)">+50</td><td style="color:var(--g)">1.41% ★ best ever</td><td style="color:var(--g)">+5 ✓</td></tr>
-        <tr><td>May</td><td>1,684</td><td style="color:var(--g)">100</td><td style="color:var(--g)">31</td><td style="color:var(--g)">+69</td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+24 ✓</td></tr>
-        <tr><td>Jun</td><td>1,753</td><td style="color:var(--g)">139</td><td style="color:var(--g)">27</td><td style="color:var(--g)">+71 ★ best ever</td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+26 ✓</td></tr>
+        <tr><td>Jan</td><td>1,528</td><td>84</td><td>25</td><td><div class="mbar-wrap"><span style="color:var(--g)">+46</span><div class="mbar-track"><div class="mbar-fill" style="width:64.8%;background:var(--g)"></div></div></div></td><td>1.64%</td><td style="color:var(--g)">+1 ✓</td></tr>
+        <tr><td>Feb</td><td>1,574</td><td style="color:var(--g)">114</td><td>33</td><td><div class="mbar-wrap"><span style="color:var(--g)">+46</span><div class="mbar-track"><div class="mbar-fill" style="width:64.8%;background:var(--g)"></div></div></div></td><td>2.10%</td><td style="color:var(--g)">+1 ✓</td></tr>
+        <tr><td>Mar</td><td>1,620</td><td>91</td><td style="color:var(--r)">42</td><td><div class="mbar-wrap"><span style="color:#facc15">+14</span><div class="mbar-track"><div class="mbar-fill" style="width:19.7%;background:#facc15"></div></div></div></td><td style="color:var(--r)">2.59%</td><td style="color:var(--r)">-31 ✗</td></tr>
+        <tr><td>Apr</td><td>1,634</td><td>100</td><td style="color:var(--g)">23</td><td><div class="mbar-wrap"><span style="color:var(--g)">+50</span><div class="mbar-track"><div class="mbar-fill" style="width:70.4%;background:var(--g)"></div></div></div></td><td style="color:var(--g)">1.41% ★ best ever</td><td style="color:var(--g)">+5 ✓</td></tr>
+        <tr><td>May</td><td>1,684</td><td style="color:var(--g)">100</td><td style="color:var(--g)">31</td><td><div class="mbar-wrap"><span style="color:var(--g)">+69</span><div class="mbar-track"><div class="mbar-fill" style="width:97.2%;background:var(--g)"></div></div></div></td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+24 ✓</td></tr>
+        <tr><td>Jun</td><td>1,753</td><td style="color:var(--g)">139</td><td style="color:var(--g)">27</td><td><div class="mbar-wrap"><span style="color:var(--g)">+71 ★ best ever</span><div class="mbar-track"><div class="mbar-fill" style="width:100.0%;background:var(--y)"></div></div></div></td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+26 ✓</td></tr>
       </tbody>
     </table>
   </div>
@@ -1861,13 +1936,15 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Profit & Loss</div>
   <div class="section-sub">July 2025 to June 2026 · 12 months · M2 Training Club Limited</div>
 
+  <div class="streak-badge">🔥 3 months profitable in a row  Apr, May, Jun</div>
+
   <div class="kg">
-    <div class="kpi"><div class="kl">Jun 26 Revenue</div><div class="kv">$108.5K</div><div class="ks g">Gross income</div></div>
-    <div class="kpi"><div class="kl">Jun 26 OPEX</div><div class="kv">$98.9K</div><div class="ks g">Operating costs</div></div>
-    <div class="kpi"><div class="kl">Jun 26 Net Profit</div><div class="kv g" style="color:var(--g)">$9,492</div><div class="ks g">8.7% margin</div></div>
-    <div class="kpi"><div class="kl">12mo Net Profit</div><div class="kv r" style="color:var(--r)">-$39.9K</div><div class="ks r">6 of 12 months profitable</div></div>
-    <div class="kpi"><div class="kl">Best month</div><div class="kv">$12.9K</div><div class="ks g">Feb 26 · May 2nd, Jun 3rd</div></div>
-    <div class="kpi"><div class="kl">Rent % of revenue</div><div class="kv">42.5%</div><div class="ks g">Jun 26 · still biggest cost</div></div>
+    <div class="kpi"><div class="kl">Jun 26 Revenue</div><div class="kv">$108.5K</div><div class="ks g">Gross income</div><div class="kd flat">≈ flat vs $108.9K May</div></div>
+    <div class="kpi"><div class="kl">Jun 26 OPEX</div><div class="kv">$98.9K</div><div class="ks g">Operating costs</div><div class="kd down">▲ up vs $97.1K May</div></div>
+    <div class="kpi"><div class="kl">Jun 26 Net Profit</div><div class="kv g" style="color:var(--g)">$9,492</div><div class="ks g">8.7% margin</div><div class="kd down">▼ vs $11,627 May · still profitable</div></div>
+    <div class="kpi"><div class="kl">12mo Net Profit</div><div class="kv r" style="color:var(--r)">-$39.9K</div><div class="ks r">6 of 12 months profitable</div><div class="kd flat">Dragged by Jan's $73.7K one-off hit</div></div>
+    <div class="kpi"><div class="kl">Best month</div><div class="kv">$12.9K</div><div class="ks g">Feb 26 · May 2nd, Jun 3rd</div><div class="kd up">Feb, May, Jun are 2026's top 3</div></div>
+    <div class="kpi"><div class="kl">Rent % of revenue</div><div class="kv">42.5%</div><div class="ks g">Jun 26 · still biggest cost</div><div class="kd up">▼ down 3.8pt vs May · right direction</div></div>
   </div>
 
   <div class="alert">
@@ -4409,6 +4486,21 @@ async function _renderMemberSplit(dataset) {
   const cur = history[history.length-1];
   const prev = history[history.length-2];
 
+  // tiny inline sparkline  no libraries, just an SVG polyline
+  function sparkline(values, colorVar){
+    if(!values || values.length < 2) return '';
+    const W=108, H=28, PAD=3;
+    const min=Math.min(...values), max=Math.max(...values);
+    const range = (max-min) || 1;
+    const step = (W-PAD*2)/(values.length-1);
+    const pts = values.map((v,i)=>`${(PAD+i*step).toFixed(1)},${(H-PAD-(v-min)/range*(H-PAD*2)).toFixed(1)}`).join(' ');
+    const lastX = PAD+(values.length-1)*step, lastY = H-PAD-(values[values.length-1]-min)/range*(H-PAD*2);
+    return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+      <polyline points="${pts}" fill="none" stroke="${colorVar}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="2.6" fill="${colorVar}"/>
+    </svg>`;
+  }
+
   // metric: lower-is-better flips the colour logic (churn)
   function card(label, now, was, opts){
     opts = opts || {};
@@ -4438,6 +4530,8 @@ async function _renderMemberSplit(dataset) {
     const deltaTxt = opts.deltaFmt
       ? opts.deltaFmt(diff, pctChange)
       : `${arrow} ${pctChange>0?'+':''}${pctChange.toFixed(1)}%`;
+    const sparkColor = cls==='up' ? 'var(--g)' : cls==='down' ? 'var(--r)' : 'var(--m)';
+    const sparkHtml = opts.series ? sparkline(opts.series, sparkColor) : '';
     return `<div class="move">
       <div class="move-l">${label}</div>
       <div class="move-row">
@@ -4445,20 +4539,21 @@ async function _renderMemberSplit(dataset) {
         <span class="move-delta ${cls}">${deltaTxt}</span>
       </div>
       <div class="move-prev">was ${fmt(was)} in ${prev.m}</div>
+      ${sparkHtml}
     </div>`;
   }
 
   grid.innerHTML = [
     card('Trading income', cur.trading, prev.trading, {
-      fmt:v=>'$'+(v/1000).toFixed(0)+'K', flatBand:500
+      fmt:v=>'$'+(v/1000).toFixed(0)+'K', flatBand:500, series:history.map(h=>h.trading)
     }),
   card('Net members', cur.net, prev.net, {
       fmt:v=>(v>0?'+':'')+v,
-      deltaFmt:(d)=>`${cur.m.split(' ')[0]}: ${cur.net>0?'+':''}${cur.net} / ${prev.m.split(' ')[0]}: ${prev.net>0?'+':''}${prev.net}`, flatBand:0
+      deltaFmt:(d)=>`${cur.m.split(' ')[0]}: ${cur.net>0?'+':''}${cur.net} / ${prev.m.split(' ')[0]}: ${prev.net>0?'+':''}${prev.net}`, flatBand:0, series:history.map(h=>h.net)
     }),
     card('Churn rate', cur.churn, prev.churn, {
       fmt:v=>v.toFixed(2)+'%', lowerBetter:true, target:2.0,
-      deltaFmt:(d)=>`${d<0?'↓ ':d>0?'↑ +':'→ '}${d.toFixed(2)}pt`, flatBand:0.01
+      deltaFmt:(d)=>`${d<0?'↓ ':d>0?'↑ +':'→ '}${d.toFixed(2)}pt`, flatBand:0.01, series:history.map(h=>h.churn)
     }),
   ].join('');
 
