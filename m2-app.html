@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="M2">
+<meta name="theme-color" content="#ffffff">
+<title>M2 Training Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --lime:#d4f53c;--lime-dark:#a8c420;--black:#0a0a0a;--white:#ffffff;
+  --bg:#f5f5f2;--surface:#ffffff;--card:#ffffff;
+  --text:#0a0a0a;--muted:#666;--dim:#999;--border:#e8e8e4;
+  --red:#e03030;--red-bg:#fdf0f0;--green:#22a05a;--green-bg:#f0faf4;
+  --amber:#d97706;--amber-bg:#fffbeb;--blue:#2563eb;--blue-bg:#eff6ff;
+  --r:16px;--rs:10px;--rb:24px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+html{font-size:15px;height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100%;overflow:hidden;max-width:430px;margin:0 auto;position:relative}
+
+/* APP SHELL */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(72px + var(--safe-bot));display:none}
+.screen.active{display:block;animation:screenin 0.22s ease}
+@keyframes screenin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* STATUS BAR SPACER */
+.statusbar{height:calc(var(--safe-top) + 44px);background:var(--surface);display:flex;align-items:flex-end;padding:0 20px 10px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.sb-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--black);letter-spacing:2px;line-height:1}
+.sb-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.sb-notif{position:relative;width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border)}
+.notif-badge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--surface)}
+.sb-avatar{width:34px;height:34px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--lime);cursor:pointer}
+
+/* BOTTOM NAV */
+.bottomnav{height:calc(60px + var(--safe-bot));background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:flex-start;padding-top:8px;position:sticky;bottom:0;z-index:50}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0}
+.bnav-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;position:relative}
+.bnav-label{font-size:10px;color:var(--dim);font-weight:500;letter-spacing:0.3px}
+.bnav-item.active .bnav-label{color:var(--black);font-weight:500}
+.bnav-dot{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--lime);display:none}
+.bnav-item.active .bnav-dot{display:block}
+
+/* SVG ICONS */
+svg.icon{width:22px;height:22px;stroke:var(--dim);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bnav-item.active svg.icon{stroke:var(--black)}
+
+/* TYPOGRAPHY */
+.h1{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;line-height:1.1}
+.h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.5px;line-height:1.2}
+.h3{font-size:15px;font-weight:500;color:var(--text)}
+.label{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.body{font-size:14px;color:var(--muted);line-height:1.6}
+
+/* SECTIONS */
+.section{padding:20px 20px 0}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:12px}
+.card-pad{padding:16px}
+
+/* HERO CARD */
+.hero-card{background:var(--black);border-radius:var(--r);padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:-30px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(212,245,60,0.08)}
+.hero-card::after{content:'';position:absolute;bottom:-20px;right:20px;width:80px;height:80px;border-radius:50%;background:rgba(212,245,60,0.05)}
+.hero-greeting{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:4px}
+.hero-name{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;letter-spacing:1px;line-height:1}
+.hero-membership{display:inline-block;background:var(--lime);color:var(--black);font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;margin-top:6px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px}
+.hstat{background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 8px;text-align:center}
+.hstat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;line-height:1}
+.hstat-lbl{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px}
+
+/* UPGRADE BANNER */
+.upgrade-banner{background:linear-gradient(135deg,#0a0a0a 0%,#1a1a1a 100%);border-radius:var(--r);padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;border:1px solid rgba(212,245,60,0.3)}
+.ub-lime{width:40px;height:40px;border-radius:10px;background:var(--lime);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--black)}
+.ub-title{font-size:13px;font-weight:500;color:#fff;margin-bottom:2px}
+.ub-sub{font-size:11px;color:rgba(255,255,255,0.5)}
+.ub-btn{margin-left:auto;background:var(--lime);color:var(--black);border:none;border-radius:20px;padding:7px 14px;font-size:11px;font-weight:500;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+/* CLASS CARDS */
+.class-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:16px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;active:scale(0.98)}
+.class-card:active{transform:scale(0.98)}
+.class-time-block{width:52px;flex-shrink:0;text-align:center;padding:8px 6px;border-radius:10px;background:var(--bg)}
+.ctb-time{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text);line-height:1}
+.ctb-ampm{font-size:10px;color:var(--muted)}
+.class-info{flex:1;min-width:0}
+.class-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:2px}
+.class-meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.class-spots{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px}
+.spots-ok{background:var(--green-bg);color:var(--green)}
+.spots-low{background:var(--amber-bg);color:var(--amber)}
+.spots-full{background:var(--red-bg);color:var(--red)}
+.class-type-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;letter-spacing:0.5px}
+.badge-hyrox{background:#0a0a0a;color:var(--lime)}
+.badge-strength{background:#f0f0ec;color:var(--black)}
+.badge-hiit{background:var(--red-bg);color:var(--red)}
+.badge-yoga{background:var(--blue-bg);color:var(--blue)}
+.badge-pump{background:var(--green-bg);color:var(--green)}
+.class-book-btn{flex-shrink:0;align-self:center}
+.book-btn{border:none;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.book-free{background:var(--black);color:#fff}
+.book-pay{background:var(--lime);color:var(--black)}
+.book-booked{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.book-full{background:var(--bg);color:var(--dim);cursor:default}
+
+/* FILTER CHIPS */
+.filter-chips{display:flex;gap:8px;overflow-x:auto;padding:0 20px 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-chips::-webkit-scrollbar{display:none}
+.fchip{flex-shrink:0;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.fchip.active{background:var(--black);color:var(--lime);border-color:var(--black)}
+
+/* DAY SCROLLER */
+.day-scroll{display:flex;gap:8px;overflow-x:auto;padding:16px 20px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.day-scroll::-webkit-scrollbar{display:none}
+.day-item{flex-shrink:0;width:46px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 4px;border-radius:12px;transition:background 0.15s}
+.day-item.active{background:var(--black)}
+.day-name{font-size:10px;font-weight:500;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px}
+.day-num{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);line-height:1}
+.day-item.active .day-name{color:rgba(212,245,60,0.6)}
+.day-item.active .day-num{color:var(--lime)}
+.day-dot{width:4px;height:4px;border-radius:50%;background:var(--border)}
+.day-item.has-class .day-dot{background:var(--lime)}
+
+/* PASS CARDS */
+.pass-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:20px;margin-bottom:12px;cursor:pointer;transition:transform 0.15s}
+.pass-card:active{transform:scale(0.98)}
+.pass-card.featured{background:var(--black);border-color:var(--black)}
+.pass-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.5px;margin-bottom:4px}
+.pass-card.featured .pass-name{color:#fff}
+.pass-price{font-size:28px;font-weight:500;color:var(--text);margin-bottom:8px;line-height:1}
+.pass-card.featured .pass-price{color:var(--lime)}
+.pass-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.pass-card.featured .pass-desc{color:rgba(255,255,255,0.5)}
+.pass-includes{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
+.pass-inc-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.pass-card.featured .pass-inc-item{color:rgba(255,255,255,0.6)}
+.pass-inc-item::before{content:'✓';color:var(--green);font-weight:500;flex-shrink:0}
+.pass-card.featured .pass-inc-item::before{color:var(--lime)}
+.pass-buy-btn{width:100%;padding:13px;border-radius:var(--rs);border:none;font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;cursor:pointer;transition:all 0.15s}
+.pass-buy-btn.dark{background:var(--black);color:#fff}
+.pass-buy-btn.lime{background:var(--lime);color:var(--black)}
+.pass-buy-btn:active{transform:scale(0.98)}
+
+/* PROFILE */
+.profile-header{background:var(--black);padding:24px 20px 20px;margin-bottom:0}
+.profile-av{width:64px;height:64px;border-radius:50%;background:rgba(212,245,60,0.15);border:2px solid var(--lime);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--lime);margin-bottom:12px}
+.profile-name{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;letter-spacing:1px;line-height:1;margin-bottom:4px}
+.profile-sub{font-size:13px;color:rgba(255,255,255,0.4)}
+.profile-membership-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(212,245,60,0.15);border:1px solid rgba(212,245,60,0.3);border-radius:20px;padding:4px 12px;margin-top:10px}
+.pmt-text{font-size:12px;color:var(--lime);font-weight:500}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid rgba(255,255,255,0.06);margin-top:16px}
+.pstat{background:var(--black);padding:14px 8px;text-align:center}
+.pstat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;line-height:1}
+.pstat-lbl{font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px}
+
+/* SETTINGS LIST */
+.settings-list{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.settings-item{display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s}
+.settings-item:last-child{border-bottom:none}
+.settings-item:active{background:var(--bg)}
+.si-icon{width:36px;height:36px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.si-title{font-size:14px;font-weight:500;color:var(--text);flex:1}
+.si-value{font-size:13px;color:var(--muted)}
+.si-arrow{color:var(--dim);font-size:16px}
+
+/* NOTIFICATIONS PANEL */
+.notif-item{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);align-items:flex-start}
+.notif-item:last-child{border-bottom:none}
+.notif-item.unread{background:rgba(212,245,60,0.04)}
+.notif-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.ni-lime{background:rgba(212,245,60,0.12)}
+.ni-red{background:var(--red-bg)}
+.ni-blue{background:var(--blue-bg)}
+.ni-green{background:var(--green-bg)}
+.notif-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.notif-body{font-size:12px;color:var(--muted);line-height:1.5}
+.notif-time{font-size:11px;color:var(--dim);margin-top:4px}
+.unread-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);flex-shrink:0;margin-top:4px}
+
+/* COACHES */
+.coach-row{display:flex;gap:12px;overflow-x:auto;padding:0 20px 20px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.coach-row::-webkit-scrollbar{display:none}
+.coach-card{flex-shrink:0;width:130px;background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;cursor:pointer}
+.coach-img{width:100%;height:120px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--black)}
+.coach-body{padding:10px}
+.coach-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.coach-spec{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex;animation:overlayIn 0.2s ease}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+.modal-sheet{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;animation:sheetIn 0.3s cubic-bezier(0.32,0.72,0,1)}
+@keyframes sheetIn{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.5px}
+.modal-close{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--bg);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--muted)}
+.modal-body{padding:20px}
+.modal-detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.modal-detail-row:last-of-type{border-bottom:none}
+.mdr-key{color:var(--muted)}
+.mdr-val{font-weight:500;color:var(--text)}
+.modal-cta{width:100%;padding:15px;border-radius:var(--rs);border:none;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer;margin-top:16px;transition:all 0.15s}
+.modal-cta.free{background:var(--black);color:#fff}
+.modal-cta.pay{background:var(--lime);color:var(--black)}
+.modal-cta:active{transform:scale(0.98)}
+.modal-price-note{text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
+
+/* STRIPE MOCK */
+.stripe-form{background:var(--bg);border-radius:var(--r);padding:16px;margin-top:16px}
+.stripe-label{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.stripe-input{width:100%;height:42px;border:1px solid var(--border);border-radius:var(--rs);padding:0 12px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;margin-bottom:12px}
+.stripe-input:focus{border-color:var(--black)}
+.stripe-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stripe-badge{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:10px;font-size:11px;color:var(--dim)}
+.stripe-logo{font-weight:700;color:#635bff;font-size:12px}
+
+/* ADMIN PANEL */
+.admin-compose{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:16px;margin-bottom:12px}
+.admin-textarea{width:100%;min-height:80px;border:1px solid var(--border);border-radius:var(--rs);padding:12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;resize:none;background:var(--bg)}
+.admin-textarea:focus{border-color:var(--black)}
+.audience-chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.aud-chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;background:var(--surface)}
+.aud-chip.sel{background:var(--black);color:var(--lime);border-color:var(--black)}
+.send-btn{width:100%;padding:14px;background:var(--black);color:var(--lime);border:none;border-radius:var(--rs);font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;cursor:pointer;margin-top:10px}
+.send-btn:active{transform:scale(0.98)}
+.notif-history-item{display:flex;gap:12px;padding:12px;background:var(--bg);border-radius:var(--rs);margin-bottom:8px}
+
+/* RECOVERY SECTION */
+.recovery-card{background:var(--black);border-radius:var(--r);padding:18px;margin-bottom:10px;display:flex;gap:14px;align-items:center}
+.rc-icon{width:44px;height:44px;border-radius:12px;background:rgba(212,245,60,0.1);border:1px solid rgba(212,245,60,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.rc-title{font-size:14px;font-weight:500;color:#fff;margin-bottom:2px}
+.rc-sub{font-size:12px;color:rgba(255,255,255,0.4)}
+.rc-temp{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--lime);margin-left:auto;flex-shrink:0}
+.protocol-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:center}
+.protocol-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--lime);flex-shrink:0}
+.step-text{font-size:13px;color:var(--text);line-height:1.5}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(80px + var(--safe-bot));left:50%;transform:translateX(-50%) translateY(20px);background:var(--black);color:#fff;padding:12px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:300;opacity:0;transition:all 0.3s;white-space:nowrap;pointer-events:none;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MISC */
+.divider{height:1px;background:var(--border);margin:4px 0}
+.see-all{font-size:13px;color:var(--muted);font-weight:500;cursor:pointer}
+.see-all:active{color:var(--text)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
+.empty-icon{font-size:40px;margin-bottom:10px}
+.pill{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.pill-green{background:var(--green-bg);color:var(--green)}
+.pill-red{background:var(--red-bg);color:var(--red)}
+.pill-amber{background:var(--amber-bg);color:var(--amber)}
+.pill-lime{background:rgba(212,245,60,0.12);color:var(--black)}
+
+/* SCROLLBAR HIDE */
+.screen::-webkit-scrollbar{display:none}
+.screen{scrollbar-width:none}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- ════════════════════════════════ HOME ════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="statusbar">
+    <div class="sb-logo">M2</div>
+    <div class="sb-right">
+      <div class="sb-notif" onclick="showNotifPanel()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="notif-badge"></div>
+      </div>
+      <div class="sb-avatar" onclick="goTo('profile')">SC</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="section" style="padding-top:16px">
+    <div class="hero-card">
+      <div class="hero-greeting">Good morning</div>
+      <div class="hero-name">Sarah Mitchell</div>
+      <div class="hero-membership">Perform Member</div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-val">14</div><div class="hstat-lbl">Visits Apr</div></div>
+        <div class="hstat"><div class="hstat-val">287</div><div class="hstat-lbl">All time</div></div>
+        <div class="hstat"><div class="hstat-val">6</div><div class="hstat-lbl">Day streak</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEXT CLASS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="label">Your next class</div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;cursor:pointer" onclick="openClassModal('hyrox-tue')">
+      <div style="background:var(--black);padding:14px 16px;display:flex;align-items:center;gap:12px">
+        <div style="flex:1">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;letter-spacing:0.5px">HYROX Training</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px">Tuesday · 6:00 AM · Coach Dave</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--lime)">6:00</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4)">Tomorrow AM</div>
+        </div>
+      </div>
+      <div style="padding:12px 16px;display:flex;align-items:center;gap:8px">
+        <span class="pill" style="background:rgba(212,245,60,0.1);color:var(--black);font-size:10px">Booked ✓</span>
+        <span style="font-size:12px;color:var(--muted)">2 spots left after you</span>
+        <div style="margin-left:auto;font-size:12px;color:var(--muted)">60 min</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODAY'S CLASSES PREVIEW -->
+  <div class="section">
+    <div class="section-header">
+      <div class="label">Today's classes</div>
+      <div class="see-all" onclick="goTo('classes')">See all →</div>
+    </div>
+
+    <div class="class-card" onclick="openClassModal('pump')">
+      <div class="class-time-block"><div class="ctb-time">9:00</div><div class="ctb-ampm">AM</div></div>
+      <div class="class-info">
+        <div class="class-name">Body Pump</div>
+        <div class="class-meta">
+          <span>Coach Bekka · 45 min</span>
+          <span class="class-type-badge badge-strength">Strength</span>
+        </div>
+      </div>
+      <div class="class-book-btn"><button class="book-btn book-free" onclick="event.stopPropagation();quickBook('Body Pump')">Book</button></div>
+    </div>
+
+    <div class="class-card" onclick="openClassModal('yoga')">
+      <div class="class-time-block"><div class="ctb-time">12:00</div><div class="ctb-ampm">PM</div></div>
+      <div class="class-info">
+        <div class="class-name">Yoga Flow</div>
+        <div class="class-meta">
+          <span>Coach Madeliene · 50 min</span>
+          <span class="class-type-badge badge-yoga">Yoga</span>
+        </div>
+      </div>
+      <div class="class-book-btn"><button class="book-btn book-free" onclick="event.stopPropagation();quickBook('Yoga Flow')">Book</button></div>
+    </div>
+
+    <div class="class-card" onclick="openClassModal('strength')">
+      <div class="class-time-block" style="background:rgba(212,245,60,0.08)"><div class="ctb-time" style="color:var(--black)">6:00</div><div class="ctb-ampm">PM</div></div>
+      <div class="class-info">
+        <div class="class-name">Strength & Conditioning</div>
+        <div class="class-meta">
+          <span>Coach Tim · 60 min</span>
+          <span class="class-type-badge badge-strength">Strength</span>
+          <span class="class-spots spots-low">4 spots left</span>
+        </div>
+      </div>
+      <div class="class-book-btn"><button class="book-btn book-free" onclick="event.stopPropagation();quickBook('Strength & Conditioning')">Book</button></div>
+    </div>
+  </div>
+
+  <!-- RECOVERY -->
+  <div class="section" style="margin-bottom:20px">
+    <div class="section-header">
+      <div class="label">Recovery suite</div>
+      <div class="see-all" onclick="goTo('recovery')">Details →</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="card card-pad" style="text-align:center;cursor:pointer" onclick="goTo('recovery')">
+        <div style="font-size:28px;margin-bottom:6px">🧊</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text)">Ice Bath</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">8–12°C · Open now</div>
+      </div>
+      <div class="card card-pad" style="text-align:center;cursor:pointer" onclick="goTo('recovery')">
+        <div style="font-size:28px;margin-bottom:6px">🌊</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text)">20m Pool</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Lap swimming · Open</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ CLASSES ════════════════════════════════ -->
+<div id="screen-classes" class="screen">
+  <div class="statusbar">
+    <div class="sb-logo">M2</div>
+    <div class="sb-right"><div style="font-size:12px;color:var(--muted)">Auckland's only HYROX club</div></div>
+  </div>
+
+  <div class="day-scroll" id="dayScroll"></div>
+
+  <div class="filter-chips">
+    <div class="fchip active" onclick="filterClasses(this,'all')">All</div>
+    <div class="fchip" onclick="filterClasses(this,'hyrox')">HYROX</div>
+    <div class="fchip" onclick="filterClasses(this,'strength')">Strength</div>
+    <div class="fchip" onclick="filterClasses(this,'hiit')">HIIT</div>
+    <div class="fchip" onclick="filterClasses(this,'yoga')">Yoga</div>
+    <div class="fchip" onclick="filterClasses(this,'pump')">Pump</div>
+  </div>
+
+  <div id="classList" style="padding:0 20px"></div>
+</div>
+
+<!-- ════════════════════════════════ PASSES / SHOP ════════════════════════════════ -->
+<div id="screen-passes" class="screen">
+  <div class="statusbar">
+    <div class="sb-logo">M2</div>
+    <div class="sb-right"><div style="font-size:12px;color:var(--muted)">No lock-in contracts</div></div>
+  </div>
+
+  <!-- UPGRADE BANNER for daily members — hidden for perform -->
+  <div class="section" style="padding-top:16px" id="upgradeBannerSection">
+    <div class="upgrade-banner">
+      <div class="ub-lime">↑</div>
+      <div>
+        <div class="ub-title">Upgrade to Perform</div>
+        <div class="ub-sub">Unlock HYROX, pool, ice bath, sauna + all classes</div>
+      </div>
+      <button class="ub-btn" onclick="openUpgradeModal()">$45/wk</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label" style="margin-bottom:14px">Passes & memberships</div>
+
+    <div class="pass-card featured" onclick="openPassModal('trial')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="pass-name">10 Days for $10</div>
+        <span style="background:var(--lime);color:var(--black);font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px;letter-spacing:0.5px">BEST VALUE</span>
+      </div>
+      <div class="pass-price">$10</div>
+      <div class="pass-desc">Full club access for 10 consecutive days. Try everything — gym, classes, HYROX, pool, ice bath, sauna.</div>
+      <div class="pass-includes">
+        <div class="pass-inc-item">Full gym floor access</div>
+        <div class="pass-inc-item">All group classes + HYROX</div>
+        <div class="pass-inc-item">Pool, ice bath, sauna, spa</div>
+        <div class="pass-inc-item">No credit card required after</div>
+      </div>
+      <button class="pass-buy-btn lime" onclick="event.stopPropagation();openPayment('10 Days for $10','$10',10)">Get started — $10</button>
+    </div>
+
+    <div class="pass-card" onclick="openPassModal('daypass')">
+      <div class="pass-name">Day Pass</div>
+      <div class="pass-price">$25</div>
+      <div class="pass-desc">One full day of access. Gym, all classes, recovery suite. Perfect for visitors or people between memberships.</div>
+      <div class="pass-includes">
+        <div class="pass-inc-item">Full day gym access</div>
+        <div class="pass-inc-item">All classes that day</div>
+        <div class="pass-inc-item">Pool, ice bath, sauna</div>
+      </div>
+      <button class="pass-buy-btn dark" onclick="event.stopPropagation();openPayment('Day Pass','$25',25)">Buy day pass — $25</button>
+    </div>
+
+    <div class="pass-card" onclick="openPassModal('perform')">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <div class="pass-name">Perform Membership</div>
+      </div>
+      <div class="pass-price" style="color:var(--black)">$45<span style="font-size:16px;color:var(--muted);font-weight:400">/wk</span></div>
+      <div class="pass-desc">The complete M2 experience. Unlimited gym, all classes including HYROX, full recovery suite access. No lock-in.</div>
+      <div class="pass-includes">
+        <div class="pass-inc-item">Unlimited gym + all classes</div>
+        <div class="pass-inc-item">HYROX training (Auckland's only)</div>
+        <div class="pass-inc-item">Pool, ice bath, sauna, spa — unlimited</div>
+        <div class="pass-inc-item">No lock-in contract</div>
+      </div>
+      <button class="pass-buy-btn dark" onclick="event.stopPropagation();openPayment('Perform Membership','$45/wk',45)">Join now — $45/wk</button>
+    </div>
+
+    <div class="pass-card" onclick="openPassModal('daily')">
+      <div class="pass-name">Daily Membership</div>
+      <div class="pass-price" style="color:var(--black)">$25<span style="font-size:16px;color:var(--muted);font-weight:400">/wk</span></div>
+      <div class="pass-desc">Gym floor access. Add on individual classes for $10 each, or upgrade to Perform anytime.</div>
+      <div class="pass-includes">
+        <div class="pass-inc-item">Full gym floor access</div>
+        <div class="pass-inc-item">Add classes for $10 each</div>
+        <div class="pass-inc-item">Upgrade to Perform anytime</div>
+      </div>
+      <button class="pass-buy-btn dark" onclick="event.stopPropagation();openPayment('Daily Membership','$25/wk',25)">Join now — $25/wk</button>
+    </div>
+  </div>
+
+  <!-- ANNUAL -->
+  <div class="section" style="margin-bottom:24px">
+    <div class="card card-pad" style="background:var(--bg);border-style:dashed">
+      <div style="font-size:13px;font-weight:500;margin-bottom:4px">Annual membership — save $702</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Pay upfront and save. Limited spots — once gone, pricing reverts to weekly rates.</div>
+      <button style="background:var(--black);color:var(--lime);border:none;border-radius:var(--rs);padding:10px 20px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;cursor:pointer;width:100%" onclick="showToast('Our team will be in touch about annual membership')">Enquire about annual</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ RECOVERY ════════════════════════════════ -->
+<div id="screen-recovery" class="screen">
+  <div class="statusbar">
+    <div class="sb-logo">M2</div>
+    <div class="sb-right"><div style="font-size:12px;color:var(--muted)">Included with Perform</div></div>
+  </div>
+
+  <div class="section" style="padding-top:16px">
+    <div class="label" style="margin-bottom:14px">Recovery suite</div>
+
+    <div class="recovery-card">
+      <div class="rc-icon">🧊</div>
+      <div><div class="rc-title">Ice Bath</div><div class="rc-sub">Cold therapy · Open daily</div></div>
+      <div class="rc-temp">8–12°C</div>
+    </div>
+    <div class="recovery-card">
+      <div class="rc-icon">🔥</div>
+      <div><div class="rc-title">Sauna</div><div class="rc-sub">Heat therapy · Deep recovery</div></div>
+      <div class="rc-temp">80–90°C</div>
+    </div>
+    <div class="recovery-card">
+      <div class="rc-icon">🌊</div>
+      <div><div class="rc-title">20m Pool</div><div class="rc-sub">Lap swimming · Active recovery</div></div>
+      <div class="rc-temp">Open</div>
+    </div>
+    <div class="recovery-card">
+      <div class="rc-icon">💧</div>
+      <div><div class="rc-title">Spa Pool</div><div class="rc-sub">Hydrotherapy jets · Relaxation</div></div>
+      <div class="rc-temp">38°C</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="label" style="margin-bottom:14px">Recovery protocol</div>
+    <div class="card card-pad">
+      <div class="protocol-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>3 min ice bath</strong> — triggers vasoconstriction, flushes metabolic waste from muscles</div>
+      </div>
+      <div class="protocol-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>10 min sauna</strong> — increases blood flow, promotes deep restorative sleep</div>
+      </div>
+      <div class="protocol-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Repeat 2–3 rounds</strong> — finish cold for recovery, warm for relaxation</div>
+      </div>
+      <div class="protocol-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Pool on rest days</strong> — 20–30 min easy freestyle maintains blood flow without adding training load</div>
+      </div>
+      <div style="background:rgba(212,245,60,0.08);border-radius:var(--rs);padding:12px;margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6">
+        Regular cold exposure reduces DOMS by up to 20% and accelerates return-to-training readiness. 2–3 sessions per week delivers measurable results within 4–6 weeks.
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="margin-bottom:24px">
+    <div class="label" style="margin-bottom:14px">Our coaches</div>
+    <div class="coach-row">
+      <div class="coach-card" onclick="showToast('Book a free consultation at m2club.co.nz/trainers')">
+        <div class="coach-img">DV</div>
+        <div class="coach-body"><div class="coach-name">Coach Dave</div><div class="coach-spec">HYROX · Hybrid racing · 8 yrs PT</div></div>
+      </div>
+      <div class="coach-card">
+        <div class="coach-img">BK</div>
+        <div class="coach-body"><div class="coach-name">Coach Bekka</div><div class="coach-spec">Strength · Race prep</div></div>
+      </div>
+      <div class="coach-card">
+        <div class="coach-img">JR</div>
+        <div class="coach-body"><div class="coach-name">Coach Junior</div><div class="coach-spec">High performance</div></div>
+      </div>
+      <div class="coach-card">
+        <div class="coach-img">TY</div>
+        <div class="coach-body"><div class="coach-name">Coach Taylor</div><div class="coach-spec">Athletic performance</div></div>
+      </div>
+      <div class="coach-card">
+        <div class="coach-img">TM</div>
+        <div class="coach-body"><div class="coach-name">Coach Tim</div><div class="coach-spec">Strength & conditioning</div></div>
+      </div>
+      <div class="coach-card">
+        <div class="coach-img">MD</div>
+        <div class="coach-body"><div class="coach-name">Coach Madeliene</div><div class="coach-spec">Functional movement</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ PROFILE ════════════════════════════════ -->
+<div id="screen-profile" class="screen">
+  <div class="profile-header">
+    <div class="profile-av">SC</div>
+    <div class="profile-name">Sarah Mitchell</div>
+    <div class="profile-sub">sarah.mitchell@gmail.com · Member since Mar 2023</div>
+    <div class="profile-membership-tag">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--lime)"></div>
+      <div class="pmt-text">Perform — Active</div>
+    </div>
+    <div class="profile-stats">
+      <div class="pstat"><div class="pstat-val">14</div><div class="pstat-lbl">This month</div></div>
+      <div class="pstat"><div class="pstat-val">287</div><div class="pstat-lbl">All time</div></div>
+      <div class="pstat"><div class="pstat-val">$45</div><div class="pstat-lbl">Per week</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:20px">
+    <div class="label" style="margin-bottom:12px">My account</div>
+    <div class="settings-list">
+      <div class="settings-item" onclick="showToast('Upcoming bookings coming soon')">
+        <div class="si-icon">📅</div>
+        <div class="si-title">My bookings</div>
+        <div class="si-value">2 upcoming</div>
+        <div class="si-arrow">›</div>
+      </div>
+      <div class="settings-item" onclick="showToast('Visit history coming soon')">
+        <div class="si-icon">📊</div>
+        <div class="si-title">Visit history</div>
+        <div class="si-value">287 visits</div>
+        <div class="si-arrow">›</div>
+      </div>
+      <div class="settings-item" onclick="showToast('Payment details managed via Stripe')">
+        <div class="si-icon">💳</div>
+        <div class="si-title">Payment details</div>
+        <div class="si-value">Visa ···4242</div>
+        <div class="si-arrow">›</div>
+      </div>
+      <div class="settings-item" onclick="showNotifPanel()">
+        <div class="si-icon">🔔</div>
+        <div class="si-title">Notifications</div>
+        <div class="si-value">3 unread</div>
+        <div class="si-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="label" style="margin-bottom:12px">Membership</div>
+    <div class="settings-list">
+      <div class="settings-item">
+        <div class="si-icon">⭐</div>
+        <div class="si-title">Perform membership</div>
+        <div class="si-value"><span class="pill pill-green">Active</span></div>
+        <div class="si-arrow">›</div>
+      </div>
+      <div class="settings-item" onclick="showToast('Membership paused — contact front desk')">
+        <div class="si-icon">⏸</div>
+        <div class="si-title">Pause membership</div>
+        <div class="si-arrow">›</div>
+      </div>
+    </div>
+
+    <div class="label" style="margin-bottom:12px">M2 Club</div>
+    <div class="settings-list">
+      <div class="settings-item" onclick="window.open('https://m2club.co.nz','_blank')">
+        <div class="si-icon">🌐</div>
+        <div class="si-title">m2club.co.nz</div>
+        <div class="si-arrow">↗</div>
+      </div>
+      <div class="settings-item" onclick="showToast('8 Nugent Street, Grafton, Auckland')">
+        <div class="si-icon">📍</div>
+        <div class="si-title">Location</div>
+        <div class="si-value">Grafton, Auckland</div>
+        <div class="si-arrow">›</div>
+      </div>
+      <div class="settings-item" onclick="openAdminPanel()">
+        <div class="si-icon">⚡</div>
+        <div class="si-title">Staff admin panel</div>
+        <div class="si-value">Taylor / Tim</div>
+        <div class="si-arrow">›</div>
+      </div>
+    </div>
+
+    <div style="padding-bottom:24px;margin-top:8px">
+      <button style="width:100%;padding:13px;background:transparent;border:1px solid var(--border);border-radius:var(--rs);font-size:14px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif" onclick="showToast('Signed out')">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottomnav">
+  <div class="bnav-item active" id="nav-home" onclick="goTo('home')">
+    <div class="bnav-icon">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <div class="bnav-dot"></div>
+    </div>
+    <div class="bnav-label">Home</div>
+  </div>
+  <div class="bnav-item" id="nav-classes" onclick="goTo('classes')">
+    <div class="bnav-icon">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="bnav-dot"></div>
+    </div>
+    <div class="bnav-label">Classes</div>
+  </div>
+  <div class="bnav-item" id="nav-passes" onclick="goTo('passes')">
+    <div class="bnav-icon">
+      <svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <div class="bnav-dot"></div>
+    </div>
+    <div class="bnav-label">Join</div>
+  </div>
+  <div class="bnav-item" id="nav-recovery" onclick="goTo('recovery')">
+    <div class="bnav-icon">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      <div class="bnav-dot"></div>
+    </div>
+    <div class="bnav-label">Recovery</div>
+  </div>
+  <div class="bnav-item" id="nav-profile" onclick="goTo('profile')">
+    <div class="bnav-icon">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="bnav-dot"></div>
+    </div>
+    <div class="bnav-label">Profile</div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ════════════════ MODALS ════════════════ -->
+
+<!-- CLASS BOOKING MODAL -->
+<div class="modal-overlay" id="classModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalClassName">HYROX Training</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px" id="modalClassMeta">Tue · 6:00 AM · Coach Dave · 60 min</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('classModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-detail-row"><div class="mdr-key">Coach</div><div class="mdr-val" id="mdCoach">Coach Dave</div></div>
+      <div class="modal-detail-row"><div class="mdr-key">Duration</div><div class="mdr-val" id="mdDuration">60 minutes</div></div>
+      <div class="modal-detail-row"><div class="mdr-key">Capacity</div><div class="mdr-val" id="mdCapacity">34 spots · 2 remaining</div></div>
+      <div class="modal-detail-row"><div class="mdr-key">Location</div><div class="mdr-val">M2 Training Club · Grafton</div></div>
+      <div class="modal-detail-row"><div class="mdr-key">Your membership</div><div class="mdr-val" id="mdMembership">Perform — free access</div></div>
+      <button class="modal-cta free" id="modalBookBtn" onclick="confirmBook()">Book this class — Free</button>
+      <div class="modal-price-note" id="modalPriceNote">Included with your Perform membership</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="payTitle">Day Pass</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Secure payment via Stripe</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('payModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:14px;background:var(--bg);border-radius:var(--rs)">
+        <div style="font-size:14px;font-weight:500" id="payItemName">Day Pass</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px" id="payItemPrice">$25</div>
+      </div>
+      <div class="stripe-form">
+        <div class="stripe-label">Email</div>
+        <input class="stripe-input" type="email" placeholder="you@email.com">
+        <div class="stripe-label">Card number</div>
+        <input class="stripe-input" type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+        <div class="stripe-row">
+          <div>
+            <div class="stripe-label">Expiry</div>
+            <input class="stripe-input" type="text" placeholder="MM / YY" maxlength="7">
+          </div>
+          <div>
+            <div class="stripe-label">CVC</div>
+            <input class="stripe-input" type="text" placeholder="123" maxlength="3">
+          </div>
+        </div>
+        <div class="stripe-badge">
+          <span>Powered by</span><span class="stripe-logo">stripe</span><span>· 256-bit SSL</span>
+        </div>
+      </div>
+      <button class="modal-cta pay" id="payBtn" onclick="processPayment()">Pay <span id="payBtnAmount">$25</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div><div class="modal-title">Upgrade to Perform</div><div style="font-size:12px;color:var(--muted);margin-top:2px">$45/wk · No lock-in</div></div>
+      <button class="modal-close" onclick="closeModal('upgradeModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--black);border-radius:var(--r);padding:16px;margin-bottom:16px">
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase">What you unlock</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.8)"><span style="color:var(--lime)">✓</span>All group classes — unlimited</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.8)"><span style="color:var(--lime)">✓</span>HYROX training (Auckland's only)</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.8)"><span style="color:var(--lime)">✓</span>20m pool — unlimited</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.8)"><span style="color:var(--lime)">✓</span>Ice bath, sauna, spa pool</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.8)"><span style="color:var(--lime)">✓</span>No lock-in contract</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:14px;color:var(--muted)">Current plan (Daily)</div>
+        <div style="font-size:14px;font-weight:500">$25/wk</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="font-size:14px;color:var(--muted)">Perform upgrade</div>
+        <div style="font-size:14px;font-weight:500;color:var(--green)">+$20/wk</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-bottom:4px">
+        <div style="font-size:14px;font-weight:500">New total</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px">$45/wk</div>
+      </div>
+      <button class="modal-cta pay" onclick="processUpgrade()">Upgrade now — $45/wk</button>
+      <div class="modal-price-note">Change takes effect immediately · Cancel anytime</div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="modal-overlay" id="notifModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Notifications</div>
+      <button class="modal-close" onclick="closeModal('notifModal')">×</button>
+    </div>
+    <div style="background:var(--card)">
+      <div class="notif-item unread">
+        <div class="notif-icon ni-lime">🏋️</div>
+        <div style="flex:1">
+          <div class="notif-title">8 Week Challenge — starts in 7 days</div>
+          <div class="notif-body">Sign up now before spots fill. Kick off Monday 29 April. Tap to register.</div>
+          <div class="notif-time">2 hours ago</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon ni-red">🔥</div>
+        <div style="flex:1">
+          <div class="notif-title">HYROX Tuesday almost full</div>
+          <div class="notif-body">Only 2 spots left in tomorrow's 6am HYROX class. Book now to secure your spot.</div>
+          <div class="notif-time">Yesterday</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon ni-blue">🏅</div>
+        <div style="flex:1">
+          <div class="notif-title">HYROX Sydney — 73 days out</div>
+          <div class="notif-body">Race day is 4 July. M2 has a dedicated race prep program — talk to Coach Dave to get started.</div>
+          <div class="notif-time">2 days ago</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notif-item">
+        <div class="notif-icon ni-green">✓</div>
+        <div style="flex:1">
+          <div class="notif-title">Booking confirmed — Body Pump</div>
+          <div class="notif-body">Monday 9:00 AM with Coach Bekka. See you there.</div>
+          <div class="notif-time">3 days ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div><div class="modal-title">Push Notification Sender</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Taylor / Tim only</div></div>
+      <button class="modal-close" onclick="closeModal('adminModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="admin-compose">
+        <div style="font-size:12px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Message</div>
+        <textarea class="admin-textarea" id="pushMsg" placeholder="E.g. 8 Week Challenge starts in 7 days — sign up now 👊"></textarea>
+        <div style="font-size:12px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:10px 0 6px">Link (optional)</div>
+        <input style="width:100%;height:38px;border:1px solid var(--border);border-radius:var(--rs);padding:0 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;background:var(--bg)" placeholder="https://m2club.co.nz/...">
+        <div style="font-size:12px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:12px 0 8px">Audience</div>
+        <div class="audience-chips">
+          <div class="aud-chip sel" onclick="toggleAud(this)">All members</div>
+          <div class="aud-chip" onclick="toggleAud(this)">Perform only</div>
+          <div class="aud-chip" onclick="toggleAud(this)">Daily only</div>
+          <div class="aud-chip" onclick="toggleAud(this)">At-risk (14+ days)</div>
+          <div class="aud-chip" onclick="toggleAud(this)">Trial members</div>
+          <div class="aud-chip" onclick="toggleAud(this)">HYROX members</div>
+        </div>
+        <button class="send-btn" onclick="sendPush()">Send push notification</button>
+      </div>
+
+      <div style="font-size:12px;font-weight:500;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Recent notifications sent</div>
+      <div class="notif-history-item">
+        <div style="flex:1"><div style="font-size:13px;font-weight:500;margin-bottom:2px">8 Week Challenge — starts in 7 days</div><div style="font-size:11px;color:var(--muted)">All members · 2 hours ago · 1,660 sent</div></div>
+        <span class="pill pill-green">Sent</span>
+      </div>
+      <div class="notif-history-item">
+        <div style="flex:1"><div style="font-size:13px;font-weight:500;margin-bottom:2px">HYROX Tuesday almost full — 2 spots left</div><div style="font-size:11px;color:var(--muted)">HYROX members · Yesterday · 312 sent</div></div>
+        <span class="pill pill-green">Sent</span>
+      </div>
+      <div class="notif-history-item">
+        <div style="flex:1"><div style="font-size:13px;font-weight:500;margin-bottom:2px">HYROX Sydney — 73 days out. Get your race prep started.</div><div style="font-size:11px;color:var(--muted)">All members · 2 days ago · 1,660 sent</div></div>
+        <span class="pill pill-green">Sent</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+const USER = { name:'Sarah Mitchell', initials:'SC', membership:'perform', visits:14, total:287, streak:6 };
+// Change to 'daily' to see daily member experience
+
+const CLASSES = [
+  {id:'hyrox-tue',name:'HYROX Training',time:'6:00',ampm:'AM',coach:'Coach Dave',duration:'60 min',type:'hyrox',spots:2,max:34,premium:true,day:0},
+  {id:'pump',name:'Body Pump',time:'9:00',ampm:'AM',coach:'Coach Bekka',duration:'45 min',type:'pump',spots:12,max:20,premium:false,day:0},
+  {id:'yoga',name:'Yoga Flow',time:'12:00',ampm:'PM',coach:'Coach Madeliene',duration:'50 min',type:'yoga',spots:8,max:16,premium:false,day:0},
+  {id:'strength',name:'Strength & Conditioning',time:'6:00',ampm:'PM',coach:'Coach Tim',duration:'60 min',type:'strength',spots:4,max:20,premium:false,day:0},
+  {id:'hiit-wed',name:'HIIT Conditioning',time:'6:00',ampm:'AM',coach:'Coach Junior',duration:'45 min',type:'hiit',spots:6,max:18,premium:false,day:1},
+  {id:'hyrox-wed',name:'HYROX Racing Sim',time:'7:00',ampm:'AM',coach:'Coach Dave',duration:'75 min',type:'hyrox',spots:1,max:24,premium:true,day:1},
+  {id:'yoga-thu',name:'Yoga Flow',time:'6:30',ampm:'AM',coach:'Coach Madeliene',duration:'50 min',type:'yoga',spots:5,max:16,premium:false,day:2},
+  {id:'strength-thu',name:'Strength Block',time:'12:00',ampm:'PM',coach:'Coach Taylor',duration:'60 min',type:'strength',spots:10,max:20,premium:false,day:2},
+  {id:'pump-fri',name:'Body Pump',time:'9:00',ampm:'AM',coach:'Coach Bekka',duration:'45 min',type:'pump',spots:0,max:20,premium:false,day:3},
+  {id:'hyrox-sat',name:'HYROX Community',time:'8:00',ampm:'AM',coach:'Coach Dave',duration:'90 min',type:'hyrox',spots:8,max:34,premium:true,day:4},
+];
+
+let bookedClasses = new Set();
+let activeDay = 0;
+let currentPayItem = {};
+
+// ── NAVIGATION ──
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  const navEl = document.getElementById('nav-' + screen);
+  if (navEl) navEl.classList.add('active');
+  if (screen === 'classes') renderClasses();
+}
+
+// ── DAYS ──
+function buildDayScroll() {
+  const scroll = document.getElementById('dayScroll');
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const nums = [22,23,24,25,26,27,28];
+  scroll.innerHTML = days.map((d,i) => {
+    const hasClass = CLASSES.some(c => c.day === i);
+    return `<div class="day-item${i===0?' active':''}${hasClass?' has-class':''}" onclick="selectDay(this,${i})">
+      <div class="day-name">${d}</div>
+      <div class="day-num">${nums[i]}</div>
+      <div class="day-dot"></div>
+    </div>`;
+  }).join('');
+}
+
+function selectDay(el, dayIdx) {
+  document.querySelectorAll('.day-item').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+  activeDay = dayIdx;
+  renderClasses();
+}
+
+// ── CLASSES ──
+function renderClasses(filter) {
+  const list = document.getElementById('classList');
+  let classes = CLASSES.filter(c => c.day === activeDay);
+  if (filter && filter !== 'all') classes = classes.filter(c => c.type === filter);
+
+  if (classes.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div>No classes this day</div></div>`;
+    return;
+  }
+
+  list.innerHTML = classes.map(c => {
+    const isBooked = bookedClasses.has(c.id);
+    const isFull = c.spots === 0;
+    const isPremiumDaily = USER.membership === 'daily' && c.premium;
+    const spotsClass = c.spots <= 3 ? 'spots-low' : c.spots === 0 ? 'spots-full' : 'spots-ok';
+    const spotsText = isFull ? 'Full' : `${c.spots} left`;
+    const typeClass = {hyrox:'badge-hyrox',strength:'badge-strength',hiit:'badge-hiit',yoga:'badge-yoga',pump:'badge-pump'}[c.type];
+
+    let btnHtml = '';
+    if (isBooked) {
+      btnHtml = `<button class="book-btn book-booked" onclick="cancelBook(event,'${c.id}')">Booked ✓</button>`;
+    } else if (isFull) {
+      btnHtml = `<button class="book-btn book-full">Full</button>`;
+    } else if (isPremiumDaily) {
+      btnHtml = `<button class="book-btn book-pay" onclick="event.stopPropagation();openPayment('${c.name} class drop-in','$10',10,'class','${c.id}')">$10</button>`;
+    } else {
+      btnHtml = `<button class="book-btn book-free" onclick="event.stopPropagation();quickBook('${c.name}','${c.id}')">Book</button>`;
+    }
+
+    return `<div class="class-card" onclick="openClassModal('${c.id}')">
+      <div class="class-time-block">
+        <div class="ctb-time">${c.time}</div>
+        <div class="ctb-ampm">${c.ampm}</div>
+      </div>
+      <div class="class-info">
+        <div class="class-name">${c.name}</div>
+        <div class="class-meta">
+          <span>${c.coach} · ${c.duration}</span>
+          <span class="class-type-badge ${typeClass}">${c.type.toUpperCase()}</span>
+          <span class="class-spots ${spotsClass}">${spotsText}</span>
+        </div>
+      </div>
+      <div class="class-book-btn">${btnHtml}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterClasses(el, type) {
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderClasses(type === 'all' ? null : type);
+}
+
+// ── BOOKING ──
+function quickBook(name, id) {
+  if (id) bookedClasses.add(id);
+  showToast(`${name} booked ✓`);
+  renderClasses();
+}
+
+function cancelBook(e, id) {
+  e.stopPropagation();
+  bookedClasses.delete(id);
+  const cls = CLASSES.find(c => c.id === id);
+  showToast(`${cls?.name || 'Class'} booking cancelled`);
+  renderClasses();
+}
+
+// ── CLASS MODAL ──
+function openClassModal(id) {
+  const cls = CLASSES.find(c => c.id === id);
+  if (!cls) return;
+  const isPremiumDaily = USER.membership === 'daily' && cls.premium;
+  const isBooked = bookedClasses.has(id);
+
+  document.getElementById('modalClassName').textContent = cls.name;
+  document.getElementById('modalClassMeta').textContent = `${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][cls.day]} · ${cls.time} ${cls.ampm} · ${cls.coach} · ${cls.duration}`;
+  document.getElementById('mdCoach').textContent = cls.coach;
+  document.getElementById('mdDuration').textContent = cls.duration;
+  document.getElementById('mdCapacity').textContent = `${cls.max} spots · ${cls.spots} remaining`;
+
+  const btn = document.getElementById('modalBookBtn');
+  const note = document.getElementById('modalPriceNote');
+
+  if (isBooked) {
+    btn.textContent = 'Cancel booking';
+    btn.className = 'modal-cta free';
+    btn.style.background = '#e8e8e4';
+    btn.style.color = '#666';
+    btn.onclick = () => { cancelBook({stopPropagation:()=>{}}, id); closeModal('classModal'); };
+    note.textContent = 'Tap to cancel your booking';
+  } else if (isPremiumDaily) {
+    btn.textContent = 'Book — $10 drop-in';
+    btn.className = 'modal-cta pay';
+    btn.style = '';
+    btn.onclick = () => { closeModal('classModal'); openPayment(cls.name + ' drop-in', '$10', 10, 'class', id); };
+    note.textContent = 'Daily members pay $10 for HYROX / premium classes';
+    document.getElementById('mdMembership').textContent = 'Daily — $10 drop-in fee';
+  } else {
+    btn.textContent = 'Book this class — Free';
+    btn.className = 'modal-cta free';
+    btn.style = '';
+    btn.onclick = confirmBook;
+    note.textContent = 'Included with your ' + (USER.membership === 'perform' ? 'Perform' : 'Daily') + ' membership';
+    document.getElementById('mdMembership').textContent = USER.membership === 'perform' ? 'Perform — free access' : 'Daily — free for standard classes';
+  }
+
+  document.getElementById('classModal').classList.add('open');
+  window._currentClassId = id;
+  window._currentClassName = cls.name;
+}
+
+function confirmBook() {
+  bookedClasses.add(window._currentClassId);
+  closeModal('classModal');
+  showToast(`${window._currentClassName} booked ✓`);
+  renderClasses();
+}
+
+// ── PAYMENT ──
+function openPayment(name, price, amount, type, classId) {
+  document.getElementById('payTitle').textContent = name;
+  document.getElementById('payItemName').textContent = name;
+  document.getElementById('payItemPrice').textContent = price;
+  document.getElementById('payBtnAmount').textContent = price;
+  document.getElementById('payModal').classList.add('open');
+  window._payType = type;
+  window._payClassId = classId;
+  window._payAmount = amount;
+  window._payName = name;
+}
+
+function processPayment() {
+  const btn = document.getElementById('payBtn');
+  btn.textContent = 'Processing...';
+  btn.style.opacity = '0.7';
+  setTimeout(() => {
+    btn.textContent = 'Pay ' + document.getElementById('payBtnAmount').textContent;
+    btn.style.opacity = '1';
+    closeModal('payModal');
+    if (window._payType === 'class' && window._payClassId) {
+      bookedClasses.add(window._payClassId);
+      renderClasses();
+    }
+    showToast('Payment successful — ' + window._payName + ' ✓');
+  }, 1800);
+}
+
+// ── UPGRADE ──
+function openUpgradeModal() { document.getElementById('upgradeModal').classList.add('open'); }
+function processUpgrade() {
+  setTimeout(() => {
+    closeModal('upgradeModal');
+    showToast('Welcome to Perform! 🎉 Membership upgraded.');
+    document.getElementById('upgradeBannerSection').style.display = 'none';
+  }, 1200);
+}
+
+// ── MODALS ──
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── NOTIFICATIONS ──
+function showNotifPanel() { document.getElementById('notifModal').classList.add('open'); }
+function openAdminPanel() { closeModal('notifModal'); setTimeout(() => document.getElementById('adminModal').classList.add('open'), 100); }
+
+function toggleAud(el) {
+  document.querySelectorAll('.aud-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function sendPush() {
+  const msg = document.getElementById('pushMsg').value.trim();
+  if (!msg) { showToast('Write a message first'); return; }
+  const btn = document.querySelector('.send-btn');
+  btn.textContent = 'Sending...';
+  setTimeout(() => {
+    btn.textContent = 'Send push notification';
+    closeModal('adminModal');
+    showToast('Push notification sent to 1,660 members ✓');
+    document.getElementById('pushMsg').value = '';
+  }, 1500);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── PASS MODAL ──
+function openPassModal(type) {
+  const map = {
+    trial: { name:'10 Days for $10', price:'$10', amount:10 },
+    daypass: { name:'Day Pass', price:'$25', amount:25 },
+    perform: { name:'Perform Membership', price:'$45/wk', amount:45 },
+    daily: { name:'Daily Membership', price:'$25/wk', amount:25 },
+  };
+  const item = map[type];
+  if (item) openPayment(item.name, item.price, item.amount);
+}
+
+// ── INIT ──
+buildDayScroll();
+renderClasses();
+
+// Daily member banner logic
+if (USER.membership === 'perform') {
+  const b = document.getElementById('upgradeBannerSection');
+  if (b) b.style.display = 'none';
+}
+</script>
+</body>
+</html>
