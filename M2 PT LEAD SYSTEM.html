@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>M2 PT Lead System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --lime:#d4f53c;--lime2:#b8d630;--lime3:rgba(212,245,60,0.12);--lime4:rgba(212,245,60,0.06);
+    --black:#0a0a0a;--black2:#111;--black3:#161616;--black4:#1c1c1c;
+    --text:#f0f0f0;--text2:#aaa;--text3:#666;
+    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.18);
+    --red:#ff4444;--red2:rgba(255,68,68,0.12);
+    --green:#39d98a;--green2:rgba(57,217,138,0.1);
+    --amber:#ffb020;--amber2:rgba(255,176,32,0.1);
+    --blue:#5fa8e0;--blue2:rgba(95,168,224,0.1);
+    --r:14px;--rs:8px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'DM Sans',sans-serif;
+    background:var(--black); color:var(--text); min-height:100vh;
+  }
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:16px 24px; background:rgba(10,10,10,0.94); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border); flex-wrap:wrap; position:sticky; top:0; z-index:40;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .m2logo{font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--lime); letter-spacing:3px; line-height:1;}
+  .brand-sep{width:1px; height:20px; background:var(--border2);}
+  .brand-sub{font-size:11px; letter-spacing:1.5px; color:var(--text3); text-transform:uppercase; font-weight:600;}
+  .controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  input, select, textarea, button{
+    font-family:'DM Sans',sans-serif; font-size:13px; border-radius:var(--rs); border:1px solid var(--border2);
+    background:var(--black3); color:var(--text); padding:9px 12px;
+  }
+  input::placeholder, textarea::placeholder{color:var(--text3);}
+  input:focus, select:focus, textarea:focus{outline:none; border-color:var(--lime);}
+  button{cursor:pointer; font-weight:600; transition:all 0.15s; border-color:var(--border2);}
+  button.primary{
+    background:var(--lime); border-color:var(--lime); color:var(--black);
+    font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1px; padding:9px 18px;
+  }
+  button.primary:hover{background:var(--lime2);}
+  button.ghost:hover{background:var(--black4); border-color:var(--border3);}
+  button.ghost.active{background:var(--lime3); border-color:var(--lime); color:var(--lime);}
+  #status-msg{font-size:11px; color:var(--text3); padding:10px 24px 0; letter-spacing:.02em;}
+  #board{
+    display:flex; gap:14px; padding:18px 24px 24px; overflow-x:auto; align-items:flex-start;
+  }
+  .column{
+    background:var(--black2); border:1px solid var(--border); border-radius:var(--r);
+    min-width:280px; max-width:300px; flex:1 0 280px; display:flex; flex-direction:column; max-height:calc(100vh - 160px);
+  }
+  .column-head{
+    padding:12px 14px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1.5px; text-transform:uppercase;
+    border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;
+    position:sticky; top:0; background:var(--black2); border-radius:var(--r) var(--r) 0 0;
+  }
+  .column-head .count{
+    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; color:var(--black);
+    background:var(--text3); border-radius:20px; padding:2px 8px; letter-spacing:0;
+  }
+  .column-head .count{background:var(--lime); color:var(--black);}
+  .column-head.unassigned .count{background:var(--red);}
+  .column-body{padding:12px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; transition:background 0.15s, outline 0.15s; border-radius:0 0 var(--r) var(--r);}
+  .column-body.drag-over{background:var(--lime4); outline:2px dashed var(--lime); outline-offset:-2px;}
+  .card{
+    background:var(--black3); border:1px solid var(--border); border-radius:var(--rs); padding:12px 14px;
+    border-left:3px solid var(--text3); cursor:grab;
+  }
+  .card.dragging{opacity:.35;}
+  .card.st-new{border-left-color:var(--red);}
+  .card.st-contacted{border-left-color:var(--blue);}
+  .card.st-trial{border-left-color:var(--lime);}
+  .card.st-won{border-left-color:var(--green);}
+  .card.st-lost{border-left-color:var(--text3); opacity:.6;}
+  .card .other-trainer{font-size:10.5px; font-weight:700; letter-spacing:.03em; color:var(--lime); text-transform:uppercase; margin-bottom:4px;}
+  .card .name{font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:.5px; color:#fff; margin-bottom:2px;}
+  .card .meta{font-size:11px; color:var(--text3); margin-bottom:8px;}
+  .chips{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;}
+  .chip{
+    font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:20px; border:1px solid var(--border2);
+    color:var(--text2); background:var(--black4); white-space:nowrap;
+  }
+  .chip.reason{color:var(--text2);}
+  .chip.pref-m{color:var(--blue); border-color:rgba(95,168,224,0.3); background:var(--blue2);}
+  .chip.pref-f{color:#e08fd6; border-color:rgba(224,143,214,0.3); background:rgba(224,143,214,0.1);}
+  .chip.pref-any{color:var(--text2);}
+  .chip.time{color:var(--lime); border-color:rgba(212,245,60,0.25); background:var(--lime4);}
+  .chip.injury{color:var(--red); border-color:rgba(255,68,68,0.3); background:var(--red2);}
+  .detail-line{font-size:11.5px; color:var(--text2); margin-bottom:3px; line-height:1.4;}
+  .detail-line b{color:var(--text); font-weight:600;}
+  .age{font-size:11px; font-weight:700; margin:8px 0; letter-spacing:.02em;}
+  .age.overdue{color:var(--red);}
+  .age.ok{color:var(--text3);}
+  .card select, .card textarea{width:100%; margin-bottom:6px; font-size:12px; padding:7px 10px;}
+  .card textarea{resize:vertical; min-height:40px;}
+  .card .row2{display:flex; gap:6px;}
+  .card .row2 select{flex:1;}
+  .empty-hint{font-size:12px; color:var(--text3); text-align:center; padding:20px 8px;}
+  .modal-bg{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); align-items:center; justify-content:center; z-index:50;
+  }
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--black2); border:1px solid var(--border2); border-radius:var(--r); padding:20px; width:380px; max-width:90vw; max-height:85vh; overflow-y:auto;}
+  .modal h2{margin:0 0 14px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.5px; color:#fff;}
+  .modal label{font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:.04em; font-weight:600; display:block; margin:10px 0 4px;}
+  .modal input, .modal select, .modal textarea{width:100%;}
+  .modal .actions{display:flex; justify-content:flex-end; gap:8px; margin-top:18px;}
+  #configBanner{
+    display:none; background:var(--amber2); border:1px solid rgba(255,176,32,0.3); color:var(--amber); padding:9px 24px; font-size:12px;
+  }
+  #configBanner.show{display:block;}
+  a{color:var(--lime);}
+  .footer-note{padding:6px 24px 24px; font-size:11px; color:var(--text3);}
+  ::-webkit-scrollbar{height:8px; width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--border3); border-radius:8px;}
+</style>
+</head>
+<body>
+
+<div id="configBanner">Set your Apps Script Web App URL at the top of this file (APPS_SCRIPT_URL) before this dashboard will load real leads.</div>
+
+<header>
+  <div class="brand">
+    <span class="m2logo">M2</span>
+    <span class="brand-sep"></span>
+    <span class="brand-sub">PT Lead System</span>
+  </div>
+  <div class="controls">
+    <input id="searchBox" type="text" placeholder="Search name / phone / email...">
+    <button class="ghost" id="archiveToggleBtn">Show archived</button>
+    <button class="ghost" id="refreshBtn">Refresh</button>
+    <button class="primary" id="newLeadBtn">+ New Lead</button>
+  </div>
+</header>
+<div id="status-msg">Loading leads...</div>
+
+<div id="board"></div>
+
+<div class="footer-note">Leads flow in automatically from the GymMaster "Free PT" questionnaire &middot; drag a card into a trainer's column (or use the dropdown) to assign it &mdash; the trainer gets emailed the lead's details instantly.</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2>Add a lead manually</h2>
+    <label>Name</label>
+    <input id="mName" type="text">
+    <label>Phone</label>
+    <input id="mPhone" type="text">
+    <label>Email</label>
+    <input id="mEmail" type="text">
+    <label>Reason for joining</label>
+    <input id="mReason" type="text">
+    <label>Trainer preference</label>
+    <select id="mTrainerPref">
+      <option value="">Not specified</option>
+      <option value="a Male trainer">A male trainer</option>
+      <option value="a Female trainer">A female trainer</option>
+      <option value="I do not have a preference">No preference</option>
+    </select>
+    <label>Preferred training style</label>
+    <select id="mStyle">
+      <option value="">Not specified</option>
+      <option>Strength Training - weights & machines</option>
+      <option>Olympic Lifting</option>
+      <option>High Intensity Interval or Circuit Training</option>
+      <option>Cardio/Fitness Focus</option>
+      <option>Mobility/Movement</option>
+      <option>Bodyweight</option>
+      <option>Power Lifting</option>
+      <option>Sports Specific</option>
+      <option>Not sure</option>
+    </select>
+    <label>Preferred time</label>
+    <select id="mTime">
+      <option value="">Not specified</option>
+      <option>Weekday - Early morning</option>
+      <option>Weekday - Midday</option>
+      <option>Weekday - Evenings</option>
+      <option>Weekend - Morning / Midday</option>
+      <option>Any - I'm flexible</option>
+    </select>
+    <label>Injuries / medical notes</label>
+    <textarea id="mInjuries" rows="2"></textarea>
+    <div class="actions">
+      <button class="ghost" id="mCancel">Cancel</button>
+      <button class="primary" id="mSave">Save lead</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ======================= CONFIG ======================= */
+// Paste your deployed Google Apps Script Web App URL here (ends in /exec).
+// See the setup guide for how to create this.
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzVyQUeToju9FNDwLSYQ86CJvW0ogHxHFsWDto6iV6HSN_6Y2djX6AXwjdFOSvryuR/exec";
+
+// Every trainer who can be assigned a lead. Keep in sync with Code.gs TRAINER_EMAILS.
+const TRAINERS = ["Bekka", "Dave", "Madi", "Te Ah", "Rodney", "Taylor"];
+
+// Trainers who get their own board column. Anyone else in TRAINERS still shows
+// up in the assign dropdown, but their leads land in the "Other Trainers" column.
+const PINNED_TRAINERS = ["Bekka", "Dave", "Te Ah", "Taylor", "Rodney"];
+
+// Board columns, left to right. "__unassigned__" and "__other__" are special keys
+// handled in columnForLead() below — everything else is a trainer name.
+const COLUMNS = [
+  {key: "__unassigned__", label: "Unassigned"},
+  ...PINNED_TRAINERS.map(t => ({key: t, label: t})),
+  {key: "__other__", label: "Other Trainers"}
+];
+
+// Follow-up stage — now a dropdown on each card (colours its left border)
+// rather than a board column. New leads default to "New".
+const STATUSES = [
+  {key: "New", cls: "st-new"},
+  {key: "Contacted", cls: "st-contacted"},
+  {key: "Trial Booked", cls: "st-trial"},
+  {key: "Won", cls: "st-won"},
+  {key: "Lost", cls: "st-lost"}
+];
+const AUTO_REFRESH_MS = 60000;
+/* ======================================================= */
+
+let leads = [];
+let pollTimer = null;
+let showArchived = false; // Won/Lost leads are hidden from the board until toggled on
+
+function $(id){ return document.getElementById(id); }
+
+function columnForLead(l){
+  const t = l.trainer || "";
+  if(!t) return "__unassigned__";
+  if(PINNED_TRAINERS.includes(t)) return t;
+  return "__other__";
+}
+
+function statusMeta(status){
+  return STATUSES.find(s => s.key === status) || STATUSES[0];
+}
+
+function init(){
+  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
+    $("configBanner").classList.add("show");
+    $("status-msg").textContent = "Not connected — showing sample data only.";
+    leads = sampleData();
+    render();
+    return;
+  }
+  fetchLeads();
+  pollTimer = setInterval(fetchLeads, AUTO_REFRESH_MS);
+}
+
+function sampleData(){
+  const now = Date.now();
+  return [
+    {id:"demo-1", name:"Sarah Thompson", phone:"021 555 0192", email:"sarah@example.com",
+     reasonForJoining:"General health & weight loss", trainerPreference:"I do not have a preference",
+     trainingStyle:"High Intensity Interval or Circuit Training", injuries:"", preferredTime:"Weekday - Early morning",
+     source:"GymMaster", status:"New", trainer:"", receivedAt: new Date(now - 3*3600*1000).toISOString(), notes:""},
+    {id:"demo-2", name:"Mike Reddy", phone:"022 444 7710", email:"mike@example.com",
+     reasonForJoining:"Training for a half marathon", trainerPreference:"a Male trainer",
+     trainingStyle:"Sports Specific", injuries:"Old ACL reconstruction, right knee", preferredTime:"Weekday - Evenings",
+     source:"GymMaster", status:"Contacted", trainer:"Dave", receivedAt: new Date(now - 26*3600*1000).toISOString(), notes:"Left voicemail Tue."},
+    {id:"demo-3", name:"Grace Foster", phone:"027 909 3623", email:"grace@example.com",
+     reasonForJoining:"Wants a structured programme", trainerPreference:"a Female trainer",
+     trainingStyle:"Strength Training - weights & machines", injuries:"", preferredTime:"Weekday - Midday",
+     source:"GymMaster", status:"Trial Booked", trainer:"Bekka", receivedAt: new Date(now - 40*3600*1000).toISOString(), notes:"Trial booked Thursday 6am."},
+    {id:"demo-4", name:"Jack Hayes", phone:"027 474 3257", email:"jack@example.com",
+     reasonForJoining:"Post-injury rehab", trainerPreference:"I do not have a preference",
+     trainingStyle:"Mobility/Movement", injuries:"Shoulder impingement, left side", preferredTime:"Any - I'm flexible",
+     source:"GymMaster", status:"New", trainer:"Madi", receivedAt: new Date(now - 5*3600*1000).toISOString(), notes:""},
+    {id:"demo-5", name:"Piper Singh", phone:"021 941 7330", email:"piper@example.com",
+     reasonForJoining:"General health & weight loss", trainerPreference:"a Male trainer",
+     trainingStyle:"Not sure", injuries:"", preferredTime:"Weekday - Evenings",
+     source:"GymMaster", status:"Won", trainer:"Bekka", receivedAt: new Date(now - 60*24*3600*1000).toISOString(), notes:"Signed up for 10-session pack."},
+    {id:"demo-6", name:"Skye Hayes", phone:"027 825 7613", email:"skye@example.com",
+     reasonForJoining:"Improve fitness for rugby pre-season", trainerPreference:"a Female trainer",
+     trainingStyle:"Mobility/Movement", injuries:"", preferredTime:"Weekday - Midday",
+     source:"GymMaster", status:"Lost", trainer:"Bekka", receivedAt: new Date(now - 90*24*3600*1000).toISOString(), notes:"Went with a different gym."},
+  ];
+}
+
+async function fetchLeads(){
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + "?action=list");
+    const data = await res.json();
+    leads = data.leads || [];
+    $("status-msg").textContent = "Last updated " + new Date().toLocaleTimeString();
+    render();
+  }catch(err){
+    $("status-msg").textContent = "Couldn't reach the lead sheet. Check APPS_SCRIPT_URL and that the Apps Script is deployed with 'Anyone' access.";
+    console.error(err);
+  }
+}
+
+async function postAction(payload){
+  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
+    alert("Demo mode: connect APPS_SCRIPT_URL to save changes for real.");
+    return;
+  }
+  try{
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"}, // avoids CORS preflight
+      body: JSON.stringify(payload)
+    });
+    await fetchLeads();
+  }catch(err){
+    console.error(err);
+    $("status-msg").textContent = "Save failed — check your connection and try again.";
+  }
+}
+
+function ageLabel(iso){
+  const ms = Date.now() - new Date(iso).getTime();
+  const hrs = ms / 3600000;
+  if(hrs < 1) return {text: Math.round(ms/60000) + "m ago", overdue:false};
+  if(hrs < 24) return {text: Math.round(hrs) + "h ago", overdue: hrs > 4};
+  return {text: Math.round(hrs/24) + "d ago", overdue: true};
+}
+
+function matchesFilters(l){
+  // Won/Lost leads are archived off the board by default — they're done,
+  // and leaving them in a trainer's column forever is exactly the clutter
+  // that makes a 50-lead column unreadable. Toggle "Show archived" to see them.
+  if(!showArchived && (l.status === "Won" || l.status === "Lost")) return false;
+
+  const q = $("searchBox").value.trim().toLowerCase();
+  if(!q) return true;
+  return (l.name||"").toLowerCase().includes(q) ||
+         (l.phone||"").toLowerCase().includes(q) ||
+         (l.email||"").toLowerCase().includes(q);
+}
+
+function render(){
+  const board = $("board");
+  board.innerHTML = "";
+  COLUMNS.forEach(col => {
+    const colEl = document.createElement("div");
+    colEl.className = "column";
+    const inCol = leads.filter(l => columnForLead(l) === col.key && matchesFilters(l));
+    const headCls = col.key === "__unassigned__" ? "unassigned" : "";
+    colEl.innerHTML = `
+      <div class="column-head ${headCls}"><span>${col.label}</span><span class="count">${inCol.length}</span></div>
+      <div class="column-body" id="col-${col.key.replace(/\W/g,'')}"></div>
+    `;
+    board.appendChild(colEl);
+    const body = colEl.querySelector(".column-body");
+    if(inCol.length === 0){
+      const hint = document.createElement("div");
+      hint.className = "empty-hint";
+      hint.textContent = "No leads";
+      body.appendChild(hint);
+    }
+    // Oldest first — the longest-waiting lead is the one that most needs
+    // attention, so it should be the first thing you see, not buried under
+    // whatever came in most recently.
+    inCol.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
+    inCol.forEach(l => body.appendChild(renderCard(l, col.key === "__other__")));
+
+    // "Other Trainers" isn't a valid drop target — Madi/Rodney/Taylor still
+    // get assigned via the dropdown on the card, since a drop here can't say which of them.
+    if(col.key === "__other__") return;
+
+    body.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      body.classList.add("drag-over");
+    });
+    body.addEventListener("dragleave", () => body.classList.remove("drag-over"));
+    body.addEventListener("drop", (e) => {
+      e.preventDefault();
+      body.classList.remove("drag-over");
+      const id = e.dataTransfer.getData("text/plain");
+      const lead = leads.find(x => x.id === id);
+      if(!lead) return;
+      const newTrainer = col.key === "__unassigned__" ? "" : col.key;
+      if((lead.trainer || "") === newTrainer) return;
+      postAction({action:"updateLead", id, trainer: newTrainer, status: lead.status||"New"});
+    });
+  });
+}
+
+function trainerPrefChip(pref){
+  if(!pref) return "";
+  let cls = "pref-any", label = pref;
+  if(/male/i.test(pref) && !/female/i.test(pref)){ cls = "pref-m"; label = "Prefers male trainer"; }
+  else if(/female/i.test(pref)){ cls = "pref-f"; label = "Prefers female trainer"; }
+  else { label = "No trainer preference"; }
+  return `<span class="chip ${cls}">${escapeHtml(label)}</span>`;
+}
+
+function renderCard(l, showTrainerLabel){
+  const card = document.createElement("div");
+  const stMeta = statusMeta(l.status || "New");
+  card.className = "card " + stMeta.cls;
+  const age = ageLabel(l.receivedAt);
+
+  const trainerSelect = document.createElement("select");
+  const noneOpt = document.createElement("option");
+  noneOpt.value = ""; noneOpt.textContent = "Unassigned";
+  trainerSelect.appendChild(noneOpt);
+  TRAINERS.forEach(t => {
+    const o = document.createElement("option");
+    o.value = t; o.textContent = t;
+    if(l.trainer === t) o.selected = true;
+    trainerSelect.appendChild(o);
+  });
+  trainerSelect.addEventListener("change", () => {
+    postAction({action:"updateLead", id:l.id, trainer: trainerSelect.value, status: l.status||"New"});
+  });
+
+  const statusSelect = document.createElement("select");
+  STATUSES.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s.key; o.textContent = s.key;
+    if((l.status||"New") === s.key) o.selected = true;
+    statusSelect.appendChild(o);
+  });
+  statusSelect.addEventListener("change", () => {
+    postAction({action:"updateLead", id:l.id, status: statusSelect.value, trainer: l.trainer||""});
+  });
+
+  const notes = document.createElement("textarea");
+  notes.placeholder = "Follow-up notes...";
+  notes.value = l.notes || "";
+  notes.addEventListener("blur", () => {
+    if(notes.value !== (l.notes||"")){
+      postAction({action:"updateLead", id:l.id, notes: notes.value, status: l.status||"New", trainer: l.trainer||""});
+    }
+  });
+
+  let chips = "";
+  chips += trainerPrefChip(l.trainerPreference);
+  if(l.preferredTime) chips += `<span class="chip time">${escapeHtml(l.preferredTime)}</span>`;
+  if(l.injuries) chips += `<span class="chip injury">&#9888; Injury note</span>`;
+
+  let details = "";
+  if(l.reasonForJoining) details += `<div class="detail-line"><b>Why:</b> ${escapeHtml(l.reasonForJoining)}</div>`;
+  if(l.trainingStyle) details += `<div class="detail-line"><b>Style:</b> ${escapeHtml(l.trainingStyle)}</div>`;
+  if(l.injuries) details += `<div class="detail-line"><b>Injuries:</b> ${escapeHtml(l.injuries)}</div>`;
+
+  const otherLabel = showTrainerLabel && l.trainer ? `<div class="other-trainer">Assigned: ${escapeHtml(l.trainer)}</div>` : "";
+
+  card.innerHTML = `
+    ${otherLabel}
+    <div class="name">${escapeHtml(l.name||"(no name)")}</div>
+    <div class="meta">${escapeHtml(l.phone||"")} ${l.phone && l.email ? "&middot;" : ""} ${escapeHtml(l.email||"")}</div>
+    <div class="meta">Source: ${escapeHtml(l.source||"Manual")}</div>
+    <div class="chips">${chips}</div>
+    ${details}
+    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " — follow up!" : ""}</div>
+  `;
+  const row2 = document.createElement("div");
+  row2.className = "row2";
+  row2.appendChild(trainerSelect);
+  row2.appendChild(statusSelect);
+  card.appendChild(row2);
+  card.appendChild(notes);
+
+  // Drag and drop: drag a card into a trainer's column (or Unassigned) to
+  // reassign it. Dropping fires the same postAction as picking from the
+  // dropdown, so the trainer still gets emailed automatically.
+  card.draggable = true;
+  card.dataset.leadId = l.id;
+  card.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", l.id);
+    e.dataTransfer.effectAllowed = "move";
+    card.classList.add("dragging");
+  });
+  card.addEventListener("dragend", () => card.classList.remove("dragging"));
+
+  return card;
+}
+
+function escapeHtml(str){
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+$("refreshBtn").addEventListener("click", fetchLeads);
+$("searchBox").addEventListener("input", render);
+$("archiveToggleBtn").addEventListener("click", () => {
+  showArchived = !showArchived;
+  $("archiveToggleBtn").textContent = showArchived ? "Hide archived" : "Show archived";
+  $("archiveToggleBtn").classList.toggle("active", showArchived);
+  render();
+});
+
+$("newLeadBtn").addEventListener("click", () => $("modalBg").classList.add("open"));
+$("mCancel").addEventListener("click", () => $("modalBg").classList.remove("open"));
+$("mSave").addEventListener("click", () => {
+  const name = $("mName").value.trim();
+  if(!name){ alert("Name is required"); return; }
+  postAction({
+    action:"addLead",
+    name, phone: $("mPhone").value.trim(), email: $("mEmail").value.trim(),
+    reasonForJoining: $("mReason").value.trim(),
+    trainerPreference: $("mTrainerPref").value,
+    trainingStyle: $("mStyle").value,
+    preferredTime: $("mTime").value,
+    injuries: $("mInjuries").value.trim(),
+    source: "Manual"
+  });
+  ["mName","mPhone","mEmail","mReason","mInjuries"].forEach(id => $(id).value = "");
+  $("mTrainerPref").value = ""; $("mStyle").value = ""; $("mTime").value = "";
+  $("modalBg").classList.remove("open");
+});
+
+init();
+</script>
+</body>
+</html>
