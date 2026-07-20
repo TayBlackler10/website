@@ -1,852 +1,516 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>M2 PT Lead System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --lime:#d4f53c;--lime2:#b8d630;--lime3:rgba(212,245,60,0.12);--lime4:rgba(212,245,60,0.06);
-    --black:#0a0a0a;--black2:#111;--black3:#161616;--black4:#1c1c1c;
-    --text:#f0f0f0;--text2:#aaa;--text3:#666;
-    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.18);
-    --red:#ff4444;--red2:rgba(255,68,68,0.12);
-    --green:#39d98a;--green2:rgba(57,217,138,0.1);
-    --amber:#ffb020;--amber2:rgba(255,176,32,0.1);
-    --blue:#5fa8e0;--blue2:rgba(95,168,224,0.1);
-    --purple:#b47eea;--purple2:rgba(180,126,234,0.1);
-    --teal:#4fd1c5;--teal2:rgba(79,209,197,0.1);
-    --pink:#e08fd6;--pink2:rgba(224,143,214,0.1);
-    --r:14px;--rs:8px;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0; font-family:'DM Sans',sans-serif;
-    background:var(--black); color:var(--text); min-height:100vh; position:relative;
-  }
-  body::before{
-    content:""; position:fixed; top:-110px; left:50%; transform:translateX(-50%);
-    width:720px; height:280px; pointer-events:none; z-index:0;
-    background:radial-gradient(ellipse at center, rgba(212,245,60,0.11), transparent 70%);
-  }
-  header{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:16px 24px; background:rgba(10,10,10,0.94); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid var(--border); flex-wrap:wrap; position:sticky; top:0; z-index:40;
-  }
-  .brand{display:flex; align-items:center; gap:12px;}
-  .m2logo{font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--lime); letter-spacing:3px; line-height:1;}
-  .brand-sep{width:1px; height:20px; background:var(--border2);}
-  .brand-sub{font-size:11px; letter-spacing:1.5px; color:var(--text3); text-transform:uppercase; font-weight:600;}
-  .controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
-  input, select, textarea, button{
-    font-family:'DM Sans',sans-serif; font-size:13px; border-radius:var(--rs); border:1px solid var(--border2);
-    background:var(--black3); color:var(--text); padding:9px 12px;
-  }
-  input::placeholder, textarea::placeholder{color:var(--text3);}
-  input:focus, select:focus, textarea:focus{outline:none; border-color:var(--lime);}
-  button{cursor:pointer; font-weight:600; transition:all 0.15s; border-color:var(--border2);}
-  button.primary{
-    background:var(--lime); border-color:var(--lime); color:var(--black);
-    font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1px; padding:9px 18px;
-  }
-  button.primary:hover{background:var(--lime2);}
-  button.ghost:hover{background:var(--black4); border-color:var(--border3);}
-  button.ghost.active{background:var(--lime3); border-color:var(--lime); color:var(--lime);}
-  #status-msg{display:none;}
+/**
+ * M2 PT Lead System — Apps Script backend
+ * ----------------------------------------
+ * Deploy this bound to your "M2 PT Leads" Google Sheet as a Web App
+ * (Deploy > New deployment > type: Web app, execute as: Me, access: Anyone).
+ * The resulting /exec URL goes into APPS_SCRIPT_URL in dashboard.html.
+ *
+ * Fields match the GymMaster "M2 Training Club | Free PT" questionnaire
+ * (the one that currently emails Tim when a member completes it).
+ *
+ * See the setup guide for full step-by-step instructions.
+ */
 
-  .greeting-bar{
-    position:relative; z-index:1; padding:16px 24px 2px; display:flex; align-items:flex-end;
-    justify-content:space-between; flex-wrap:wrap; gap:10px;
-  }
-  .greeting-text{font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:.5px; color:#fff;}
-  .greeting-sub{font-size:11.5px; color:var(--text3); margin-top:3px;}
-  .live-badge{
-    display:inline-flex; align-items:center; gap:6px; font-size:10px; font-weight:700; letter-spacing:.07em;
-    text-transform:uppercase; color:var(--green); background:var(--green2); border:1px solid rgba(57,217,138,0.3);
-    border-radius:20px; padding:6px 11px 6px 9px; white-space:nowrap;
-  }
-  .live-badge.error{color:var(--red); background:var(--red2); border-color:rgba(255,68,68,0.3);}
-  .live-dot{width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 2s infinite;}
-  .live-badge.error .live-dot{background:var(--red); animation:none;}
-  @keyframes pulse{
-    0%{box-shadow:0 0 0 0 rgba(57,217,138,0.5);} 70%{box-shadow:0 0 0 6px rgba(57,217,138,0);} 100%{box-shadow:0 0 0 0 rgba(57,217,138,0);}
-  }
+const SHEET_NAME = "Leads";
 
-  .summary-bar{display:flex; gap:12px; padding:14px 24px 0; flex-wrap:wrap; position:relative; z-index:1;}
-  .stat-card{
-    background:var(--black2); border:1px solid var(--border); border-radius:var(--r);
-    padding:13px 20px; flex:1; min-width:130px;
-  }
-  .stat-card .stat-icon{font-size:15px; line-height:1; margin-bottom:5px; opacity:.9;}
-  .stat-card .stat-num{font-family:'Bebas Neue',sans-serif; font-size:32px; line-height:1; color:#fff;}
-  .stat-card.urgent{border-color:rgba(255,68,68,0.35); background:linear-gradient(135deg, rgba(255,68,68,0.08), var(--black2));}
-  .stat-card.urgent .stat-num{color:var(--red);}
-  .stat-card.type-active{border-color:rgba(95,168,224,0.28); background:linear-gradient(135deg, rgba(95,168,224,0.07), var(--black2));}
-  .stat-card.type-active .stat-num{color:var(--blue);}
-  .stat-card.type-week{border-color:rgba(212,245,60,0.28); background:linear-gradient(135deg, rgba(212,245,60,0.07), var(--black2));}
-  .stat-card.type-week .stat-num{color:var(--lime);}
-  .stat-card .stat-label{font-size:10.5px; color:var(--text3); text-transform:uppercase; letter-spacing:.06em; margin-top:3px; font-weight:600;}
+// Each trainer's real email address. Assigning a lead in the dashboard
+// (by dropdown or drag-and-drop) sends that trainer an email automatically.
+const TRAINER_EMAILS = {
+  "Bekka": "bekka@m2club.co.nz",
+  "Dave": "davidblint@gmail.com",
+  "Madi": "madeleinecollins4@gmail.com",
+  "Te Ao": "teaokura@gmail.com",
+  "Rodney": "rodwonglyn@gmail.com",
+  "Taylor": "taylor@m2club.co.nz"
+};
 
-  .section-row{margin-top:20px; position:relative; z-index:1;}
-  .section-label{
-    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
-    color:var(--text3); padding:0 24px; display:flex; align-items:center; gap:7px;
-  }
-  .section-label .ic{font-size:13px;}
-  .section-label .dot{width:6px; height:6px; border-radius:50%; background:var(--red);}
+// Head coach — cc'd on assignment emails so Tim can see it went out.
+const HEAD_COACH_EMAIL = "tim@m2club.co.nz";
 
-  .attention-row{display:flex; gap:10px; overflow-x:auto; padding:10px 24px 6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
-  .attention-card{
-    background:linear-gradient(160deg, rgba(255,68,68,0.07), var(--black2) 65%);
-    border:1px solid var(--border); border-left:3px solid var(--red);
-    border-radius:var(--rs); padding:12px 14px; min-width:235px; flex-shrink:0; scroll-snap-align:start;
-  }
-  .a-top{display:flex; align-items:center; gap:10px; margin-bottom:9px;}
-  .avatar{
-    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue',sans-serif; font-size:13px; color:#0a0a0a; flex-shrink:0; letter-spacing:.3px;
-  }
-  .attention-card .a-name{font-family:'Bebas Neue',sans-serif; font-size:17px; color:#fff; letter-spacing:.3px;}
-  .a-reason-badge{
-    display:inline-flex; align-items:center; gap:4px; font-size:9.5px; font-weight:700; letter-spacing:.04em;
-    text-transform:uppercase; color:var(--red); background:var(--red2); border:1px solid rgba(255,68,68,0.25);
-    border-radius:20px; padding:3px 8px; margin-top:3px; width:fit-content;
-  }
-  .attention-card select{width:100%; font-size:12px; padding:8px 9px;}
-  .attention-empty, .workload-empty{font-size:12px; color:var(--text3); padding:12px 24px;}
-
-  .workload-row{display:flex; gap:10px; overflow-x:auto; padding:10px 24px 6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
-  .workload-chip{
-    background:var(--black2); border:1px solid var(--border); border-radius:var(--rs);
-    padding:11px 16px; min-width:150px; cursor:pointer; transition:border-color .15s, transform .15s; flex-shrink:0;
-    display:flex; align-items:center; gap:11px; scroll-snap-align:start;
-  }
-  .workload-chip:hover{border-color:var(--lime); transform:translateY(-1px);}
-  .w-avatar{
-    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue',sans-serif; font-size:14px; color:#0a0a0a; flex-shrink:0; position:relative;
-  }
-  .w-avatar .w-badge{
-    position:absolute; top:-5px; right:-5px; background:var(--lime); color:var(--black);
-    font-family:'DM Sans',sans-serif; font-size:10px; font-weight:800; min-width:17px; height:17px;
-    border-radius:20px; display:flex; align-items:center; justify-content:center; padding:0 3px; border:2px solid var(--black2);
-  }
-  .w-info{display:flex; flex-direction:column;}
-  .workload-chip .w-name{font-family:'Bebas Neue',sans-serif; font-size:15px; color:#fff; letter-spacing:.4px;}
-  .workload-chip .w-oldest{font-size:10px; color:var(--text3); margin-top:2px;}
-  .workload-chip .w-oldest.overdue{color:var(--red); font-weight:700;}
-
-  #board{
-    display:flex; gap:14px; padding:18px 24px 24px; overflow-x:auto; align-items:flex-start;
-  }
-  .column{
-    background:var(--black2); border:1px solid var(--border); border-radius:var(--r);
-    min-width:280px; max-width:300px; flex:1 0 280px; display:flex; flex-direction:column; max-height:calc(100vh - 160px);
-  }
-  .column-head{
-    padding:12px 14px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1.5px; text-transform:uppercase;
-    border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;
-    position:sticky; top:0; background:var(--black2); border-radius:var(--r) var(--r) 0 0;
-  }
-  .column-head .ch-left{display:flex; align-items:center; gap:8px;}
-  .column-head .mini-avatar{
-    width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue',sans-serif; font-size:10px; color:#0a0a0a; flex-shrink:0;
-  }
-  .column-head .count{
-    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; color:var(--black);
-    background:var(--text3); border-radius:20px; padding:2px 8px; letter-spacing:0;
-  }
-  .column-head .count{background:var(--lime); color:var(--black);}
-  .column-head.unassigned .count{background:var(--red);}
-  .column-body{padding:12px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; transition:background 0.15s, outline 0.15s; border-radius:0 0 var(--r) var(--r);}
-  .column-body.drag-over{background:var(--lime4); outline:2px dashed var(--lime); outline-offset:-2px;}
-  .card{
-    background:var(--black3); border:1px solid var(--border); border-radius:var(--rs); padding:12px 14px;
-    border-left:3px solid var(--text3); cursor:grab;
-  }
-  .card.dragging{opacity:.35;}
-  .card.st-new{border-left-color:var(--red);}
-  .card.st-contacted{border-left-color:var(--blue);}
-  .card.st-trial{border-left-color:var(--lime); background:linear-gradient(135deg, rgba(212,245,60,0.05), var(--black3) 60%);}
-  .card.st-won{border-left-color:var(--green); background:linear-gradient(135deg, rgba(57,217,138,0.07), var(--black3) 60%);}
-  .card.st-lost{border-left-color:var(--text3); opacity:.6;}
-  .card .other-trainer{font-size:10.5px; font-weight:700; letter-spacing:.03em; color:var(--lime); text-transform:uppercase; margin-bottom:4px;}
-  .card .name{font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:.5px; color:#fff; margin-bottom:2px;}
-  .card .meta{font-size:11px; color:var(--text3); margin-bottom:8px;}
-  .chips{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;}
-  .chip{
-    font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:20px; border:1px solid var(--border2);
-    color:var(--text2); background:var(--black4); white-space:nowrap;
-  }
-  .chip.reason{color:var(--text2);}
-  .chip.pref-m{color:var(--blue); border-color:rgba(95,168,224,0.3); background:var(--blue2);}
-  .chip.pref-f{color:#e08fd6; border-color:rgba(224,143,214,0.3); background:rgba(224,143,214,0.1);}
-  .chip.pref-any{color:var(--text2);}
-  .chip.time{color:var(--lime); border-color:rgba(212,245,60,0.25); background:var(--lime4);}
-  .chip.injury{color:var(--red); border-color:rgba(255,68,68,0.3); background:var(--red2);}
-  .detail-line{font-size:11.5px; color:var(--text2); margin-bottom:3px; line-height:1.4;}
-  .detail-line b{color:var(--text); font-weight:600;}
-  .age{font-size:11px; font-weight:700; margin:8px 0; letter-spacing:.02em;}
-  .age.overdue{color:var(--red);}
-  .age.ok{color:var(--text3);}
-  .card select, .card textarea{width:100%; margin-bottom:6px; font-size:12px; padding:7px 10px;}
-  .card textarea{resize:vertical; min-height:40px;}
-  .card .row2{display:flex; gap:6px;}
-  .card .row2 select{flex:1;}
-  .empty-hint{font-size:12px; color:var(--text3); text-align:center; padding:20px 8px;}
-  .modal-bg{
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); align-items:center; justify-content:center; z-index:50;
-  }
-  .modal-bg.open{display:flex;}
-  .modal{background:var(--black2); border:1px solid var(--border2); border-radius:var(--r); padding:20px; width:380px; max-width:90vw; max-height:85vh; overflow-y:auto;}
-  .modal h2{margin:0 0 14px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.5px; color:#fff;}
-  .modal label{font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:.04em; font-weight:600; display:block; margin:10px 0 4px;}
-  .modal input, .modal select, .modal textarea{width:100%;}
-  .modal .actions{display:flex; justify-content:flex-end; gap:8px; margin-top:18px;}
-  #configBanner{
-    display:none; background:var(--amber2); border:1px solid rgba(255,176,32,0.3); color:var(--amber); padding:9px 24px; font-size:12px;
-  }
-  #configBanner.show{display:block;}
-  a{color:var(--lime);}
-  .footer-note{padding:6px 24px 24px; font-size:11px; color:var(--text3);}
-  ::-webkit-scrollbar{height:8px; width:8px;}
-  ::-webkit-scrollbar-thumb{background:var(--border3); border-radius:8px;}
-
-  .mobile-nav{display:none;}
-  @media (max-width:760px){
-    body{padding-bottom:74px;}
-    header{padding:14px 16px;}
-    .greeting-bar{padding:14px 16px 2px;}
-    .greeting-text{font-size:23px;}
-    .summary-bar{padding:12px 16px 0;}
-    .section-label{padding:0 16px;}
-    .attention-row, .workload-row{padding:10px 16px 6px;}
-    .footer-note{padding:6px 16px 20px;}
-    #board{padding:16px 16px 20px; scroll-snap-type:x mandatory;}
-    .column{min-width:86vw; max-width:90vw; flex:1 0 86vw; scroll-snap-align:start; max-height:none;}
-    .stat-card{min-width:calc(50% - 6px);}
-    .mobile-nav{
-      display:flex; position:fixed; bottom:0; left:0; right:0; z-index:45;
-      background:rgba(10,10,10,0.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      border-top:1px solid var(--border); padding:7px 4px calc(6px + env(safe-area-inset-bottom));
-      justify-content:space-around;
-    }
-    .mobile-nav button{
-      background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px;
-      font-size:18px; color:var(--text2); padding:5px 12px; border-radius:10px;
-    }
-    .mobile-nav button span{font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--text3);}
-    .mobile-nav button:active{background:var(--black4);}
-  }
-</style>
-</head>
-<body>
-
-<div id="configBanner">Set your Apps Script Web App URL at the top of this file (APPS_SCRIPT_URL) before this dashboard will load real leads.</div>
-
-<header>
-  <div class="brand">
-    <span class="m2logo">M2</span>
-    <span class="brand-sep"></span>
-    <span class="brand-sub">PT Lead System</span>
-  </div>
-  <div class="controls">
-    <input id="searchBox" type="text" placeholder="Search name / phone / email...">
-    <button class="ghost" id="archiveToggleBtn">Show archived</button>
-    <button class="ghost" id="refreshBtn">Refresh</button>
-    <button class="primary" id="newLeadBtn">+ New Lead</button>
-  </div>
-</header>
-<div id="status-msg">Loading leads...</div>
-
-<div class="greeting-bar">
-  <div>
-    <div class="greeting-text" id="greetingText">Hey, Tim</div>
-    <div class="greeting-sub" id="greetingSub">Loading leads&hellip;</div>
-  </div>
-  <div class="live-badge" id="liveBadge"><span class="live-dot"></span>Live</div>
-</div>
-
-<div id="summaryBar" class="summary-bar"></div>
-
-<div class="section-row">
-  <div class="section-label"><span class="ic">&#128680;</span> Needs Attention</div>
-  <div id="attentionRow" class="attention-row"></div>
-</div>
-
-<div class="section-row">
-  <div class="section-label"><span class="ic">&#128170;</span> Trainer Workload</div>
-  <div id="workloadRow" class="workload-row"></div>
-</div>
-
-<div class="section-row">
-  <div class="section-label"><span class="ic">&#128203;</span> Full Board</div>
-</div>
-<div id="board"></div>
-
-<div class="footer-note">Leads flow in automatically from the GymMaster "Free PT" questionnaire &middot; drag a card into a trainer's column (or use the dropdown) to assign it &mdash; the trainer gets emailed the lead's details instantly.</div>
-
-<nav class="mobile-nav" id="mobileNav">
-  <button data-scroll="attentionRow">&#128680;<span>Attention</span></button>
-  <button data-scroll="workloadRow">&#128170;<span>Team</span></button>
-  <button data-scroll="board">&#128203;<span>Board</span></button>
-  <button id="mobileNewBtn">&#65291;<span>New</span></button>
-</nav>
-
-<div class="modal-bg" id="modalBg">
-  <div class="modal">
-    <h2>Add a lead manually</h2>
-    <label>Name</label>
-    <input id="mName" type="text">
-    <label>Phone</label>
-    <input id="mPhone" type="text">
-    <label>Email</label>
-    <input id="mEmail" type="text">
-    <label>Reason for joining</label>
-    <input id="mReason" type="text">
-    <label>Trainer preference</label>
-    <select id="mTrainerPref">
-      <option value="">Not specified</option>
-      <option value="a Male trainer">A male trainer</option>
-      <option value="a Female trainer">A female trainer</option>
-      <option value="I do not have a preference">No preference</option>
-    </select>
-    <label>Preferred training style</label>
-    <select id="mStyle">
-      <option value="">Not specified</option>
-      <option>Strength Training - weights & machines</option>
-      <option>Olympic Lifting</option>
-      <option>High Intensity Interval or Circuit Training</option>
-      <option>Cardio/Fitness Focus</option>
-      <option>Mobility/Movement</option>
-      <option>Bodyweight</option>
-      <option>Power Lifting</option>
-      <option>Sports Specific</option>
-      <option>Not sure</option>
-    </select>
-    <label>Preferred time</label>
-    <select id="mTime">
-      <option value="">Not specified</option>
-      <option>Weekday - Early morning</option>
-      <option>Weekday - Midday</option>
-      <option>Weekday - Evenings</option>
-      <option>Weekend - Morning / Midday</option>
-      <option>Any - I'm flexible</option>
-    </select>
-    <label>Injuries / medical notes</label>
-    <textarea id="mInjuries" rows="2"></textarea>
-    <div class="actions">
-      <button class="ghost" id="mCancel">Cancel</button>
-      <button class="primary" id="mSave">Save lead</button>
-    </div>
-  </div>
-</div>
-
-<script>
-/* ======================= CONFIG ======================= */
-// Paste your deployed Google Apps Script Web App URL here (ends in /exec).
-// See the setup guide for how to create this.
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzVyQUeToju9FNDwLSYQ86CJvW0ogHxHFsWDto6iV6HSN_6Y2djX6AXwjdFOSvryuR/exec";
-
-// Every trainer who can be assigned a lead. Keep in sync with Code.gs TRAINER_EMAILS.
-const TRAINERS = ["Bekka", "Dave", "Madi", "Te Ah", "Rodney", "Taylor"];
-
-// Trainers who get their own board column. Anyone else in TRAINERS still shows
-// up in the assign dropdown, but their leads land in the "Other Trainers" column.
-const PINNED_TRAINERS = ["Bekka", "Dave", "Te Ah", "Taylor", "Rodney"];
-
-// Board columns, left to right. "__unassigned__" and "__other__" are special keys
-// handled in columnForLead() below — everything else is a trainer name.
+// Columns, in sheet order. Maps 1:1 to the GymMaster questionnaire fields.
 const COLUMNS = [
-  {key: "__unassigned__", label: "Unassigned"},
-  ...PINNED_TRAINERS.map(t => ({key: t, label: t})),
-  {key: "__other__", label: "Other Trainers"}
+  "ID", "ReceivedAt", "Name", "Phone", "Email",
+  "ReasonForJoining", "TrainerPreference", "TrainingStyle", "Injuries", "PreferredTime",
+  "Source", "Status", "Trainer", "AssignedAt", "Notes", "LastUpdated"
 ];
 
-// Follow-up stage — now a dropdown on each card (colours its left border)
-// rather than a board column. New leads default to "New".
-const STATUSES = [
-  {key: "New", cls: "st-new"},
-  {key: "Contacted", cls: "st-contacted"},
-  {key: "Trial Booked", cls: "st-trial"},
-  {key: "Won", cls: "st-won"},
-  {key: "Lost", cls: "st-lost"}
-];
-const AUTO_REFRESH_MS = 60000;
-/* ======================================================= */
-
-let leads = [];
-let pollTimer = null;
-let showArchived = false; // Won/Lost leads are hidden from the board until toggled on
-
-function $(id){ return document.getElementById(id); }
-
-// Deterministic avatar colour + initials so a given trainer/lead always
-// gets the same look across the attention row, workload chips and board.
-const AVATAR_COLORS = ["var(--lime)","var(--blue)","var(--amber)","var(--purple)","var(--teal)","var(--pink)","var(--green)"];
-function avatarColor(name){
-  let h = 0;
-  const s = name || "";
-  for(let i=0; i<s.length; i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
-  return AVATAR_COLORS[h % AVATAR_COLORS.length];
-}
-function initials(name){
-  const parts = (name||"").trim().split(/\s+/).filter(Boolean);
-  if(parts.length === 0) return "?";
-  if(parts.length === 1) return parts[0].slice(0,2).toUpperCase();
-  return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
-}
-
-function greetingText(){
-  const h = new Date().getHours();
-  if(h < 5) return "Still up, Tim?";
-  if(h < 12) return "Good morning, Tim";
-  if(h < 17) return "Good afternoon, Tim";
-  return "Good evening, Tim";
-}
-
-function setStatus(text, isError){
-  $("status-msg").textContent = text;
-  $("greetingSub").textContent = text;
-  $("liveBadge").classList.toggle("error", !!isError);
-  $("liveBadge").innerHTML = `<span class="live-dot"></span>${isError ? "Offline" : "Live"}`;
-}
-
-function columnForLead(l){
-  const t = l.trainer || "";
-  if(!t) return "__unassigned__";
-  if(PINNED_TRAINERS.includes(t)) return t;
-  return "__other__";
-}
-
-function statusMeta(status){
-  return STATUSES.find(s => s.key === status) || STATUSES[0];
-}
-
-function init(){
-  $("greetingText").textContent = greetingText();
-  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
-    $("configBanner").classList.add("show");
-    setStatus("Not connected — showing sample data only.", true);
-    leads = sampleData();
-    render();
-    return;
+function getSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
   }
-  fetchLeads();
-  pollTimer = setInterval(fetchLeads, AUTO_REFRESH_MS);
-}
-
-function sampleData(){
-  const now = Date.now();
-  return [
-    {id:"demo-1", name:"Sarah Thompson", phone:"021 555 0192", email:"sarah@example.com",
-     reasonForJoining:"General health & weight loss", trainerPreference:"I do not have a preference",
-     trainingStyle:"High Intensity Interval or Circuit Training", injuries:"", preferredTime:"Weekday - Early morning",
-     source:"GymMaster", status:"New", trainer:"", receivedAt: new Date(now - 3*3600*1000).toISOString(), notes:""},
-    {id:"demo-2", name:"Mike Reddy", phone:"022 444 7710", email:"mike@example.com",
-     reasonForJoining:"Training for a half marathon", trainerPreference:"a Male trainer",
-     trainingStyle:"Sports Specific", injuries:"Old ACL reconstruction, right knee", preferredTime:"Weekday - Evenings",
-     source:"GymMaster", status:"Contacted", trainer:"Dave", receivedAt: new Date(now - 26*3600*1000).toISOString(), notes:"Left voicemail Tue."},
-    {id:"demo-3", name:"Grace Foster", phone:"027 909 3623", email:"grace@example.com",
-     reasonForJoining:"Wants a structured programme", trainerPreference:"a Female trainer",
-     trainingStyle:"Strength Training - weights & machines", injuries:"", preferredTime:"Weekday - Midday",
-     source:"GymMaster", status:"Trial Booked", trainer:"Bekka", receivedAt: new Date(now - 40*3600*1000).toISOString(), notes:"Trial booked Thursday 6am."},
-    {id:"demo-4", name:"Jack Hayes", phone:"027 474 3257", email:"jack@example.com",
-     reasonForJoining:"Post-injury rehab", trainerPreference:"I do not have a preference",
-     trainingStyle:"Mobility/Movement", injuries:"Shoulder impingement, left side", preferredTime:"Any - I'm flexible",
-     source:"GymMaster", status:"New", trainer:"Madi", receivedAt: new Date(now - 5*3600*1000).toISOString(), notes:""},
-    {id:"demo-5", name:"Piper Singh", phone:"021 941 7330", email:"piper@example.com",
-     reasonForJoining:"General health & weight loss", trainerPreference:"a Male trainer",
-     trainingStyle:"Not sure", injuries:"", preferredTime:"Weekday - Evenings",
-     source:"GymMaster", status:"Won", trainer:"Bekka", receivedAt: new Date(now - 60*24*3600*1000).toISOString(), notes:"Signed up for 10-session pack."},
-    {id:"demo-6", name:"Skye Hayes", phone:"027 825 7613", email:"skye@example.com",
-     reasonForJoining:"Improve fitness for rugby pre-season", trainerPreference:"a Female trainer",
-     trainingStyle:"Mobility/Movement", injuries:"", preferredTime:"Weekday - Midday",
-     source:"GymMaster", status:"Lost", trainer:"Bekka", receivedAt: new Date(now - 90*24*3600*1000).toISOString(), notes:"Went with a different gym."},
-  ];
-}
-
-async function fetchLeads(){
-  try{
-    const res = await fetch(APPS_SCRIPT_URL + "?action=list");
-    const data = await res.json();
-    leads = data.leads || [];
-    setStatus("Updated " + new Date().toLocaleTimeString(), false);
-    render();
-  }catch(err){
-    setStatus("Couldn't reach the lead sheet — check APPS_SCRIPT_URL and Apps Script access.", true);
-    console.error(err);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(COLUMNS);
+    sheet.setFrozenRows(1);
   }
+  return sheet;
 }
 
-async function postAction(payload){
-  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
-    alert("Demo mode: connect APPS_SCRIPT_URL to save changes for real.");
-    return;
-  }
-  try{
-    await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      headers: {"Content-Type": "text/plain;charset=utf-8"}, // avoids CORS preflight
-      body: JSON.stringify(payload)
-    });
-    await fetchLeads();
-  }catch(err){
-    console.error(err);
-    setStatus("Save failed — check your connection and try again.", true);
-  }
+function colIndex_(name) {
+  return COLUMNS.indexOf(name) + 1; // 1-based
 }
 
-function ageLabel(iso){
-  const ms = Date.now() - new Date(iso).getTime();
-  const hrs = ms / 3600000;
-  if(hrs < 1) return {text: Math.round(ms/60000) + "m ago", overdue:false};
-  if(hrs < 24) return {text: Math.round(hrs) + "h ago", overdue: hrs > 4};
-  return {text: Math.round(hrs/24) + "d ago", overdue: true};
-}
-
-function matchesFilters(l){
-  // Won/Lost leads are archived off the board by default — they're done,
-  // and leaving them in a trainer's column forever is exactly the clutter
-  // that makes a 50-lead column unreadable. Toggle "Show archived" to see them.
-  if(!showArchived && (l.status === "Won" || l.status === "Lost")) return false;
-
-  const q = $("searchBox").value.trim().toLowerCase();
-  if(!q) return true;
-  return (l.name||"").toLowerCase().includes(q) ||
-         (l.phone||"").toLowerCase().includes(q) ||
-         (l.email||"").toLowerCase().includes(q);
-}
-
-function computeStats(){
-  const activeLeads = leads.filter(l => l.status !== "Won" && l.status !== "Lost");
-  const unassigned = activeLeads.filter(l => !l.trainer);
-  const overdue = activeLeads.filter(l => ageLabel(l.receivedAt).overdue);
-  const weekAgo = Date.now() - 7*24*3600*1000;
-  const thisWeek = leads.filter(l => new Date(l.receivedAt).getTime() >= weekAgo);
+function rowToLead_(row) {
+  const obj = {};
+  COLUMNS.forEach((c, i) => {
+    obj[c] = row[i];
+  });
   return {
-    unassignedCount: unassigned.length,
-    overdueCount: overdue.length,
-    activeCount: activeLeads.length,
-    weekCount: thisWeek.length
+    id: String(obj.ID),
+    receivedAt: obj.ReceivedAt,
+    name: obj.Name,
+    phone: obj.Phone,
+    email: obj.Email,
+    reasonForJoining: obj.ReasonForJoining || "",
+    trainerPreference: obj.TrainerPreference || "",
+    trainingStyle: obj.TrainingStyle || "",
+    injuries: obj.Injuries || "",
+    preferredTime: obj.PreferredTime || "",
+    source: obj.Source,
+    status: obj.Status || "New",
+    trainer: obj.Trainer || "",
+    assignedAt: obj.AssignedAt || "",
+    notes: obj.Notes || "",
+    lastUpdated: obj.LastUpdated || ""
   };
 }
 
-function renderSummary(){
-  const s = computeStats();
-  $("summaryBar").innerHTML = `
-    <div class="stat-card ${s.unassignedCount>0?'urgent':''}">
-      <div class="stat-icon">&#127919;</div>
-      <div class="stat-num">${s.unassignedCount}</div>
-      <div class="stat-label">Unassigned</div>
-    </div>
-    <div class="stat-card ${s.overdueCount>0?'urgent':''}">
-      <div class="stat-icon">&#9200;</div>
-      <div class="stat-num">${s.overdueCount}</div>
-      <div class="stat-label">Overdue Follow-up</div>
-    </div>
-    <div class="stat-card type-active">
-      <div class="stat-icon">&#128203;</div>
-      <div class="stat-num">${s.activeCount}</div>
-      <div class="stat-label">Active In Pipeline</div>
-    </div>
-    <div class="stat-card type-week">
-      <div class="stat-icon">&#127881;</div>
-      <div class="stat-num">${s.weekCount}</div>
-      <div class="stat-label">New This Week</div>
-    </div>
-  `;
+function doGet(e) {
+  const action = (e.parameter.action || "list");
+  if (action === "list") {
+    const sheet = getSheet_();
+    const values = sheet.getDataRange().getValues();
+    const rows = values.slice(1).filter(r => r[0] !== ""); // skip header, skip blanks
+    const leads = rows.map(rowToLead_);
+    return jsonOut_({ leads });
+  }
+  return jsonOut_({ error: "Unknown action" });
 }
 
-// Pulls out anything that needs Tim's attention right now — unassigned or
-// overdue — regardless of which trainer's column it happens to be sitting
-// in below, so he never has to hunt through the board to find it.
-function renderAttention(){
-  const row = $("attentionRow");
-  row.innerHTML = "";
-  const candidates = leads.filter(l =>
-    matchesFilters(l) && l.status !== "Won" && l.status !== "Lost" &&
-    (!l.trainer || ageLabel(l.receivedAt).overdue)
-  );
-  candidates.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
-  const top = candidates.slice(0, 12);
+function doPost(e) {
+  let payload;
+  try {
+    payload = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return jsonOut_({ error: "Bad JSON" });
+  }
 
-  if(top.length === 0){
-    const hint = document.createElement("div");
-    hint.className = "attention-empty";
-    hint.textContent = "Nothing urgent right now.";
-    row.appendChild(hint);
+  const action = payload.action;
+  if (action === "addLead") {
+    return jsonOut_(addLead_(payload));
+  }
+  if (action === "updateLead") {
+    return jsonOut_(updateLead_(payload));
+  }
+  return jsonOut_({ error: "Unknown action" });
+}
+
+function addLead_(p) {
+  const sheet = getSheet_();
+  const id = Utilities.getUuid();
+  const now = new Date().toISOString();
+  const row = [
+    id, now, p.name || "", p.phone || "", p.email || "",
+    p.reasonForJoining || "", p.trainerPreference || "", p.trainingStyle || "",
+    p.injuries || "", p.preferredTime || "",
+    p.source || "Manual", "New", "", "", "", now
+  ];
+  sheet.appendRow(row);
+  return { ok: true, id };
+}
+
+function updateLead_(p) {
+  const sheet = getSheet_();
+  const values = sheet.getDataRange().getValues();
+  const idCol = colIndex_("ID") - 1;
+  let rowIndex = -1;
+  for (let i = 1; i < values.length; i++) {
+    if (String(values[i][idCol]) === String(p.id)) {
+      rowIndex = i + 1; // 1-based sheet row
+      break;
+    }
+  }
+  if (rowIndex === -1) {
+    return { ok: false, error: "Lead not found" };
+  }
+
+  const prevTrainer = sheet.getRange(rowIndex, colIndex_("Trainer")).getValue();
+  const now = new Date().toISOString();
+
+  if (typeof p.status !== "undefined") {
+    sheet.getRange(rowIndex, colIndex_("Status")).setValue(p.status);
+  }
+  if (typeof p.trainer !== "undefined") {
+    sheet.getRange(rowIndex, colIndex_("Trainer")).setValue(p.trainer);
+    if (p.trainer && p.trainer !== prevTrainer) {
+      sheet.getRange(rowIndex, colIndex_("AssignedAt")).setValue(now);
+    }
+  }
+  if (typeof p.notes !== "undefined") {
+    sheet.getRange(rowIndex, colIndex_("Notes")).setValue(p.notes);
+  }
+  sheet.getRange(rowIndex, colIndex_("LastUpdated")).setValue(now);
+
+  // Notify the trainer if they were newly assigned.
+  if (p.trainer && p.trainer !== prevTrainer) {
+    notifyTrainer_(sheet, rowIndex, p.trainer);
+  }
+
+  return { ok: true };
+}
+
+// Link back to the hosted dashboard, included at the bottom of assignment
+// emails. Update this if the dashboard ever moves.
+const DASHBOARD_URL = "http://m2club.co.nz/M2_PT.html";
+
+function notifyTrainer_(sheet, rowIndex, trainerName) {
+  const email = TRAINER_EMAILS[trainerName];
+  if (!email) return; // no address on file — skip silently
+
+  const rowVals = sheet.getRange(rowIndex, 1, 1, COLUMNS.length).getValues()[0];
+  const lead = rowToLead_(rowVals);
+
+  const subject = "New PT lead: " + (lead.name || "Unnamed lead");
+
+  // Only include rows for fields that actually have a value — no more
+  // "Trainer preference: -" placeholders cluttering the email.
+  const detailRows = [
+    { label: "Reason for joining", value: lead.reasonForJoining },
+    { label: "Trainer preference", value: lead.trainerPreference },
+    { label: "Training style", value: lead.trainingStyle },
+    { label: "Preferred time", value: lead.preferredTime }
+  ].filter(r => r.value);
+
+  const receivedFormatted = formatDateNZ_(lead.receivedAt);
+
+  const htmlRows = detailRows.map(r =>
+    '<tr><td style="padding:5px 14px 5px 0;color:#888;font-size:13px;white-space:nowrap;vertical-align:top;">' + r.label +
+    '</td><td style="padding:5px 0;font-size:14px;color:#111;">' + escapeHtml_(r.value) + "</td></tr>"
+  ).join("");
+
+  const injuryBlock = lead.injuries
+    ? '<div style="margin-top:14px;padding:10px 14px;background:#fff2f2;border-left:3px solid #ff4444;font-size:13px;color:#a33;border-radius:4px;">' +
+      "<b>Injury / medical note:</b> " + escapeHtml_(lead.injuries) + "</div>"
+    : "";
+
+  const html =
+    '<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;">' +
+      '<div style="background:#0a0a0a;padding:14px 20px;border-radius:10px 10px 0 0;">' +
+        '<span style="font-family:Georgia,serif;letter-spacing:2px;color:#d4f53c;font-size:18px;font-weight:bold;">M2</span>' +
+        '<span style="color:#999;font-size:11px;margin-left:10px;letter-spacing:1px;">PT LEAD SYSTEM</span>' +
+      "</div>" +
+      '<div style="border:1px solid #eee;border-top:none;padding:20px;border-radius:0 0 10px 10px;">' +
+        '<p style="font-size:15px;margin:0 0 14px;color:#111;">Hi ' + escapeHtml_(trainerName) + ", you've been assigned a new lead — please follow up within 24 hours.</p>" +
+        '<table style="width:100%;border-collapse:collapse;margin-bottom:4px;">' +
+          '<tr><td style="padding:5px 14px 5px 0;color:#888;font-size:13px;white-space:nowrap;">Name</td><td style="padding:5px 0;font-size:14px;color:#111;"><b>' + escapeHtml_(lead.name || "-") + "</b></td></tr>" +
+          '<tr><td style="padding:5px 14px 5px 0;color:#888;font-size:13px;white-space:nowrap;">Phone</td><td style="padding:5px 0;font-size:14px;"><a href="tel:' + escapeHtml_(lead.phone || "") + '" style="color:#111;">' + escapeHtml_(lead.phone || "-") + "</a></td></tr>" +
+          '<tr><td style="padding:5px 14px 5px 0;color:#888;font-size:13px;white-space:nowrap;">Email</td><td style="padding:5px 0;font-size:14px;"><a href="mailto:' + escapeHtml_(lead.email || "") + '" style="color:#111;">' + escapeHtml_(lead.email || "-") + "</a></td></tr>" +
+          htmlRows +
+        "</table>" +
+        injuryBlock +
+        '<p style="font-size:11px;color:#aaa;margin-top:16px;">Source: ' + escapeHtml_(lead.source || "-") + " &middot; Received: " + receivedFormatted + "</p>" +
+        '<a href="' + DASHBOARD_URL + '" style="display:inline-block;margin-top:8px;background:#d4f53c;color:#0a0a0a;padding:9px 18px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:13px;">Open dashboard</a>' +
+      "</div>" +
+    "</div>";
+
+  // Plain-text fallback for clients that don't render HTML.
+  const textLines = [
+    "Hi " + trainerName + ", you've been assigned a new lead — please follow up within 24 hours.",
+    "",
+    "Name: " + (lead.name || "-"),
+    "Phone: " + (lead.phone || "-"),
+    "Email: " + (lead.email || "-")
+  ];
+  detailRows.forEach(r => textLines.push(r.label + ": " + r.value));
+  if (lead.injuries) textLines.push("Injury / medical note: " + lead.injuries);
+  textLines.push("", "Source: " + (lead.source || "-") + " · Received: " + receivedFormatted, "", "Dashboard: " + DASHBOARD_URL);
+
+  MailApp.sendEmail({
+    to: email,
+    cc: HEAD_COACH_EMAIL,
+    subject: subject,
+    body: textLines.join("\n"),
+    htmlBody: html
+  });
+}
+
+function formatDateNZ_(isoString) {
+  if (!isoString) return "-";
+  try {
+    return Utilities.formatDate(new Date(isoString), "Pacific/Auckland", "d MMM, h:mm a");
+  } catch (e) {
+    return isoString;
+  }
+}
+
+function escapeHtml_(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function jsonOut_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * ===================== GMAIL AUTO-IMPORT =====================
+ * Watches a dedicated Gmail inbox for GymMaster "M2 Training Club | Free PT"
+ * questionnaire completion emails and adds each one as a New lead — no
+ * Power Automate, no Outlook, no separate platform.
+ *
+ * IMPORTANT: this only works if GYMMASTER_INBOX_EMAIL below is the SAME
+ * Google account that owns this Apps Script project and Sheet. GmailApp
+ * always reads the inbox of whoever authorized the script — it can't reach
+ * into an unrelated mailbox. If your dedicated Gmail is a different account
+ * to the one that owns the Sheet, this needs to be redeployed from that
+ * account instead.
+ *
+ * IMPORTANT #2: the actual answers aren't in the email body — GymMaster's
+ * notification email is just a one-line "so-and-so completed the
+ * questionnaire" message with a PDF attached. This script reads that PDF
+ * (via Drive, which extracts its text) rather than the email itself, which
+ * means the "Drive API" advanced service must be enabled first:
+ * in the Apps Script editor, click Services (+) in the left sidebar,
+ * find "Drive API", and click Add.
+ *
+ * Setup, in order:
+ * 1. Add the Drive API advanced service as described above.
+ * 2. In GymMaster, add GYMMASTER_INBOX_EMAIL as a second Email Recipient on
+ *    the "M2 Training Club | Free PT" questionnaire, alongside Tim.
+ * 3. Wait for one real completed questionnaire to land in that inbox.
+ * 4. Open this script, select debugLatestGymMasterEmail in the function
+ *    dropdown at the top, click Run, then check View > Logs. Confirm each
+ *    parsed field looks right. If something's blank or wrong, the question
+ *    wording in QUESTION_LABELS below doesn't match the real PDF text — fix
+ *    the label text (copy it exactly from the logged PDF text) and run again.
+ * 5. Once the parsed output looks correct, select createGmailImportTrigger
+ *    in the function dropdown and click Run ONCE. That turns on an
+ *    automatic check every 10 minutes — nothing else to do after that.
+ * ===============================================================
+ */
+
+// The inbox that receives GymMaster's questionnaire completion emails.
+// This is the same Google account that owns this script and the Sheet,
+// so GmailApp below can actually read it.
+const GYMMASTER_INBOX_EMAIL = "tayblacklerfitness@gmail.com";
+
+// Gmail search used to find completion emails, excluding ones already
+// imported. GymMaster's subject line is just "Questionnaire Updated" (not
+// the questionnaire name), so we match on the sender name plus "Free PT"
+// appearing anywhere in the email instead.
+const GYMMASTER_SEARCH_QUERY = 'from:"M2 Training Club" "Free PT" -label:m2-imported';
+
+// Label applied to a thread once it's been turned into a lead, so the same
+// email is never imported twice.
+const IMPORTED_LABEL = "m2-imported";
+
+// The three dropdown questions on the form. GymMaster's PDF only ever prints
+// the SELECTED option's text (never the other choices), and — for reasons
+// specific to how it lays out dropdown widgets — that text can land in an
+// unpredictable spot relative to its own question label. So instead of
+// looking for "the answer right after this label", we just search the whole
+// PDF text for one of these known option strings; whichever one appears IS
+// the answer, regardless of where it landed.
+const DROPDOWN_OPTIONS = {
+  trainerPreference: ["a Male trainer", "a Female trainer", "I do not have a preference"],
+  trainingStyle: [
+    "Strength Training - weights & machines",
+    "Olympic Lifting",
+    "High Intensity Interval or Circuit Training",
+    "Cardio/Fitness Focus",
+    "Mobility/Movement",
+    "Bodyweight",
+    "Power Lifting",
+    "Sports Specific",
+    "Not sure"
+  ],
+  preferredTime: [
+    "Weekday - Early morning",
+    "Weekday - Midday",
+    "Weekday - Evenings",
+    "Weekend - Morning / Midday",
+    "Any - I'm flexible"
+  ]
+};
+
+// Every question, in the order it appears on the form — including the
+// dropdowns, even though their answers are pulled separately via
+// DROPDOWN_OPTIONS above. Text-type answers are captured as "everything
+// between this label and the next one in this list", so the dropdown
+// entries still need to be here just to mark where a text answer should
+// stop reading.
+const ALL_LABELS_IN_ORDER = [
+  { field: "name",              label: "Your First & Last Name", type: "text" },
+  { field: "reasonForJoining",  label: "What best describes your reason for joining the gym?", type: "text" },
+  { field: "trainerPreference", label: "Your new membership includes a free Personal Training session with one of our trainers. What would be your preference:", type: "dropdown" },
+  { field: "trainingStyle",     label: "What best describes your preferred training style?", type: "dropdown" },
+  { field: "injuries",          label: "Do you have any injuries or medical issues our trainers should be aware of?", type: "text" },
+  { field: "preferredTime",     label: "What time of the day would suit you best for your free PT session?", type: "dropdown" },
+  { field: "phone",             label: "Phone Number to contact on", type: "text" }
+];
+
+function importGymMasterLeads_() {
+  const threads = GmailApp.search(GYMMASTER_SEARCH_QUERY, 0, 20);
+  if (threads.length === 0) return;
+
+  const label = getOrCreateLabel_(IMPORTED_LABEL);
+
+  threads.forEach(thread => {
+    thread.getMessages().forEach(msg => {
+      const pdf = getPdfAttachment_(msg);
+      if (!pdf) return; // no PDF on this message — nothing to parse, skip it
+      const text = pdfToText_(pdf);
+      const parsed = parseGymMasterEmail_(text);
+      if (!parsed.email) parsed.email = extractSenderEmail_(msg);
+      parsed.source = "GymMaster";
+      addLead_(parsed);
+    });
+    thread.addLabel(label);
+  });
+}
+
+// GymMaster's notification email is just a link — the actual answers are in
+// the attached PDF. This finds it.
+function getPdfAttachment_(msg) {
+  const attachments = msg.getAttachments({ includeAttachments: true });
+  return attachments.find(a => a.getContentType() === "application/pdf") || null;
+}
+
+// Converts a PDF blob to plain text by round-tripping it through Google
+// Drive (Drive auto-extracts embedded text, or OCRs it if it's a scanned
+// image). Requires the "Drive API" advanced service — see setup guide.
+// Handles both the v2 (Drive.Files.insert) and v3 (Drive.Files.create)
+// versions of that service, since the default depends on how it was added.
+function pdfToText_(blob) {
+  const metadata = { name: blob.getName(), title: blob.getName(), mimeType: MimeType.GOOGLE_DOCS };
+  const file = Drive.Files.create
+    ? Drive.Files.create(metadata, blob, { ocr: true })              // v3
+    : Drive.Files.insert(metadata, blob, { convert: true, ocr: true }); // v2
+  const fileId = file.id;
+  try {
+    const doc = DocumentApp.openById(fileId);
+    return doc.getBody().getText();
+  } finally {
+    try {
+      Drive.Files.remove(fileId); // clean up the temporary converted copy
+    } catch (e) {
+      Logger.log("Couldn't delete temp Drive file " + fileId + " (harmless): " + e.message);
+    }
+  }
+}
+
+function parseGymMasterEmail_(rawText) {
+  // Collapse all whitespace/line-wrapping down to single spaces first, so a
+  // label that happens to wrap across two PDF lines still matches as one
+  // continuous string.
+  const text = rawText.replace(/\s+/g, " ").trim();
+
+  const result = {};
+
+  // Dropdowns: find whichever known option string is present.
+  result.trainerPreference = findKnownOption_(text, DROPDOWN_OPTIONS.trainerPreference);
+  result.trainingStyle = findKnownOption_(text, DROPDOWN_OPTIONS.trainingStyle);
+  result.preferredTime = findKnownOption_(text, DROPDOWN_OPTIONS.preferredTime);
+
+  // Typed fields: grab everything between this label and the next one in
+  // the full question order (skipping the dropdown entries themselves,
+  // since those are already answered above — they're only here as boundaries).
+  for (let i = 0; i < ALL_LABELS_IN_ORDER.length; i++) {
+    const item = ALL_LABELS_IN_ORDER[i];
+    if (item.type !== "text") continue;
+    const nextLabel = i + 1 < ALL_LABELS_IN_ORDER.length ? ALL_LABELS_IN_ORDER[i + 1].label : null;
+    result[item.field] = extractAnswer_(text, item.label, nextLabel);
+  }
+
+  // The Phone field is last in the form, so its captured text can have the
+  // deferred "preferred time" dropdown value stuck on the end of it (the
+  // same PDF quirk mentioned above) — trim that back off if present.
+  if (result.phone) {
+    DROPDOWN_OPTIONS.preferredTime.forEach(opt => {
+      const idx = result.phone.indexOf(opt);
+      if (idx !== -1) result.phone = result.phone.substring(0, idx).trim();
+    });
+  }
+
+  return result;
+}
+
+function findKnownOption_(text, options) {
+  for (const opt of options) {
+    if (text.indexOf(opt) !== -1) return opt;
+  }
+  return "";
+}
+
+function extractAnswer_(text, label, nextLabel) {
+  const startIdx = text.indexOf(label);
+  if (startIdx === -1) return "";
+  const afterLabel = startIdx + label.length;
+  let endIdx = nextLabel ? text.indexOf(nextLabel, afterLabel) : -1;
+  if (endIdx === -1) endIdx = Math.min(text.length, afterLabel + 300); // last field: grab a bounded chunk
+  return text.substring(afterLabel, endIdx).trim();
+}
+
+function extractSenderEmail_(msg) {
+  const from = msg.getFrom(); // e.g. "John Smith <john@example.com>"
+  const match = from.match(/<(.+)>/);
+  return match ? match[1] : from;
+}
+
+function getOrCreateLabel_(name) {
+  return GmailApp.getUserLabelByName(name) || GmailApp.createLabel(name);
+}
+
+// Run manually (no trigger) after a real completion email has arrived, to
+// sanity-check the parsing before turning on automatic imports.
+function debugLatestGymMasterEmail() {
+  const threads = GmailApp.search('from:"M2 Training Club" "Free PT"', 0, 1);
+  if (threads.length === 0) {
+    Logger.log("No matching emails found yet. Check GYMMASTER_SEARCH_QUERY matches the real sender/subject.");
     return;
   }
-  top.forEach(l => row.appendChild(renderAttentionCard_(l)));
+  const messages = threads[0].getMessages();
+  const msg = messages[messages.length - 1];
+
+  const pdf = getPdfAttachment_(msg);
+  if (!pdf) {
+    Logger.log("No PDF attachment found on this email. Raw body was:");
+    Logger.log(msg.getPlainBody());
+    return;
+  }
+
+  const text = pdfToText_(pdf);
+  Logger.log("----- TEXT EXTRACTED FROM PDF -----");
+  Logger.log(text);
+  Logger.log("----- PARSED FIELDS -----");
+  Logger.log(JSON.stringify(parseGymMasterEmail_(text), null, 2));
+
+  // Also write it straight into the Sheet — easier to read/copy than the
+  // Apps Script log viewer. Check the "Debug" tab after running this.
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let debugSheet = ss.getSheetByName("Debug") || ss.insertSheet("Debug");
+  debugSheet.clear();
+  debugSheet.getRange(1, 1).setValue("Raw PDF text:");
+  debugSheet.getRange(2, 1).setValue(text);
+  debugSheet.getRange(4, 1).setValue("Parsed fields:");
+  debugSheet.getRange(5, 1).setValue(JSON.stringify(parseGymMasterEmail_(text), null, 2));
 }
 
-function renderAttentionCard_(l){
-  const card = document.createElement("div");
-  card.className = "attention-card";
-  const age = ageLabel(l.receivedAt);
-  const reason = !l.trainer ? "Unassigned" : "Overdue follow-up";
-  const icon = !l.trainer ? "&#127919;" : "&#9200;";
-  const name = l.name || "(no name)";
-
-  const trainerSelect = document.createElement("select");
-  const noneOpt = document.createElement("option");
-  noneOpt.value = ""; noneOpt.textContent = "Unassigned";
-  trainerSelect.appendChild(noneOpt);
-  TRAINERS.forEach(t => {
-    const o = document.createElement("option");
-    o.value = t; o.textContent = t;
-    if(l.trainer === t) o.selected = true;
-    trainerSelect.appendChild(o);
+// Run ONCE to turn on automatic checking every 10 minutes. Safe to re-run —
+// it clears any existing trigger for this function first so you never end
+// up with duplicates.
+function createGmailImportTrigger() {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === "importGymMasterLeads_") ScriptApp.deleteTrigger(t);
   });
-  trainerSelect.addEventListener("change", () => {
-    postAction({action:"updateLead", id:l.id, trainer: trainerSelect.value, status: l.status||"New"});
-  });
-
-  card.innerHTML = `
-    <div class="a-top">
-      <div class="avatar" style="background:${avatarColor(name)}">${initials(name)}</div>
-      <div>
-        <div class="a-name">${escapeHtml(name)}</div>
-        <div class="a-reason-badge">${icon} ${reason} &middot; ${age.text}</div>
-      </div>
-    </div>
-  `;
-  card.appendChild(trainerSelect);
-  return card;
+  ScriptApp.newTrigger("importGymMasterLeads_")
+    .timeBased()
+    .everyMinutes(10)
+    .create();
+  Logger.log("Trigger created — checking for new GymMaster leads every 10 minutes.");
 }
-
-// One chip per trainer — active lead count plus how long their oldest
-// unresolved lead has been sitting, so workload imbalance is visible
-// without counting cards column by column. Click a chip to jump to that
-// trainer's column below.
-function renderWorkload(){
-  const row = $("workloadRow");
-  row.innerHTML = "";
-  TRAINERS.forEach(t => {
-    const theirLeads = leads.filter(l => l.trainer === t && l.status !== "Won" && l.status !== "Lost");
-    const chip = document.createElement("div");
-    chip.className = "workload-chip";
-    let oldestText = "No active leads";
-    let oldestOverdue = false;
-    if(theirLeads.length > 0){
-      const oldest = theirLeads.slice().sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt))[0];
-      const age = ageLabel(oldest.receivedAt);
-      oldestText = "Oldest: " + age.text;
-      oldestOverdue = age.overdue;
-    }
-    chip.innerHTML = `
-      <div class="w-avatar" style="background:${avatarColor(t)}">${initials(t)}<span class="w-badge">${theirLeads.length}</span></div>
-      <div class="w-info">
-        <div class="w-name">${escapeHtml(t)}</div>
-        <div class="w-oldest ${oldestOverdue?'overdue':''}">${oldestText}</div>
-      </div>
-    `;
-    chip.addEventListener("click", () => {
-      const colKey = PINNED_TRAINERS.includes(t) ? t : "__other__";
-      const el = document.getElementById("colwrap-" + colKey.replace(/\W/g,''));
-      if(el) el.scrollIntoView({behavior:"smooth", inline:"center", block:"nearest"});
-    });
-    row.appendChild(chip);
-  });
-}
-
-function render(){
-  renderSummary();
-  renderAttention();
-  renderWorkload();
-
-  const board = $("board");
-  board.innerHTML = "";
-  COLUMNS.forEach(col => {
-    const colEl = document.createElement("div");
-    colEl.className = "column";
-    colEl.id = "colwrap-" + col.key.replace(/\W/g,'');
-    const inCol = leads.filter(l => columnForLead(l) === col.key && matchesFilters(l));
-    const headCls = col.key === "__unassigned__" ? "unassigned" : "";
-    const isTrainerCol = col.key !== "__unassigned__" && col.key !== "__other__";
-    const avatarHtml = isTrainerCol ? `<span class="mini-avatar" style="background:${avatarColor(col.key)}">${initials(col.key)}</span>` : "";
-    colEl.innerHTML = `
-      <div class="column-head ${headCls}"><span class="ch-left">${avatarHtml}<span>${col.label}</span></span><span class="count">${inCol.length}</span></div>
-      <div class="column-body" id="col-${col.key.replace(/\W/g,'')}"></div>
-    `;
-    board.appendChild(colEl);
-    const body = colEl.querySelector(".column-body");
-    if(inCol.length === 0){
-      const hint = document.createElement("div");
-      hint.className = "empty-hint";
-      hint.textContent = "No leads";
-      body.appendChild(hint);
-    }
-    // Oldest first — the longest-waiting lead is the one that most needs
-    // attention, so it should be the first thing you see, not buried under
-    // whatever came in most recently.
-    inCol.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
-    inCol.forEach(l => body.appendChild(renderCard(l, col.key === "__other__")));
-
-    // "Other Trainers" isn't a valid drop target — Madi/Rodney/Taylor still
-    // get assigned via the dropdown on the card, since a drop here can't say which of them.
-    if(col.key === "__other__") return;
-
-    body.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
-      body.classList.add("drag-over");
-    });
-    body.addEventListener("dragleave", () => body.classList.remove("drag-over"));
-    body.addEventListener("drop", (e) => {
-      e.preventDefault();
-      body.classList.remove("drag-over");
-      const id = e.dataTransfer.getData("text/plain");
-      const lead = leads.find(x => x.id === id);
-      if(!lead) return;
-      const newTrainer = col.key === "__unassigned__" ? "" : col.key;
-      if((lead.trainer || "") === newTrainer) return;
-      postAction({action:"updateLead", id, trainer: newTrainer, status: lead.status||"New"});
-    });
-  });
-}
-
-function trainerPrefChip(pref){
-  if(!pref) return "";
-  let cls = "pref-any", label = pref;
-  if(/male/i.test(pref) && !/female/i.test(pref)){ cls = "pref-m"; label = "Prefers male trainer"; }
-  else if(/female/i.test(pref)){ cls = "pref-f"; label = "Prefers female trainer"; }
-  else { label = "No trainer preference"; }
-  return `<span class="chip ${cls}">${escapeHtml(label)}</span>`;
-}
-
-function renderCard(l, showTrainerLabel){
-  const card = document.createElement("div");
-  const stMeta = statusMeta(l.status || "New");
-  card.className = "card " + stMeta.cls;
-  const age = ageLabel(l.receivedAt);
-
-  const trainerSelect = document.createElement("select");
-  const noneOpt = document.createElement("option");
-  noneOpt.value = ""; noneOpt.textContent = "Unassigned";
-  trainerSelect.appendChild(noneOpt);
-  TRAINERS.forEach(t => {
-    const o = document.createElement("option");
-    o.value = t; o.textContent = t;
-    if(l.trainer === t) o.selected = true;
-    trainerSelect.appendChild(o);
-  });
-  trainerSelect.addEventListener("change", () => {
-    postAction({action:"updateLead", id:l.id, trainer: trainerSelect.value, status: l.status||"New"});
-  });
-
-  const statusSelect = document.createElement("select");
-  STATUSES.forEach(s => {
-    const o = document.createElement("option");
-    o.value = s.key; o.textContent = s.key;
-    if((l.status||"New") === s.key) o.selected = true;
-    statusSelect.appendChild(o);
-  });
-  statusSelect.addEventListener("change", () => {
-    postAction({action:"updateLead", id:l.id, status: statusSelect.value, trainer: l.trainer||""});
-  });
-
-  const notes = document.createElement("textarea");
-  notes.placeholder = "Follow-up notes...";
-  notes.value = l.notes || "";
-  notes.addEventListener("blur", () => {
-    if(notes.value !== (l.notes||"")){
-      postAction({action:"updateLead", id:l.id, notes: notes.value, status: l.status||"New", trainer: l.trainer||""});
-    }
-  });
-
-  let chips = "";
-  chips += trainerPrefChip(l.trainerPreference);
-  if(l.preferredTime) chips += `<span class="chip time">${escapeHtml(l.preferredTime)}</span>`;
-  if(l.injuries) chips += `<span class="chip injury">&#9888; Injury note</span>`;
-
-  let details = "";
-  if(l.reasonForJoining) details += `<div class="detail-line"><b>Why:</b> ${escapeHtml(l.reasonForJoining)}</div>`;
-  if(l.trainingStyle) details += `<div class="detail-line"><b>Style:</b> ${escapeHtml(l.trainingStyle)}</div>`;
-  if(l.injuries) details += `<div class="detail-line"><b>Injuries:</b> ${escapeHtml(l.injuries)}</div>`;
-
-  const otherLabel = showTrainerLabel && l.trainer ? `<div class="other-trainer">Assigned: ${escapeHtml(l.trainer)}</div>` : "";
-
-  card.innerHTML = `
-    ${otherLabel}
-    <div class="name">${escapeHtml(l.name||"(no name)")}</div>
-    <div class="meta">${escapeHtml(l.phone||"")} ${l.phone && l.email ? "&middot;" : ""} ${escapeHtml(l.email||"")}</div>
-    <div class="meta">Source: ${escapeHtml(l.source||"Manual")}</div>
-    <div class="chips">${chips}</div>
-    ${details}
-    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " — follow up!" : ""}</div>
-  `;
-  const row2 = document.createElement("div");
-  row2.className = "row2";
-  row2.appendChild(trainerSelect);
-  row2.appendChild(statusSelect);
-  card.appendChild(row2);
-  card.appendChild(notes);
-
-  // Drag and drop: drag a card into a trainer's column (or Unassigned) to
-  // reassign it. Dropping fires the same postAction as picking from the
-  // dropdown, so the trainer still gets emailed automatically.
-  card.draggable = true;
-  card.dataset.leadId = l.id;
-  card.addEventListener("dragstart", (e) => {
-    e.dataTransfer.setData("text/plain", l.id);
-    e.dataTransfer.effectAllowed = "move";
-    card.classList.add("dragging");
-  });
-  card.addEventListener("dragend", () => card.classList.remove("dragging"));
-
-  return card;
-}
-
-function escapeHtml(str){
-  const d = document.createElement("div");
-  d.textContent = str;
-  return d.innerHTML;
-}
-
-$("refreshBtn").addEventListener("click", fetchLeads);
-$("searchBox").addEventListener("input", render);
-$("archiveToggleBtn").addEventListener("click", () => {
-  showArchived = !showArchived;
-  $("archiveToggleBtn").textContent = showArchived ? "Hide archived" : "Show archived";
-  $("archiveToggleBtn").classList.toggle("active", showArchived);
-  render();
-});
-
-document.querySelectorAll("#mobileNav button[data-scroll]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const el = $(btn.dataset.scroll);
-    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
-  });
-});
-$("mobileNewBtn").addEventListener("click", () => $("modalBg").classList.add("open"));
-
-$("newLeadBtn").addEventListener("click", () => $("modalBg").classList.add("open"));
-$("mCancel").addEventListener("click", () => $("modalBg").classList.remove("open"));
-$("mSave").addEventListener("click", () => {
-  const name = $("mName").value.trim();
-  if(!name){ alert("Name is required"); return; }
-  postAction({
-    action:"addLead",
-    name, phone: $("mPhone").value.trim(), email: $("mEmail").value.trim(),
-    reasonForJoining: $("mReason").value.trim(),
-    trainerPreference: $("mTrainerPref").value,
-    trainingStyle: $("mStyle").value,
-    preferredTime: $("mTime").value,
-    injuries: $("mInjuries").value.trim(),
-    source: "Manual"
-  });
-  ["mName","mPhone","mEmail","mReason","mInjuries"].forEach(id => $(id).value = "");
-  $("mTrainerPref").value = ""; $("mStyle").value = ""; $("mTime").value = "";
-  $("modalBg").classList.remove("open");
-});
-
-init();
-</script>
-</body>
-</html>
