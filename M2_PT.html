@@ -216,6 +216,19 @@
   ::-webkit-scrollbar{height:8px; width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--border3); border-radius:8px;}
 
+  /* Trainer's own private, filtered view (?t=&k= in the URL) — no board,
+     no other trainers, no admin controls, just their own leads. */
+  body.trainer-mode #searchBox,
+  body.trainer-mode #archiveToggleBtn,
+  body.trainer-mode #newLeadBtn,
+  body.trainer-mode .admin-only,
+  body.trainer-mode #mobileNav{display:none;}
+  body.trainer-mode #board{justify-content:center;}
+  body.trainer-mode .column{max-width:640px; flex:1 1 640px;}
+  body.trainer-mode .card{cursor:default;}
+  body.trainer-mode .meta a{color:var(--text2); text-decoration:none;}
+  body.trainer-mode .meta a:hover{color:var(--lime);}
+
   .mobile-nav{display:none;}
   @media (max-width:760px){
     body{padding-bottom:74px;}
@@ -273,22 +286,22 @@
 
 <div id="summaryBar" class="summary-bar"></div>
 
-<div class="section-row">
+<div class="section-row admin-only">
   <div class="section-label"><span class="ic">&#128680;</span> Needs Attention</div>
   <div id="attentionRow" class="attention-row"></div>
 </div>
 
-<div class="section-row">
+<div class="section-row admin-only">
   <div class="section-label"><span class="ic">&#128170;</span> Trainer Workload</div>
   <div id="workloadRow" class="workload-row"></div>
 </div>
 
 <div class="section-row">
-  <div class="section-label"><span class="ic">&#128203;</span> Full Board</div>
+  <div class="section-label"><span class="ic">&#128203;</span> <span id="boardLabelText">Full Board</span></div>
 </div>
 <div id="board"></div>
 
-<div class="footer-note">Leads flow in automatically from the GymMaster "Free PT" questionnaire &middot; drag a card into a trainer's column (or use the dropdown) to assign it &mdash; the trainer gets emailed the lead's details instantly.</div>
+<div class="footer-note" id="footerNote">Leads flow in automatically from the GymMaster "Free PT" questionnaire &middot; drag a card into a trainer's column (or use the dropdown) to assign it &mdash; the trainer gets emailed the lead's details instantly.</div>
 
 <nav class="mobile-nav" id="mobileNav">
   <button data-scroll="attentionRow">&#128680;<span>Attention</span></button>
@@ -379,6 +392,15 @@ const STATUSES = [
 const AUTO_REFRESH_MS = 60000;
 /* ======================================================= */
 
+// A trainer's private link looks like ?t=Bekka&k=<secret token>. If both are
+// present we're in "trainer mode": one trainer's own filtered view, gated
+// server-side by the token (see listMine/updateMine in Code.gs) — never the
+// full admin board, regardless of what someone types into the URL.
+const urlParams = new URLSearchParams(window.location.search);
+const TRAINER_NAME = urlParams.get("t") || "";
+const TRAINER_KEY = urlParams.get("k") || "";
+const TRAINER_MODE = !!(TRAINER_NAME && TRAINER_KEY);
+
 let leads = [];
 let pollTimer = null;
 let showArchived = false; // Won/Lost leads are hidden from the board until toggled on
@@ -401,12 +423,13 @@ function initials(name){
   return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
 }
 
-function greetingText(){
+function greetingText(name){
+  const who = name || "Tim";
   const h = new Date().getHours();
-  if(h < 5) return "Still up, Tim?";
-  if(h < 12) return "Good morning, Tim";
-  if(h < 17) return "Good afternoon, Tim";
-  return "Good evening, Tim";
+  if(h < 5) return "Still up, " + who + "?";
+  if(h < 12) return "Good morning, " + who;
+  if(h < 17) return "Good afternoon, " + who;
+  return "Good evening, " + who;
 }
 
 function setStatus(text, isError){
@@ -428,11 +451,17 @@ function statusMeta(status){
 }
 
 function init(){
-  $("greetingText").textContent = greetingText();
+  if(TRAINER_MODE){
+    document.body.classList.add("trainer-mode");
+    $("boardLabelText").textContent = "My Leads";
+    $("footerNote").textContent = "This is your private lead list — only you can see it. Update the status and add notes as you follow up; Tim and Taylor can see your notes on the main board.";
+  }
+  $("greetingText").textContent = greetingText(TRAINER_MODE ? TRAINER_NAME : "Tim");
+
   if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
     $("configBanner").classList.add("show");
     setStatus("Not connected — showing sample data only.", true);
-    leads = sampleData();
+    leads = TRAINER_MODE ? sampleData().filter(l => l.trainer === TRAINER_NAME) : sampleData();
     render();
     return;
   }
@@ -472,13 +501,22 @@ function sampleData(){
 
 async function fetchLeads(){
   try{
-    const res = await fetch(APPS_SCRIPT_URL + "?action=list");
+    const url = TRAINER_MODE
+      ? APPS_SCRIPT_URL + "?action=listMine&trainer=" + encodeURIComponent(TRAINER_NAME) + "&key=" + encodeURIComponent(TRAINER_KEY)
+      : APPS_SCRIPT_URL + "?action=list";
+    const res = await fetch(url);
     const data = await res.json();
+    if(data.error){
+      leads = [];
+      setStatus(data.error === "Not authorized" ? "This link isn't valid — ask Tim or Taylor for a new one." : data.error, true);
+      render();
+      return;
+    }
     leads = data.leads || [];
     setStatus("Updated " + new Date().toLocaleTimeString(), false);
     render();
   }catch(err){
-    setStatus("Couldn't reach the lead sheet — check APPS_SCRIPT_URL and Apps Script access.", true);
+    setStatus("Couldn't reach the lead sheet — check your connection.", true);
     console.error(err);
   }
 }
@@ -493,6 +531,28 @@ async function postAction(payload){
       method: "POST",
       headers: {"Content-Type": "text/plain;charset=utf-8"}, // avoids CORS preflight
       body: JSON.stringify(payload)
+    });
+    await fetchLeads();
+  }catch(err){
+    console.error(err);
+    setStatus("Save failed — check your connection and try again.", true);
+  }
+}
+
+// Trainer-mode equivalent of postAction — always goes through updateMine,
+// always stamped with this trainer's own name + secret key so the backend
+// can enforce they're only ever touching their own leads.
+async function postMine(payload){
+  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
+    alert("Demo mode: connect APPS_SCRIPT_URL to save changes for real.");
+    return;
+  }
+  const full = Object.assign({action:"updateMine", trainer: TRAINER_NAME, key: TRAINER_KEY}, payload);
+  try{
+    await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify(full)
     });
     await fetchLeads();
   }catch(err){
@@ -656,6 +716,10 @@ function renderWorkload(){
 }
 
 function render(){
+  if(TRAINER_MODE){
+    renderTrainerView();
+    return;
+  }
   renderSummary();
   renderAttention();
   renderWorkload();
@@ -709,6 +773,101 @@ function render(){
       postAction({action:"updateLead", id, trainer: newTrainer, status: lead.status||"New"});
     });
   });
+}
+
+// A trainer's own private view: just their leads, in one list, with stats
+// scoped to them only. No board, no other trainers, no reassignment.
+function renderTrainerView(){
+  const visible = leads.filter(matchesFilters);
+  const active = visible.filter(l => l.status !== "Won" && l.status !== "Lost");
+  const overdue = active.filter(l => ageLabel(l.receivedAt).overdue);
+
+  $("summaryBar").innerHTML = `
+    <div class="stat-card ${overdue.length>0?'urgent':''}">
+      <div class="stat-icon">&#9200;</div>
+      <div class="stat-num">${overdue.length}</div>
+      <div class="stat-label">Need Follow-up</div>
+    </div>
+    <div class="stat-card type-active">
+      <div class="stat-icon">&#128203;</div>
+      <div class="stat-num">${active.length}</div>
+      <div class="stat-label">Active Leads</div>
+    </div>
+  `;
+
+  const board = $("board");
+  board.innerHTML = "";
+  const colEl = document.createElement("div");
+  colEl.className = "column";
+  colEl.innerHTML = `
+    <div class="column-head"><span class="ch-left"><span>My Leads</span></span><span class="count">${visible.length}</span></div>
+    <div class="column-body" id="myLeadsBody"></div>
+  `;
+  board.appendChild(colEl);
+  const body = colEl.querySelector(".column-body");
+
+  if(visible.length === 0){
+    const hint = document.createElement("div");
+    hint.className = "empty-hint";
+    hint.textContent = "No leads assigned to you right now.";
+    body.appendChild(hint);
+    return;
+  }
+
+  visible.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
+  visible.forEach(l => body.appendChild(renderTrainerCard_(l)));
+}
+
+function renderTrainerCard_(l){
+  const card = document.createElement("div");
+  const stMeta = statusMeta(l.status || "New");
+  card.className = "card " + stMeta.cls;
+  const age = ageLabel(l.receivedAt);
+
+  const statusSelect = document.createElement("select");
+  STATUSES.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s.key; o.textContent = s.key;
+    if((l.status||"New") === s.key) o.selected = true;
+    statusSelect.appendChild(o);
+  });
+  statusSelect.addEventListener("change", () => {
+    postMine({id:l.id, status: statusSelect.value});
+  });
+
+  const notes = document.createElement("textarea");
+  notes.placeholder = "Follow-up notes...";
+  notes.value = l.notes || "";
+  notes.addEventListener("blur", () => {
+    if(notes.value !== (l.notes||"")){
+      postMine({id:l.id, notes: notes.value});
+    }
+  });
+
+  let chips = "";
+  chips += trainerPrefChip(l.trainerPreference);
+  if(l.preferredTime) chips += `<span class="chip time">${escapeHtml(l.preferredTime)}</span>`;
+  if(l.injuries) chips += `<span class="chip injury">&#9888; Injury note</span>`;
+
+  let details = "";
+  if(l.reasonForJoining) details += `<div class="detail-line"><b>Why:</b> ${escapeHtml(l.reasonForJoining)}</div>`;
+  if(l.trainingStyle) details += `<div class="detail-line"><b>Style:</b> ${escapeHtml(l.trainingStyle)}</div>`;
+  if(l.injuries) details += `<div class="detail-line"><b>Injuries:</b> ${escapeHtml(l.injuries)}</div>`;
+
+  card.innerHTML = `
+    <div class="name">${escapeHtml(l.name||"(no name)")}</div>
+    <div class="meta">
+      ${l.phone ? `<a href="tel:${escapeHtml(l.phone)}">${escapeHtml(l.phone)}</a>` : ""}
+      ${l.phone && l.email ? "&middot;" : ""}
+      ${l.email ? `<a href="mailto:${escapeHtml(l.email)}">${escapeHtml(l.email)}</a>` : ""}
+    </div>
+    <div class="chips">${chips}</div>
+    ${details}
+    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " — follow up!" : ""}</div>
+  `;
+  card.appendChild(statusSelect);
+  card.appendChild(notes);
+  return card;
 }
 
 function trainerPrefChip(pref){
