@@ -392,13 +392,16 @@ const STATUSES = [
 const AUTO_REFRESH_MS = 60000;
 /* ======================================================= */
 
-// A trainer's private link looks like ?t=Bekka&k=<secret token>. If both are
+// A trainer's private link looks like ?trainer=Bekka&key=<secret token>.
+// (Not "?t=&k=" — some hosting/CDN layers silently strip a bare "t="
+// param as if it were a cache-busting timestamp, which is exactly what was
+// happening on m2club.co.nz. Longer names avoid that entirely.) If both are
 // present we're in "trainer mode": one trainer's own filtered view, gated
 // server-side by the token (see listMine/updateMine in Code.gs) — never the
 // full admin board, regardless of what someone types into the URL.
 const urlParams = new URLSearchParams(window.location.search);
-const TRAINER_NAME = urlParams.get("t") || "";
-const TRAINER_KEY = urlParams.get("k") || "";
+const TRAINER_NAME = urlParams.get("trainer") || "";
+const TRAINER_KEY = urlParams.get("key") || "";
 const TRAINER_MODE = !!(TRAINER_NAME && TRAINER_KEY);
 
 let leads = [];
