@@ -229,6 +229,26 @@
   body.trainer-mode .meta a{color:var(--text2); text-decoration:none;}
   body.trainer-mode .meta a:hover{color:var(--lime);}
 
+  .trainer-tabs{display:flex; gap:6px; flex-wrap:wrap; padding:10px 14px 12px; border-bottom:1px solid var(--border);}
+  .trainer-tab{
+    display:inline-flex; align-items:center; gap:6px; font-family:'DM Sans',sans-serif; font-size:11.5px; font-weight:700;
+    letter-spacing:.02em; padding:6px 12px; border-radius:20px; border:1px solid var(--border2);
+    background:var(--black4); color:var(--text2); cursor:pointer; transition:all .15s;
+  }
+  .trainer-tab .tab-count{
+    font-size:10px; font-weight:800; background:rgba(255,255,255,0.12); border-radius:20px; padding:1px 6px; color:var(--text);
+  }
+  .trainer-tab.st-new{border-color:rgba(255,68,68,0.3);}
+  .trainer-tab.st-new.active{background:var(--red2); border-color:var(--red); color:var(--red);}
+  .trainer-tab.st-contacted{border-color:rgba(95,168,224,0.3);}
+  .trainer-tab.st-contacted.active{background:var(--blue2); border-color:var(--blue); color:var(--blue);}
+  .trainer-tab.st-trial{border-color:rgba(212,245,60,0.3);}
+  .trainer-tab.st-trial.active{background:var(--lime4); border-color:var(--lime); color:var(--lime);}
+  .trainer-tab.st-won{border-color:rgba(57,217,138,0.3);}
+  .trainer-tab.st-won.active{background:var(--green2); border-color:var(--green); color:var(--green);}
+  .trainer-tab.st-lost{opacity:.75;}
+  .trainer-tab.st-lost.active{background:var(--black4); border-color:var(--text3); color:var(--text); opacity:1;}
+
   .mobile-nav{display:none;}
   @media (max-width:760px){
     body{padding-bottom:74px;}
@@ -407,6 +427,7 @@ const TRAINER_MODE = !!(TRAINER_NAME && TRAINER_KEY);
 let leads = [];
 let pollTimer = null;
 let showArchived = false; // Won/Lost leads are hidden from the board until toggled on
+let trainerTab = "New"; // trainer-mode only: which status tab is currently selected
 
 function $(id){ return document.getElementById(id); }
 
@@ -778,11 +799,24 @@ function render(){
   });
 }
 
-// A trainer's own private view: just their leads, in one list, with stats
-// scoped to them only. No board, no other trainers, no reassignment.
+// Search-only filter for trainer mode — unlike matchesFilters(), this does
+// NOT hide Won/Lost leads, since trainers now have dedicated tabs for those
+// statuses and need them to actually show up when that tab is selected.
+function matchesSearchOnly(l){
+  const q = $("searchBox").value.trim().toLowerCase();
+  if(!q) return true;
+  return (l.name||"").toLowerCase().includes(q) ||
+         (l.phone||"").toLowerCase().includes(q) ||
+         (l.email||"").toLowerCase().includes(q);
+}
+
+// A trainer's own private view: their leads split into status tabs (New,
+// Contacted, Trial Booked, Won, Lost) so it's obvious at a glance who's
+// where, rather than one long mixed list. No board, no other trainers,
+// no reassignment.
 function renderTrainerView(){
-  const visible = leads.filter(matchesFilters);
-  const active = visible.filter(l => l.status !== "Won" && l.status !== "Lost");
+  const mine = leads.filter(matchesSearchOnly);
+  const active = mine.filter(l => l.status !== "Won" && l.status !== "Lost");
   const overdue = active.filter(l => ageLabel(l.receivedAt).overdue);
 
   $("summaryBar").innerHTML = `
@@ -798,27 +832,46 @@ function renderTrainerView(){
     </div>
   `;
 
+  // Make sure the selected tab still exists as a status (defensive — STATUSES
+  // is a fixed list so this always passes, but cheap to guard).
+  if(!STATUSES.find(s => s.key === trainerTab)) trainerTab = "New";
+
   const board = $("board");
   board.innerHTML = "";
   const colEl = document.createElement("div");
   colEl.className = "column";
   colEl.innerHTML = `
-    <div class="column-head"><span class="ch-left"><span>My Leads</span></span><span class="count">${visible.length}</span></div>
+    <div class="column-head"><span class="ch-left"><span>My Leads</span></span><span class="count">${mine.length}</span></div>
+    <div class="trainer-tabs" id="trainerTabsRow"></div>
     <div class="column-body" id="myLeadsBody"></div>
   `;
   board.appendChild(colEl);
-  const body = colEl.querySelector(".column-body");
 
-  if(visible.length === 0){
+  const tabsRow = colEl.querySelector("#trainerTabsRow");
+  STATUSES.forEach(s => {
+    const count = mine.filter(l => (l.status||"New") === s.key).length;
+    const btn = document.createElement("button");
+    btn.className = "trainer-tab " + s.cls + (trainerTab === s.key ? " active" : "");
+    btn.innerHTML = `${escapeHtml(s.key)} <span class="tab-count">${count}</span>`;
+    btn.addEventListener("click", () => { trainerTab = s.key; renderTrainerView(); });
+    tabsRow.appendChild(btn);
+  });
+
+  const body = colEl.querySelector(".column-body");
+  const inTab = mine.filter(l => (l.status||"New") === trainerTab);
+
+  if(inTab.length === 0){
     const hint = document.createElement("div");
     hint.className = "empty-hint";
-    hint.textContent = "No leads assigned to you right now.";
+    hint.textContent = mine.length === 0
+      ? "No leads assigned to you right now."
+      : "Nothing in " + trainerTab + " right now.";
     body.appendChild(hint);
     return;
   }
 
-  visible.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
-  visible.forEach(l => body.appendChild(renderTrainerCard_(l)));
+  inTab.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
+  inTab.forEach(l => body.appendChild(renderTrainerCard_(l)));
 }
 
 function renderTrainerCard_(l){
