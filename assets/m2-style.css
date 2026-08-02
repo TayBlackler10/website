@@ -49,7 +49,8 @@ header#siteHeader{position:fixed;top:0;left:0;right:0;z-index:1000;}
 @media(max-width:900px){.utility-bar{display:none;}}
 nav{display:flex;align-items:center;justify-content:space-between;padding:26px 48px;transition:padding .4s,background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent;}
 nav.scrolled{padding:16px 48px;background:rgba(10,10,10,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
-.nav-brand{font-family:var(--display);font-size:1.5rem;letter-spacing:.06em;}
+.nav-brand{font-family:var(--display);font-size:1.5rem;letter-spacing:.06em;display:flex;align-items:center;}
+.nav-brand img{height:26px;width:auto;display:block;}
 .nav-links{display:flex;align-items:center;gap:34px;list-style:none;}
 .nav-links a{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);position:relative;padding-bottom:6px;transition:color .3s;}
 .nav-links a.active{color:var(--white);}
