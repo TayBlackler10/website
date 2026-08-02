@@ -3,560 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#080808">
-<title>Personal Trainers Auckland | M2 Training Club Grafton  HYROX & Strength Coaches</title>
-<meta name="description" content="Meet the personal trainers at M2 Training Club, Grafton Auckland  Dave, Bekka, Taylor, Tim, Madeliene, Te and Joe. Specialists in HYROX, strength, conditioning and powerlifting. Free consultation.">
+<title>Personal Trainers Auckland | Meet Our Coaches | M2 Training Club Grafton</title>
+<meta name="description" content="Meet the coaches at M2 Training Club, Grafton Auckland. Seven personal trainers specialising in HYROX, strength, bodybuilding and more. Free consultation.">
 <link rel="canonical" href="https://m2club.co.nz/trainers.html">
+<meta property="og:title" content="Personal Trainers Auckland | Meet Our Coaches | M2 Training Club Grafton">
+<meta property="og:description" content="Meet the coaches at M2 Training Club, Grafton Auckland. Seven personal trainers specialising in HYROX, strength, bodybuilding and more. Free consultation.">
+<meta property="og:url" content="https://m2club.co.nz/trainers.html">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--black:#080808;--dark:#0f0f0f;--card:#141414;--card2:#1b1b1b;--yellow:#DFFF00;--y2:#c8e600;--white:#fff;--mid:#888;--line:#1e1e1e;--line2:#282828;}
-html{scroll-behavior:smooth;}
-body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
-a{-webkit-tap-highlight-color:transparent;color:inherit;text-decoration:none;}
-img{display:block;max-width:100%;}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:997;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");}
-
-/* NAV */
-.nav{padding-top:env(safe-area-inset-top);position:sticky;top:0;z-index:999;display:flex;align-items:center;justify-content:space-between;padding:0 3.5rem;height:66px;background:rgba(8,8,8,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);}
-@media(max-width:700px){.nav{padding:0 1.2rem;height:56px;}}
-.nav-brand img{height:36px;width:auto;display:block;}
-.nav-links{display:flex;align-items:center;gap:1.4rem;list-style:none;}
-@media(max-width:1400px){.nav-links{display:none;}}
-.nav-links a{font-size:.78rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);transition:color .2s;white-space:nowrap;}
-.nav-links a:hover,.nav-links a.active{color:var(--white);}
-.nav-links a.active{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--yellow);}
-.nav-right{display:flex;align-items:center;gap:1rem;}
-.nav-cta{display:inline-flex;align-items:center;padding:.55rem 1.2rem;background:var(--yellow);color:#000;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;transition:background .18s;white-space:nowrap;}
-.nav-cta:hover{background:var(--y2);}
-.nav-hamburger{display:none;background:none;border:none;cursor:pointer;padding:.4rem;color:var(--white);position:relative;z-index:9999;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
-@media(max-width:1400px){.nav-hamburger{display:flex;align-items:center;justify-content:center;}}
-.nav-drawer{position:fixed;inset:0;z-index:600;visibility:hidden;pointer-events:none;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1),visibility .32s;}
-.nav-drawer.open{visibility:visible;pointer-events:auto;transform:translateX(0);}
-.nav-drawer-bg{position:absolute;inset:0;background:rgba(8,8,8,.7);backdrop-filter:blur(4px);pointer-events:none;}
-.nav-drawer.open .nav-drawer-bg{pointer-events:auto;}
-.nav-drawer-panel{position:absolute;right:0;top:0;bottom:0;width:min(320px,90vw);background:var(--black);border-left:1px solid var(--line);display:flex;flex-direction:column;padding:2rem 1.8rem;}
-.nav-drawer-close{align-self:flex-end;background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:1.6rem;font-weight:300;margin-bottom:2.5rem;padding:.3rem;line-height:1;}
-.nav-drawer-links{list-style:none;display:flex;flex-direction:column;gap:0;}
-.nav-drawer-links a{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,0.75);padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,0.07);text-decoration:none;text-transform:none;transition:color .15s;}
-.nav-drawer-links a:hover,.nav-drawer-links a.active{color:#c8f026;font-weight:600;}
-.nav-drawer-cta{margin-top:2rem;display:block;text-align:center;padding:.9rem 1rem;background:#c8f026;color:#000;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;border-radius:4px;text-decoration:none;}
-
-/* TICKER */
-.ticker{background:var(--yellow);overflow:hidden;padding:.58rem 0;}
-.tick-track{display:inline-flex;white-space:nowrap;animation:tick 40s linear infinite;}
-.tick-track span{font-size:.68rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#000;padding:0 1.8rem;}
-.tick-track .dot{color:rgba(0,0,0,.28);padding:0;}
-@keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-
-/* HERO STRIP */
-.trainers-hero{position:relative;border-bottom:1px solid var(--line);background:var(--black);}@media(max-width:860px){.trainers-hero{display:none;}}
-.trainer-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(48%,1fr));gap:0;position:relative;}
-@media(min-width:860px){.trainer-strip{grid-template-columns:repeat(7,1fr);height:clamp(420px,46vw,760px);overflow:hidden;}}
-.ts-panel{position:relative;overflow:hidden;display:flex;flex-direction:column;height:48vw;}
-@media(min-width:860px){.ts-panel{height:100%;}}
-.ts-panel img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.62) saturate(.88);transition:filter .5s ease,transform .6s ease;display:block;}
-.ts-panel:hover img{filter:brightness(.78) saturate(1);transform:scale(1.03);}
-.ts-panel+.ts-panel{border-left:1px solid rgba(255,255,255,.08);}
-.ts-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,.93) 0%,rgba(8,8,8,.1) 55%,transparent 100%);}
-.ts-info{position:absolute;bottom:0;left:0;right:0;padding:1.2rem 1.2rem 1rem;display:flex;flex-direction:column;justify-content:flex-end;}
-.ts-num{font-size:.5rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--yellow);opacity:.6;margin-bottom:.25rem;}
-.ts-name{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;line-height:.95;margin-bottom:.4rem;}
-.ts-specs{display:flex;gap:.35rem;flex-wrap:wrap;}
-.ts-spec{font-size:.5rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(223,255,0,.3);color:var(--yellow);padding:.13rem .4rem;white-space:nowrap;}
-@media(max-width:700px){.ts-info{padding:1rem;} .ts-name{font-size:1.4rem;}}
-
-/* HEADLINE BAR */
-.hero-headline-bar{background:var(--black);border-top:2px solid var(--yellow);display:grid;grid-template-columns:1fr auto;align-items:center;gap:2rem;padding:2rem 3.5rem;}
-@media(max-width:700px){.hero-headline-bar{padding:1.8rem 1.2rem;grid-template-columns:1fr;gap:1.2rem;}}
-.hhb-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);letter-spacing:.02em;line-height:.92;}
-.hhb-h1 em{color:var(--yellow);font-style:normal;}
-.hhb-sub{font-size:.88rem;font-weight:300;color:rgba(255,255,255,.42);margin-top:.5rem;max-width:500px;line-height:1.6;}
-.hhb-actions{display:flex;gap:.8rem;flex-wrap:wrap;}
-
-/* TRAINER CARDS */
-.section{padding:5rem 0;border-bottom:1px solid var(--line);}
-@media(max-width:700px){.section{padding:3.5rem 0;}}
-.wrap{max-width:1280px;margin:0 auto;padding:0 3.5rem;}
-@media(max-width:700px){.wrap{padding:0 1.2rem;}}
-.sec-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3rem;gap:1rem;flex-wrap:wrap;}
-.sec-kick{font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--yellow);margin-bottom:.5rem;opacity:.8;display:block;}
-.sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.03em;line-height:1;}
-.trainer-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line2);}
-@media(max-width:1000px){.trainer-cards{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:600px){.trainer-cards{grid-template-columns:repeat(2,1fr);gap:2px;}.tc-photo{height:52vw;}.tc-info{padding:.8rem;}.tc-name{font-size:1.6rem;}.tc-tags{gap:.3rem;}.tc-tag{font-size:.55rem;padding:.2rem .5rem;}}
-.tc{background:var(--card);display:flex;flex-direction:column;overflow:hidden;transition:background .2s;}
-.tc:hover{background:var(--card2);}
-.tc-photo{position:relative;overflow:hidden;height:420px;}
-@media(max-width:1000px){.tc-photo{height:55vw;max-height:420px;}}
-.tc-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.78) saturate(.92);transition:transform .7s ease,filter .5s;display:block;}
-.tc:hover .tc-photo img{transform:scale(1.04);filter:brightness(.9) saturate(1);}
-.tc-num{position:absolute;top:1.2rem;left:1.2rem;font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:.25em;color:var(--yellow);opacity:.7;background:rgba(8,8,8,.6);backdrop-filter:blur(4px);padding:.2rem .6rem;}
-.tc-body{padding:2rem;flex:1;display:flex;flex-direction:column;gap:.5rem;}
-.tc-name{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;line-height:1;}
-.tc-role{font-size:.65rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--yellow);opacity:.75;}
-.tc-bio{font-size:.84rem;font-weight:300;color:rgba(255,255,255,.48);line-height:1.7;flex:1;margin-top:.3rem;}
-.tc-specs{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem;}
-.tc-spec-tag{font-size:.56rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;border:1px solid var(--line2);color:var(--mid);padding:.25rem .55rem;}
-.tc-contact{display:flex;flex-direction:column;gap:.45rem;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--line);}
-.tc-contact-item{display:flex;align-items:center;gap:.55rem;font-size:.75rem;font-weight:400;color:rgba(255,255,255,.42);transition:color .18s;}
-.tc-contact-item:hover{color:var(--yellow);}
-.tc-contact-item svg{flex-shrink:0;opacity:.6;}
-.tc-cta{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);transition:gap .18s;}
-.tc-cta:hover{gap:.8rem;}
-
-/* HOW IT WORKS */
-.hiw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line2);}
-@media(max-width:700px){.hiw-grid{grid-template-columns:1fr;}}
-.hiw-cell{background:var(--card);padding:2.5rem;position:relative;overflow:hidden;}
-.hiw-num{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--yellow);opacity:.07;position:absolute;top:.2rem;right:.6rem;line-height:1;}
-.hiw-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;margin-bottom:.65rem;}
-.hiw-body{font-size:.84rem;font-weight:300;color:rgba(255,255,255,.47);line-height:1.7;}
-.pt-callout{background:var(--card2);border:1px solid var(--line2);border-left:3px solid var(--yellow);padding:2.5rem 3rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-top:2px;}
-.pt-callout h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;margin-bottom:.3rem;}
-.pt-callout p{font-size:.88rem;font-weight:300;color:rgba(255,255,255,.48);max-width:500px;}
-
-/* BUTTONS */
-.btn-y{display:inline-flex;align-items:center;padding:.95rem 2rem;background:var(--yellow);color:#000;font-size:.78rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:background .18s;}
-.btn-y:hover{background:var(--y2);}
-.btn-outline{display:inline-flex;align-items:center;padding:.95rem 2rem;border:1px solid var(--line2);color:var(--white);font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;transition:border-color .18s;}
-.btn-outline:hover{border-color:rgba(255,255,255,.4);}
-.btn-y-sm{display:inline-flex;align-items:center;padding:.75rem 1.5rem;background:var(--yellow);color:#000;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;transition:background .18s;}
-.btn-y-sm:hover{background:var(--y2);}
-
-/* CTA BAND */
-.cta-band{background:var(--yellow);padding:5rem 3.5rem;text-align:center;}
-@media(max-width:700px){.cta-band{padding:3.5rem 1.2rem;}}
-.cta-band h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,5rem);color:#000;letter-spacing:.04em;line-height:1;margin-bottom:.8rem;}
-.cta-band p{font-size:1rem;color:rgba(0,0,0,.62);margin-bottom:2rem;}
-.btn-dark{display:inline-flex;align-items:center;padding:1.1rem 2.5rem;background:#000;color:var(--yellow);font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;transition:background .18s;}
-.btn-dark:hover{background:#1a1a1a;}
-
-/* FOOTER */
-footer{padding:2rem 3.5rem;background:var(--black);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
-@media(max-width:700px){footer{padding:1.5rem 1.2rem;flex-direction:column;align-items:flex-start;}}
-.fl{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--yellow);}
-footer p{font-size:.78rem;font-weight:300;color:var(--mid);line-height:1.8;}
-footer a{color:var(--mid);transition:color .2s;}
-footer a:hover{color:var(--white);}
-
-/* MOBILE CTA */
-.mob-cta{padding-bottom:calc(.9rem + env(safe-area-inset-bottom));display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--black);border-top:1px solid var(--line2);flex-direction:column;padding:1rem 1.2rem;}
-@media(max-width:700px){.mob-cta{display:flex;}}
-.mob-cta-label{font-size:.62rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:.5rem;}
-.mob-cta-btn{display:block;text-align:center;padding:.9rem;background:var(--yellow);color:#000;font-size:.78rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;}
-body{padding-bottom:90px;}
-@media(min-width:701px){body{padding-bottom:0;}}
-
-/* REVEAL */
-.reveal{opacity:1;transform:none;}
-.reveal.animate{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
-.reveal.animate.in{opacity:1;transform:none;}
-
-/* WIX OVERRIDE */
-.trainer-strip {
-  height: clamp(420px, 46vw, 760px) !important;
-  max-height: 760px !important;
-  overflow: hidden !important;
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/m2-style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  "@id": "https://www.m2club.co.nz/#gym",
+  "name": "M2 Training Club",
+  "url": "https://www.m2club.co.nz",
+  "telephone": "+6495581408",
+  "email": "reception@m2club.co.nz",
+  "description": "Auckland's #1 training club in Grafton. Gym floor, unlimited group fitness classes, swimming pool, spa pool, ice bath, sauna and recovery area. Over 1,700 members.",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "8 Nugent Street",
+    "addressLocality": "Grafton",
+    "addressRegion": "Auckland",
+    "postalCode": "1023",
+    "addressCountry": "NZ"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": -36.8614, "longitude": 174.7710 },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "05:00", "closes": "22:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "07:00", "closes": "19:00" }
+  ],
+  "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.4", "reviewCount": "114", "bestRating": "5" }
 }
-.trainer-card {
-  overflow: hidden !important;
-  min-height: 0 !important;
-}
-.nav-link-trial { color: #c8f000 !important; font-weight: 600; }
-
-</style>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-1PW3XYQ1F8');
 </script>
-
-    <meta property="og:title" content="Personal Trainers Auckland | M2 Training Club">
-
-    <meta property="og:description" content="Expert personal trainers in Grafton, Auckland. HYROX, strength, powerlifting & conditioning. Free consultation available.">
-
-    <meta property="og:url" content="https://m2club.co.nz/trainers.html">
-  <!-- Meta Pixel Code -->
-  <script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '1173983798207057');
-  fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
-  /></noscript>
-  <!-- End Meta Pixel Code -->
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav" role="navigation" aria-label="Main navigation">
-  <a href="https://m2club.co.nz/" class="nav-brand"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/m2-logo.png" alt="M2 Training Club" height="36"></a>
-  <ul class="nav-links">
-    <li><a href="https://m2club.co.nz/10-day-trial.html" class="nav-link-trial">Free 3 Days</a></li>
-    <li><a href="https://m2club.co.nz/our-story.html">Our Story</a></li>
-    <li><a href="https://m2club.co.nz/memberships.html">Memberships</a></li>
-    <li><a href="https://m2club.co.nz/annual-memberships.html">Annual</a></li>
-    <li><a href="https://m2club.co.nz/classes.html">Classes</a></li>
-    <li><a href="https://m2club.co.nz/trainers.html" class="active">Trainers</a></li>
-    <li><a href="https://m2club.co.nz/become-a-pt.html">Become a PT</a></li>
-    <li><a href="https://m2club.co.nz/recovery.html">Recovery</a></li>
-    <li><a href="https://m2club.co.nz/fitness-passport.html">Fitness Passport</a></li>
-    <li><a href="https://m2club.co.nz/contact.html">Contact</a></li>
-                <li><a href="reviews.html">Reviews</a></li>
-  </ul>
-  <div class="nav-right">
-    
-    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" style="pointer-events:none">
-        <line x1="2" y1="6" x2="20" y2="6"/><line x1="2" y1="11" x2="20" y2="11"/><line x1="2" y1="16" x2="20" y2="16"/>
-      </svg>
-    </button>
+<header id="siteHeader">
+  <div class="utility-bar" id="utilityBar">
+    <div class="wrap utility-inner">
+      <ul class="utility-links">
+        <li><a href="our-story.html">Our Story</a></li>
+        <li><a href="trainers.html" class="active">Trainers</a></li>
+        <li><a href="become-a-pt.html">Become a PT</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="utility-right">
+        <a href="tel:095581408">09 558 1408</a>
+        <a href="https://www.instagram.com/m2trainingclub/">Instagram</a>
+      </div>
+    </div>
   </div>
-</nav>
-
-<!-- DRAWER -->
-<div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
-  <div class="nav-drawer-bg" id="navDrawerBg"></div>
-  <div class="nav-drawer-panel">
-    <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close menu">✕</button>
-        <ul class="nav-drawer-links">
-      <li><a href="https://m2club.co.nz/">Home</a></li>
-      <li><a href="https://m2club.co.nz/memberships.html">Memberships</a></li>
-      <li><a href="https://m2club.co.nz/annual-memberships.html">Annual</a></li>
-      <li><a href="https://m2club.co.nz/classes.html">Classes</a></li>
-      <li><a href="https://m2club.co.nz/trainers.html" class="active">Trainers</a></li>
-      <li><a href="https://m2club.co.nz/become-a-pt.html">Become a PT</a></li>
-      <li><a href="https://m2club.co.nz/recovery.html">Recovery</a></li>
-      <li><a href="https://m2club.co.nz/fitness-passport.html">Fitness Passport</a></li>
-      <li><a href="https://m2club.co.nz/contact.html">Contact</a></li>
-      <li><a href="https://m2club.co.nz/reviews.html">Reviews</a></li>
+  <nav id="mainNav">
+    <a href="index.html" class="nav-brand">M2</a>
+    <ul class="nav-links">
+      <li><a href="memberships.html">Memberships</a></li>
+      <li><a href="annual-memberships.html">Annual</a></li>
+      <li><a href="classes.html">Classes</a></li>
+      <li><a href="recovery.html">Recovery</a></li>
+      <li><a href="fitness-passport.html">Fitness Passport</a></li>
     </ul>
-    
-  </div>
+    <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" class="nav-cta">Free 3 Days</a>
+    <button class="nav-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<div class="mobile-menu">
+  <button class="mobile-menu-close" aria-label="Close menu"></button>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="memberships.html">Memberships</a></li>
+    <li><a href="annual-memberships.html">Annual</a></li>
+    <li><a href="classes.html">Classes</a></li>
+    <li><a href="recovery.html">Recovery</a></li>
+    <li><a href="fitness-passport.html">Fitness Passport</a></li>
+  </ul>
+  <div class="mm-divider"></div>
+  <ul class="mm-secondary">
+      <li><a href="our-story.html">Our Story</a></li>
+      <li><a href="trainers.html">Trainers</a></li>
+      <li><a href="become-a-pt.html">Become a PT</a></li>
+      <li><a href="reviews.html">Reviews</a></li>
+      <li><a href="contact.html">Contact</a></li>
+  </ul>
 </div>
 
-<main role="main">
-
-<!-- TICKER -->
-<div class="ticker" aria-hidden="true">
-  <div class="tick-track">
-    <span>Coach Dave</span><span class="dot">·</span><span>Coach Bekka</span><span class="dot">·</span><span>Coach Taylor</span><span class="dot">·</span><span>Coach Tim</span><span class="dot">·</span><span>Coach Madeliene</span><span class="dot">·</span><span>Coach Te</span><span class="dot">·</span><span>Coach Joe</span><span class="dot">·</span><span>HYROX · Strength · Conditioning</span><span class="dot">·</span><span>Free Consultation</span><span class="dot">·</span><span>Grafton Auckland</span><span class="dot">·</span><span>Coach Dave</span><span class="dot">·</span><span>Coach Bekka</span><span class="dot">·</span><span>Coach Taylor</span><span class="dot">·</span><span>Coach Tim</span><span class="dot">·</span><span>Coach Madeliene</span><span class="dot">·</span><span>Coach Te</span><span class="dot">·</span><span>Coach Joe</span><span class="dot">·</span><span>HYROX · Strength · Conditioning</span><span class="dot">·</span><span>Free Consultation</span><span class="dot">·</span><span>Grafton Auckland</span><span class="dot">·</span>
-  </div>
-</div>
-
-<!-- HERO: full-bleed panoramic photo strip -->
-<section class="trainers-hero">
-  <div class="trainer-strip" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr 1fr;">
-    <div class="ts-panel">
-      <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Dave%20(2)%20(1).jpg" alt="Coach Dave  personal trainer at M2 Training Club Grafton Auckland" loading="eager">
-      <div class="ts-grad"></div>
-      <div class="ts-info">
-        <div class="ts-num">Coach 01</div>
-        <div class="ts-name">Dave</div>
-        <div class="ts-specs"><span class="ts-spec">HYROX</span><span class="ts-spec">Strength</span></div>
-      </div>
-    </div>
-    <div class="ts-panel">
-      <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Bekka%20(2).jpg" alt="Coach Bekka  personal trainer at M2 Training Club Grafton Auckland" loading="eager">
-      <div class="ts-grad"></div>
-      <div class="ts-info">
-        <div class="ts-num">Coach 02</div>
-        <div class="ts-name">Bekka</div>
-        <div class="ts-specs"><span class="ts-spec">HYROX</span><span class="ts-spec">Strength</span></div>
-      </div>
-    </div>
-    <div class="ts-panel">
-      <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Taylor%20.jpg" alt="Coach Taylor  personal trainer at M2 Training Club Grafton Auckland" loading="eager">
-      <div class="ts-grad"></div>
-      <div class="ts-info">
-        <div class="ts-num">Coach 03</div>
-        <div class="ts-name">Taylor</div>
-        <div class="ts-specs"><span class="ts-spec">HYROX</span><span class="ts-spec">Transform</span></div>
-      </div>
-    </div>
-    <div class="ts-panel">
-      <img src="https://lh3.googleusercontent.com/d/1CNQTbE6tSZLnrq6irBnzuFoRdymR3Wm5" alt="Coach Tim  personal trainer at M2 Training Club Grafton Auckland" loading="eager">
-      <div class="ts-grad"></div>
-      <div class="ts-info">
-        <div class="ts-num">Coach 04</div>
-        <div class="ts-name">Tim</div>
-        <div class="ts-specs"><span class="ts-spec">Bodybuilding</span><span class="ts-spec">Strength</span></div>
-      </div>
-    </div>
-    <div class="ts-panel">
-      <img src="https://lh3.googleusercontent.com/d/1mkagB_T0CnEYm6GRkFmhf0xA08pfTogA" alt="Coach Madeliene  strength and transformation trainer at M2 Training Club Grafton Auckland" loading="eager">
-      <div class="ts-grad"></div>
-      <div class="ts-info">
-        <div class="ts-num">Coach 05</div>
-        <div class="ts-name">Madeliene</div>
-        <div class="ts-specs"><span class="ts-spec">Powerlifting</span><span class="ts-spec">Transform</span></div>
-      </div>
-    </div>
-    <div class="ts-panel">
-      <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Te.jpg" alt="Coach Te  personal trainer at M2 Training Club Grafton Auckland" loading="eager">
-      <div class="ts-grad"></div>
-      <div class="ts-info">
-        <div class="ts-num">Coach 06</div>
-        <div class="ts-name">Te</div>
-        <div class="ts-specs"><span class="ts-spec">Strength</span><span class="ts-spec">Recovery</span></div>
-      </div>
-    </div>
-    <div class="ts-panel">
-      <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Joe.jpg" alt="Coach Joe  personal trainer at M2 Training Club Grafton Auckland" loading="eager">
-      <div class="ts-grad"></div>
-      <div class="ts-info">
-        <div class="ts-num">Coach 07</div>
-        <div class="ts-name">Joe</div>
-        <div class="ts-specs"><span class="ts-spec">Boxing</span><span class="ts-spec">Strength</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="hero-headline-bar">
-    <div>
-      <h1 class="hhb-h1">Find Your <em>Trainer.</em></h1>
-      <p class="hhb-sub">Seven coaches, all different specialties. Book a free consultation and we'll point you in the right direction.</p>
-    </div>
-    <div class="hhb-actions">
-      <a href="mailto:tim@m2club.co.nz" class="btn-y">Book Free Consultation</a>
-      <a href="#our-trainers" class="btn-outline">Meet the Coaches &rarr;</a>
+<section class="page-head">
+  <div class="wrap reveal">
+    <p class="breadcrumb"><a href="index.html">Home</a> / Trainers</p>
+    <h1 class="page-h1">Find your<br><span class="y">trainer.</span></h1>
+    <p class="page-sub">Seven coaches, all different specialties. Book a free consultation and we'll point you in the right direction.</p>
+    <div class="hero-actions" style="margin-top:30px;">
+      <a href="mailto:tim@m2club.co.nz" class="btn btn-solid">Book Free Consultation</a>
+      <a href="#coaches" class="btn btn-line">Meet the Coaches</a>
     </div>
   </div>
 </section>
 
-<!-- TRAINER DETAIL CARDS -->
-<section class="section reveal" id="our-trainers">
+<section class="section-pad" id="coaches">
   <div class="wrap">
-    <div class="sec-hdr"><div><span class="sec-kick">The Team</span><h2 class="sec-ttl">Our Coaches</h2></div></div>
-    <div class="trainer-cards">
+    <div class="section-head reveal">
+      <h2 class="section-h2">Our coaches</h2>
+    </div>
+    <div class="coach-grid reveal">
 
-      <!-- DAVE -->
-      <div class="tc">
-        <div class="tc-photo">
-          <div class="tc-num">01 / 07</div>
-          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Dave%20(2)%20(1).jpg" alt="Coach Dave  HYROX and strength trainer at M2 Training Club Auckland" loading="lazy">
-        </div>
-        <div class="tc-body">
-          <div class="tc-name">Dave</div>
-          <div class="tc-role">Coach &amp; Personal Trainer · 8 Years Experience</div>
-          <p class="tc-bio">Over the years, I've been all shapes and sizes, gotten fit, fallen off the wagon, and had to rebound a few times. I know what both ends of the spectrum feel like, and that's what's led me to where I am today. I've been a personal trainer for eight years, recently finding my passion in HYROX and hybrid racing  competing internationally and coaching athletes at all levels.</p>
-          <div class="tc-specs" style="margin-top:.8rem;">
-            <span class="tc-spec-tag">HYROX</span><span class="tc-spec-tag">Strength</span><span class="tc-spec-tag">Endurance</span><span class="tc-spec-tag">Conditioning</span>
-          </div>
-          <div class="tc-contact">
-            <a href="/cdn-cgi/l/email-protection#7c181d0a193c114e1f10091e521f13521206" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 4l7 5 7-5"/></svg>
-              <span class="__cf_email__" data-cfemail="6703061102270a55040b120549040849091d">[email&#160;protected]</span>
-            </a>
-            <a href="tel:021811268" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 2.5h3l1.5 3.5-2 1.5a10 10 0 004 4l1.5-2 3.5 1.5v3a1 1 0 01-1 1A13.5 13.5 0 012 3.5a1 1 0 011-1h-.5z"/></svg>
-              021 811 268
-            </a>
-            <a href="https://instagram.com/db_ptme" target="_blank" rel="noopener" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="11.5" cy="4.5" r=".7" fill="currentColor" stroke="none"/></svg>
-              @db_ptme
-            </a>
-          </div>
-          <a href="mailto:tim@m2club.co.nz" class="tc-cta">Book Free Consultation</a>
+      <div class="coach-card">
+        <div class="coach-card-photo"><div class="coach-card-num">01 / 07</div><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Dave%20(2)%20(1).jpg" alt="Coach Dave, HYROX and strength trainer at M2 Training Club"></div>
+        <div class="coach-card-body">
+          <div class="coach-card-name">Dave</div>
+          <div class="coach-card-role">Coach & Personal Trainer &middot; 8 Years Experience</div>
+          <p class="coach-card-bio">Over the years, I've been all shapes and sizes, gotten fit, fallen off the wagon, and had to rebound a few times. I've been a personal trainer for eight years, recently finding my passion in HYROX and hybrid racing &mdash; competing internationally and coaching athletes at all levels.</p>
+          <div class="cc-tags"><span>HYROX</span><span>Strength</span><span>Endurance</span><span>Conditioning</span></div>
+          <div class="coach-card-contact"><a href="mailto:reception@m2club.co.nz?subject=Enquiry%20for%20Dave">Enquire</a></div>
         </div>
       </div>
 
-      <!-- BEKKA -->
-      <div class="tc">
-        <div class="tc-photo">
-          <div class="tc-num">02 / 07</div>
-          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Bekka%20(2).jpg" alt="Coach Bekka  HYROX engine trainer at M2 Training Club Auckland" loading="lazy">
-        </div>
-        <div class="tc-body">
-          <div class="tc-name">Bekka</div>
-          <div class="tc-role">Coach &amp; Personal Trainer</div>
-          <p class="tc-bio">Bekka coaches people to move better and train with purpose, whether that's race prep, stepping into competition, or just feeling stronger in everyday life. Her own journey started with wanting to build strength and self-belief, and that's the same thing she brings to everyone she coaches. She comes from a strong sport background and brings real energy and structure to every session.</p>
-          <div class="tc-specs" style="margin-top:.8rem;">
-            <span class="tc-spec-tag">Race Prep</span><span class="tc-spec-tag">Strength</span><span class="tc-spec-tag">HYROX</span><span class="tc-spec-tag">Sport Performance</span>
-          </div>
-          <div class="tc-contact">
-            <a href="/cdn-cgi/l/email-protection#8ceee9e7e7edcce1beefe0f9eea2efe3a2e2f6" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 4l7 5 7-5"/></svg>
-              <span class="__cf_email__" data-cfemail="294b4c42424869441b4a455c4b074a46074753">[email&#160;protected]</span>
-            </a>
-            <a href="tel:0273431959" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 2.5h3l1.5 3.5-2 1.5a10 10 0 004 4l1.5-2 3.5 1.5v3a1 1 0 01-1 1A13.5 13.5 0 012 3.5a1 1 0 011-1h-.5z"/></svg>
-              027 343 1959
-            </a>
-            <a href="https://instagram.com/bjeanfit_" target="_blank" rel="noopener" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="11.5" cy="4.5" r=".7" fill="currentColor" stroke="none"/></svg>
-              @bjeanfit_
-            </a>
-          </div>
-          <a href="mailto:tim@m2club.co.nz" class="tc-cta">Book Free Consultation</a>
+      <div class="coach-card">
+        <div class="coach-card-photo"><div class="coach-card-num">02 / 07</div><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Bekka%20(2).jpg" alt="Coach Bekka, HYROX engine trainer at M2 Training Club"></div>
+        <div class="coach-card-body">
+          <div class="coach-card-name">Bekka</div>
+          <div class="coach-card-role">Coach & Personal Trainer</div>
+          <p class="coach-card-bio">Bekka coaches people to move better and train with purpose, whether that's race prep, stepping into competition, or just feeling stronger in everyday life. She comes from a strong sport background and brings real energy and structure to every session.</p>
+          <div class="cc-tags"><span>Race Prep</span><span>Strength</span><span>HYROX</span><span>Sport Performance</span></div>
+          <div class="coach-card-contact"><a href="mailto:reception@m2club.co.nz?subject=Enquiry%20for%20Bekka">Enquire</a></div>
         </div>
       </div>
 
-      <!-- TAYLOR -->
-      <div class="tc">
-        <div class="tc-photo">
-          <div class="tc-num">03 / 07</div>
-          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Taylor%20.jpg" alt="Coach Taylor  HYROX and conditioning trainer at M2 Training Club Auckland" loading="lazy">
-        </div>
-        <div class="tc-body">
-          <div class="tc-name">Taylor</div>
-          <div class="tc-role">Owner &amp; Coach</div>
-          <p class="tc-bio">With close to a decade of experience in health and fitness, Taylor brings a results-driven approach grounded in both competitive athletic performance and real client success. He specialises in body transformation, strength, and building habits that actually stick, whether you're a busy professional or a competitive athlete. His coaching isn't about quick fixes. It's about building something that lasts.</p>
-          <div class="tc-specs" style="margin-top:.8rem;">
-            <span class="tc-spec-tag">Body Transformation</span><span class="tc-spec-tag">Strength</span><span class="tc-spec-tag">HYROX</span><span class="tc-spec-tag">Conditioning</span>
-          </div>
-          <div class="tc-contact">
-            <a href="/cdn-cgi/l/email-protection#7400150d181b06341946171801165a171b5a1a0e" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 4l7 5 7-5"/></svg>
-              <span class="__cf_email__" data-cfemail="691d081005061b29045b0a051c0b470a06470713">[email&#160;protected]</span>
-            </a>
-            <a href="tel:0277791929" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 2.5h3l1.5 3.5-2 1.5a10 10 0 004 4l1.5-2 3.5 1.5v3a1 1 0 01-1 1A13.5 13.5 0 012 3.5a1 1 0 011-1h-.5z"/></svg>
-              027 779 1929
-            </a>
-            <a href="https://instagram.com/tayblackler" target="_blank" rel="noopener" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="11.5" cy="4.5" r=".7" fill="currentColor" stroke="none"/></svg>
-              @tayblackler
-            </a>
-          </div>
-          <a href="mailto:tim@m2club.co.nz" class="tc-cta">Book Free Consultation</a>
+      <div class="coach-card">
+        <div class="coach-card-photo"><div class="coach-card-num">03 / 07</div><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Taylor%20.jpg" alt="Coach Taylor, HYROX and conditioning trainer at M2 Training Club"></div>
+        <div class="coach-card-body">
+          <div class="coach-card-name">Taylor</div>
+          <div class="coach-card-role">Owner & Coach</div>
+          <p class="coach-card-bio">With close to a decade of experience in health and fitness, Taylor brings a results-driven approach grounded in competitive athletic performance and real client success. His coaching isn't about quick fixes &mdash; it's about building something that lasts.</p>
+          <div class="cc-tags"><span>Body Transformation</span><span>Strength</span><span>HYROX</span><span>Conditioning</span></div>
+          <div class="coach-card-contact"><a href="mailto:reception@m2club.co.nz?subject=Enquiry%20for%20Taylor">Enquire</a></div>
         </div>
       </div>
 
-      <!-- TIM -->
-      <div class="tc">
-        <div class="tc-photo">
-          <div class="tc-num">04 / 07</div>
-          <img src="https://lh3.googleusercontent.com/d/1CNQTbE6tSZLnrq6irBnzuFoRdymR3Wm5" alt="Coach Tim  strength and hypertrophy trainer at M2 Training Club Auckland" loading="lazy">
-        </div>
-        <div class="tc-body">
-          <div class="tc-name">Tim</div>
-          <div class="tc-role">Owner &amp; Coach</div>
-          <p class="tc-bio">Tim's been into health and fitness for over 14 years, starting out training for motorsport. Since then he's gone deep on everything from fat loss and muscle gain to bodybuilding and sport-specific prep. He's competed at national level in bodybuilding for the last five years, and that experience shows in how he coaches. Whatever the goal, he's probably been there himself.</p>
-          <div class="tc-specs" style="margin-top:.8rem;">
-            <span class="tc-spec-tag">Bodybuilding</span><span class="tc-spec-tag">Fat Loss</span><span class="tc-spec-tag">Muscle Gain</span><span class="tc-spec-tag">Nutrition</span>
-          </div>
-          <div class="tc-contact">
-            <a href="/cdn-cgi/l/email-protection#3145585c715c03525d44531f525e1f5f4b" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 4l7 5 7-5"/></svg>
-              <span class="__cf_email__" data-cfemail="c8bca1a588a5faaba4bdaae6aba7e6a6b2">[email&#160;protected]</span>
-            </a>
-            <a href="tel:0277574212" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 2.5h3l1.5 3.5-2 1.5a10 10 0 004 4l1.5-2 3.5 1.5v3a1 1 0 01-1 1A13.5 13.5 0 012 3.5a1 1 0 011-1h-.5z"/></svg>
-              027 757 4212
-            </a>
-            <a href="https://instagram.com/this_is_tims_world" target="_blank" rel="noopener" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="11.5" cy="4.5" r=".7" fill="currentColor" stroke="none"/></svg>
-              @this_is_tims_world
-            </a>
-          </div>
-          <a href="mailto:tim@m2club.co.nz" class="tc-cta">Book Free Consultation</a>
+      <div class="coach-card">
+        <div class="coach-card-photo"><div class="coach-card-num">04 / 07</div><img src="https://lh3.googleusercontent.com/d/1CNQTbE6tSZLnrq6irBnzuFoRdymR3Wm5" alt="Coach Tim, strength and hypertrophy trainer at M2 Training Club"></div>
+        <div class="coach-card-body">
+          <div class="coach-card-name">Tim</div>
+          <div class="coach-card-role">Owner & Coach</div>
+          <p class="coach-card-bio">Tim's been into health and fitness for over 14 years, starting out training for motorsport. He's competed at national level in bodybuilding for the last five years, and that experience shows in how he coaches.</p>
+          <div class="cc-tags"><span>Bodybuilding</span><span>Fat Loss</span><span>Muscle Gain</span><span>Nutrition</span></div>
+          <div class="coach-card-contact"><a href="mailto:tim@m2club.co.nz">Enquire</a></div>
         </div>
       </div>
 
-      <!-- MADELIENE -->
-      <div class="tc">
-        <div class="tc-photo">
-          <div class="tc-num">05 / 07</div>
-          <img src="https://lh3.googleusercontent.com/d/1mkagB_T0CnEYm6GRkFmhf0xA08pfTogA" alt="Coach Madeliene  strength and transformation trainer at M2 Training Club Auckland" loading="lazy">
-        </div>
-        <div class="tc-body">
-          <div class="tc-name">Madeliene</div>
-          <div class="tc-role">Strength &amp; Transformation Coach</div>
-          <p class="tc-bio">A two-time Auckland Powerlifting Champion (2023 &amp; 2024) and bodybuilding athlete, Madeliene's own journey started with a 30kg weight loss. Since stepping into coaching, she's helped clients achieve goals they once thought were out of reach  from a 55-year-old client squatting 160kg, to guiding a 40kg weight-loss transformation, to helping women hit their first unassisted pull-ups.</p>
-          <p class="tc-bio" style="margin-top:.7rem;">Every training plan she builds is tailored to the individual. Whether you're chasing a powerlifting total, trying to lose weight, or just want to see what you're capable of, she'll meet you where you're at.</p>
-          <div class="tc-specs" style="margin-top:.8rem;">
-            <span class="tc-spec-tag">Powerlifting</span><span class="tc-spec-tag">Bodybuilding</span><span class="tc-spec-tag">Strength</span><span class="tc-spec-tag">Transformation</span>
-          </div>
-          <div class="tc-contact">
-            <a href="/cdn-cgi/l/email-protection#7a171b1e1f161f13141f191516161314094e3a1d171b131654191517" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 4l7 5 7-5"/></svg>
-              <span class="__cf_email__" data-cfemail="f19c9095949d94989f94929e9d9d989f82c5b1969c90989ddf929e9c">[email&#160;protected]</span>
-            </a>
-            <a href="tel:0212921799" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 2.5h3l1.5 3.5-2 1.5a10 10 0 004 4l1.5-2 3.5 1.5v3a1 1 0 01-1 1A13.5 13.5 0 012 3.5a1 1 0 011-1h-.5z"/></svg>
-              021 292 1799
-            </a>
-            <a href="https://instagram.com/madeleine.collins___" target="_blank" rel="noopener" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="11.5" cy="4.5" r=".7" fill="currentColor" stroke="none"/></svg>
-              @madeleine.collins___
-            </a>
-          </div>
-          <a href="/cdn-cgi/l/email-protection#bbd6dadfded7ded2d5ded8d4d7d7d2d5c88ffbdcd6dad2d795d8d4d6" class="tc-cta">Book with Madeliene →</a>
+      <div class="coach-card">
+        <div class="coach-card-photo"><div class="coach-card-num">05 / 07</div><img src="https://lh3.googleusercontent.com/d/1mkagB_T0CnEYm6GRkFmhf0xA08pfTogA" alt="Coach Madeliene, strength and transformation trainer at M2 Training Club"></div>
+        <div class="coach-card-body">
+          <div class="coach-card-name">Madeliene</div>
+          <div class="coach-card-role">Strength & Transformation Coach</div>
+          <p class="coach-card-bio">A two-time Auckland Powerlifting Champion (2023 & 2024) and bodybuilding athlete, Madeliene's own journey started with a 30kg weight loss. Every training plan she builds is tailored to the individual.</p>
+          <div class="cc-tags"><span>Powerlifting</span><span>Bodybuilding</span><span>Strength</span><span>Transformation</span></div>
+          <div class="coach-card-contact"><a href="mailto:reception@m2club.co.nz?subject=Enquiry%20for%20Madeliene">Enquire</a></div>
         </div>
       </div>
 
-      <!-- TE -->
-      <div class="tc">
-        <div class="tc-photo">
-          <div class="tc-num">06 / 07</div>
-          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Te.jpg" alt="Coach Te  strength and recovery trainer at M2 Training Club Auckland" loading="lazy">
-        </div>
-        <div class="tc-body">
-          <div class="tc-name">Te</div>
-          <div class="tc-role">Coach &amp; Personal Trainer</div>
-          <p class="tc-bio">Kia ora, I'm Coach Te. Sport has shaped my life for as long as I can remember  growing up I represented Waikato in cricket, tennis, volleyball, and touch rugby, then went on to represent New Zealand in badminton. Competing at that level taught me the value of hard work, consistency, and pushing past what you think you're capable of.</p>
-          <p class="tc-bio" style="margin-top:.7rem;">That passion led me into personal training. After a serious spinal injury in 2025, I felt firsthand how vital movement, strength work, and a structured recovery plan are to getting back on your feet  it proved to me that exercise is one of the most powerful tools we have for both body and mind. Whether you want to lose weight, gain muscle, recover from injury, or just feel better, I'm here to guide you.</p>
-          <div class="tc-specs" style="margin-top:.8rem;">
-            <span class="tc-spec-tag">Strength Training</span><span class="tc-spec-tag">Muscle Building</span><span class="tc-spec-tag">Fat Loss</span><span class="tc-spec-tag">Mobility &amp; Recovery</span>
-          </div>
-          <div class="tc-contact">
-            <a href="mailto:teaokura@gmail.com" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 4l7 5 7-5"/></svg>
-              teaokura@gmail.com
-            </a>
-            <a href="tel:0274358131" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 2.5h3l1.5 3.5-2 1.5a10 10 0 004 4l1.5-2 3.5 1.5v3a1 1 0 01-1 1A13.5 13.5 0 012 3.5a1 1 0 011-1h-.5z"/></svg>
-              027 435 8131
-            </a>
-            <a href="https://instagram.com/teormsby" target="_blank" rel="noopener" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="11.5" cy="4.5" r=".7" fill="currentColor" stroke="none"/></svg>
-              @teormsby
-            </a>
-          </div>
-          <a href="mailto:teaokura@gmail.com" class="tc-cta">Book with Te →</a>
+      <div class="coach-card">
+        <div class="coach-card-photo"><div class="coach-card-num">06 / 07</div><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Te.jpg" alt="Coach Te, strength and recovery trainer at M2 Training Club"></div>
+        <div class="coach-card-body">
+          <div class="coach-card-name">Te</div>
+          <div class="coach-card-role">Coach & Personal Trainer</div>
+          <p class="coach-card-bio">Kia ora, I'm Coach Te. Sport has shaped my life for as long as I can remember &mdash; representing Waikato in cricket, tennis, volleyball and touch rugby, then New Zealand in badminton. After a serious spinal injury in 2025, I felt firsthand how vital movement and structured recovery are to getting back on your feet.</p>
+          <div class="cc-tags"><span>Strength Training</span><span>Muscle Building</span><span>Fat Loss</span><span>Mobility & Recovery</span></div>
+          <div class="coach-card-contact"><a href="mailto:teaokura@gmail.com">Enquire</a></div>
         </div>
       </div>
 
-      <!-- JOE -->
-      <div class="tc">
-        <div class="tc-photo">
-          <div class="tc-num">07 / 07</div>
-          <img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Joe.jpg" alt="Coach Joe  strength, conditioning and boxing trainer at M2 Training Club Auckland" loading="lazy">
-        </div>
-        <div class="tc-body">
-          <div class="tc-name">Joe</div>
-          <div class="tc-role">Personal Trainer &middot; Strength, Conditioning &amp; Boxing</div>
-          <p class="tc-bio">My passion for fitness started on the football pitch at eight, and by 14 I was hooked on weight training. After discovering running at 17, I joined the British Army, where over seven years I took up boxing, competed as an amateur, and coached it within my regiment.</p>
-          <p class="tc-bio" style="margin-top:.7rem;">Since leaving the Army, I've worked as a Personal Trainer, blending strength and conditioning, functional fitness, and boxing to help people get stronger, lose weight, or build confidence in the gym. I love working with beginners who aren't sure where to start, and tailor every programme to the client in front of me.</p>
-          <div class="tc-specs" style="margin-top:.8rem;">
-            <span class="tc-spec-tag">CIMSPA L3 PT</span><span class="tc-spec-tag">ASCA L1 S&amp;C</span><span class="tc-spec-tag">England Boxing L2</span><span class="tc-spec-tag">Nutrition Coaching</span>
-          </div>
-          <div class="tc-contact">
-            <a href="mailto:joespark499@hotmail.com" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><path d="M1 4l7 5 7-5"/></svg>
-              joespark499@hotmail.com
-            </a>
-            <a href="https://instagram.com/joe_spark1989" target="_blank" rel="noopener" class="tc-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><circle cx="8" cy="8" r="3"/><circle cx="11.5" cy="4.5" r=".7" fill="currentColor" stroke="none"/></svg>
-              @joe_spark1989
-            </a>
-          </div>
-          <a href="mailto:joespark499@hotmail.com" class="tc-cta">Book with Joe &rarr;</a>
+      <div class="coach-card">
+        <div class="coach-card-photo"><div class="coach-card-num">07 / 07</div><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Joe.jpg" alt="Coach Joe, strength, conditioning and boxing trainer at M2 Training Club"></div>
+        <div class="coach-card-body">
+          <div class="coach-card-name">Joe</div>
+          <div class="coach-card-role">Personal Trainer &middot; Strength, Conditioning & Boxing</div>
+          <p class="coach-card-bio">My passion for fitness started on the football pitch at eight. After joining the British Army, I took up boxing, competed as an amateur, and coached it within my regiment. I love working with beginners who aren't sure where to start.</p>
+          <div class="cc-tags"><span>CIMSPA L3 PT</span><span>ASCA L1 S&amp;C</span><span>England Boxing L2</span><span>Nutrition Coaching</span></div>
+          <div class="coach-card-contact"><a href="mailto:joespark499@hotmail.com">Email</a><a href="https://instagram.com/joe_spark1989">@joe_spark1989</a></div>
         </div>
       </div>
 
@@ -564,49 +194,73 @@ body{padding-bottom:90px;}
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="section reveal">
+<section class="section-pad" style="padding-top:0;">
   <div class="wrap">
-    <div class="sec-hdr"><div><span class="sec-kick">Working with a Trainer</span><h2 class="sec-ttl">How It Works</h2></div></div>
-    <div class="hiw-grid">
-      <div class="hiw-cell"><div class="hiw-num">1</div><div class="hiw-title">Free Consultation</div><p class="hiw-body">Start with a free 30-minute consultation. Your trainer will find out where you're at, what you've tried, and what you actually want. Then build a plan around that.</p></div>
+    <div class="section-head reveal">
+      <h2 class="section-h2">How it works</h2>
+    </div>
+    <div class="hiw-grid reveal">
+      <div class="hiw-cell"><div class="hiw-num">1</div><div class="hiw-title">Free Consultation</div><p class="hiw-body">Start with a free 30-minute consultation. Your trainer will find out where you're at and what you actually want, then build a plan around that.</p></div>
       <div class="hiw-cell"><div class="hiw-num">2</div><div class="hiw-title">Custom Programme</div><p class="hiw-body">No generic programs. Your training is built around your goals, your schedule, and your current level, and adjusted as you improve.</p></div>
-      <div class="hiw-cell"><div class="hiw-num">3</div><div class="hiw-title">Train &amp; Improve</div><p class="hiw-body">Show up, do the work, get results. Your trainer will be on the floor with you, not watching from across the room.</p></div>
+      <div class="hiw-cell"><div class="hiw-num">3</div><div class="hiw-title">Train & Improve</div><p class="hiw-body">Show up, do the work, get results. Your trainer will be on the floor with you, not watching from across the room.</p></div>
     </div>
-    <div class="pt-callout">
+    <div class="mem-callout reveal">
       <div><h3>Interested in Becoming a Trainer?</h3><p>M2 offers a Level 4 Personal Training certification course for aspiring coaches. $3,000 with payment plans available.</p></div>
-      <a href="https://m2club.co.nz/become-a-pt.html" class="btn-y-sm">PT Course Info →</a>
+      <a href="become-a-pt.html" class="btn btn-solid">PT Course Info <span class="arrow">&#8594;</span></a>
     </div>
   </div>
 </section>
 
-<div class="cta-band"><h2>Book Your Free Consultation</h2><p>30 minutes, no commitment. Meet your trainer and build a plan.</p><a href="/cdn-cgi/l/email-protection#41332422243135282e2f012c73222d34236f222e6f2f3b7e3234232b2422357c0733242461111561222e2f32342d352035282e2f" class="btn-dark">Book Free Consultation</a></div>
+<section class="cta-final">
+  <div class="wrap">
+    <h2 class="reveal">Book Your Free<br>Consultation</h2>
+    <p class="reveal d1">30 minutes, no commitment. Meet your trainer and build a plan.</p>
+    <div class="cta-actions reveal d2">
+      <a href="mailto:tim@m2club.co.nz" class="btn btn-solid">Book Free Consultation <span class="arrow">&#8594;</span></a>
+    </div>
+  </div>
+</section>
 
-</main>
-
-<footer role="contentinfo">
-  <div class="fl">M2 Training Club</div>
-  <p><strong>8 Nugent Street, Grafton, Auckland 1023</strong><br>MonFri 5:00am10:00pm · SatSun 7:00am7:00pm<br><a href="tel:095581408">09 558 1408</a> · <a href="/cdn-cgi/l/e
-
-
-  <p class="footer-copyright" style="font-size:.72rem;color:rgba(255,255,255,.3);margin-top:1rem;width:100%;">© 2026 M2 Training Club · 8 Nugent Street, Grafton, Auckland</p>
-
-<script>
-// Nav hamburger
-(function(){
-  var btn=document.getElementById('navHamburger');
-  var drawer=document.getElementById('navDrawer');
-  var drawerBg=document.getElementById('navDrawerBg');
-  var closeBtn=document.getElementById('navDrawerClose');
-  function openDrawer(){drawer.classList.add('open');document.body.style.overflow='hidden';}
-  function closeDrawer(){drawer.classList.remove('open');document.body.style.overflow='';}
-  if(btn) btn.addEventListener('click',function(e){e.stopPropagation();openDrawer();});
-  if(closeBtn) closeBtn.addEventListener('click',closeDrawer);
-  if(drawerBg) drawerBg.addEventListener('click',closeDrawer);
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
-  if(drawer) drawer.querySelectorAll('.nav-drawer-links a').forEach(function(a){a.addEventListener('click',closeDrawer);});
-})();
-</script>
-undefined
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div class="foot-brand">M2</div>
+        <p>8 Nugent Street<br>Grafton, Auckland 1023</p>
+        <p>Mon–Fri 5am–10pm<br>Sat–Sun 7am–7pm</p>
+      </div>
+      <div class="foot-col">
+        <h4>Club</h4>
+        <a href="our-story.html">Our Story</a>
+        <a href="memberships.html">Memberships</a>
+        <a href="classes.html">Classes</a>
+        <a href="trainers.html">Trainers</a>
+      </div>
+      <div class="foot-col">
+        <h4>Info</h4>
+        <a href="recovery.html">Recovery</a>
+        <a href="fitness-passport.html">Fitness Passport</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h4>Connect</h4>
+        <a href="tel:095581408">09 558 1408</a>
+        <a href="mailto:reception@m2club.co.nz">reception@m2club.co.nz</a>
+        <a href="https://www.instagram.com/m2trainingclub/">Instagram</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-marquee">
+    <div class="foot-marquee-track">
+      <span>M2 Training Club</span><span>M2 Training Club</span><span>M2 Training Club</span><span>M2 Training Club</span>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 M2 Training Club</span>
+    <span>Grafton, Auckland</span>
+  </div>
+</footer>
+<script src="/assets/m2-main.js"></script>
 </body>
 </html>
