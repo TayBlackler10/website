@@ -1,6 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () {
   var nav = document.getElementById('mainNav');
   var utilityBar = document.getElementById('utilityBar');
+  var siteHeader = document.getElementById('siteHeader');
+
+  function setHeaderHeightVar() {
+    if (!siteHeader) return;
+    var h = siteHeader.offsetHeight;
+    if (h > 0) document.documentElement.style.setProperty('--header-h', h + 'px');
+  }
+  setHeaderHeightVar();
+  window.addEventListener('resize', setHeaderHeightVar);
+  window.addEventListener('load', setHeaderHeightVar);
+
   window.addEventListener('scroll', function () {
     if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
     if (utilityBar) utilityBar.classList.toggle('hide', window.scrollY > 10);
