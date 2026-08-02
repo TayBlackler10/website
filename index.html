@@ -20,6 +20,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/m2-style.css?v=3">
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  "@id": "https://www.m2club.co.nz/#gym",
+  "name": "M2 Training Club",
+  "url": "https://www.m2club.co.nz",
+  "telephone": "+6495581408",
+  "email": "reception@m2club.co.nz",
+  "description": "Auckland's #1 training club in Grafton. Gym floor, unlimited group fitness classes, swimming pool, spa pool, ice bath, sauna and recovery area. Over 1,700 members.",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "8 Nugent Street",
+    "addressLocality": "Grafton",
+    "addressRegion": "Auckland",
+    "postalCode": "1023",
+    "addressCountry": "NZ"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": -36.8614, "longitude": 174.7710 },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "05:00", "closes": "22:00" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Saturday","Sunday"], "opens": "07:00", "closes": "19:00" }
+  ],
+  "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.4", "reviewCount": "114", "bestRating": "5" }
+}
+</script>
 </head>
 <body>
 
@@ -48,7 +75,7 @@
       <li><a href="recovery.html">Recovery</a></li>
       <li><a href="fitness-passport.html">Fitness Passport</a></li>
     </ul>
-    <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" class="nav-cta">Free 3 Days</a>
+    <a href="claim-trial.html" class="nav-cta">Free 3 Days</a>
     <button class="nav-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
   </nav>
 </header>
@@ -85,7 +112,7 @@
     <h1 class="hero-h1 reveal d1">Train Hard.<br>Recover <span class="y">Harder.</span></h1>
     <p class="hero-sub reveal d2">A training club for people who actually want to train &mdash; HYROX, group classes, gym floor and full recovery, all under one roof.</p>
     <div class="hero-actions reveal d3">
-      <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" class="btn btn-solid">Get Your Free 3 Days <span class="arrow">&#8594;</span></a>
+      <a href="claim-trial.html" class="btn btn-solid">Get Your Free 3 Days <span class="arrow">&#8594;</span></a>
       <a href="memberships.html" class="btn btn-line">View Memberships</a>
     </div>
     <div class="hero-stats reveal d4">
@@ -357,8 +384,25 @@
     <h2 class="reveal">Ready to Train?</h2>
     <p class="reveal d1">Free for 3 days. Full access. No lock-in.</p>
     <div class="cta-actions reveal d2">
-      <a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" class="btn btn-solid">Get Your Free 3 Days <span class="arrow">&#8594;</span></a>
+      <a href="claim-trial.html" class="btn btn-solid">Get Your Free 3 Days <span class="arrow">&#8594;</span></a>
     </div>
+  </div>
+</section>
+
+<section class="lead-band">
+  <div class="wrap lead-inner reveal">
+    <div class="lead-text">
+      <h3>Not Ready to Visit Yet?</h3>
+      <p>Get our class timetable and training tips sent straight to your inbox &mdash; no pressure, unsubscribe any time.</p>
+    </div>
+    <form class="lead-form" id="lead-form">
+      <input type="hidden" name="_subject" value="New Newsletter Signup &mdash; M2 Training Club Website">
+      <input type="hidden" name="access_key" value="2aaede0f-585b-484d-9c06-663e3a4f3c45">
+      <input type="hidden" name="source" value="index.html lead-band">
+      <input type="email" name="email" placeholder="your@email.com" required>
+      <button type="submit" class="btn btn-solid" id="lead-submit">Send It To Me</button>
+      <div id="lead-result" class="lead-result"></div>
+    </form>
   </div>
 </section>
 
@@ -403,5 +447,33 @@
   </div>
 </footer>
 <script src="/assets/m2-main.js?v=3"></script>
+<script>
+(function(){
+  var form = document.getElementById('lead-form');
+  var result = document.getElementById('lead-result');
+  var btn = document.getElementById('lead-submit');
+  if (!form) return;
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    btn.disabled = true; btn.textContent = 'Sending...';
+    var data = new FormData(form);
+    fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.success) {
+          result.innerHTML = '<span style="color:var(--yellow);">Done — check your inbox soon.</span>';
+          form.reset();
+        } else {
+          result.innerHTML = '<span style="color:#ff6b6b;">Something went wrong. Please try again.</span>';
+        }
+        btn.disabled = false; btn.textContent = 'Send It To Me';
+      })
+      .catch(function () {
+        result.innerHTML = '<span style="color:#ff6b6b;">Something went wrong. Please try again.</span>';
+        btn.disabled = false; btn.textContent = 'Send It To Me';
+      });
+  });
+})();
+</script>
 </body>
 </html>

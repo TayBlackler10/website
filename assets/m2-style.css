@@ -626,3 +626,16 @@ footer{border-top:1px solid var(--line);padding-top:80px;}
 @media(max-width:900px){.review-grid-full{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}}
 @media(max-width:600px){.review-grid-full{grid-template-columns:minmax(0,1fr);}}
 .review-grid-full .review-card{border:none;background:var(--black);border-radius:0;}
+
+/* LEAD MAGNET / EMAIL OPT-IN BAND */
+.lead-band{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:56px 0;}
+.lead-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;}
+.lead-text h3{font-family:var(--display);font-size:1.5rem;text-transform:uppercase;margin-bottom:6px;}
+.lead-text p{color:var(--dim);font-size:.88rem;max-width:420px;}
+.lead-form{display:flex;gap:10px;flex-wrap:wrap;flex:1;max-width:460px;}
+.lead-form input[type="email"]{flex:1;min-width:200px;background:var(--black);border:1px solid var(--line-strong);border-radius:2px;padding:14px 16px;color:var(--white);font-family:var(--body);font-size:.9rem;}
+.lead-form input[type="email"]::placeholder{color:var(--dim-2);}
+.lead-form input[type="email"]:focus{outline:none;border-color:var(--yellow);}
+.lead-form button{white-space:nowrap;}
+.lead-result{width:100%;font-size:.8rem;margin-top:10px;}
+@media(max-width:900px){.lead-inner{flex-direction:column;align-items:flex-start;}.lead-form{max-width:100%;width:100%;}}
