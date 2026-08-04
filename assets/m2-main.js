@@ -54,6 +54,19 @@ document.addEventListener('DOMContentLoaded', function () {
   if (mobileClose) {
     mobileClose.addEventListener('click', function () { document.body.classList.remove('menu-open'); });
   }
+var galleryTabs = document.querySelectorAll('.gallery-tab');
+  if (galleryTabs.length) {
+    galleryTabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.dataset.tab;
+        galleryTabs.forEach(function (t) { t.classList.toggle('active', t === tab); });
+        document.querySelectorAll('.gallery-panel').forEach(function (p) {
+          p.classList.toggle('active', p.id === 'panel-' + target);
+        });
+      });
+    });
+  }
+
   document.querySelectorAll('.mobile-menu a').forEach(function (a) {
     a.addEventListener('click', function () { document.body.classList.remove('menu-open'); });
   });
