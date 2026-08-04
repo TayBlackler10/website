@@ -639,3 +639,13 @@ footer{border-top:1px solid var(--line);padding-top:80px;}
 .lead-form button{white-space:nowrap;}
 .lead-result{width:100%;font-size:.8rem;margin-top:10px;}
 @media(max-width:900px){.lead-inner{flex-direction:column;align-items:flex-start;}.lead-form{max-width:100%;width:100%;}}
+
+/* MEMBER GALLERY (masonry) */
+.masonry-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:dense;gap:6px;}
+.masonry-grid .m-item{overflow:hidden;position:relative;border-radius:2px;aspect-ratio:3/4;}
+.masonry-grid .m-item.tall{aspect-ratio:auto;}
+.masonry-grid .m-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.16,1,.3,1);}
+.masonry-grid .m-item:hover img{transform:scale(1.05);}
+.masonry-grid .m-item.tall{grid-row:span 2;}
+@media(max-width:900px){.masonry-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:600px){.masonry-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;}}
