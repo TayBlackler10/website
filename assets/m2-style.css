@@ -649,3 +649,13 @@ footer{border-top:1px solid var(--line);padding-top:80px;}
 .masonry-grid .m-item.tall{grid-row:span 2;}
 @media(max-width:900px){.masonry-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media(max-width:600px){.masonry-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;}}
+
+/* PAGE-HEAD WITH BACKGROUND PHOTO */
+.page-head.has-photo{position:relative;overflow:hidden;}
+.page-head.has-photo .ph-bg{position:absolute;inset:0;z-index:0;}
+.page-head.has-photo .ph-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(.55);}
+.page-head.has-photo .ph-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.55) 0%,rgba(10,10,10,.75) 60%,rgba(10,10,10,.97) 100%);}
+.page-head.has-photo .wrap{position:relative;z-index:1;}
+
+/* FACILITY STRIP */
+.facility-strip-note{color:var(--dim);font-size:.9rem;max-width:520px;margin-top:-8px;margin-bottom:8px;}
