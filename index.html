@@ -495,6 +495,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     btn.disabled = true; btn.textContent = 'Sending...';
+    if (typeof fbq === 'function') { fbq('track', 'Lead', { content_name: 'Newsletter Signup' }); }
     var data = new FormData(form);
     fetch('https://api.web3forms.com/submit', { method: 'POST', body: data })
       .then(function (r) { return r.json(); })
