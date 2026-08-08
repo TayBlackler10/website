@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function () {
   window.addEventListener('scroll', function () {
     if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
     if (utilityBar) utilityBar.classList.toggle('hide', window.scrollY > 10);
+    requestAnimationFrame(setHeaderHeightVar);
   });
+
+  if (utilityBar) utilityBar.addEventListener('transitionend', setHeaderHeightVar);
 
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
