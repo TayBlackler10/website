@@ -1349,12 +1349,12 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
       </div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--black)">→</div>
     </div>
-    <div id="hyroxCountdown" style="background:linear-gradient(135deg,var(--black3),#0f1800);border:1px solid rgba(212,245,60,0.2);border-radius:var(--r);padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer" onclick="toast('Book your race prep session with Coach Dave')">
+    <div id="hyroxCountdown" style="background:linear-gradient(135deg,var(--black3),#0f1800);border:1px solid rgba(212,245,60,0.2);border-radius:var(--r);padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer" onclick="openRaceModal()">
       <div style="font-size:24px">🏆</div>
       <div style="flex:1">
-        <div style="font-size:9px;color:var(--lime);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px">Race countdown</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;letter-spacing:0.5px;margin-bottom:1px">HYROX Auckland Doubles</div>
-        <div style="font-size:11px;color:var(--text3)">Jan 30, 2027 · <span id="daysOut" style="color:var(--lime);font-weight:600"></span> days out</div>
+        <div style="font-size:9px;color:var(--lime);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px">Next race / competition</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#fff;letter-spacing:0.5px;margin-bottom:1px" id="raceNameDisplay">HYROX Auckland</div>
+        <div style="font-size:11px;color:var(--text3)"><span id="raceDateDisplay">Jan 30, 2027</span> · <span id="daysOut" style="color:var(--lime);font-weight:600"></span> days out · <span style="color:var(--lime);text-decoration:underline">Edit</span></div>
       </div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--lime);line-height:1" id="daysNum"></div>
     </div>
@@ -2634,6 +2634,72 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
   </div>
 </div>
 
+<!-- RACE MODAL -->
+<div class="overlay" id="raceModal" onclick="co(event,'raceModal')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-head">
+      <div><div class="sh-title">Next Race / Competition</div><div class="sh-sub">Any race, competition or event — we'll count down with you</div></div>
+      <div class="sh-close" onclick="cm('raceModal')">×</div>
+    </div>
+    <div class="sh-body">
+
+      <!-- CURRENT RACE -->
+      <div id="currentRaceDisplay" style="background:linear-gradient(135deg,#0f1800,var(--black3));border:1px solid rgba(212,245,60,0.2);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;display:flex;gap:12px;align-items:center">
+        <div style="font-size:28px">🏆</div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--lime);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px">Current race</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;letter-spacing:0.5px;margin-bottom:2px" id="modalRaceName">HYROX Auckland</div>
+          <div style="font-size:12px;color:var(--text3)"><span id="modalRaceDate">Jan 30, 2027</span> · <span id="modalDaysOut" style="color:var(--lime);font-weight:600"></span> days out</div>
+        </div>
+      </div>
+
+      <!-- POPULAR RACES -->
+      <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Popular upcoming races & events</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px" id="popularRaces">
+        <div onclick="selectRace('HYROX Auckland','2027-01-30')" style="background:var(--black3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s" ontouchstart="this.style.borderColor='var(--lime)'" ontouchend="this.style.borderColor='var(--border)'">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">HYROX Auckland</div><div style="font-size:11px;color:var(--text3)">January 30, 2027 · Auckland</div></div>
+          <div style="font-size:12px;color:var(--lime);font-weight:600">Select →</div>
+        </div>
+        <div onclick="selectRace('HYROX Sydney','2026-10-11')" style="background:var(--black3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s" ontouchstart="this.style.borderColor='var(--lime)'" ontouchend="this.style.borderColor='var(--border)'">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">HYROX Sydney</div><div style="font-size:11px;color:var(--text3)">October 11, 2026 · Sydney</div></div>
+          <div style="font-size:12px;color:var(--lime);font-weight:600">Select →</div>
+        </div>
+        <div onclick="selectRace('Auckland Marathon','2026-10-25')" style="background:var(--black3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s" ontouchstart="this.style.borderColor='var(--lime)'" ontouchend="this.style.borderColor='var(--border)'">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Auckland Marathon</div><div style="font-size:11px;color:var(--text3)">October 25, 2026 · Auckland</div></div>
+          <div style="font-size:12px;color:var(--lime);font-weight:600">Select →</div>
+        </div>
+        <div onclick="selectRace('Queenstown International Marathon','2026-11-21')" style="background:var(--black3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s" ontouchstart="this.style.borderColor='var(--lime)'" ontouchend="this.style.borderColor='var(--border)'">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Queenstown Marathon</div><div style="font-size:11px;color:var(--text3)">November 21, 2026 · Queenstown</div></div>
+          <div style="font-size:12px;color:var(--lime);font-weight:600">Select →</div>
+        </div>
+        <div onclick="selectRace('Ironman New Zealand','2027-03-07')" style="background:var(--black3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s" ontouchstart="this.style.borderColor='var(--lime)'" ontouchend="this.style.borderColor='var(--border)'">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Ironman New Zealand</div><div style="font-size:11px;color:var(--text3)">March 7, 2027 · Taupo</div></div>
+          <div style="font-size:12px;color:var(--lime);font-weight:600">Select →</div>
+        </div>
+        <div onclick="selectRace('Tough Mudder Auckland','2026-09-19')" style="background:var(--black3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s" ontouchstart="this.style.borderColor='var(--lime)'" ontouchend="this.style.borderColor='var(--border)'">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text)">Tough Mudder Auckland</div><div style="font-size:11px;color:var(--text3)">September 19, 2026 · Auckland</div></div>
+          <div style="font-size:12px;color:var(--lime);font-weight:600">Select →</div>
+        </div>
+      </div>
+
+      <!-- CUSTOM RACE -->
+      <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Or add your own race</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <div>
+          <div class="stripe-lbl mb8">Race / competition name</div>
+          <input id="customRaceName" class="stripe-input" type="text" placeholder="e.g. Auckland Marathon, powerlifting comp...">
+        </div>
+        <div>
+          <div class="stripe-lbl mb8">Race date</div>
+          <input id="customRaceDate" class="stripe-input" type="date">
+        </div>
+      </div>
+      <button class="sh-cta cta-free" onclick="saveCustomRace()">Save my race</button>
+      <button onclick="clearRace()" style="width:100%;padding:12px;background:transparent;border:none;font-size:13px;color:var(--text3);cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px">Remove race countdown</button>
+    </div>
+  </div>
+</div>
+
 <!-- PR MODAL -->
 <div class="overlay" id="prModal" onclick="co(event,'prModal')">
   <div class="sheet"><div class="sh-handle"></div>
@@ -3318,6 +3384,81 @@ function shareCalendar() {
   } else {
     toast('Calendar link copied ✓');
   }
+}
+
+// ── RACE COUNTDOWN ───────────────────────────
+const DEFAULT_RACE = { name: 'HYROX Auckland', date: '2027-01-30' };
+
+function getRace() {
+  const saved = localStorage.getItem('m2_race');
+  return saved ? JSON.parse(saved) : DEFAULT_RACE;
+}
+
+function saveRace(name, date) {
+  localStorage.setItem('m2_race', JSON.stringify({ name, date }));
+  updateRaceDisplay();
+  cm('raceModal');
+  toast(`Race set: ${name} 🏆`);
+}
+
+function updateRaceDisplay() {
+  const race = getRace();
+  const raceDate = new Date(race.date);
+  const now = new Date();
+  const days = Math.ceil((raceDate - now) / (1000 * 60 * 60 * 24));
+  const dateStr = raceDate.toLocaleDateString('en-NZ', { day:'numeric', month:'short', year:'numeric' });
+
+  // Update home screen countdown
+  const nameEl = document.getElementById('raceNameDisplay');
+  const dateEl = document.getElementById('raceDateDisplay');
+  const daysOut = document.getElementById('daysOut');
+  const daysNum = document.getElementById('daysNum');
+  if(nameEl) nameEl.textContent = race.name;
+  if(dateEl) dateEl.textContent = dateStr;
+  if(daysOut) daysOut.textContent = days;
+  if(daysNum) daysNum.textContent = days;
+
+  // Update modal
+  const modalName = document.getElementById('modalRaceName');
+  const modalDate = document.getElementById('modalRaceDate');
+  const modalDays = document.getElementById('modalDaysOut');
+  if(modalName) modalName.textContent = race.name;
+  if(modalDate) modalDate.textContent = dateStr;
+  if(modalDays) modalDays.textContent = days;
+}
+
+function setCountdown() {
+  updateRaceDisplay();
+}
+
+function openRaceModal() {
+  updateRaceDisplay();
+  // Pre-fill custom fields with current race
+  const race = getRace();
+  const nameInput = document.getElementById('customRaceName');
+  const dateInput = document.getElementById('customRaceDate');
+  if(nameInput) nameInput.value = race.name;
+  if(dateInput) dateInput.value = race.date;
+  openM('raceModal');
+}
+
+function selectRace(name, date) {
+  saveRace(name, date);
+}
+
+function saveCustomRace() {
+  const name = document.getElementById('customRaceName').value.trim();
+  const date = document.getElementById('customRaceDate').value;
+  if(!name) { toast('Enter a race name'); return; }
+  if(!date) { toast('Pick a date'); return; }
+  saveRace(name, date);
+}
+
+function clearRace() {
+  localStorage.removeItem('m2_race');
+  updateRaceDisplay();
+  cm('raceModal');
+  toast('Race countdown removed');
 }
 
 // ── QR CHECK-IN ──────────────────────────────
