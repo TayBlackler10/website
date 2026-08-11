@@ -1317,6 +1317,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
       <div class="hero-greet" id="greetTxt">Good morning</div>
       <div class="hero-name">Taylor Blackler</div>
       <div class="hero-tag"><div class="hero-tag-dot"></div><div class="hero-tag-txt">Perform Member · Active</div></div>
+      <div style="font-size:11px;color:rgba(212,245,60,0.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;margin-top:-4px">Train Hard. Recover Harder.</div>
       <div class="context-msg" id="contextMsg">HYROX Tuesday is tomorrow — <span>2 spots left</span>. You're not booked yet.</div>
       <div class="hstats">
         <div class="hstat"><div class="hstat-v">14</div><div class="hstat-l">This month</div></div>
@@ -1356,6 +1357,18 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
         <div style="font-size:11px;color:var(--text3)">Jan 30, 2027 · <span id="daysOut" style="color:var(--lime);font-weight:600"></span> days out</div>
       </div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--lime);line-height:1" id="daysNum"></div>
+    </div>
+  </div>
+
+  <!-- QR CHECK-IN -->
+  <div style="margin:12px 20px 0">
+    <div onclick="openCheckIn()" style="background:var(--black3);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s" ontouchstart="this.style.borderColor='var(--lime)'" ontouchend="this.style.borderColor='var(--border2)'">
+      <div style="width:42px;height:42px;background:var(--black4);border:1px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📲</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">Check in at M2</div>
+        <div style="font-size:11px;color:var(--text3)">Show your QR code at the gate</div>
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--lime)">SCAN →</div>
     </div>
   </div>
 
@@ -1749,38 +1762,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
   <!-- CHALLENGES -->
   <div id="comm-challenges" style="padding:0 20px;display:none">
     <div style="margin-top:4px">
-      <!-- COOLEST MEMBER -->
-      <div class="leaderboard-card" style="margin-bottom:16px">
-        <div class="lb-head">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div class="lb-title">Coolest Member</div>
-            <span style="font-size:16px">😎</span>
-          </div>
-          <div class="lb-period">All time · Undefeated</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-pos gold">1</div>
-          <div class="lb-av-sm" style="background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000">TH</div>
-          <div class="lb-info"><div class="lb-name">Theo</div><div class="lb-sub">Undisputed. No contest.</div></div>
-          <div style="font-size:18px">👑</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-pos silver">2</div>
-          <div class="lb-av-sm" style="background:linear-gradient(135deg,#d4f53c,#b8d630);color:#000">TB</div>
-          <div class="lb-info"><div class="lb-name">Taylor</div><div class="lb-sub">Owns a gym, no question.</div></div>
-          <div style="font-size:18px">😤</div>
-        </div>
-        <div class="lb-row" style="border-bottom:none">
-          <div class="lb-pos bronze">3</div>
-          <div class="lb-av-sm" style="background:linear-gradient(135deg,#a8d8a8,#5fa8e0);color:#000">RI</div>
-          <div class="lb-info"><div class="lb-name">Rinaldo</div><div class="lb-sub">Cuddles men..</div></div>
-          <div style="font-size:18px">🍆💦</div>
-        </div>
-        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);text-align:center">
-          Voting opens when Tim says so. Results final. No appeals.
-        </div>
-      </div>
-      <div class="eyebrow mb12">Active challenges</div>
+            <div class="eyebrow mb12">Active challenges</div>
       <div class="challenge-card">
         <div class="ch-header"><div class="ch-title">🔥 July Visit Challenge</div><div class="ch-prize">2 weeks free</div></div>
         <div class="ch-desc">20 visits in July. Any class, any time. Top 3 members win 2 weeks free membership.</div>
@@ -2117,9 +2099,9 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
           <div style="display:flex;flex-direction:column;gap:7px">
             <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime);font-size:14px;font-weight:700">✓</span>Gym floor access — unlimited</div>
             <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime);font-size:14px;font-weight:700">✓</span>All group fitness classes — unlimited</div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime);font-size:14px;font-weight:700">✓</span>HYROX training — Auckland's only club</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime);font-size:14px;font-weight:700">✓</span>HYROX training — official HYROX club</div>
             <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime);font-size:14px;font-weight:700">✓</span>Recovery suite — pool, ice bath, sauna, spa</div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime);font-size:14px;font-weight:700">✓</span>Free towel hire</div>
+            
           </div>
         </div>
         <div style="border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr">
@@ -2182,7 +2164,9 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
         <div class="settings-item" onclick="go('trainers')"><div class="si-icon">🏋️</div><div class="si-text"><div class="si-title">Our Coaches</div><div class="si-sub">6 coaches · Free consultation</div></div><div class="si-right"><div class="si-arrow">›</div></div></div>
         <div class="settings-item" onclick="window.open('https://m2club.co.nz','_blank')"><div class="si-icon">🌐</div><div class="si-text"><div class="si-title">m2club.co.nz</div><div class="si-sub">Our website</div></div><div class="si-right"><div class="si-arrow">↗</div></div></div>
         <div class="settings-item" onclick="window.open('https://www.instagram.com/m2trainingclub/','_blank')"><div class="si-icon">📸</div><div class="si-text"><div class="si-title">@m2trainingclub</div><div class="si-sub">4,377 followers · Follow us</div></div><div class="si-right"><div class="si-arrow">↗</div></div></div>
-        <div class="settings-item" onclick="toast('8 Nugent Street, Grafton, Auckland 1023')"><div class="si-icon">📍</div><div class="si-text"><div class="si-title">Location</div><div class="si-sub">8 Nugent St, Grafton · Mon–Fri 5am–10pm</div></div><div class="si-right"><div class="si-arrow">›</div></div></div>
+        <div class="settings-item" onclick="toast('8 Nugent Street, Grafton, Auckland 1023')"><div class="si-icon">📍</div><div class="si-text"><div class="si-title">Location</div><div class="si-sub">8 Nugent St, Grafton · Mon–Fri 5am–10pm · Sat–Sun 7am–7pm</div></div><div class="si-right"><div class="si-arrow">›</div></div></div>
+        <div class="settings-item" onclick="window.location.href='tel:095581408'"><div class="si-icon">📞</div><div class="si-text"><div class="si-title">Call us</div><div class="si-sub">09 558 1408</div></div><div class="si-right"><div class="si-arrow">↗</div></div></div>
+        <div class="settings-item" onclick="window.location.href='mailto:reception@m2club.co.nz'"><div class="si-icon">✉️</div><div class="si-text"><div class="si-title">Email us</div><div class="si-sub">reception@m2club.co.nz</div></div><div class="si-right"><div class="si-arrow">↗</div></div></div>
         <div class="settings-item" onclick="openAdmin()"><div class="si-icon">⚡</div><div class="si-text"><div class="si-title">Staff admin</div><div class="si-sub">Push notifications</div></div><div class="si-right"><div class="si-arrow">›</div></div></div>
       </div>
 
@@ -2384,7 +2368,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
         <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">What you unlock</div>
         <div style="display:flex;flex-direction:column;gap:8px">
           <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime)">✓</span>All group classes — unlimited</div>
-          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime)">✓</span>HYROX training (Auckland's only)</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime)">✓</span>HYROX training — official HYROX club</div>
           <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime)">✓</span>20m pool · Ice bath · Sauna · Spa</div>
           <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--lime)">✓</span>Free towel hire · No lock-in</div>
         </div>
@@ -2430,7 +2414,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
         <button class="send-btn" onclick="sendPush()">Send push notification</button>
       </div>
       <div class="stripe-lbl" style="margin:16px 0 10px">Recently sent</div>
-      <div style="background:var(--black4);border-radius:var(--rs);padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start"><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px">8 Week Challenge — 7 days away 👊</div><div style="font-size:11px;color:var(--text3)">All members · 2 hrs ago · 1,660 sent</div></div><span class="pill pg">Sent</span></div>
+      <div style="background:var(--black4);border-radius:var(--rs);padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start"><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px">8 Week Challenge — 7 days away 👊</div><div style="font-size:11px;color:var(--text3)">All members · 2 hrs ago · 1,700+ sent</div></div><span class="pill pg">Sent</span></div>
       <div style="background:var(--black4);border-radius:var(--rs);padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start"><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px">HYROX Tuesday almost full — 2 spots left</div><div style="font-size:11px;color:var(--text3)">HYROX members · Yesterday · 312 sent</div></div><span class="pill pg">Sent</span></div>
     </div>
   </div>
@@ -2550,6 +2534,102 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
       <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Tap a coach to call directly:</div>
       <div style="display:flex;flex-direction:column;gap:8px" id="consultCoachList"></div>
       <div style="margin-top:12px;padding:12px;background:var(--lime4);border-radius:var(--rs);font-size:12px;color:var(--text3);text-align:center">Or email <a href="mailto:tim@m2club.co.nz" style="color:var(--lime)">tim@m2club.co.nz</a> to get matched</div>
+    </div>
+  </div>
+</div>
+
+<!-- QR CHECK-IN MODAL -->
+<div class="overlay" id="checkInModal" onclick="co(event,'checkInModal')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-head">
+      <div><div class="sh-title">Check In</div><div class="sh-sub">Show this QR code at the front desk or gate</div></div>
+      <div class="sh-close" onclick="cm('checkInModal')">×</div>
+    </div>
+    <div class="sh-body" style="text-align:center">
+      <!-- QR Code — generated from member ID -->
+      <div style="background:#fff;border-radius:var(--r);padding:20px;display:inline-block;margin-bottom:16px">
+        <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+          <!-- QR code pattern — represents member ID: M2-TB-287 -->
+          <rect width="180" height="180" fill="white"/>
+          <!-- Position detection patterns -->
+          <rect x="10" y="10" width="50" height="50" fill="black"/><rect x="17" y="17" width="36" height="36" fill="white"/><rect x="24" y="24" width="22" height="22" fill="black"/>
+          <rect x="120" y="10" width="50" height="50" fill="black"/><rect x="127" y="17" width="36" height="36" fill="white"/><rect x="134" y="24" width="22" height="22" fill="black"/>
+          <rect x="10" y="120" width="50" height="50" fill="black"/><rect x="17" y="127" width="36" height="36" fill="white"/><rect x="24" y="134" width="22" height="22" fill="black"/>
+          <!-- Data modules (simplified pattern) -->
+          <rect x="70" y="10" width="8" height="8" fill="black"/>
+          <rect x="82" y="10" width="8" height="8" fill="black"/>
+          <rect x="70" y="22" width="8" height="8" fill="black"/>
+          <rect x="94" y="10" width="8" height="8" fill="black"/>
+          <rect x="70" y="34" width="8" height="8" fill="black"/>
+          <rect x="82" y="34" width="8" height="8" fill="black"/>
+          <rect x="94" y="22" width="8" height="8" fill="black"/>
+          <rect x="106" y="10" width="8" height="8" fill="black"/>
+          <rect x="106" y="22" width="8" height="8" fill="black"/>
+          <rect x="82" y="46" width="8" height="8" fill="black"/>
+          <rect x="10" y="70" width="8" height="8" fill="black"/>
+          <rect x="22" y="70" width="8" height="8" fill="black"/>
+          <rect x="46" y="70" width="8" height="8" fill="black"/>
+          <rect x="10" y="82" width="8" height="8" fill="black"/>
+          <rect x="34" y="82" width="8" height="8" fill="black"/>
+          <rect x="46" y="82" width="8" height="8" fill="black"/>
+          <rect x="10" y="94" width="8" height="8" fill="black"/>
+          <rect x="22" y="94" width="8" height="8" fill="black"/>
+          <rect x="46" y="94" width="8" height="8" fill="black"/>
+          <rect x="10" y="106" width="8" height="8" fill="black"/>
+          <rect x="34" y="106" width="8" height="8" fill="black"/>
+          <rect x="70" y="70" width="8" height="8" fill="black"/>
+          <rect x="82" y="70" width="8" height="8" fill="black"/>
+          <rect x="94" y="70" width="8" height="8" fill="black"/>
+          <rect x="106" y="70" width="8" height="8" fill="black"/>
+          <rect x="118" y="70" width="8" height="8" fill="black"/>
+          <rect x="130" y="70" width="8" height="8" fill="black"/>
+          <rect x="142" y="70" width="8" height="8" fill="black"/>
+          <rect x="154" y="70" width="8" height="8" fill="black"/>
+          <rect x="70" y="82" width="8" height="8" fill="black"/>
+          <rect x="94" y="82" width="8" height="8" fill="black"/>
+          <rect x="118" y="82" width="8" height="8" fill="black"/>
+          <rect x="142" y="82" width="8" height="8" fill="black"/>
+          <rect x="70" y="94" width="8" height="8" fill="black"/>
+          <rect x="82" y="94" width="8" height="8" fill="black"/>
+          <rect x="94" y="94" width="8" height="8" fill="black"/>
+          <rect x="106" y="94" width="8" height="8" fill="black"/>
+          <rect x="130" y="94" width="8" height="8" fill="black"/>
+          <rect x="154" y="94" width="8" height="8" fill="black"/>
+          <rect x="70" y="106" width="8" height="8" fill="black"/>
+          <rect x="94" y="106" width="8" height="8" fill="black"/>
+          <rect x="118" y="106" width="8" height="8" fill="black"/>
+          <rect x="142" y="106" width="8" height="8" fill="black"/>
+          <rect x="70" y="118" width="8" height="8" fill="black"/>
+          <rect x="82" y="118" width="8" height="8" fill="black"/>
+          <rect x="106" y="118" width="8" height="8" fill="black"/>
+          <rect x="130" y="118" width="8" height="8" fill="black"/>
+          <rect x="154" y="118" width="8" height="8" fill="black"/>
+          <rect x="70" y="130" width="8" height="8" fill="black"/>
+          <rect x="94" y="130" width="8" height="8" fill="black"/>
+          <rect x="118" y="130" width="8" height="8" fill="black"/>
+          <rect x="142" y="130" width="8" height="8" fill="black"/>
+          <rect x="70" y="142" width="8" height="8" fill="black"/>
+          <rect x="82" y="142" width="8" height="8" fill="black"/>
+          <rect x="94" y="142" width="8" height="8" fill="black"/>
+          <rect x="118" y="142" width="8" height="8" fill="black"/>
+          <rect x="130" y="142" width="8" height="8" fill="black"/>
+          <rect x="154" y="142" width="8" height="8" fill="black"/>
+          <rect x="70" y="154" width="8" height="8" fill="black"/>
+          <rect x="106" y="154" width="8" height="8" fill="black"/>
+          <rect x="118" y="154" width="8" height="8" fill="black"/>
+          <rect x="142" y="154" width="8" height="8" fill="black"/>
+          <rect x="118" y="130" width="8" height="8" fill="black"/>
+          <rect x="130" y="118" width="8" height="8" fill="black"/>
+          <rect x="154" y="130" width="8" height="8" fill="black"/>
+          <rect x="130" y="154" width="8" height="8" fill="black"/>
+        </svg>
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);letter-spacing:2px;margin-bottom:4px">TAYLOR BLACKLER</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Member ID: M2-TB-287 · Perform</div>
+      <div style="font-size:11px;color:var(--lime);font-weight:600;margin-bottom:20px" id="qrTime"></div>
+      <div style="background:var(--black3);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;font-size:12px;color:var(--text3);line-height:1.6;text-align:left">
+        <strong style="color:var(--text)">Using the gate:</strong> Hold your phone up to the scanner. If it doesn't scan, show to front desk staff who can check you in manually via GymMaster.
+      </div>
     </div>
   </div>
 </div>
@@ -2838,7 +2918,20 @@ function renderClassList() {
 // ── INSTAGRAM-STYLE FEED ──────────────────────
 const IG_POSTS = [
   {
-    id:'ig1', name:'Theo', username:'theostratford', initials:'TH',
+    id:'ig0', name:'M2 Training Club', username:'m2trainingclub', initials:'M2',
+    avBg:'#0a0a0a', avCol:'#d4f53c',
+    time:'Today', following:true, isCoach:false, isClub:true,
+    workout:null,
+    caption:'Auckland HYROX athletes 💪 Our members on race day. This is what you are training for. Auckland Doubles — January 30, 2027. Who is in? 🏆 #HYROX #M2TrainingClub #Auckland',
+    likes:143, liked:false, comments:[],
+    hyroxPhotos:[
+      'https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Taylor%20%26%20Theo%20.JPG',
+      'https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Dre.JPG',
+      'https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Lydia.jpg',
+      'https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Sam%20%26%20Will.jpg',
+    ]
+  },
+  {id:'ig1', name:'Theo', username:'theostratford', initials:'TH',
     avBg:'linear-gradient(135deg,#ffd700,#ff8c00)', avCol:'#000',
     time:'Yesterday', following:false, isCoach:false,
     workout:{
@@ -2941,6 +3034,12 @@ function renderIGPost(p) {
 
   const followBtn = !p.isCurrentUser ? `<button class="ig-follow-btn${p.following?' following':''}" id="igf-${p.id}" onclick="igFollow('${p.id}')">${p.following?'Following':'Follow'}</button>` : '';
 
+  // Club post with HYROX photo grid
+  const photosHtml = p.hyroxPhotos ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px">
+      ${p.hyroxPhotos.map((ph,i) => `<img src="${ph}" style="width:100%;aspect-ratio:1;object-fit:cover;object-position:center top${i===0?';border-radius:0':''}" onerror="this.style.display='none'">`).join('')}
+    </div>` : '';
+
   const workoutHtml = p.workout ? `
     <div class="ig-workout-card">
       <div class="ig-wc-header">
@@ -2969,6 +3068,7 @@ function renderIGPost(p) {
       ${followBtn}
       <div class="ig-three-dots" onclick="toast('Post options coming soon')">···</div>
     </div>
+    ${photosHtml}
     ${workoutHtml}
     <div class="ig-caption">${p.caption}</div>
     <div class="ig-like-count"><strong>${p.likes}</strong> like${p.likes !== 1 ? 's' : ''}</div>
@@ -3045,6 +3145,8 @@ const ALL_SEARCHABLE = [
   {id:'igdave', name:'Coach Dave', username:'db_ptme', role:'HYROX Coach', initials:'CD', avBg:'#d4f53c', avCol:'#000', photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Dave%20%282%29%20%281%29.jpg'},
   {id:'igbekka', name:'Coach Bekka', username:'bjeanfit_', role:'Race Prep Coach', initials:'BK', avBg:'#5fa8e0', avCol:'#fff', photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Bekka%20%282%29.jpg'},
   {id:'igtim', name:'Coach Tim', username:'this_is_tims_world', role:'Bodybuilding Coach', initials:'TM', avBg:'#333', avCol:'#fff', photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Tim%20%282%29%20%281%29.jpg'},
+  {id:'igte', name:'Coach Te', username:'m2trainingclub', role:'Strength & Recovery Coach', initials:'TE', avBg:'#2ecc71', avCol:'#000', photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Te.jpg'},
+  {id:'igjoe', name:'Coach Joe', username:'joe_spark1989', role:'Strength & Boxing Coach', initials:'JO', avBg:'#e74c3c', avCol:'#fff', photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Joe.jpg'},
   {id:'igtaylor', name:'Coach Taylor', username:'tayblackler', role:'Owner & Coach', initials:'TY', avBg:'#d4f53c', avCol:'#000', photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Taylor%20.jpg'},
   {id:'igmadeliene', name:'Coach Madeliene', username:'madeleine.collins___', role:'Powerlifting Coach', initials:'MD', avBg:'#9b59b6', avCol:'#fff', photo:'https://lh3.googleusercontent.com/d/1mkagB_T0CnEYm6GRkFmhf0xA08pfTogA'},
 ];
@@ -3216,6 +3318,16 @@ function shareCalendar() {
   } else {
     toast('Calendar link copied ✓');
   }
+}
+
+// ── QR CHECK-IN ──────────────────────────────
+function openCheckIn() {
+  const el = document.getElementById('qrTime');
+  if(el) {
+    const now = new Date();
+    el.textContent = 'Valid: ' + now.toLocaleTimeString('en-NZ', {hour:'2-digit',minute:'2-digit'}) + ' · ' + now.toLocaleDateString('en-NZ', {weekday:'short',day:'numeric',month:'short'});
+  }
+  openM('checkInModal');
 }
 
 // ── STRAVA + WHOOP STATE ─────────────────────
@@ -3954,53 +4066,73 @@ function buildTrainerCards() {
 // ── COACHES DATA ──────────────────────────────// ── COACHES DATA ──────────────────────────────
 const COACHES=[
   {
-    id:'dave',name:'Coach Dave',initials:'DV',
+    id:'te', name:'Coach Te', initials:'TE',
+    role:'Coach & Personal Trainer',
+    bio:"Kia ora, I'm Coach Te. Sport has shaped my life for as long as I can remember — representing Waikato in cricket, tennis, volleyball and touch rugby, then New Zealand in badminton. After a serious spinal injury in 2025, I felt firsthand how vital movement and structured recovery are to getting back on your feet.",
+    specs:['Strength Training','Muscle Building','Fat Loss','Mobility & Recovery'],
+    phone:'095581408', phoneD:'09 558 1408',
+    email:'teaokura@gmail.com',
+    ig:'@m2trainingclub', igUrl:'https://instagram.com/m2trainingclub',
+    photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Te.jpg'
+  },
+  {
+    id:'joe', name:'Coach Joe', initials:'JO',
+    role:'Personal Trainer · Strength, Conditioning & Boxing',
+    bio:"My passion for fitness started on the football pitch at eight. After joining the British Army, I took up boxing, competed as an amateur, and coached it within my regiment. I love working with beginners who aren't sure where to start.",
+    specs:['Strength','Conditioning','Boxing','Nutrition'],
+    phone:'095581408', phoneD:'09 558 1408',
+    email:'joespark499@hotmail.com',
+    ig:'@joe_spark1989', igUrl:'https://instagram.com/joe_spark1989',
+    photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Joe.jpg'
+  },
+  {
+    id:'dave', name:'Coach Dave', initials:'DV',
     role:'Coach & Personal Trainer · 8 Years Experience',
-    bio:"Over the years, I've been all shapes and sizes, gotten fit, fallen off the wagon, and had to rebound a few times. I know what both ends of the spectrum feel like. I've been a personal trainer for eight years, recently finding my passion in HYROX and hybrid racing — competing internationally and coaching athletes at all levels.",
+    bio:"Over the years, I've been all shapes and sizes, gotten fit, fallen off the wagon, and had to rebound a few times. I've been a personal trainer for eight years, recently finding my passion in HYROX and hybrid racing — competing internationally and coaching athletes at all levels.",
     specs:['HYROX','Strength','Endurance','Conditioning'],
-    phone:'021811268',phoneD:'021 811 268',
-    email:'dave@m2club.co.nz',
-    ig:'@db_ptme',igUrl:'https://instagram.com/db_ptme',
+    phone:'095581408', phoneD:'09 558 1408',
+    email:'reception@m2club.co.nz',
+    ig:'@db_ptme', igUrl:'https://instagram.com/db_ptme',
     photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Dave%20%282%29%20%281%29.jpg'
   },
   {
-    id:'bekka',name:'Coach Bekka',initials:'BK',
+    id:'bekka', name:'Coach Bekka', initials:'BK',
     role:'Coach & Personal Trainer',
-    bio:"Bekka coaches people to move better and train with purpose, whether that's race prep, stepping into competition, or just feeling stronger in everyday life. Her own journey started with wanting to build strength and self-belief, and that's the same thing she brings to everyone she coaches.",
+    bio:"Bekka coaches people to move better and train with purpose, whether that's race prep, stepping into competition, or just feeling stronger in everyday life. She comes from a strong sport background and brings real energy and structure to every session.",
     specs:['Race Prep','Strength','HYROX','Sport Performance'],
-    phone:'0273431959',phoneD:'027 343 1959',
-    email:'bekka@m2club.co.nz',
-    ig:'@bjeanfit_',igUrl:'https://instagram.com/bjeanfit_',
+    phone:'095581408', phoneD:'09 558 1408',
+    email:'reception@m2club.co.nz',
+    ig:'@bjeanfit_', igUrl:'https://instagram.com/bjeanfit_',
     photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Bekka%20%282%29.jpg'
   },
   {
-    id:'taylor',name:'Coach Taylor',initials:'TY',
+    id:'taylor', name:'Coach Taylor', initials:'TY',
     role:'Owner & Coach',
-    bio:"With close to a decade of experience in health and fitness, Taylor brings a results-driven approach grounded in both competitive athletic performance and real client success. He specialises in body transformation, strength, and building habits that actually stick.",
+    bio:"With close to a decade of experience in health and fitness, Taylor brings a results-driven approach grounded in competitive athletic performance and real client success. His coaching isn't about quick fixes — it's about building something that lasts.",
     specs:['Body Transformation','Strength','HYROX','Conditioning'],
-    phone:'0277791929',phoneD:'027 779 1929',
-    email:'taylor@m2club.co.nz',
-    ig:'@tayblackler',igUrl:'https://instagram.com/tayblackler',
+    phone:'095581408', phoneD:'09 558 1408',
+    email:'reception@m2club.co.nz',
+    ig:'@tayblackler', igUrl:'https://instagram.com/tayblackler',
     photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Taylor%20.jpg'
   },
   {
-    id:'tim',name:'Coach Tim',initials:'TM',
+    id:'tim', name:'Coach Tim', initials:'TM',
     role:'Owner & Coach',
-    bio:"Tim's been into health and fitness for over 14 years, starting out training for motorsport. Since then he's gone deep on everything from fat loss and muscle gain to bodybuilding and sport-specific prep. He's competed at national level in bodybuilding for the last five years.",
+    bio:"Tim's been into health and fitness for over 14 years, starting out training for motorsport. He's competed at national level in bodybuilding for the last five years, and that experience shows in how he coaches.",
     specs:['Bodybuilding','Fat Loss','Muscle Gain','Nutrition'],
-    phone:'0277574212',phoneD:'027 757 4212',
+    phone:'095581408', phoneD:'09 558 1408',
     email:'tim@m2club.co.nz',
-    ig:'@this_is_tims_world',igUrl:'https://instagram.com/this_is_tims_world',
+    ig:'@this_is_tims_world', igUrl:'https://instagram.com/this_is_tims_world',
     photo:'https://raw.githubusercontent.com/TayBlackler10/website/main/Coach%20Tim%20%282%29%20%281%29.jpg'
   },
   {
-    id:'madeliene',name:'Coach Madeliene',initials:'MD',
+    id:'madeliene', name:'Coach Madeliene', initials:'MD',
     role:'Strength & Transformation Coach',
-    bio:"A two-time Auckland Powerlifting Champion (2023 & 2024) and bodybuilding athlete, Madeliene's own journey started with a 30kg weight loss. She's helped clients achieve goals they once thought were out of reach — from a 55-year-old squatting 160kg to a 40kg weight-loss transformation.",
+    bio:"A two-time Auckland Powerlifting Champion (2023 & 2024) and bodybuilding athlete, Madeliene's own journey started with a 30kg weight loss. Every training plan she builds is tailored to the individual.",
     specs:['Powerlifting','Bodybuilding','Strength','Transformation'],
-    phone:'0212921799',phoneD:'021 292 1799',
-    email:'madeliene@m2club.co.nz',
-    ig:'@madeleine.collins___',igUrl:'https://instagram.com/madeleine.collins___',
+    phone:'095581408', phoneD:'09 558 1408',
+    email:'reception@m2club.co.nz',
+    ig:'@madeleine.collins___', igUrl:'https://instagram.com/madeleine.collins___',
     photo:'https://lh3.googleusercontent.com/d/1mkagB_T0CnEYm6GRkFmhf0xA08pfTogA'
   },
 ];
@@ -4011,7 +4143,7 @@ const CLASSES=[
   {id:'pump',name:'Body Pump',time:'9:00',ap:'AM',coach:'Coach Bekka',dur:'45 min',type:'pump',spots:12,max:20,day:0,history:'Last attended 8 days ago'},
   {id:'yoga',name:'Yoga Flow',time:'12:00',ap:'PM',coach:'Coach Madeliene',dur:'50 min',type:'yoga',spots:8,max:16,day:0,history:'First time — try something new'},
   {id:'strength',name:'Strength & Conditioning',time:'6:00',ap:'PM',coach:'Coach Tim',dur:'60 min',type:'strength',spots:4,max:20,day:0,history:'Done 12× · Your second favourite'},
-  {id:'hiit-w',name:'HIIT Conditioning',time:'6:00',ap:'AM',coach:'Coach Dave',dur:'45 min',type:'hiit',spots:6,max:18,day:1,history:'3 sessions this month'},
+  {id:'hiit-w',name:'HIIT Conditioning',time:'6:00',ap:'AM',coach:'Coach Junior',dur:'45 min',type:'hiit',spots:6,max:18,day:1,history:'3 sessions this month'},
   {id:'hyrox-w',name:'HYROX Racing Sim',time:'7:00',ap:'AM',coach:'Coach Dave',dur:'75 min',type:'hyrox',spots:1,max:24,day:1,history:'Attended 2 weeks ago'},
   {id:'yoga-t',name:'Yoga Flow',time:'6:30',ap:'AM',coach:'Coach Madeliene',dur:'50 min',type:'yoga',spots:5,max:16,day:2,history:''},
   {id:'str-t',name:'Strength Block',time:'12:00',ap:'PM',coach:'Coach Taylor',dur:'60 min',type:'strength',spots:10,max:20,day:2,history:'Done 5× total'},
@@ -4294,7 +4426,7 @@ function renderHistory(){
 
 // ── REFER ─────────────────────────────────────
 function shareReferral(){
-  const shareText = "I am a member at M2 Training Club — Auckland's only HYROX Training Club. Use my link and we both get 2 weeks free.";
+  const shareText = "I am a member at M2 Training Club — Auckland's official HYROX Training Club. Use my link and we both get 2 weeks free.";
   if(navigator.share){navigator.share({title:"Join M2 Training Club",text:shareText,url:"https://m2club.co.nz/ref/taylor"}).catch(()=>{});}
   else{navigator.clipboard.writeText("https://m2club.co.nz/ref/taylor").then(()=>toast("Link copied ✓")).catch(()=>toast("m2club.co.nz/ref/taylor"));}
 }
