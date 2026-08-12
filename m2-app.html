@@ -808,11 +808,11 @@ hr.div{border:none;border-top:1px solid var(--border);margin:14px 0}
 .tod-chip.active{background:transparent !important;color:var(--lime) !important;box-shadow:inset 0 0 0 1px var(--lime)}
 
 /* LES MILLS STYLE CLASS CARD */
-.lm-class-card{background:var(--black2);border:none;border-bottom:1px solid var(--border);padding:14px 0;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:background 0.15s}
+.lm-class-card{background:var(--black2);border:none;border-bottom:1px solid var(--border);padding:14px 0;display:flex;gap:14px;align-items:center;cursor:pointer;transition:background 0.15s}
 .lm-class-card:active{background:var(--black3)}
-.lm-time-col{width:70px;flex-shrink:0;text-align:right;padding-top:2px}
+.lm-time-col{width:64px;flex-shrink:0;text-align:right;padding-top:0}
 .lm-time{font-family:var(--font-mono);font-size:15px;font-weight:600;color:#fff}
-.lm-ampm{font-size:11px;color:var(--text3);margin-top:1px}
+.lm-ampm{font-size:11px;color:var(--text3);line-height:1}
 .lm-divider{width:1px;background:var(--border2);align-self:stretch;flex-shrink:0;margin:2px 0}
 .lm-info{flex:1;min-width:0}
 .lm-duration{font-size:11px;color:var(--text3);margin-bottom:3px}
@@ -2768,8 +2768,10 @@ function renderClassList() {
 
     return `<div class="lm-class-card" onclick="openClass('${c.id}')">
       <div class="lm-time-col">
-        <div class="lm-time">${c.time}</div>
-        <div class="lm-ampm">${c.ap}</div>
+        <div style="display:flex;align-items:baseline;gap:2px">
+          <div class="lm-time">${c.time}</div>
+          <div class="lm-ampm">${c.ap}</div>
+        </div>
       </div>
       <div class="lm-divider"></div>
       <div class="lm-info">
@@ -2779,10 +2781,10 @@ function renderClassList() {
         <div class="lm-footer">
           <span class="lm-type-badge" style="background:${tbg};color:${tcol}">${c.type.toUpperCase()}</span>
           ${!isBk && !isFull ? `<span class="lm-spots">${c.spots} available</span>` : ''}
-          ${btnHtml}
         </div>
-        ${c.history ? `<div style="font-size:11px;color:var(--text3);margin-top:5px;font-style:italic">${c.history}</div>` : ''}
+        ${c.history ? `<div style="font-size:11px;color:var(--text3);margin-top:4px;font-style:italic">${c.history}</div>` : ''}
       </div>
+      <div style="flex-shrink:0;display:flex;align-items:center;padding-right:4px">${btnHtml}</div>
     </div>`;
   }).join('');
 }
