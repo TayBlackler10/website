@@ -4,17 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M2 Training Club  Marketing Command Centre</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --y:#C8FF00;--yd:#a8d600;
-  --b:#050505;--s:#111111;--s2:#181818;--s3:#202020;--s4:#2a2a2a;
-  --br:rgba(200,255,0,0.18);--br2:rgba(255,255,255,0.08);--br3:rgba(255,255,255,0.14);
-  --t:#f0f0f0;--t2:#b0b0b0;--m:#686868;
-  --g:#4ade80;--r:#f87171;--blue:#60a5fa;--purple:#a78bfa
+  --y:#DFFF00;--yd:#c7e600;--y3:rgba(223,255,0,0.12);--y4:rgba(223,255,0,0.06);
+  --b:#000000;--s:#0c0e0e;--s2:#141616;--s3:#1c1e1e;--s4:#262a2a;
+  --br:rgba(223,255,0,0.18);--br2:rgba(255,255,255,0.06);--br3:rgba(255,255,255,0.14);
+  --t:#ffffff;--t2:#a8adad;--m:#767c7c;
+  --g:#39d98a;--r:#ff4444;--blue:#5fa8e0;--purple:#a78bfa;
+  --font-mono:'JetBrains Mono',monospace;
+  --rad:14px;--rad-s:8px;
 }
 html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body{position:relative}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 900px 600px at 15% 0%,rgba(223,255,0,0.045) 0%,transparent 55%),radial-gradient(ellipse 800px 700px at 100% 30%,rgba(143,148,148,0.06) 0%,transparent 55%),var(--b)}
+.topbar,.nav-bar,.section{position:relative;z-index:1}
 
 /* ── TOP BAR ── */
 .topbar{background:rgba(5,5,5,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--br);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100}
@@ -62,10 +67,11 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 
 /* ── KPI GRID ── */
 .kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px}
-.kpi{background:var(--s);border:1px solid var(--br2);border-radius:16px;padding:24px 22px;transition:border-color .18s;cursor:default;position:relative}
-.kpi:hover{border-color:var(--br3)}
+.kpi{background:var(--s2);border:1px solid var(--br2);border-radius:var(--rad);padding:24px 22px;transition:border-color .18s,transform .18s;cursor:default;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:-60px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(223,255,0,0.07) 0%,transparent 70%);pointer-events:none}
+.kpi:hover{border-color:var(--br3);transform:translateY(-1px)}
 .kl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:12px;font-weight:700}
-.kv{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--t);line-height:1;margin-bottom:8px;letter-spacing:.5px;font-weight:400}
+.kv{font-family:var(--font-mono);font-size:42px;color:var(--t);line-height:1;margin-bottom:8px;letter-spacing:-0.5px;font-weight:600}
 .kv.y{color:var(--y)}.kv.g{color:var(--g)}.kv.r{color:var(--r)}
 .ks{font-size:12px;color:var(--m);line-height:1.5}
 .ks.g{color:var(--g)}.ks.r{color:var(--r)}.ks.y{color:var(--y)}
@@ -77,16 +83,16 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 .src-target{color:var(--y);background:rgba(200,255,0,.1);border:1px solid rgba(200,255,0,.35)}
 /* Movement panel */
 .move-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
-.move{background:var(--s);border:1px solid var(--br2);border-radius:14px;padding:16px 18px}
+.move{background:var(--s2);border:1px solid var(--br2);border-radius:var(--rad-s);padding:16px 18px}
 .move-l{font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:8px}
 .move-row{display:flex;align-items:baseline;gap:8px}
-.move-now{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;color:var(--t)}
+.move-now{font-family:var(--font-mono);font-weight:600;font-size:26px;line-height:1;color:var(--t)}
 .move-delta{font-size:13px;font-weight:700}
 .move-delta.up{color:var(--g)}.move-delta.down{color:var(--r)}.move-delta.flat{color:var(--m)}
 .move-prev{font-size:10px;color:var(--m);margin-top:5px}
 
 /* ── CARDS ── */
-.card{background:var(--s);border:1px solid var(--br2);border-radius:16px;padding:24px 26px;margin-bottom:18px;transition:border-color .2s}
+.card{background:var(--s2);border:1px solid var(--br2);border-radius:var(--rad);padding:24px 26px;margin-bottom:18px;transition:border-color .2s}
 .card:last-child{margin-bottom:0}
 .card:hover{border-color:var(--br3)}
 
@@ -442,15 +448,17 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Daily To Do</div>
   <div class="section-sub">Smart tasks based on your M2 data · Updates from live GymMaster + Meta data · <span id="todo-updated" style="color:var(--g)">Loading...</span></div>
 
-  <!-- LIVE STATUS STRIP -->
-  <div id="todo-live-strip" style="background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.2);border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-    <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--y)" id="todo-strip-trials"></div><div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px">Trials this month</div></div>
-    <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--g)" id="todo-strip-net"></div><div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px">Net members</div></div>
-    <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--r)" id="todo-strip-noshows">26</div><div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px">April no-shows to follow up</div></div>
-    <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--r)" id="todo-strip-upcoming"></div><div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px">Upcoming cancellations</div></div>
-    <div style="text-align:center"><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--blue)" id="todo-strip-spend">$81</div><div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px">Meta spend today</div></div>
-    <div style="flex:1;min-width:200px"><div style="font-size:13px;color:var(--t2)" id="todo-strip-msg">Checking live data...</div></div>
+  <!-- KEY OBJECTIVES -->
+  <div style="margin-bottom:10px;font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1.6px;font-weight:700">Key objectives, at a glance</div>
+  <div class="kg" id="todo-live-strip" style="margin-bottom:28px">
+    <div class="kpi"><div class="kl">Trials this month</div><div class="kv y" id="todo-strip-trials" style="font-size:36px"></div><div class="ks">GymMaster live</div></div>
+    <div class="kpi"><div class="kl">Net members</div><div class="kv g" id="todo-strip-net" style="font-size:36px"></div><div class="ks">this month</div></div>
+    <div class="kpi"><div class="kl">Upcoming cancellations</div><div class="kv r" id="todo-strip-upcoming" style="font-size:36px"></div><div class="ks r">act on these first</div></div>
+    <div class="kpi"><div class="kl">Meta spend today</div><div class="kv" style="color:var(--blue);font-size:36px" id="todo-strip-spend">$81</div><div class="ks">across 8 active campaigns</div></div>
+    <div class="kpi"><div class="kl">Fitness Passport, not visited since Jul 1</div><div class="kv r" style="font-size:36px">461</div><div class="ks r">40% of 1,143 members · revenue leak, paid per visit</div></div>
+    <div class="kpi"><div class="kl">Allfit Newmarket opens</div><div class="kv y" style="font-size:36px">Sept</div><div class="ks y">$12.95/wk, 12mo min term · your no-lock-in trial is the edge</div></div>
   </div>
+  <div style="font-size:13px;color:var(--t2);margin-bottom:20px" id="todo-strip-msg">Checking live data...</div>
 
   <div class="two" style="margin-bottom:20px">
     <div class="card" style="border-color:rgba(200,255,0,.3)">
@@ -1867,7 +1875,13 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="row"><span class="rl">Instagram</span><a href="https://www.instagram.com/m2trainingclub/" target="_blank" style="color:var(--y);font-size:12px">@m2trainingclub ↗</a></div>
     </div>
     <div class="card">
-      <div class="ct">Website analytics (manual entry)</div>
+      <div class="ct">Website analytics <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">GA4 snapshot, 18 Aug 2026</span></div>
+      <div class="row"><span class="rl">Total sessions, last 30 days</span><span class="rv">8,468</span></div>
+      <div class="row"><span class="rl">Paid Social</span><span class="rv y">5,611 (66%)</span></div>
+      <div class="row"><span class="rl">Organic Search</span><span class="rv g">1,622 (19%)</span></div>
+      <div class="row"><span class="rl">Direct</span><span class="rv">792 (9%)</span></div>
+      <div class="row"><span class="rl">Note</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">Paid Social jumped from 0 to dominant once Meta ads ramped up ~5 Aug, organic held flat, no cannibalisation</span></div>
+      <div class="ct" style="margin-top:20px">Manual override, if needed</div>
       <div style="margin-bottom:8px"><div class="inp-lbl">Monthly sessions</div><input class="inp" type="number" id="seo-sessions" placeholder="e.g. 3200" oninput="saveSEO()"></div>
       <div style="margin-bottom:8px"><div class="inp-lbl">Avg session duration (sec)</div><input class="inp" type="number" id="seo-duration" placeholder="e.g. 95" oninput="saveSEO()"></div>
       <div><div class="inp-lbl">Top traffic source</div><input class="inp" type="text" id="seo-topsource" placeholder="e.g. Google Organic" oninput="saveSEO()"></div>
@@ -2195,6 +2209,16 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="row"><span class="rl">Re-engagement email/SMS cost</span><span class="rv g">~$0 if via GymMaster</span></div>
   </div>
 
+  <div class="card" style="border-color:rgba(255,68,68,0.25)">
+    <div class="ct">Fitness Passport visit retention <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">snapshot from GymMaster export, 18 Aug 2026</span></div>
+    <div class="row"><span class="rl">Total current Fitness Passport members</span><span class="rv">1,143</span></div>
+    <div class="row"><span class="rl">Visited since 1 Jul 2026</span><span class="rv g">683 (60%)</span></div>
+    <div class="row"><span class="rl">Not visited since 1 Jul 2026</span><span class="rv r">461 (40%)</span></div>
+    <div class="row"><span class="rl">↳ Lapsed (used to come, stopped)</span><span class="rv r">435</span></div>
+    <div class="row"><span class="rl">↳ Never visited at all</span><span class="rv r">26</span></div>
+    <div class="row"><span class="rl">Why this matters</span><span class="rv y">You're paid per visit for these members, 461 are currently earning $0</span></div>
+  </div>
+
   <div class="two">
     <div class="card">
       <div class="ct">Re-engagement playbook</div>
@@ -2291,6 +2315,16 @@ button,a{-webkit-tap-highlight-color:transparent}
       </div>
     </div>
     <div>
+      <div class="card" style="border-color:rgba(255,68,68,0.25)">
+        <div class="ct">Competitor tracker <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">confirmed 18 Aug 2026</span></div>
+        <div class="row"><span class="rl">Allfit Newmarket</span><span class="rv r">Opens Sept 2026</span></div>
+        <div class="row"><span class="rl">↳ Pricing</span><span class="rv" style="font-size:12px">$12.95-$19.95/wk, 12mo min term</span></div>
+        <div class="row"><span class="rl">↳ Amenities</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">Sauna + Normatec recovery room, no pool/ice bath seen</span></div>
+        <div class="row"><span class="rl">↳ Where M2 wins</span><span class="rv g" style="font-size:12px">No lock-in vs their 12mo contract, real pool + ice bath, HYROX coach who's raced it</span></div>
+        <div class="row"><span class="rl">Muscle Club Newmarket</span><span class="rv y">Opens Sept 2026</span></div>
+        <div class="row"><span class="rl">↳ Status</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">No public details found yet, confirmed via Taylor's own intel, keep watching @muscle_club_newmarket</span></div>
+        <div class="row"><span class="rl">Les Mills</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">The established giant, big-box, cinematic brand marketing, persistent multi-month remarketing. M2's edge: authentic, boutique, community-led</span></div>
+      </div>
       <div class="card">
         <div class="ct">Competitor notes</div>
         <textarea class="note-area" id="n-comp" placeholder="What are other Auckland gyms doing?"></textarea>
