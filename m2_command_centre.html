@@ -4,30 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>M2 Training Club  Marketing Command Centre</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --y:#C8FF00;--yd:#a8d600;--y3:rgba(200,255,0,0.12);--y4:rgba(200,255,0,0.06);
-  --b:#000000;--s:#0c0e0e;--s2:#141616;--s3:#1c1e1e;--s4:#262a2a;
-  --br:rgba(223,255,0,0.18);--br2:rgba(255,255,255,0.06);--br3:rgba(255,255,255,0.14);
-  --t:#ffffff;--t2:#a8adad;--m:#767c7c;
+  --b:#0a0a0a;--s:#111110;--s2:#161615;--s3:#1c1c1a;--s4:#242422;
+  --br:rgba(200,255,0,0.18);--br2:rgba(245,245,242,0.1);--br3:rgba(245,245,242,0.18);
+  --t:#f5f5f2;--t2:rgba(245,245,242,0.7);--m:rgba(245,245,242,0.42);
   --g:#39d98a;--r:#ff4444;--blue:#5fa8e0;--purple:#a78bfa;
   --font-mono:'JetBrains Mono',monospace;
-  --rad:14px;--rad-s:8px;
+  --rad:6px;--rad-s:3px;
 }
-html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
 
 /* ── TOP BAR ── */
 .topbar{background:rgba(5,5,5,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--br);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--y);letter-spacing:3px}
-.logo span{font-size:13px;color:var(--m);font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:.5px;margin-left:14px;vertical-align:middle}
-.topdate{font-size:13px;color:var(--t2);background:var(--s2);padding:7px 16px;border-radius:20px;border:1px solid var(--br2)}
+.logo span{font-size:13px;color:var(--m);font-family:'Inter',sans-serif;font-weight:400;letter-spacing:.5px;margin-left:14px;vertical-align:middle}
+.topdate{font-size:13px;color:var(--t2);background:var(--s2);padding:7px 16px;border-radius:4px;border:1px solid var(--br2)}
 
 /* ── DROPDOWN NAV ── */
 .nav-bar{background:rgba(6,6,6,0.98);backdrop-filter:blur(10px);padding:0 40px;border-bottom:1px solid var(--br2);position:sticky;top:68px;z-index:99;display:flex;align-items:stretch;gap:2px}
 .nav-item{position:relative;display:flex;align-items:stretch}
-.nav-btn{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:0 22px;height:50px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:7px;border-bottom:2px solid transparent;user-select:none}
+.nav-btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:0 22px;height:50px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:7px;border-bottom:2px solid transparent;user-select:none}
 .nav-btn:hover{color:var(--t);background:rgba(255,255,255,.04)}
 .nav-btn.active{color:var(--y);border-bottom-color:var(--y);background:rgba(200,255,0,.04)}
 .nav-btn .arrow{font-size:9px;transition:transform .2s;opacity:.4}
@@ -37,7 +37,7 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 /* Dropdown */
 .nav-dropdown{display:none;position:absolute;top:100%;left:0;background:var(--s);border:1px solid var(--br3);border-radius:0 14px 14px 14px;min-width:220px;padding:8px;z-index:200;box-shadow:0 20px 50px rgba(0,0,0,.8)}
 .nav-dropdown.open{display:block;animation:fadeIn .15s ease}
-.nav-dd-item{font-family:'DM Sans',sans-serif;font-size:14px;padding:11px 14px;border-radius:8px;cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:10px;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
+.nav-dd-item{font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;border-radius:4px;cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:10px;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
 .nav-dd-item:hover{background:rgba(200,255,0,.1);color:var(--y)}
 .nav-dd-item.active{background:rgba(200,255,0,.12);color:var(--y);font-weight:600}
 .nav-dd-item .dd-icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
@@ -54,9 +54,9 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 .section-sub{font-size:14px;color:var(--m);margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--br2);line-height:1.6}
 
 /* ── INNER TABS ── */
-.tab-nav{display:flex;gap:4px;background:var(--s2);padding:6px;border-radius:12px;margin-bottom:28px;overflow-x:auto;scrollbar-width:none;border:1px solid var(--br2)}
+.tab-nav{display:flex;gap:4px;background:var(--s2);padding:6px;border-radius:6px;margin-bottom:28px;overflow-x:auto;scrollbar-width:none;border:1px solid var(--br2)}
 .tab-nav::-webkit-scrollbar{display:none}
-.tnb{font-size:14px;font-weight:500;padding:10px 22px;border-radius:8px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;font-family:'DM Sans',sans-serif}
+.tnb{font-size:14px;font-weight:500;padding:10px 22px;border-radius:4px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;font-family:'Inter',sans-serif}
 .tnb.on{background:var(--s4);color:var(--t);box-shadow:0 2px 10px rgba(0,0,0,.5);border:1px solid var(--br3)}
 .tnb:hover:not(.on){color:var(--t2);background:var(--s3)}
 .tab-pnl{display:none}
@@ -72,7 +72,7 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 .ks{font-size:12px;color:var(--m);line-height:1.5}
 .ks.g{color:var(--g)}.ks.r{color:var(--r)}.ks.y{color:var(--y)}
 /* Source provenance badges */
-.src{position:absolute;top:12px;right:12px;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;line-height:1.4}
+.src{position:absolute;top:12px;right:12px;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;line-height:1.4}
 .src-live{color:var(--g);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.4)}
 .src-live::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--g);margin-right:4px;vertical-align:middle;animation:pulse 2s infinite}
 .src-hist{color:var(--t2);background:rgba(176,176,176,.1);border:1px solid rgba(176,176,176,.3)}
@@ -99,7 +99,7 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 /* Rows  more breathing room, clearer label/value split */
 .row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:15px;gap:16px;transition:background .15s}
 .row:last-child{border-bottom:none}
-.row:hover{background:rgba(255,255,255,.025);margin:0 -10px;padding:14px 10px;border-radius:8px}
+.row:hover{background:rgba(255,255,255,.025);margin:0 -10px;padding:14px 10px;border-radius:4px}
 .rl{color:var(--t2);font-size:14px}
 .rv{font-weight:600;color:var(--t);text-align:right;font-size:15px}
 .rv.g{color:var(--g)}.rv.r{color:var(--r)}.rv.y{color:var(--y)}
@@ -138,7 +138,7 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 .rb{font-size:14px;color:var(--t2);line-height:1.7}
 
 /* ── STATUS BADGES ── */
-.badge{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:700;letter-spacing:.3px}
+.badge{font-size:11px;padding:4px 12px;border-radius:4px;font-weight:700;letter-spacing:.3px}
 .b-active{background:rgba(74,222,128,.15);color:var(--g)}
 .b-off{background:rgba(136,136,136,.12);color:var(--m)}
 .b-hot{background:rgba(200,255,0,.15);color:var(--y)}
@@ -161,33 +161,33 @@ html,body{background:var(--b);color:var(--t);font-family:'DM Sans',sans-serif;mi
 /* ── CONTENT CHECKLIST ── */
 .ci{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s}
 .ci:last-child{border-bottom:none}
-.ci:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:16px 10px;border-radius:8px}
+.ci:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:16px 10px;border-radius:4px}
 .ci-check{width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,.15);flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .ci-check:hover:not(.done){border-color:var(--y);background:rgba(200,255,0,.08)}
 .ci-check.done{background:var(--y);border-color:var(--y)}
 .ci-check.done::after{content:'✓';font-size:13px;color:#000;font-weight:700}
 .ci-title{font-size:15px;font-weight:500;color:var(--t)}
 .ci-title.done-text{text-decoration:line-through;color:var(--m)}
-.ci-tag{font-size:11px;padding:2px 9px;border-radius:20px;background:rgba(200,255,0,.12);color:var(--y);margin-left:8px;font-weight:700}
+.ci-tag{font-size:11px;padding:2px 9px;border-radius:4px;background:rgba(200,255,0,.12);color:var(--y);margin-left:8px;font-weight:700}
 .ci-who{font-size:13px;color:var(--m);margin-top:4px}
 
 /* ── INPUTS ── */
-.inp{background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:12px 16px;font-size:15px;color:var(--t);font-family:'DM Sans',sans-serif;width:100%;transition:all .2s}
+.inp{background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:12px 16px;font-size:15px;color:var(--t);font-family:'Inter',sans-serif;width:100%;transition:all .2s}
 .inp:focus{outline:none;border-color:var(--y);background:var(--s3);box-shadow:0 0 0 3px rgba(200,255,0,.08)}
 .inp::placeholder{color:var(--m)}
 select.inp{cursor:pointer}
 .inp-lbl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;font-weight:700}
 .add-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-.btn{background:var(--y);color:#000;border:none;border-radius:10px;padding:13px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;letter-spacing:.3px}
+.btn{background:var(--y);color:#000;border:none;border-radius:4px;padding:13px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap;letter-spacing:.3px}
 .btn:hover{background:var(--yd);transform:translateY(-1px);box-shadow:0 6px 16px rgba(200,255,0,.3)}
 .btn:active{transform:translateY(0)}
-.btn-ghost{background:transparent;border:1px solid var(--br2);border-radius:10px;padding:12px 20px;font-size:14px;color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.btn-ghost{background:transparent;border:1px solid var(--br2);border-radius:4px;padding:12px 20px;font-size:14px;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap}
 .btn-ghost:hover{border-color:var(--y);color:var(--y);background:rgba(200,255,0,.05)}
 
 /* ── FUNNEL ── */
 .funnel-row{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s}
 .funnel-row:last-child{border-bottom:none}
-.funnel-row:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:18px 10px;border-radius:8px}
+.funnel-row:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:18px 10px;border-radius:4px}
 .fn{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--t);min-width:70px;letter-spacing:.5px}
 .fl{font-size:14px;color:var(--t2);flex:1}
 .fb{font-size:15px;font-weight:600;min-width:48px;text-align:right}
@@ -201,14 +201,14 @@ select.inp{cursor:pointer}
 .ns-email{color:var(--blue);font-size:13px}
 
 /* ── TEXTAREA ── */
-.note-area{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:16px 18px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--t);resize:vertical;min-height:120px;line-height:1.7;transition:all .2s}
+.note-area{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:16px 18px;font-family:'Inter',sans-serif;font-size:15px;color:var(--t);resize:vertical;min-height:120px;line-height:1.7;transition:all .2s}
 .note-area:focus{outline:none;border-color:var(--y);box-shadow:0 0 0 3px rgba(200,255,0,.08)}
 .note-area::placeholder{color:var(--m)}
 
 /* ── OFFER CARDS ── */
 .offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
 @media(max-width:560px){.offer-grid{grid-template-columns:1fr}}
-.offer{background:var(--s);border:1px solid var(--br2);border-radius:16px;padding:24px 24px;position:relative;transition:border-color .2s;cursor:default}
+.offer{background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:24px 24px;position:relative;transition:border-color .2s;cursor:default}
 .offer:hover{border-color:rgba(255,255,255,.18)}
 .offer.hot{border-color:rgba(200,255,0,.3)}
 .offer.hot:hover{border-color:rgba(200,255,0,.5)}
@@ -219,7 +219,7 @@ select.inp{cursor:pointer}
 .o-save{font-size:14px;color:var(--g);margin-top:10px;font-weight:600}
 
 /* ── SAVE BUTTON ── */
-.save-btn{background:transparent;border:1px solid var(--br2);border-radius:8px;padding:9px 18px;font-size:13px;color:var(--m);cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:10px;transition:all .2s}
+.save-btn{background:transparent;border:1px solid var(--br2);border-radius:4px;padding:9px 18px;font-size:13px;color:var(--m);cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;transition:all .2s}
 .save-btn:hover{border-color:var(--y);color:var(--y);background:rgba(200,255,0,.05)}
 .save-btn.saved{color:var(--g);border-color:var(--g)}
 
@@ -232,26 +232,26 @@ select.inp{cursor:pointer}
 footer{text-align:center;padding:60px 40px 36px;color:var(--m);font-size:13px;border-top:1px solid var(--br2);margin-top:60px}
 
 /* ── TABLE SCROLL WRAPPER ── */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
 
 /* ── TOUCH TARGETS ── */
 .nav-btn,.nav-dd-item,.tnb,.btn,.btn-ghost{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button,a{-webkit-tap-highlight-color:transparent}
 
 /* ── HERO SNAPSHOT ── */
-.hero-snap{background:linear-gradient(135deg,rgba(74,222,128,.07),rgba(200,255,0,.03) 60%);border:1px solid rgba(74,222,128,.28);border-radius:20px;padding:28px 28px 26px;margin-bottom:22px}
-.hero-snap-badge{display:inline-block;background:rgba(200,255,0,.12);color:var(--y);font-size:11.5px;font-weight:700;letter-spacing:.6px;padding:6px 14px;border-radius:20px;margin-bottom:14px}
+.hero-snap{background:linear-gradient(135deg,rgba(74,222,128,.07),rgba(200,255,0,.03) 60%);border:1px solid rgba(74,222,128,.28);border-radius:4px;padding:28px 28px 26px;margin-bottom:22px}
+.hero-snap-badge{display:inline-block;background:rgba(200,255,0,.12);color:var(--y);font-size:11.5px;font-weight:700;letter-spacing:.6px;padding:6px 14px;border-radius:4px;margin-bottom:14px}
 .hero-snap-headline{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--t);line-height:1;letter-spacing:.5px}
-.hero-snap-headline .hs-sub{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--m);font-weight:400;margin-left:10px;letter-spacing:0}
+.hero-snap-headline .hs-sub{font-family:'Inter',sans-serif;font-size:14px;color:var(--m);font-weight:400;margin-left:10px;letter-spacing:0}
 .hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:22px 0 20px}
-.hstat{background:rgba(0,0,0,.22);border:1px solid var(--br2);border-radius:14px;padding:16px 18px}
+.hstat{background:rgba(0,0,0,.22);border:1px solid var(--br2);border-radius:6px;padding:16px 18px}
 .hstat-l{font-size:10.5px;color:var(--m);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:7px}
 .hstat-v{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--t);line-height:1}
 .hstat-v.up{color:var(--g)}.hstat-v.down{color:var(--r)}
 .hstat-d{font-size:12px;color:var(--m);margin-top:7px;line-height:1.4}
 .hstat-d.up{color:var(--g)}.hstat-d.down{color:var(--r)}.hstat-d.flat{color:var(--t2)}
 .hero-flags{display:flex;flex-wrap:wrap;gap:9px}
-.flag{font-size:12.5px;padding:8px 14px;border-radius:10px;font-weight:600;line-height:1.3}
+.flag{font-size:12.5px;padding:8px 14px;border-radius:4px;font-weight:600;line-height:1.3}
 .flag.win{background:rgba(74,222,128,.1);color:var(--g);border:1px solid rgba(74,222,128,.25)}
 .flag.watch{background:rgba(248,113,113,.09);color:var(--r);border:1px solid rgba(248,113,113,.22)}
 .hero-foot{font-size:11px;color:var(--m);margin-top:16px}
@@ -259,7 +259,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 /* ── KPI DELTA + STREAK BADGE ── */
 .kd{font-size:11.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--br2);color:var(--m)}
 .kd.up{color:var(--g)}.kd.down{color:var(--r)}.kd.flat{color:var(--t2)}
-.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:var(--g);font-size:12px;font-weight:700;padding:7px 14px;border-radius:20px;margin-bottom:16px}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:var(--g);font-size:12px;font-weight:700;padding:7px 14px;border-radius:4px;margin-bottom:16px}
 
 /* ── SPARKLINES ── */
 .spark{display:block;margin-top:8px}
@@ -293,7 +293,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   .kl{font-size:10px;margin-bottom:6px}
   .ks{font-size:11px}
 
-  .card{padding:18px 16px;margin-bottom:14px;border-radius:14px}
+  .card{padding:18px 16px;margin-bottom:14px;border-radius:6px}
   .ct{font-size:10px;margin-bottom:14px}
 
   .row{font-size:13px;padding:12px 0;gap:8px}
@@ -313,7 +313,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   .tbl th{padding:10px 10px;font-size:10px}
   .tbl td{padding:10px 10px}
 
-  .tab-nav{padding:4px;border-radius:10px;margin-bottom:18px}
+  .tab-nav{padding:4px;border-radius:4px;margin-bottom:18px}
   .tnb{font-size:12px;padding:8px 12px;border-radius:6px}
 
   .insight,.alert,.good-box{padding:16px 16px;border-radius:0 12px 12px 0}
@@ -348,7 +348,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   footer{padding:32px 16px 24px;margin-top:32px}
 
-  .hero-snap{padding:18px 16px 20px;border-radius:14px}
+  .hero-snap{padding:18px 16px 20px;border-radius:6px}
   .hero-snap-headline{font-size:32px}
   .hero-stats{grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 14px}
   .hstat{padding:12px 14px}
@@ -471,7 +471,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="card" style="margin-bottom:18px">
     <div class="ct">⏰ Daily operating rhythm  M2</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
-      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:14px">
+      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px">
         <div style="font-size:11px;font-weight:700;color:var(--y);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">☀️ Morning (8–9am)</div>
         <div style="font-size:13px;color:var(--t2);line-height:1.8">
           ✓ Check Dashboard Overview<br>
@@ -480,7 +480,7 @@ button,a{-webkit-tap-highlight-color:transparent}
           ✓ Reply to any DMs / enquiries
         </div>
       </div>
-      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:14px">
+      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px">
         <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">🕑 Midday (12–1pm)</div>
         <div style="font-size:13px;color:var(--t2);line-height:1.8">
           ✓ Follow up any no-show trials (call or SMS)<br>
@@ -489,7 +489,7 @@ button,a{-webkit-tap-highlight-color:transparent}
           ✓ Review any upcoming cancels
         </div>
       </div>
-      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:14px">
+      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px">
         <div style="font-size:11px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">🌙 End of day (5–6pm)</div>
         <div style="font-size:13px;color:var(--t2);line-height:1.8">
           ✓ Log any trial sources not recorded<br>
@@ -498,7 +498,7 @@ button,a{-webkit-tap-highlight-color:transparent}
           ✓ Update weekly scorecard if Friday
         </div>
       </div>
-      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:14px">
+      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px">
         <div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">📅 Weekly (Monday)</div>
         <div style="font-size:13px;color:var(--t2);line-height:1.8">
           ✓ Review Meta CPV for all campaigns<br>
@@ -516,14 +516,14 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="ct">👻 April no-shows  still to follow up</div>
       <div style="font-size:13px;color:var(--t2);margin-bottom:12px">26 people signed up for a trial and never came in. At 23% conversion rate that's ~6 lost members = $270/wk or $14K/year. SMS or call each one this week.</div>
       <div style="font-size:12px;color:var(--m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Template SMS to send</div>
-      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:14px;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic">"Hey [name], it's Tay from M2 Training Club! You signed up for a 3-day trial recently and I just wanted to check in  are you still keen to come in? Happy to book you a time that works. We've got pool, sauna, ice bath, and classes all included. Just reply here 💪"</div>
+      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic">"Hey [name], it's Tay from M2 Training Club! You signed up for a 3-day trial recently and I just wanted to check in  are you still keen to come in? Happy to book you a time that works. We've got pool, sauna, ice bath, and classes all included. Just reply here 💪"</div>
       <button class="btn-ghost" style="margin-top:12px;width:100%;font-size:13px" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)">View no-show list →</button>
     </div>
     <div class="card" style="border-color:rgba(200,255,0,.3)">
       <div class="ct">📧 Email  trials not yet converted</div>
       <div style="font-size:13px;color:var(--t2);margin-bottom:12px">Anyone who did a trial but hasn't joined yet. Send this within 48 hours of their last visit. Personalise with their name and what they tried.</div>
       <div style="font-size:12px;color:var(--m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Template email to send</div>
-      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:14px;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic">"Hey [name], thanks for coming in this week  stoked you got to check out M2. Just wanted to reach out personally and see how you found it. If you're keen to join, I'd love to get you sorted on a membership. We're running a $45/week Perform membership this month which gets you everything  pool, sauna, ice bath, all classes. Reply here or come in any time and ask for Tay.  Tay Blackler, M2 Training Club"</div>
+      <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic">"Hey [name], thanks for coming in this week  stoked you got to check out M2. Just wanted to reach out personally and see how you found it. If you're keen to join, I'd love to get you sorted on a membership. We're running a $45/week Perform membership this month which gets you everything  pool, sauna, ice bath, all classes. Reply here or come in any time and ask for Tay.  Tay Blackler, M2 Training Club"</div>
     </div>
   </div>
 
@@ -671,7 +671,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- TRIAL SIGN-UP LIVE TICKER -->
   <div id="trial-ticker" style="margin-bottom:18px;display:none">
-    <div id="trial-flash" style="background:rgba(200,255,0,0.08);border:1px solid rgba(200,255,0,0.4);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;animation:trialFlash 0.6s ease">
+    <div id="trial-flash" style="background:rgba(200,255,0,0.08);border:1px solid rgba(200,255,0,0.4);border-radius:6px;padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;animation:trialFlash 0.6s ease">
       <div style="width:48px;height:48px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;animation:pulse 2s infinite">🔥</div>
       <div style="flex:1">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);letter-spacing:1px;margin-bottom:2px">NEW TRIAL SIGN-UP</div>
@@ -686,7 +686,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- LIVE TRIAL COUNTER BADGE -->
   <div style="margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <div id="trial-live-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{document.querySelector('.tnb.on')?.classList.remove('on');},10)" onmouseover="this.style.borderColor='var(--y)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
+    <div id="trial-live-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{document.querySelector('.tnb.on')?.classList.remove('on');},10)" onmouseover="this.style.borderColor='var(--y)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
       <div style="position:relative">
         <div style="width:44px;height:44px;border-radius:50%;background:rgba(200,255,0,0.12);border:2px solid var(--y);display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
         <div id="trial-dot" style="position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:var(--g);border:2px solid var(--b);animation:pulse 2s infinite;display:none"></div>
@@ -697,7 +697,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div style="font-size:11px;color:var(--y);margin-top:3px;opacity:.7">tap to see trial analytics →</div>
       </div>
     </div>
-    <div id="converted-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','funnel')},100)" onmouseover="this.style.borderColor='rgba(74,222,128,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
+    <div id="converted-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','funnel')},100)" onmouseover="this.style.borderColor='rgba(74,222,128,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
       <div style="width:44px;height:44px;border-radius:50%;background:rgba(74,222,128,0.12);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
       <div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--g);line-height:1" id="ov-converted-count"></div>
@@ -705,7 +705,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div style="font-size:11px;color:var(--g);margin-top:3px;opacity:.7">tap to see conversion funnel →</div>
       </div>
     </div>
-    <div id="noshow-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)" onmouseover="this.style.borderColor='rgba(248,113,113,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
+    <div id="noshow-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)" onmouseover="this.style.borderColor='rgba(248,113,113,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
       <div style="width:44px;height:44px;border-radius:50%;background:rgba(248,113,113,0.12);border:2px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:20px">👻</div>
       <div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--r);line-height:1" id="ov-noshow-count"></div>
@@ -896,15 +896,15 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card" style="margin-bottom:18px">
       <div class="ct">How to read your ad signals</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:4px">
-        <div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.25);border-radius:12px;padding:16px">
+        <div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">✅ GREEN  Scale it</div>
           <div style="font-size:13px;color:var(--t2)">CPV under $0.40 · CTR above 1.5% · Frequency under 2.5× · CPM under $6 · Steady or rising LPVs</div>
         </div>
-        <div style="background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.2);border-radius:12px;padding:16px">
+        <div style="background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.2);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">⚠️ YELLOW  Watch & tweak</div>
           <div style="font-size:13px;color:var(--t2)">CPV $0.40–$0.65 · CTR 0.8–1.5% · Frequency 2.5–3.5× · CPM $6–10 · Flat or small dip in LPVs</div>
         </div>
-        <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);border-radius:12px;padding:16px">
+        <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--r);margin-bottom:8px">🔴 RED  Act now</div>
           <div style="font-size:13px;color:var(--t2)">CPV above $0.65 · CTR below 0.8% · Frequency above 3.5× · CPM above $10 · LPVs falling week-on-week</div>
         </div>
@@ -915,7 +915,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card" style="margin-bottom:18px">
       <div class="ct">Your 3 campaigns  what the numbers tell you</div>
 
-      <div style="border:1px solid rgba(200,255,0,.2);border-radius:12px;padding:18px;margin-bottom:12px;background:rgba(200,255,0,.02)">
+      <div style="border:1px solid rgba(200,255,0,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(200,255,0,.02)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
           <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y)">3 DAY TRIAL</span>
           <span class="badge b-hot">Hot · $1,441/mo</span>
@@ -934,7 +934,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         </div>
       </div>
 
-      <div style="border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:18px;margin-bottom:12px;background:rgba(74,222,128,.02)">
+      <div style="border:1px solid rgba(74,222,128,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(74,222,128,.02)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
           <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--g)">$45 A WEEK</span>
           <span class="badge b-active">Active · $591/mo</span>
@@ -953,7 +953,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         </div>
       </div>
 
-      <div style="border:1px solid rgba(248,113,113,.2);border-radius:12px;padding:18px;background:rgba(248,113,113,.03)">
+      <div style="border:1px solid rgba(248,113,113,.2);border-radius:6px;padding:18px;background:rgba(248,113,113,.03)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
           <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--r)">PT COURSE</span>
           <span class="badge b-warn">Needs attention · $408/mo</span>
@@ -1321,10 +1321,10 @@ button,a{-webkit-tap-highlight-color:transparent}
 
     <!-- Scenario selector -->
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <button onclick="setForecast('all')" id="fc-btn-all" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:8px;border:1px solid var(--y);background:var(--y);color:#000;cursor:pointer;font-family:'DM Sans',sans-serif">All scenarios</button>
-      <button onclick="setForecast('conservative')" id="fc-btn-conservative" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:8px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif">Conservative</button>
-      <button onclick="setForecast('base')" id="fc-btn-base" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:8px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif">Base case</button>
-      <button onclick="setForecast('optimistic')" id="fc-btn-optimistic" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:8px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif">Optimistic</button>
+      <button onclick="setForecast('all')" id="fc-btn-all" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--y);background:var(--y);color:#000;cursor:pointer;font-family:'Inter',sans-serif">All scenarios</button>
+      <button onclick="setForecast('conservative')" id="fc-btn-conservative" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif">Conservative</button>
+      <button onclick="setForecast('base')" id="fc-btn-base" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif">Base case</button>
+      <button onclick="setForecast('optimistic')" id="fc-btn-optimistic" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif">Optimistic</button>
       <div style="margin-left:auto;display:flex;align-items:center;gap:16px;font-size:12px;color:var(--m)">
         <span><span style="display:inline-block;width:20px;height:3px;background:var(--blue);vertical-align:middle;margin-right:5px;border-radius:2px"></span>Actual</span>
         <span><span style="display:inline-block;width:20px;height:3px;background:var(--m);vertical-align:middle;margin-right:5px;border-radius:2px;border-top:2px dashed var(--m)"></span>Conservative</span>
@@ -1342,7 +1342,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div id="forecast-labels" style="display:flex;font-size:10px;color:var(--m);margin-top:4px;min-width:600px;overflow:hidden"></div>
 
     <!-- Tooltip -->
-    <div id="fc-tooltip" style="display:none;position:fixed;background:var(--s);border:1px solid var(--br2);border-radius:10px;padding:10px 14px;font-size:13px;pointer-events:none;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.5)"></div>
+    <div id="fc-tooltip" style="display:none;position:fixed;background:var(--s);border:1px solid var(--br2);border-radius:4px;padding:10px 14px;font-size:13px;pointer-events:none;z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.5)"></div>
   </div>
 
   <!-- SCENARIO BREAKDOWN TABLE -->
@@ -1357,15 +1357,15 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- SCENARIO EXPLAINERS -->
   <div class="three" style="margin-bottom:18px">
-    <div style="background:rgba(136,136,136,.07);border:1px solid var(--br2);border-top:3px solid var(--m);border-radius:14px;padding:18px">
+    <div style="background:rgba(136,136,136,.07);border:1px solid var(--br2);border-top:3px solid var(--m);border-radius:6px;padding:18px">
       <div style="font-size:13px;font-weight:700;color:var(--t2);margin-bottom:8px">📉 Conservative  $1.31M</div>
       <div style="font-size:13px;color:var(--m);line-height:1.7">Current pace holds. No major growth or decline. Assumes ~$111.6K/month flat from July onwards. Churn stays around 1.5–2%. No new campaigns launched.</div>
     </div>
-    <div style="background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.2);border-top:3px solid var(--y);border-radius:14px;padding:18px">
+    <div style="background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.2);border-top:3px solid var(--y);border-radius:6px;padding:18px">
       <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">📊 Base Case  $1.36M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">3% monthly revenue growth. Steady member gains (+45/mo net), Passport income continuing to grow, Meta ads maintained. Realistic if you keep doing what you're doing and fix source tracking.</div>
     </div>
-    <div style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-top:3px solid var(--g);border-radius:14px;padding:18px">
+    <div style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-top:3px solid var(--g);border-radius:6px;padding:18px">
       <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">🚀 Optimistic  $1.40M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">5% monthly revenue growth. Hit 2,000+ members by Dec, launch referral programme, upsell 10% of daily members to Perform, female ad set delivers. Achievable but requires execution on all fronts.</div>
     </div>
@@ -1670,7 +1670,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Weekly Scorecard</div>
   <div class="section-sub">Auto-populated from GymMaster every time you open this page · Add notes then save</div>
 
-  <div id="sc-live-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--g);background:rgba(74,222,128,.1);padding:5px 12px;border-radius:20px;margin-bottom:16px">
+  <div id="sc-live-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--g);background:rgba(74,222,128,.1);padding:5px 12px;border-radius:4px;margin-bottom:16px">
     <span style="width:7px;height:7px;border-radius:50%;background:var(--g);display:inline-block;animation:pulse 2s infinite"></span>
     Live from GymMaster · <span id="sc-updated">Loading...</span>
   </div>
@@ -1748,7 +1748,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px"></div>
 
   <!-- Add post modal -->
-  <div id="cal-modal" style="display:none;background:var(--s);border:1px solid var(--br);border-radius:10px;padding:16px;margin-bottom:12px">
+  <div id="cal-modal" style="display:none;background:var(--s);border:1px solid var(--br);border-radius:4px;padding:16px;margin-bottom:12px">
     <div class="ct" id="cal-modal-title">Add post</div>
     <div class="three" style="margin-bottom:10px">
       <div><div class="inp-lbl">Type</div>
@@ -1935,7 +1935,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addContent()">+ Add</button></div>
   </div>
   <div class="card">
-    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(200,255,0,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:20px;margin-left:4px"></span></div>
+    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(200,255,0,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:4px;margin-left:4px"></span></div>
     <div id="ct-todo"></div>
   </div>
   <div class="card">
@@ -2104,7 +2104,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="card">
     <div class="ct">12-month revenue forecast  3 scenarios</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:4px">
-      <div style="background:var(--s2);border-radius:10px;padding:16px;border:1px solid var(--br2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Conservative</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--t2);margin-bottom:4px">$1.28M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">Current run rate maintained</div>
@@ -2112,7 +2112,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div class="row" style="font-size:12px"><span class="rl">New members/mo</span><span class="rv">+20 net</span></div>
         <div class="row" style="font-size:12px"><span class="rl">Net profit est</span><span class="rv r">~-$48K/yr</span></div>
       </div>
-      <div style="background:var(--s2);border-radius:10px;padding:16px;border:1px solid rgba(200,255,0,.25)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(200,255,0,.25)">
         <div style="font-size:11px;color:var(--y);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Target</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--y);margin-bottom:4px">$1.44M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">+45 net members/month</div>
@@ -2120,7 +2120,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div class="row" style="font-size:12px"><span class="rl">New members/mo</span><span class="rv y">+45 net</span></div>
         <div class="row" style="font-size:12px"><span class="rl">Net profit est</span><span class="rv g">~+$204K/yr</span></div>
       </div>
-      <div style="background:var(--s2);border-radius:10px;padding:16px;border:1px solid rgba(74,222,128,.2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(74,222,128,.2)">
         <div style="font-size:11px;color:var(--g);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Stretch</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--g);margin-bottom:4px">$1.8M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">2,000+ members + upsells</div>
@@ -2144,11 +2144,11 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div><div class="inp-lbl">Other income/month ($)</div><input class="inp" type="number" id="mrr-other" value="14700" oninput="calcMRR()"></div>
     </div>
     <div class="two">
-      <div style="background:var(--s2);border-radius:10px;padding:16px;border:1px solid var(--br2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Projected MRR</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--y)" id="mrr-total"></div>
       </div>
-      <div style="background:var(--s2);border-radius:10px;padding:16px;border:1px solid var(--br2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div class="row" style="font-size:13px"><span class="rl">Perform revenue</span><span class="rv y" id="mrr-r-perform"></span></div>
         <div class="row" style="font-size:13px"><span class="rl">Daily revenue</span><span class="rv" id="mrr-r-daily"></span></div>
         <div class="row" style="font-size:13px"><span class="rl">Passport revenue</span><span class="rv" id="mrr-r-pp"></span></div>
@@ -2281,11 +2281,11 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div><div class="inp-lbl">Target net members/month</div><input class="inp" type="number" id="gl-mem-target" value="45" oninput="updateGoalCalc()"></div>
     </div>
     <div class="two">
-      <div style="background:var(--s2);border-radius:10px;padding:16px;border:1px solid var(--br2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Monthly revenue needed</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--y)" id="gl-monthly-needed">$120,000</div>
       </div>
-      <div style="background:var(--s2);border-radius:10px;padding:16px;border:1px solid var(--br2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Target net profit/month</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--g)" id="gl-profit-needed">$12,000</div>
       </div>
@@ -2360,7 +2360,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <!-- MAY PROJECTION -->
   <div class="card" style="border-color:rgba(200,255,0,.3)">
     <div class="ct"><span class="curmonth" data-tpl="{MY} projection">May 2026 projection</span>
-      <span id="pp-live-badge" style="display:none;align-items:center;gap:4px;font-size:10px;color:var(--g);background:rgba(74,222,128,.1);padding:2px 8px;border-radius:20px;margin-left:8px">
+      <span id="pp-live-badge" style="display:none;align-items:center;gap:4px;font-size:10px;color:var(--g);background:rgba(74,222,128,.1);padding:2px 8px;border-radius:4px;margin-left:8px">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--g);display:inline-block;animation:pulse 2s infinite"></span>
         Live
       </span>
@@ -2734,7 +2734,7 @@ function renderCustomTasks(){
         ${t.done?'<span style="font-size:13px;color:#000;font-weight:700">✓</span>':''}
       </div>
       <div style="flex:1;font-size:14px;color:${t.done?'var(--m)':'var(--t)'};text-decoration:${t.done?'line-through':'none'}">${t.text}</div>
-      <div style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.06);color:var(--m)">${t.priority}</div>
+      <div style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--m)">${t.priority}</div>
       <button onclick="removeCustomTask(${t.id})" style="background:transparent;border:none;color:var(--m);cursor:pointer;font-size:16px;padding:0 4px">×</button>
     </div>`).join('');
 }
@@ -2862,7 +2862,7 @@ function renderScorecards() {
   const el = document.getElementById('sc-history');
   if(!scorecards.length){el.innerHTML='<div style="font-size:12px;color:var(--m);padding:8px 0">No scorecards yet.</div>';return;}
   el.innerHTML = scorecards.map(s=>`
-    <div style="border:1px solid var(--br);border-radius:8px;padding:12px 14px;margin-bottom:10px">
+    <div style="border:1px solid var(--br);border-radius:4px;padding:12px 14px;margin-bottom:10px">
       <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y);margin-bottom:8px">Week of ${s.week}</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:8px">
         ${sc_kpi('Trials',s.trials)} ${sc_kpi('New members',s.newmem,'g')} ${sc_kpi('Cancellations',s.cancel,'r')} ${sc_kpi('PP visits',s.ppvisits)} ${sc_kpi('Ad spend','$'+s.adspend)} ${sc_kpi('Revenue','$'+s.rev.toLocaleString(),'g')} ${sc_kpi('PT leads',s.ptleads)} ${sc_kpi('PT sales',s.ptsales,'g')}
@@ -2975,10 +2975,10 @@ function renderCampaigns(){
   const el=document.getElementById('camp-list');
   if(!el)return;
   el.innerHTML=campaigns.map(c=>`
-    <div style="background:var(--s);border:1px solid var(--br);border-radius:8px;padding:13px 15px;margin-bottom:10px">
+    <div style="background:var(--s);border:1px solid var(--br);border-radius:4px;padding:13px 15px;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
         <div style="font-family:\'Bebas Neue\',sans-serif;font-size:16px;color:var(--y);flex:1">${c.name}</div>
-        <button onclick="toggleCampStatus(${c.id})" style="font-size:10px;padding:3px 10px;border-radius:20px;border:none;cursor:pointer;background:${statusColors[c.status]};color:${statusText[c.status]};font-family:\'DM Sans\',sans-serif;font-weight:500">${c.status}</button>
+        <button onclick="toggleCampStatus(${c.id})" style="font-size:10px;padding:3px 10px;border-radius:4px;border:none;cursor:pointer;background:${statusColors[c.status]};color:${statusText[c.status]};font-family:\'DM Sans\',sans-serif;font-weight:500">${c.status}</button>
       </div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--m)">
         <span>Objective: <strong style="color:var(--t)">${c.obj}</strong></span>
@@ -3025,7 +3025,7 @@ function renderPT(){
   const renderCard=l=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px">
     <div style="flex:1;font-weight:500;color:var(--t)">${l.name}</div>
     <div style="font-size:10px;color:var(--m)">${l.source}</div>
-    <button onclick="advancePT(${l.id})" style="font-size:9px;padding:2px 8px;border-radius:20px;border:none;cursor:pointer;background:${ptColors[l.stage]};color:${ptText[l.stage]};font-family:\'DM Sans\',sans-serif">${l.stage} →</button>
+    <button onclick="advancePT(${l.id})" style="font-size:9px;padding:2px 8px;border-radius:4px;border:none;cursor:pointer;background:${ptColors[l.stage]};color:${ptText[l.stage]};font-family:\'DM Sans\',sans-serif">${l.stage} →</button>
     <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y)">$${l.price.toLocaleString()}</div>
   </div>`;
   if(el1) el1.innerHTML=active.length?active.map(renderCard).join(''):'<div style="font-size:12px;color:var(--m);padding:8px 0">No active leads.</div>';
@@ -3363,7 +3363,7 @@ function renderScorecardHistory() {
   if(!el) return;
   if(!history.length){ el.innerHTML='<div style="font-size:13px;color:var(--m);padding:8px 0">No notes saved yet.</div>'; return; }
   el.innerHTML = history.map(h=>`
-    <div style="border:1px solid var(--br2);border-radius:8px;padding:12px 14px;margin-bottom:10px">
+    <div style="border:1px solid var(--br2);border-radius:4px;padding:12px 14px;margin-bottom:10px">
       <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y);margin-bottom:8px">${h.week}</div>
       ${h.wins?`<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--g);font-weight:500">Wins: </span><span style="color:var(--t2)">${h.wins}</span></div>`:''}
       ${h.issues?`<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--r);font-weight:500">Issues: </span><span style="color:var(--t2)">${h.issues}</span></div>`:''}
@@ -3590,8 +3590,8 @@ async function loadMetaLive() {
       if (alertEl) {
         alertEl.style.display = 'block';
         alertEl.innerHTML = isAuth
-          ? '<div style="background:rgba(248,113,113,.12);border:1px solid var(--r);border-radius:10px;padding:14px 16px"><strong style="color:var(--r)">Meta is disconnected.</strong> The access token has expired, so live ad data cannot load. Generate a fresh long-lived token in Meta Business and update it in the worker, then refresh this page. All other sections are unaffected.</div>'
-          : '<div style="background:rgba(248,113,113,.12);border:1px solid var(--r);border-radius:10px;padding:14px 16px"><strong style="color:var(--r)">Meta API error.</strong> ' + (metaErr.value.error.message || '') + '</div>';
+          ? '<div style="background:rgba(248,113,113,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta is disconnected.</strong> The access token has expired, so live ad data cannot load. Generate a fresh long-lived token in Meta Business and update it in the worker, then refresh this page. All other sections are unaffected.</div>'
+          : '<div style="background:rgba(248,113,113,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta API error.</strong> ' + (metaErr.value.error.message || '') + '</div>';
       }
       return;
     }
