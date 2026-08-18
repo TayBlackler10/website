@@ -239,21 +239,22 @@ footer{text-align:center;padding:60px 40px 36px;color:var(--m);font-size:13px;bo
 button,a{-webkit-tap-highlight-color:transparent}
 
 /* ── HERO SNAPSHOT ── */
-.hero-snap{background:linear-gradient(135deg,rgba(74,222,128,.07),rgba(200,255,0,.03) 60%);border:1px solid rgba(74,222,128,.28);border-radius:4px;padding:28px 28px 26px;margin-bottom:22px}
-.hero-snap-badge{display:inline-block;background:rgba(200,255,0,.12);color:var(--y);font-size:11.5px;font-weight:700;letter-spacing:.6px;padding:6px 14px;border-radius:4px;margin-bottom:14px}
+.hero-snap{background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:28px 28px 26px;margin-bottom:22px}
+.hero-snap-badge{display:inline-block;color:var(--g);font-size:12.5px;font-weight:600;margin-bottom:14px}
 .hero-snap-headline{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--t);line-height:1;letter-spacing:.5px}
 .hero-snap-headline .hs-sub{font-family:'Inter',sans-serif;font-size:14px;color:var(--m);font-weight:400;margin-left:10px;letter-spacing:0}
 .hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:22px 0 20px}
-.hstat{background:rgba(0,0,0,.22);border:1px solid var(--br2);border-radius:6px;padding:16px 18px}
+.hstat{background:var(--s2);border:1px solid var(--br2);border-radius:6px;padding:16px 18px}
 .hstat-l{font-size:10.5px;color:var(--m);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:7px}
 .hstat-v{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--t);line-height:1}
 .hstat-v.up{color:var(--g)}.hstat-v.down{color:var(--r)}
 .hstat-d{font-size:12px;color:var(--m);margin-top:7px;line-height:1.4}
 .hstat-d.up{color:var(--g)}.hstat-d.down{color:var(--r)}.hstat-d.flat{color:var(--t2)}
-.hero-flags{display:flex;flex-wrap:wrap;gap:9px}
-.flag{font-size:12.5px;padding:8px 14px;border-radius:4px;font-weight:600;line-height:1.3}
-.flag.win{background:rgba(74,222,128,.1);color:var(--g);border:1px solid rgba(74,222,128,.25)}
-.flag.watch{background:rgba(248,113,113,.09);color:var(--r);border:1px solid rgba(248,113,113,.22)}
+.hero-flags{display:flex;flex-direction:column;gap:0}
+.flag{font-size:13px;padding:10px 0;border-bottom:1px solid var(--br2);font-weight:400;line-height:1.4;color:var(--t2)}
+.flag:last-child{border-bottom:none}
+.flag.win{border-left:2px solid var(--g);padding-left:12px}
+.flag.watch{border-left:2px solid var(--r);padding-left:12px}
 .hero-foot{font-size:11px;color:var(--m);margin-top:16px}
 
 /* ── KPI DELTA + STREAK BADGE ── */
