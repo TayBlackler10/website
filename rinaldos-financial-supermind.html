@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rinaldo's Financial Supermind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0E13;
+    --bg-2:#10141C;
+    --bg-3:#171C26;
+    --bg-4:#1E2430;
+    --line:rgba(232,230,222,0.10);
+    --line-strong:rgba(232,230,222,0.18);
+    --ink:#ECE8DD;
+    --ink-dim:#9C9A8E;
+    --ink-faint:#6B6A61;
+    --accent:#5C8EEF;
+    --accent-dim:rgba(92,142,239,0.14);
+    --teal:#4FAE9B;
+    --teal-dim:rgba(79,174,155,0.14);
+    --rust:#C1654F;
+    --rust-dim:rgba(193,101,79,0.14);
+    --slate:#7C93A8;
+    --slate-dim:rgba(124,147,168,0.14);
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  body{min-height:100vh; padding-bottom:60px;}
+  .num{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  a{color:inherit;}
+
+  /* ---------- layout shell ---------- */
+  .app{max-width:1180px; margin:0 auto; padding:28px 24px 0;}
+
+  /* ---------- topbar ---------- */
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-bottom:22px; border-bottom:1px solid var(--line);}
+  .brand{display:flex; align-items:center; gap:14px;}
+  .brand-mark{
+    width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; letter-spacing:0.02em;
+    background:linear-gradient(155deg, var(--accent), #1B3A73); color:#0B1220; flex:none;
+  }
+  .brand-text h1{font-size:21px; font-weight:500; letter-spacing:-0.01em;}
+  .brand-text p{font-size:12.5px; color:var(--ink-dim); margin-top:2px;}
+  .topbar-meta{display:flex; align-items:center; gap:12px;}
+  .badge{
+    font-size:11px; padding:6px 11px; border-radius:100px; border:1px solid var(--line-strong);
+    color:var(--ink-dim); background:var(--bg-3); white-space:nowrap; letter-spacing:0.01em;
+  }
+  .badge.dot::before{content:"●"; color:var(--accent); margin-right:6px; font-size:8px; vertical-align:middle;}
+  .topbar-date{font-size:12px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------- brief banner ---------- */
+  .brief{
+    margin-top:22px; padding:18px 22px; border-radius:var(--radius);
+    background:linear-gradient(100deg, rgba(92,142,239,0.09), rgba(92,142,239,0.01) 60%);
+    border:1px solid var(--line); display:flex; gap:16px; align-items:baseline; flex-wrap:wrap;
+  }
+  .brief-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.12em; color:var(--accent); font-weight:600; flex:none;}
+  .brief p{font-family:'Fraunces',serif; font-size:17px; font-weight:400; line-height:1.5; color:var(--ink); font-style:italic;}
+  .brief p em{color:var(--accent); font-style:normal;}
+
+  /* ---------- layout: nav + panels ---------- */
+  .layout{display:grid; grid-template-columns:238px 1fr; gap:26px; margin-top:26px;}
+  .tabs{display:flex; flex-direction:column; gap:6px; position:sticky; top:24px; align-self:start;}
+  .tab{
+    display:flex; align-items:center; gap:12px; text-align:left; width:100%;
+    background:transparent; border:1px solid transparent; border-radius:10px; padding:12px 12px;
+    cursor:pointer; color:var(--ink-dim); transition:background .15s, border-color .15s;
+  }
+  .tab:hover{background:var(--bg-3);}
+  .tab.active{background:var(--bg-3); border-color:var(--line-strong);}
+  .tab-code{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; letter-spacing:0.03em;
+    width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    background:var(--bg-4); color:var(--ink-faint); flex:none;
+  }
+  .tab.active .tab-code{background:var(--accent); color:#0B1220;}
+  .tab-labels{display:flex; flex-direction:column; gap:1px; overflow:hidden;}
+  .tab-name{font-size:13px; color:var(--ink); font-weight:500; white-space:nowrap;}
+  .tab.active .tab-name{color:var(--ink);}
+  .tab-value{font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--ink-faint);}
+
+  .panels{min-width:0;}
+  .panel{display:none;}
+  .panel.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  .panel-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:18px; flex-wrap:wrap;}
+  .panel-head h2{font-size:24px; font-weight:500; letter-spacing:-0.01em;}
+  .panel-head .sub{font-size:12.5px; color:var(--ink-dim); margin-top:4px;}
+
+  /* ---------- card grid ---------- */
+  .grid{display:grid; gap:14px;}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  .grid.cols-2{grid-template-columns:1.3fr 1fr;}
+  .card{
+    background:var(--bg-3); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
+  }
+  .card-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-faint); font-weight:600;}
+  .card-big{font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:600; margin-top:8px; letter-spacing:-0.01em;}
+  .card-delta{font-size:12px; margin-top:6px; font-family:'IBM Plex Mono',monospace;}
+  .up{color:var(--teal);} .down{color:var(--rust);} .flat{color:var(--ink-dim);}
+
+  .section-title{font-size:12px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint); font-weight:600; margin:26px 0 12px;}
+  .section-title:first-child{margin-top:0;}
+
+  /* ---------- table ---------- */
+  table{width:100%; border-collapse:collapse;}
+  th{
+    text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-faint);
+    font-weight:600; padding:0 12px 10px; border-bottom:1px solid var(--line);
+  }
+  th.num-col, td.num-col{text-align:right;}
+  td{padding:12px 12px; font-size:13.5px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  td.num-col{font-family:'IBM Plex Mono',monospace; font-size:13px;}
+  .row-tag{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:9px;}
+  .muted-row td{color:var(--ink-dim);}
+  .total-row td{border-top:1px solid var(--line-strong); font-weight:600; padding-top:14px;}
+
+  /* ---------- donut + legend ---------- */
+  .donut-wrap{display:flex; align-items:center; gap:22px; flex-wrap:wrap;}
+  .donut{width:150px; height:150px; border-radius:50%; flex:none; position:relative;}
+  .donut::after{
+    content:""; position:absolute; inset:20px; border-radius:50%; background:var(--bg-3);
+  }
+  .legend{display:flex; flex-direction:column; gap:9px; flex:1; min-width:170px;}
+  .legend-row{display:flex; align-items:center; justify-content:space-between; font-size:12.5px; gap:10px;}
+  .legend-row .l-name{display:flex; align-items:center; gap:8px; color:var(--ink-dim);}
+  .legend-row .l-val{font-family:'IBM Plex Mono',monospace; color:var(--ink);}
+  .swatch{width:9px; height:9px; border-radius:3px; flex:none;}
+
+  /* ---------- progress bars (goals) ---------- */
+  .goal{margin-bottom:18px;}
+  .goal:last-child{margin-bottom:0;}
+  .goal-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .goal-name{font-size:13.5px; font-weight:500;}
+  .goal-note{font-size:11.5px; color:var(--ink-faint); margin-top:2px;}
+  .goal-pct{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-dim);}
+  .bar-track{height:7px; border-radius:100px; background:var(--bg-4); overflow:hidden;}
+  .bar-fill{height:100%; border-radius:100px; background:linear-gradient(90deg, var(--accent), #A9C6FF);}
+
+  /* ---------- charts svg ---------- */
+  svg text{font-family:'IBM Plex Mono',monospace;}
+  .chart-card{padding-bottom:12px;}
+  .axis-label{fill:var(--ink-faint); font-size:9.5px;}
+
+  /* ---------- decision engine ---------- */
+  .decisions{display:flex; flex-direction:column; gap:10px;}
+  .dcard{
+    display:flex; gap:14px; background:var(--bg-3); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; align-items:flex-start;
+  }
+  .dtag{
+    flex:none; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em;
+    padding:5px 10px; border-radius:100px; white-space:nowrap; margin-top:1px;
+  }
+  .dtag.consider{background:var(--accent-dim); color:var(--accent);}
+  .dtag.monitor{background:var(--rust-dim); color:var(--rust);}
+  .dtag.clear{background:var(--teal-dim); color:var(--teal);}
+  .dtag.info{background:var(--slate-dim); color:var(--slate);}
+  .dbody h4{font-size:14px; font-weight:500; margin-bottom:4px;}
+  .dbody p{font-size:12.5px; color:var(--ink-dim); line-height:1.5;}
+
+  /* ---------- macro cards ---------- */
+  .macro-card .card-big{font-size:22px;}
+  .macro-card .card-source{font-size:10.5px; color:var(--ink-faint); margin-top:10px; border-top:1px solid var(--line); padding-top:10px;}
+
+  footer{max-width:1180px; margin:40px auto 0; padding:20px 24px; border-top:1px solid var(--line); font-size:11px; color:var(--ink-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 880px){
+    .layout{grid-template-columns:1fr;}
+    .tabs{position:static; flex-direction:row; overflow-x:auto; gap:8px; padding-bottom:4px;}
+    .tab{flex:none; min-width:150px;}
+    .grid.cols-3{grid-template-columns:1fr 1fr;}
+    .grid.cols-2{grid-template-columns:1fr;}
+    .donut-wrap{flex-direction:column; align-items:flex-start;}
+  }
+  @media (max-width: 520px){
+    .grid.cols-3{grid-template-columns:1fr;}
+    .app{padding:20px 16px 0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .panel.active{animation:none;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">FS</div>
+      <div class="brand-text">
+        <h1>Rinaldo's Financial Supermind</h1>
+        <p>Rinaldo's automated financial position</p>
+      </div>
+    </div>
+    <div class="topbar-meta">
+      <span class="badge dot">Sample data — real figures pending</span>
+      <span class="topbar-date" id="todayDate"></span>
+    </div>
+  </div>
+
+  <div class="brief">
+    <span class="brief-label">Today's read</span>
+    <p id="briefText">Net worth sits at <em>$86,400</em>, up 2.1% this month. Nothing here needs urgent attention — the standout item is your emergency fund, now <em>83%</em> to target.</p>
+  </div>
+
+  <div class="layout">
+    <nav class="tabs">
+      <button class="tab active" data-tab="nw">
+        <span class="tab-code">NW</span>
+        <span class="tab-labels"><span class="tab-name">Net Worth &amp; Goals</span><span class="tab-value">$86,400</span></span>
+      </button>
+      <button class="tab" data-tab="io">
+        <span class="tab-code">IO</span>
+        <span class="tab-labels"><span class="tab-name">Inflow vs Outflow</span><span class="tab-value">29% saved</span></span>
+      </button>
+      <button class="tab" data-tab="pf">
+        <span class="tab-code">PF</span>
+        <span class="tab-labels"><span class="tab-name">Investments &amp; Portfolio</span><span class="tab-value">$75,400</span></span>
+      </button>
+      <button class="tab" data-tab="mx">
+        <span class="tab-code">MX</span>
+        <span class="tab-labels"><span class="tab-name">Macro Markets</span><span class="tab-value">OCR 3.00%</span></span>
+      </button>
+      <button class="tab" data-tab="de">
+        <span class="tab-code">DE</span>
+        <span class="tab-labels"><span class="tab-name">Decision Engine</span><span class="tab-value">2 to review</span></span>
+      </button>
+    </nav>
+
+    <main class="panels">
+
+      <!-- ============ NET WORTH ============ -->
+      <section class="panel active" id="panel-nw">
+        <div class="panel-head">
+          <div>
+            <h2>Net Worth &amp; Financial Position</h2>
+            <div class="sub">What you own, what you owe, and where goals stand</div>
+          </div>
+        </div>
+
+        <div class="grid cols-3">
+          <div class="card">
+            <div class="card-label">Net worth</div>
+            <div class="card-big">$86,400</div>
+            <div class="card-delta up">▲ $1,780 (2.1%) this month</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Total assets</div>
+            <div class="card-big">$97,900</div>
+            <div class="card-delta up">▲ $1,540 this month</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Total liabilities</div>
+            <div class="card-big">$11,500</div>
+            <div class="card-delta down">▼ $240 paid down</div>
+          </div>
+        </div>
+
+        <div class="section-title">12-month trend</div>
+        <div class="card chart-card">
+          <svg id="nwTrend" viewBox="0 0 1000 220" style="width:100%; height:200px;"></svg>
+        </div>
+
+        <div class="grid cols-2" style="margin-top:14px;">
+          <div class="card">
+            <div class="section-title" style="margin-top:0;">Accounts</div>
+            <table>
+              <thead><tr><th>Account</th><th class="num-col">Balance</th></tr></thead>
+              <tbody>
+                <tr><td><span class="row-tag" style="background:var(--teal)"></span>Westpac Everyday</td><td class="num-col">$3,200</td></tr>
+                <tr><td><span class="row-tag" style="background:var(--teal)"></span>Westpac Bonus Saver <span style="color:var(--ink-faint)">— emergency fund</span></td><td class="num-col">$12,500</td></tr>
+                <tr><td><span class="row-tag" style="background:var(--accent)"></span>Kernel Cash Fund <span style="color:var(--ink-faint)">— goal-specific</span></td><td class="num-col">$6,800</td></tr>
+                <tr><td><span class="row-tag" style="background:var(--accent)"></span>Kernel High Growth Fund</td><td class="num-col">$22,100</td></tr>
+                <tr><td><span class="row-tag" style="background:var(--accent)"></span>Kernel Global 100 Fund</td><td class="num-col">$18,400</td></tr>
+                <tr><td><span class="row-tag" style="background:var(--slate)"></span>NZ Funds KiwiSaver</td><td class="num-col">$34,900</td></tr>
+                <tr class="total-row"><td>Total assets</td><td class="num-col">$97,900</td></tr>
+                <tr class="muted-row"><td><span class="row-tag" style="background:var(--rust)"></span>Westpac Personal Loan <span style="color:var(--ink-faint)">— car loan</span></td><td class="num-col">– $11,500</td></tr>
+                <tr class="total-row"><td>Net worth</td><td class="num-col">$86,400</td></tr>
+              </tbody>
+            </table>
+            <div class="card-source" style="margin-top:12px; font-size:11px; color:var(--ink-faint); border-top:1px solid var(--line); padding-top:10px;">Car value excluded by design — treated as a depreciating asset, not part of net worth.</div>
+          </div>
+
+          <div class="card">
+            <div class="section-title" style="margin-top:0;">Asset mix</div>
+            <div class="donut-wrap">
+              <div class="donut" id="assetDonut"></div>
+              <div class="legend" id="assetLegend"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Goals</div>
+        <div class="card">
+          <div class="goal">
+            <div class="goal-top">
+              <div><div class="goal-name">Emergency fund</div><div class="goal-note">Westpac Bonus Saver → target $15,000, 3 months' expenses</div></div>
+              <div class="goal-pct">83%</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width:83%"></div></div>
+          </div>
+          <div class="goal">
+            <div class="goal-top">
+              <div><div class="goal-name">Kernel Cash Fund goal</div><div class="goal-note">Target $10,000 — on track for October at current contribution rate</div></div>
+              <div class="goal-pct">68%</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width:68%; background:linear-gradient(90deg, var(--teal), #7FD3C2);"></div></div>
+          </div>
+          <div class="goal">
+            <div class="goal-top">
+              <div><div class="goal-name">First home deposit (via KiwiSaver)</div><div class="goal-note">NZ Funds KiwiSaver — eligible for first-home withdrawal after 3 years</div></div>
+              <div class="goal-pct">42%</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" style="width:42%; background:linear-gradient(90deg, var(--slate), #9DBBD8);"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ INFLOW / OUTFLOW ============ -->
+      <section class="panel" id="panel-io">
+        <div class="panel-head">
+          <div>
+            <h2>Inflow vs Outflow</h2>
+            <div class="sub">What's coming in, what's going out, and the gap between them</div>
+          </div>
+        </div>
+
+        <div class="grid cols-3">
+          <div class="card">
+            <div class="card-label">Income (avg / month)</div>
+            <div class="card-big">$7,200</div>
+            <div class="card-delta flat">Steady over 6 months</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Expenses (avg / month)</div>
+            <div class="card-big">$5,100</div>
+            <div class="card-delta up">▲ 4% vs prior 6 months</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Savings rate</div>
+            <div class="card-big">29%</div>
+            <div class="card-delta up">Above your 25% target</div>
+          </div>
+        </div>
+
+        <div class="section-title">Income vs expenses, last 6 months</div>
+        <div class="card chart-card">
+          <svg id="ioBars" viewBox="0 0 1000 260" style="width:100%; height:240px;"></svg>
+        </div>
+
+        <div class="section-title">Where it went this month</div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Category</th><th class="num-col">Amount</th><th class="num-col">Share</th></tr></thead>
+            <tbody>
+              <tr><td>Housing</td><td class="num-col">$1,950</td><td class="num-col">38%</td></tr>
+              <tr><td>Food &amp; groceries</td><td class="num-col">$820</td><td class="num-col">16%</td></tr>
+              <tr><td>Transport &amp; car loan</td><td class="num-col">$640</td><td class="num-col">13%</td></tr>
+              <tr><td>Subscriptions &amp; utilities</td><td class="num-col">$410</td><td class="num-col">8%</td></tr>
+              <tr><td>Discretionary</td><td class="num-col">$780</td><td class="num-col">15%</td></tr>
+              <tr><td>Other</td><td class="num-col">$500</td><td class="num-col">10%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ INVESTMENTS / PORTFOLIO ============ -->
+      <section class="panel" id="panel-pf">
+        <div class="panel-head">
+          <div>
+            <h2>Investments &amp; Portfolio</h2>
+            <div class="sub">Allocation, performance, and what you're paying in fees</div>
+          </div>
+        </div>
+
+        <div class="grid cols-3">
+          <div class="card">
+            <div class="card-label">Total invested</div>
+            <div class="card-big">$75,400</div>
+            <div class="card-delta up">▲ 9.4% over 12 months</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Weighted-avg fee</div>
+            <div class="card-big">0.51%</div>
+            <div class="card-delta flat">Placeholder — confirm from fund PDS</div>
+          </div>
+          <div class="card">
+            <div class="card-label">Contribution rate</div>
+            <div class="card-big">$1,100/mo</div>
+            <div class="card-delta flat">Across Kernel + KiwiSaver</div>
+          </div>
+        </div>
+
+        <div class="grid cols-2" style="margin-top:14px;">
+          <div class="card chart-card">
+            <div class="section-title" style="margin-top:0;">Portfolio value, 12 months</div>
+            <svg id="pfLine" viewBox="0 0 700 220" style="width:100%; height:200px;"></svg>
+          </div>
+          <div class="card">
+            <div class="section-title" style="margin-top:0;">Allocation</div>
+            <div class="donut-wrap">
+              <div class="donut" id="pfDonut"></div>
+              <div class="legend" id="pfLegend"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Fund fees &amp; notes</div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Fund</th><th class="num-col">Balance</th><th class="num-col">Annual fee</th><th>Note</th></tr></thead>
+            <tbody>
+              <tr><td>Kernel High Growth Fund</td><td class="num-col">$22,100</td><td class="num-col">0.25%</td><td style="color:var(--ink-faint)">Placeholder — verify current PDS</td></tr>
+              <tr><td>Kernel Global 100 Fund</td><td class="num-col">$18,400</td><td class="num-col">0.25%</td><td style="color:var(--ink-faint)">Placeholder — verify current PDS</td></tr>
+              <tr><td>NZ Funds KiwiSaver</td><td class="num-col">$34,900</td><td class="num-col">1.10%</td><td style="color:var(--ink-faint)">Placeholder — verify current fund fact sheet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ MACRO MARKETS ============ -->
+      <section class="panel" id="panel-mx">
+        <div class="panel-head">
+          <div>
+            <h2>Macro Markets</h2>
+            <div class="sub">The economic backdrop your decisions sit inside</div>
+          </div>
+        </div>
+
+        <div class="grid cols-3">
+          <div class="card macro-card">
+            <div class="card-label">OCR (RBNZ)</div>
+            <div class="card-big">3.00%</div>
+            <div class="card-source">Placeholder — auto-pulled from RBNZ on refresh</div>
+          </div>
+          <div class="card macro-card">
+            <div class="card-label">CPI inflation, annual</div>
+            <div class="card-big">2.7%</div>
+            <div class="card-source">Placeholder — auto-pulled from Stats NZ</div>
+          </div>
+          <div class="card macro-card">
+            <div class="card-label">NZX 50</div>
+            <div class="card-big">12,940</div>
+            <div class="card-source">Placeholder — auto-pulled from market data feed</div>
+          </div>
+          <div class="card macro-card">
+            <div class="card-label">Avg 1-yr term deposit</div>
+            <div class="card-big">4.35%</div>
+            <div class="card-source">Placeholder — compared against your Cash Fund return</div>
+          </div>
+          <div class="card macro-card">
+            <div class="card-label">Avg mortgage rate (1-yr)</div>
+            <div class="card-big">5.79%</div>
+            <div class="card-source">Placeholder — relevant to first-home planning</div>
+          </div>
+          <div class="card macro-card">
+            <div class="card-label">Unemployment rate</div>
+            <div class="card-big">5.1%</div>
+            <div class="card-source">Placeholder — auto-pulled from Stats NZ</div>
+          </div>
+        </div>
+
+        <div class="section-title">What this means for you</div>
+        <div class="card">
+          <p style="font-size:13.5px; color:var(--ink-dim); line-height:1.6;">This section is where the AI research agent connects the dots between the macro picture and your own accounts — for example, flagging when term deposit rates beat your Kernel Cash Fund return, or when mortgage rates shift your first-home timeline. All figures above are placeholders until live sourcing is connected.</p>
+        </div>
+      </section>
+
+      <!-- ============ DECISION ENGINE ============ -->
+      <section class="panel" id="panel-de">
+        <div class="panel-head">
+          <div>
+            <h2>Financial Decision Engine</h2>
+            <div class="sub">What's worth a look, and what genuinely isn't</div>
+          </div>
+        </div>
+
+        <div class="decisions">
+          <div class="dcard">
+            <span class="dtag consider">Consider</span>
+            <div class="dbody">
+              <h4>Everyday balance running above transaction needs</h4>
+              <p>Westpac Everyday is sitting at $3,200 against typical monthly spend of ~$1,800. Sample logic: excess above a ~6-week buffer could be moved into Kernel Cash Fund, which is currently earning more than a transaction account.</p>
+            </div>
+          </div>
+          <div class="dcard">
+            <span class="dtag monitor">Monitor</span>
+            <div class="dbody">
+              <h4>Car loan rate vs cash fund return</h4>
+              <p>Worth checking whether the Westpac Personal Loan rate is higher than what idle cash is earning elsewhere — if so, an extra repayment may outperform holding cash. Needs your actual loan rate to calculate properly.</p>
+            </div>
+          </div>
+          <div class="dcard">
+            <span class="dtag clear">No action needed</span>
+            <div class="dbody">
+              <h4>Emergency fund on track</h4>
+              <p>At the current contribution pace, the Bonus Saver reaches its $15,000 target in roughly 4 months. No change recommended.</p>
+            </div>
+          </div>
+          <div class="dcard">
+            <span class="dtag info">Worth knowing</span>
+            <div class="dbody">
+              <h4>KiwiSaver government contribution</h4>
+              <p>Sample check: confirm this year's minimum $1,042.86 personal contribution has been met to claim the full government top-up before 30 June.</p>
+            </div>
+          </div>
+          <div class="dcard">
+            <span class="dtag clear">No action needed</span>
+            <div class="dbody">
+              <h4>Portfolio allocation still within target range</h4>
+              <p>Growth vs cash split remains close to plan. Nothing to rebalance this month.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<footer>
+  <span>Financial Supermind — built for Rinaldo</span>
+  <span>All figures on this build are illustrative placeholders, replace with real data to activate</span>
+</footer>
+
+<script>
+// ---------- date ----------
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-NZ', { day:'numeric', month:'long', year:'numeric' });
+
+// ---------- tab switching ----------
+const tabs = document.querySelectorAll('.tab');
+const panels = document.querySelectorAll('.panel');
+const briefs = {
+  nw: 'Net worth sits at <em>$86,400</em>, up 2.1% this month. Nothing here needs urgent attention — the standout item is your emergency fund, now <em>83%</em> to target.',
+  io: 'You saved <em>29%</em> of income this month, ahead of your 25% target. Expenses crept up 4% versus the prior six months, mostly discretionary.',
+  pf: 'Portfolio is up <em>9.4%</em> over 12 months across Kernel and KiwiSaver. Allocation still sits within your target range — no rebalancing called for.',
+  mx: 'Term deposit rates are currently ahead of your cash fund return — worth a quick comparison. Everything else in the macro picture is steady.',
+  de: 'Two items are worth a look this cycle, one is just worth knowing, and two need no action at all.'
+};
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    document.getElementById('briefText').innerHTML = briefs[tab.dataset.tab];
+  });
+});
+
+// ---------- donut chart builder ----------
+function buildDonut(elId, legendId, data){
+  const el = document.getElementById(elId);
+  const legend = document.getElementById(legendId);
+  const total = data.reduce((s,d)=>s+d.value,0);
+  let acc = 0;
+  const stops = data.map(d=>{
+    const start = acc/total*360;
+    acc += d.value;
+    const end = acc/total*360;
+    return `${d.color} ${start}deg ${end}deg`;
+  }).join(', ');
+  el.style.background = `conic-gradient(${stops})`;
+  legend.innerHTML = data.map(d=>`
+    <div class="legend-row">
+      <span class="l-name"><span class="swatch" style="background:${d.color}"></span>${d.label}</span>
+      <span class="l-val">${(d.value/total*100).toFixed(0)}%</span>
+    </div>`).join('');
+}
+
+buildDonut('assetDonut','assetLegend',[
+  {label:'Growth funds (Kernel)', value:40500, color:'var(--accent)'},
+  {label:'KiwiSaver', value:34900, color:'var(--slate)'},
+  {label:'Cash & everyday', value:22500, color:'var(--teal)'}
+]);
+
+buildDonut('pfDonut','pfLegend',[
+  {label:'Kernel High Growth', value:22100, color:'var(--accent)'},
+  {label:'Kernel Global 100', value:18400, color:'#A9C6FF'},
+  {label:'NZ Funds KiwiSaver', value:34900, color:'var(--slate)'}
+]);
+
+// ---------- svg line/area chart ----------
+function drawLine(svgId, points, opts={}){
+  const svg = document.getElementById(svgId);
+  const w = svg.viewBox.baseVal.width, h = svg.viewBox.baseVal.height;
+  const pad = {l:36, r:10, t:16, b:26};
+  const min = Math.min(...points), max = Math.max(...points);
+  const range = (max-min)||1;
+  const stepX = (w-pad.l-pad.r)/(points.length-1);
+  const coords = points.map((v,i)=>{
+    const x = pad.l + i*stepX;
+    const y = pad.t + (h-pad.t-pad.b)*(1-(v-min)/range);
+    return [x,y];
+  });
+  const linePath = coords.map((c,i)=> (i===0?'M':'L')+c[0].toFixed(1)+','+c[1].toFixed(1)).join(' ');
+  const areaPath = linePath + ` L${coords[coords.length-1][0].toFixed(1)},${h-pad.b} L${coords[0][0].toFixed(1)},${h-pad.b} Z`;
+  let svgHTML = `
+    <defs>
+      <linearGradient id="grad-${svgId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${opts.color||'#5C8EEF'}" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="${opts.color||'#5C8EEF'}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#grad-${svgId})" stroke="none"/>
+    <path d="${linePath}" fill="none" stroke="${opts.color||'#5C8EEF'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+  coords.forEach((c,i)=>{
+    if(opts.labels && opts.labels[i]!==undefined){
+      svgHTML += `<text class="axis-label" x="${c[0]}" y="${h-6}" text-anchor="middle">${opts.labels[i]}</text>`;
+    }
+  });
+  // last point marker
+  const last = coords[coords.length-1];
+  svgHTML += `<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${opts.color||'#5C8EEF'}"/>`;
+  svg.innerHTML = svgHTML;
+}
+
+drawLine('nwTrend', [71200,72900,74100,75800,76950,78400,79100,80600,81950,83700,84620,86400], {
+  color:'#5C8EEF',
+  labels:['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug']
+});
+
+drawLine('pfLine', [68900,69850,70200,71600,70800,72400,73100,74300,73800,74900,75100,75400], {
+  color:'#4FAE9B',
+  labels:['Sep','','Nov','','Jan','','Mar','','May','','Jul','Aug']
+});
+
+// ---------- svg bar chart ----------
+function drawBars(svgId, series){
+  const svg = document.getElementById(svgId);
+  const w = svg.viewBox.baseVal.width, h = svg.viewBox.baseVal.height;
+  const pad = {l:44, r:10, t:16, b:30};
+  const groups = series.labels.length;
+  const groupW = (w-pad.l-pad.r)/groups;
+  const barW = groupW*0.28;
+  const maxVal = Math.max(...series.income, ...series.expense);
+  let html = '';
+  for(let i=0;i<groups;i++){
+    const gx = pad.l + i*groupW + groupW/2;
+    const incH = (h-pad.t-pad.b) * (series.income[i]/maxVal);
+    const expH = (h-pad.t-pad.b) * (series.expense[i]/maxVal);
+    const incY = h-pad.b-incH;
+    const expY = h-pad.b-expH;
+    html += `<rect x="${(gx-barW-4).toFixed(1)}" y="${incY.toFixed(1)}" width="${barW.toFixed(1)}" height="${incH.toFixed(1)}" rx="3" fill="#4FAE9B"/>`;
+    html += `<rect x="${(gx+4).toFixed(1)}" y="${expY.toFixed(1)}" width="${barW.toFixed(1)}" height="${expH.toFixed(1)}" rx="3" fill="#C1654F"/>`;
+    html += `<text class="axis-label" x="${gx}" y="${h-8}" text-anchor="middle">${series.labels[i]}</text>`;
+  }
+  // legend
+  html += `<rect x="${pad.l}" y="0" width="9" height="9" rx="2" fill="#4FAE9B"/><text class="axis-label" x="${pad.l+14}" y="8" fill="var(--ink-dim)">Income</text>`;
+  html += `<rect x="${pad.l+80}" y="0" width="9" height="9" rx="2" fill="#C1654F"/><text class="axis-label" x="${pad.l+94}" y="8" fill="var(--ink-dim)">Expenses</text>`;
+  svg.innerHTML = html;
+}
+
+drawBars('ioBars', {
+  labels:['Mar','Apr','May','Jun','Jul','Aug'],
+  income:[7100,7200,7150,7300,7200,7250],
+  expense:[4800,4950,5000,5200,5300,5100]
+});
+</script>
+</body>
+</html>
