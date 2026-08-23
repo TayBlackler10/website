@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080808">
+<title>M2 // HYROX Melbourne Build</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --volt:#DFFF00;
+    --volt-dim:#C8FF00;
+    --black:#080808;
+    --panel:#121212;
+    --panel-2:#171717;
+    --line:#2a2a2a;
+    --text:#F2F2ED;
+    --text-dim:#9b9b95;
+    --text-faint:#5f5f5a;
+    --red:#FF4D4D;
+    --blue:#4DA6FF;
+    --font-display:'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+    --font-body:'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono:'DM Mono', 'SF Mono', monospace;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--black);color:var(--text);font-family:var(--font-body);}
+  body{padding-bottom:96px; overflow-x:hidden;}
+  a{color:inherit;}
+  ::selection{background:var(--volt); color:#000;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(8,8,8,0.92); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+    padding:14px 18px 12px;
+  }
+  .topbar-row{display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:baseline; gap:8px;}
+  .brand-m2{font-family:var(--font-display); font-size:26px; letter-spacing:1px; color:var(--volt); line-height:1;}
+  .brand-sub{font-family:var(--font-mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim);}
+  .countdown{text-align:right;}
+  .countdown-num{font-family:var(--font-display); font-size:28px; color:var(--text); line-height:1;}
+  .countdown-lbl{font-family:var(--font-mono); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--volt);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:22px 18px 8px;}
+  .hero-title{font-family:var(--font-display); font-size:44px; line-height:0.92; letter-spacing:0.5px; margin:0 0 6px;}
+  .hero-title em{font-style:normal; color:var(--volt);}
+  .hero-meta{font-family:var(--font-mono); font-size:12px; color:var(--text-dim); line-height:1.6;}
+  .hero-meta b{color:var(--text);}
+
+  .racepins{display:flex; gap:10px; margin-top:16px; overflow-x:auto; padding-bottom:4px;}
+  .racepin{flex:0 0 auto; min-width:150px; background:var(--panel); border:1px solid var(--line); border-radius:2px; padding:10px 12px;}
+  .racepin-date{font-family:var(--font-mono); font-size:10px; color:var(--volt); letter-spacing:1px;}
+  .racepin-name{font-family:var(--font-display); font-size:17px; letter-spacing:0.3px; margin-top:2px;}
+  .racepin-sub{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:2px;}
+
+  /* ---------- tabs ---------- */
+  .tabs{
+    display:flex; gap:0; padding:0 18px; margin-top:20px;
+    border-bottom:1px solid var(--line); overflow-x:auto;
+  }
+  .tab{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:1.2px; text-transform:uppercase;
+    color:var(--text-dim); background:none; border:none; padding:10px 4px; margin-right:22px;
+    border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap;
+  }
+  .tab.active{color:var(--volt); border-bottom-color:var(--volt);}
+
+  .view{display:none; padding:18px;}
+  .view.active{display:block;}
+
+  /* ---------- section headers ---------- */
+  .sec-label{font-family:var(--font-mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--volt); margin:26px 0 8px;}
+  .sec-label:first-child{margin-top:0;}
+  h2.block-title{font-family:var(--font-display); font-size:26px; letter-spacing:0.3px; margin:0 0 10px;}
+  p.lede{color:var(--text-dim); font-size:14px; line-height:1.6; margin:0 0 16px;}
+
+  /* ---------- cards ---------- */
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:2px; padding:16px; margin-bottom:12px;}
+  .card-title{font-weight:700; font-size:14px; margin:0 0 6px;}
+  .card-body{font-size:13px; color:var(--text-dim); line-height:1.6;}
+
+  /* ---------- phase timeline ---------- */
+  .phase-track{display:flex; border:1px solid var(--line); border-radius:2px; overflow:hidden; margin-bottom:6px;}
+  .phase-seg{padding:10px 8px; font-family:var(--font-mono); font-size:10px; text-align:center; border-right:1px solid var(--line); flex-shrink:0;}
+  .phase-seg:last-child{border-right:none;}
+  .phase-seg .n{font-family:var(--font-display); font-size:18px; display:block;}
+  .phase-base{background:#141c08;}
+  .phase-build{background:#1c1608;}
+  .phase-peak{background:#1c0808;}
+  .phase-taper{background:#08131c;}
+  .phase-race{background:var(--volt); color:#000;}
+  .phase-legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:14px;}
+  .legend-item{display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10px; color:var(--text-dim);}
+  .legend-dot{width:9px; height:9px; border-radius:1px;}
+
+  /* ---------- weakness callout ---------- */
+  .callout{border-left:3px solid var(--volt); background:var(--panel); padding:14px 16px; margin:14px 0; font-size:13px; line-height:1.65; color:var(--text-dim);}
+  .callout b{color:var(--text);}
+  .callout.warn{border-left-color:var(--red);}
+
+  /* ---------- principle grid ---------- */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media(max-width:520px){.grid2{grid-template-columns:1fr;}}
+  .princ{background:var(--panel); border:1px solid var(--line); padding:14px;}
+  .princ .k{font-family:var(--font-mono); font-size:10px; color:var(--volt); letter-spacing:1px;}
+  .princ .t{font-weight:700; font-size:14px; margin:4px 0 6px;}
+  .princ .d{font-size:12.5px; color:var(--text-dim); line-height:1.55;}
+
+  /* ---------- week accordion ---------- */
+  .week-card{border:1px solid var(--line); margin-bottom:10px; background:var(--panel); border-radius:2px; overflow:hidden;}
+  .week-head{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer;}
+  .week-head-left{display:flex; align-items:center; gap:12px;}
+  .week-num{font-family:var(--font-display); font-size:26px; color:var(--volt); min-width:44px;}
+  .week-info .wtitle{font-weight:700; font-size:14px;}
+  .week-info .wdates{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:2px;}
+  .week-badge{font-family:var(--font-mono); font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:3px 7px; border:1px solid var(--line); border-radius:20px; color:var(--text-dim);}
+  .week-progress{font-family:var(--font-mono); font-size:11px; color:var(--text-dim); display:flex; align-items:center; gap:8px;}
+  .prog-bar{width:36px; height:4px; background:#2a2a2a; position:relative; border-radius:2px; overflow:hidden;}
+  .prog-fill{position:absolute; left:0; top:0; bottom:0; background:var(--volt);}
+  .chev{transition:transform .2s ease; color:var(--text-faint); font-size:12px;}
+  .week-card.open .chev{transform:rotate(180deg);}
+  .week-body{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .week-card.open .week-body{max-height:6000px;}
+  .week-body-inner{padding:0 16px 16px;}
+
+  .day-block{border-top:1px solid var(--line); padding:12px 0;}
+  .day-head{display:flex; align-items:baseline; gap:8px; margin-bottom:8px;}
+  .day-name{font-family:var(--font-display); font-size:16px; letter-spacing:0.5px;}
+  .day-date{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+  .day-today{color:var(--volt) !important;}
+
+  .session{display:flex; gap:10px; padding:9px 0; border-top:1px dashed #232323;}
+  .day-block .session:first-of-type{border-top:none;}
+  .sess-check{flex:0 0 auto; width:20px; height:20px; margin-top:2px; border:1.5px solid var(--text-faint); border-radius:3px; cursor:pointer; position:relative;}
+  .sess-check.done{background:var(--volt); border-color:var(--volt);}
+  .sess-check.done::after{content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#000;}
+  .sess-main{flex:1; min-width:0;}
+  .sess-top{display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+  .sess-period{font-family:var(--font-mono); font-size:9px; letter-spacing:1px; color:var(--text-faint); border:1px solid var(--line); padding:1px 5px; border-radius:2px;}
+  .sess-title{font-weight:700; font-size:13.5px;}
+  .sess-title.done-txt{color:var(--text-faint); text-decoration:line-through;}
+  .tag{font-family:var(--font-mono); font-size:8.5px; letter-spacing:0.5px; text-transform:uppercase; padding:1px 6px; border-radius:20px;}
+  .tag-aerobic{background:#0e2e12; color:#7be08a;}
+  .tag-strength{background:#2e230e; color:#e0b87b;}
+  .tag-weakness{background:#3a0e10; color:#ff8f8f;}
+  .tag-race{background:var(--volt); color:#000;}
+  .tag-rest{background:#151515; color:var(--text-faint);}
+  .sess-detail{font-size:12.5px; color:var(--text-dim); line-height:1.55; margin-top:4px;}
+  .sess-note{width:100%; margin-top:7px; background:var(--black); border:1px solid var(--line); color:var(--text); font-family:var(--font-body); font-size:12px; padding:7px 9px; border-radius:2px; resize:vertical; min-height:30px;}
+  .sess-note::placeholder{color:var(--text-faint);}
+
+  /* ---------- today view ---------- */
+  .today-date{font-family:var(--font-mono); font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase;}
+  .today-week{font-family:var(--font-display); font-size:20px; color:var(--volt); margin:2px 0 18px;}
+  .empty-state{text-align:center; padding:50px 20px; color:var(--text-faint);}
+  .empty-state .big{font-family:var(--font-display); font-size:22px; color:var(--text-dim); margin-bottom:6px;}
+
+  /* ---------- progress ---------- */
+  .stat-row{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px;}
+  .stat-box{background:var(--panel); border:1px solid var(--line); padding:14px 10px; text-align:center;}
+  .stat-num{font-family:var(--font-display); font-size:30px; color:var(--volt); line-height:1;}
+  .stat-lbl{font-family:var(--font-mono); font-size:9px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:4px;}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:7px;}
+  .bar-wk{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); width:34px; flex-shrink:0;}
+  .bar-track{flex:1; height:14px; background:var(--panel-2); border:1px solid var(--line); position:relative; overflow:hidden;}
+  .bar-fill{height:100%; background:linear-gradient(90deg,#8a9c00,var(--volt));}
+  .bar-pct{font-family:var(--font-mono); font-size:10px; color:var(--text-dim); width:32px; text-align:right; flex-shrink:0;}
+
+  /* ---------- data tab tables ---------- */
+  table.stat-table{width:100%; border-collapse:collapse; font-size:12px; margin-bottom:10px;}
+  table.stat-table th{font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:1px; color:var(--text-faint); text-align:left; padding:6px 4px; border-bottom:1px solid var(--line);}
+  table.stat-table td{padding:6px 4px; border-bottom:1px solid #1c1c1c; font-family:var(--font-mono);}
+  table.stat-table tr.weak td{color:#ff8f8f;}
+  table.stat-table td.station{font-family:var(--font-body); color:var(--text);}
+
+  /* ---------- bottom nav ---------- */
+  .bottomnav{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    display:flex; background:#0c0c0c; border-top:1px solid var(--line);
+    padding:8px 6px calc(10px + env(safe-area-inset-bottom));
+  }
+  .bn-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--text-faint); font-family:var(--font-mono); font-size:9px; letter-spacing:0.5px; text-transform:uppercase; padding:4px 0; cursor:pointer;}
+  .bn-item.active{color:var(--volt);}
+  .bn-icon{width:20px; height:20px;}
+
+  .reset-link{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); text-decoration:underline; cursor:pointer; margin-top:20px; display:inline-block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row">
+    <div class="brand">
+      <span class="brand-m2">M2</span>
+      <span class="brand-sub">Training&nbsp;Club</span>
+    </div>
+    <div class="countdown">
+      <div class="countdown-num" id="cdNum">—</div>
+      <div class="countdown-lbl" id="cdLbl">days to melbourne</div>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <h1 class="hero-title">HYROX<br><em>MELBOURNE</em> BUILD</h1>
+  <div class="hero-meta">15-week program &middot; <b>Taylor Blackler</b> &middot; Base → Threshold → Peak → Taper</div>
+  <div class="racepins">
+    <div class="racepin">
+      <div class="racepin-date">WED · 9 DEC</div>
+      <div class="racepin-name">Open Solo Men</div>
+      <div class="racepin-sub">HYROX Melbourne</div>
+    </div>
+    <div class="racepin">
+      <div class="racepin-date">MON · 14 DEC</div>
+      <div class="racepin-name">Pro Doubles</div>
+      <div class="racepin-sub">HYROX Melbourne</div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-view="today">Today</button>
+  <button class="tab" data-view="overview">Overview</button>
+  <button class="tab" data-view="program">Program</button>
+  <button class="tab" data-view="progress">Progress</button>
+  <button class="tab" data-view="data">Your Data</button>
+</div>
+
+<!-- ===================== TODAY ===================== -->
+<div class="view active" id="view-today">
+  <div class="today-date" id="todayDate">—</div>
+  <div class="today-week" id="todayWeek">—</div>
+  <div id="todaySessions"></div>
+</div>
+
+<!-- ===================== OVERVIEW ===================== -->
+<div class="view" id="view-overview">
+  <div class="sec-label">The Build</div>
+  <h2 class="block-title">15 weeks, four phases</h2>
+  <p class="lede">Counting back from Melbourne, the program runs Base → Threshold Build → Race-Specific Peak → Taper, then a short turnaround into Pro Doubles five days later. Every phase is built on the same principle: the engine comes first, specificity comes last.</p>
+
+  <div class="phase-track">
+    <div class="phase-seg phase-base">WK 1–6<span class="n">BASE</span></div>
+    <div class="phase-seg phase-build">WK 7–11<span class="n">BUILD</span></div>
+    <div class="phase-seg phase-peak">WK 12–14<span class="n">PEAK</span></div>
+    <div class="phase-seg phase-taper">WK 15<span class="n">TAPER</span></div>
+    <div class="phase-seg phase-race">9&nbsp;DEC<span class="n">RACE</span></div>
+  </div>
+  <div class="phase-legend">
+    <div class="legend-item"><span class="legend-dot" style="background:#3a5c0e"></span>Aerobic base — Zone 2 volume, TT bike, general strength, weakness technique</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#8a6a1a"></span>Threshold build — tempo running, compromised running, strength-endurance</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#8a1a1a"></span>Peak — full simulations, race pacing, doubles-specific work</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#1a5c8a"></span>Taper — volume down, sharpness up</div>
+  </div>
+
+  <div class="callout">
+    <b>Why this order:</b> HYROX is a threshold-paced event stacked on top of eight strength-endurance stations. Research across HYROX-specific coaching (Endurox, TrainRox, RoxZone, HyroxDataLab) converges on the same hierarchy — frequency and aerobic volume are the foundation, threshold work sits above it, and race-specific simulation only pays off once the base can support the fatigue it creates. Skipping straight to simulations before the engine is built is the most common way HYROX athletes plateau or break down.
+  </div>
+
+  <div class="sec-label">Built around your data</div>
+  <div class="callout">
+    <b>Your running is not the problem.</b> Your Zone 2 pace (4:44/km over 42.5km) and half marathon (1:30, ~4:16/km) both sit well ahead of your in-race run splits (4:21–4:42/km average) — meaning you're already running Hyrox at close to the right relative intensity. The time is disappearing on the stations, not the runs. This program spends comparatively little energy trying to make you a faster runner and a lot more energy making you a more efficient, less-destroyed athlete on the floor. See <b>Your Data</b> for the full breakdown, including one weakness you didn't mention (Row) that shows up clearly in both your results.
+  </div>
+  <div class="callout">
+    <b>Recalibrated against Strava.</b> Your logged runs sit mostly at 5:05-5:20/km, and your Strava-estimated Zone 2 ceiling (from HR zones) lands at 4:43/km — both consistent with the 4:45-5:15/km pace band used throughout this program, so no change needed there. Morning aerobic sessions in Base and Build now run to a 60-minute floor rather than building up to it, since you're comfortable starting there. A handful of sessions stay short on purpose — Friday mornings, Saturday's pre-rest recovery jog, and everything in Taper and Race Week — those are deliberately light so you arrive fresh, not an oversight.
+  </div>
+
+  <div class="sec-label">Weekly shape</div>
+  <div class="grid2">
+    <div class="princ"><div class="k">Frequency</div><div class="t">Double days, most days</div><div class="d">AM aerobic session (run or TT bike, 60 min floor in Base/Build), PM strength / skill / weakness work. Friday PM is always off — full rest, every week, no exceptions.</div></div>
+    <div class="princ"><div class="k">The bike</div><div class="t">TT trainer carries volume</div><div class="d">A meaningful share of Zone 2 work moves to the bike, especially in Base phase. It builds the aerobic engine without the impact cost of extra running mileage, and keeps legs fresher for strength and station work.</div></div>
+    <div class="princ"><div class="k">The weak points</div><div class="t">Burpees &amp; lunges get their own sessions</div><div class="d">Dedicated "Weakness Lab" blocks (EMOM burpee broad jumps, loaded lunge ladders) run twice a week through Base and Build, then fold into compromised-running circuits as race day nears.</div></div>
+    <div class="princ"><div class="k">Weekends</div><div class="t">Long aerobic + circuit/simulation</div><div class="d">Saturday carries the long aerobic session (running or bike, alternating). Sunday shifts from an aerobic capacity circuit in Base phase to full or partial race simulations by Peak phase. From Week 3, Sunday PM adds a genuine 45-min AMRAP or EMOM conditioning test (alternating week to week) — real effort, not technique pace. Triple-session weekends appear from Week 10 onward on simulation days.</div></div>
+  </div>
+
+  <div class="sec-label">A note on recovery</div>
+  <div class="callout warn">
+    Double and triple training days on top of a demanding training load put a premium on sleep, protein intake and total calories — this matters more than usual given the appetite suppression that comes with GLP-1/GIP-class compounds. Under-fuelling on a big volume week is the fastest way to blunt adaptation and stall recovery, so treat hitting your calorie and protein targets as part of the program, not an afterthought. This program covers training only — for anything specific to your TRT or retatrutide protocol, that's a conversation for your prescribing doctor, not this app.
+  </div>
+</div>
+
+<!-- ===================== PROGRAM ===================== -->
+<div class="view" id="view-program">
+  <div class="sec-label">Full Program</div>
+  <h2 class="block-title">Week by week</h2>
+  <p class="lede">Tap a week to expand it. Tick off sessions as you go — everything saves on this device automatically.</p>
+  <div id="weeksContainer"></div>
+  <div style="text-align:center;">
+    <span class="reset-link" id="resetBtn">Reset all tracked data</span>
+  </div>
+</div>
+
+<!-- ===================== PROGRESS ===================== -->
+<div class="view" id="view-progress">
+  <div class="sec-label">Progress</div>
+  <h2 class="block-title">Adherence</h2>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-num" id="statDone">0</div><div class="stat-lbl">Sessions logged</div></div>
+    <div class="stat-box"><div class="stat-num" id="statPct">0%</div><div class="stat-lbl">Completion</div></div>
+    <div class="stat-box"><div class="stat-num" id="statWeak">0%</div><div class="stat-lbl">Weakness lab hit rate</div></div>
+  </div>
+  <div class="sec-label">By week</div>
+  <div id="weekBars"></div>
+</div>
+
+<!-- ===================== YOUR DATA ===================== -->
+<div class="view" id="view-data">
+  <div class="sec-label">From your uploads</div>
+  <h2 class="block-title">Race splits on file</h2>
+  <p class="lede">Two recent HYROX results, run vs. station rank. Lower rank number = better relative to the field.</p>
+
+  <div class="card">
+    <div class="card-title">Race A</div>
+    <table class="stat-table">
+      <tr><th>Station</th><th>Time</th><th>Rank</th></tr>
+      <tr><td class="station">Run 1</td><td>04:18</td><td>2131</td></tr>
+      <tr><td class="station">Ski</td><td>04:29</td><td>1864</td></tr>
+      <tr><td class="station">Run 2</td><td>04:17</td><td>1456</td></tr>
+      <tr><td class="station">Sled Push</td><td>02:20</td><td>981</td></tr>
+      <tr><td class="station">Run 3</td><td>04:29</td><td>1265</td></tr>
+      <tr><td class="station">Sled Pull</td><td>04:12</td><td>1341</td></tr>
+      <tr><td class="station">Run 4</td><td>04:29</td><td>1223</td></tr>
+      <tr class="weak"><td class="station">Burpee Broad Jump</td><td>05:21</td><td>1384</td></tr>
+      <tr><td class="station">Run 5</td><td>04:37</td><td>1145</td></tr>
+      <tr class="weak"><td class="station">Row</td><td>04:45</td><td>1655</td></tr>
+      <tr><td class="station">Run 6</td><td>04:26</td><td>1048</td></tr>
+      <tr class="weak"><td class="station">Farmers Carry</td><td>02:20</td><td>2264</td></tr>
+      <tr><td class="station">Run 7</td><td>04:36</td><td>1321</td></tr>
+      <tr class="weak"><td class="station">Sandbag Lunge</td><td>06:00</td><td>1993</td></tr>
+      <tr><td class="station">Run 8</td><td>06:26</td><td>1122</td></tr>
+      <tr class="weak"><td class="station">Wall Balls</td><td>07:03</td><td>1672</td></tr>
+    </table>
+    <div class="card-body">Avg run: 04:42 (rank 1264)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Race B</div>
+    <table class="stat-table">
+      <tr><th>Station</th><th>Time</th><th>Rank</th></tr>
+      <tr><td class="station">Run 1</td><td>02:07</td><td>146</td></tr>
+      <tr><td class="station">Ski</td><td>04:17</td><td>816</td></tr>
+      <tr><td class="station">Run 2</td><td>03:55</td><td>380</td></tr>
+      <tr><td class="station">Sled Push</td><td>02:27</td><td>1053</td></tr>
+      <tr><td class="station">Run 3</td><td>04:18</td><td>513</td></tr>
+      <tr><td class="station">Sled Pull</td><td>04:09</td><td>728</td></tr>
+      <tr><td class="station">Run 4</td><td>04:26</td><td>682</td></tr>
+      <tr class="weak"><td class="station">Burpee Broad Jump</td><td>04:42</td><td>961</td></tr>
+      <tr><td class="station">Run 5</td><td>04:49</td><td>1023</td></tr>
+      <tr class="weak"><td class="station">Row</td><td>04:49</td><td>1535</td></tr>
+      <tr><td class="station">Run 6</td><td>04:50</td><td>1167</td></tr>
+      <tr><td class="station">Farmers Carry</td><td>01:55</td><td>963</td></tr>
+      <tr><td class="station">Run 7</td><td>04:46</td><td>1145</td></tr>
+      <tr class="weak"><td class="station">Sandbag Lunge</td><td>05:03</td><td>1243</td></tr>
+      <tr><td class="station">Run 8</td><td>05:39</td><td>1001</td></tr>
+      <tr><td class="station">Wall Balls</td><td>05:35</td><td>841</td></tr>
+      <tr><td class="station">Roxzone</td><td>08:09</td><td>806</td></tr>
+    </table>
+    <div class="card-body">Avg run: 04:21 (rank 742)</div>
+  </div>
+
+  <div class="callout">
+    <b>Read on the data:</b> Farmers Carry and Wall Balls swung from well below your run-rank average in Race A to well above it in Race B — that's real, fast progress, not noise. <b>Sandbag Lunge</b> and <b>Row</b> are the two stations that stayed weak relative to your running in both races — Row in particular (rank 1655, then 1535) is consistently worse than almost every run split either day, which you didn't flag but the numbers do. Burpee Broad Jump improved a lot between races too. This program leans on Sandbag Lunge and Row as the priority weak points, with Burpee Broad Jump and Wall Balls kept in rotation to lock in the gains.
+  </div>
+</div>
+
+<div class="bottomnav" id="bottomnav">
+  <button class="bn-item active" data-view="today">Today</button>
+  <button class="bn-item" data-view="overview">Overview</button>
+  <button class="bn-item" data-view="program">Program</button>
+  <button class="bn-item" data-view="progress">Progress</button>
+  <button class="bn-item" data-view="data">Data</button>
+</div>
+
+<script>
+/* =========================================================================
+   M2 // HYROX MELBOURNE BUILD
+   Program generator + local tracking. All data stored on-device via
+   localStorage — nothing leaves the phone.
+========================================================================= */
+
+const START_DATE = new Date(2026,7,24); // Mon 24 Aug 2026 (month is 0-indexed)
+const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const MS_DAY = 86400000;
+
+function addDays(d,n){ const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function fmtShort(d){ return d.toLocaleDateString('en-NZ',{day:'numeric',month:'short'}); }
+function fmtFull(d){ return d.toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'long'}); }
+function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+function weekDates(weekNum){ const base = addDays(START_DATE,(weekNum-1)*7); return [...Array(7)].map((_,i)=>addDays(base,i)); }
+
+/* ---------- session helper ---------- */
+function S(period,title,detail,tag){ return {period,title,detail,tag}; }
+
+/* =========================== PHASE 1 : BASE (wk 1-6) =========================== */
+function baseWeek(w){
+  const run = 60+(w-1)*3;       // 60..75
+  const bike = 60+(w-1)*4;      // 60..80
+  const long = 75+w*10;         // 85..135
+  const emom = Math.min(10+w*3,26);
+  const lunge = 40+w*10;       // metres, 50..100
+  const alt = w%2===0;         // alternate long-day modality
+  const condition = w>=3;       // genuine conditioning test from Week 3 onward
+  const condIsAmrap = w%2===1;  // alternate AMRAP / EMOM week to week
+  const burpees = 13+w;         // 16..19
+  const lungeReps = 18+w*2;     // 24..30 per leg
+  let condSession;
+  if(condIsAmrap){
+    condSession = S('PM','Conditioning — 45 min AMRAP',`As many rounds as possible in 45 min: ${burpees} Burpee Broad Jumps, ${lungeReps} Walking Lunges (sandbag or double DB), 250m Row or Ski Erg. Real effort this time — this is a genuine conditioning test, not technique work. Log your rounds.`,'weakness');
+  } else {
+    condSession = S('PM','Conditioning — 45 min EMOM',`EMOM x45, rotating every minute: Min 1 — ${burpees-4} Burpee Broad Jumps. Min 2 — ${lungeReps-6} Walking Lunges/leg. Min 3 — 250m Row or Ski Erg (or 18 cal Bike). Repeat the 3-minute block 15 times. Genuine effort, minimal buffer.`,'weakness');
+  }
+  return [
+    { sessions:[ S('AM',`Zone 2 Run — ${run} min`,`Easy conversational pace, ~4:45–5:15/km, nose-breathing effort. This is engine-building — do not push it.`,'aerobic'),
+                 S('PM','Lower Body Strength',`Back squat or trap-bar deadlift 4x6-8, Bulgarian split squat 3x10/leg, hip thrust 3x10, core finisher. Moderate load, full control.`,'strength') ]},
+    { sessions:[ S('AM',`Zone 2 Bike (TT trainer) — ${bike} min`,`Steady aerobic ride, Zone 2 HR 126-156bpm / RPE 4-5, cadence 85-95rpm. Builds the engine without the impact cost of extra running.`,'aerobic'),
+                 S('PM','Weakness Lab — Burpee Broad Jumps',`EMOM x ${emom} min: 8 Burpee Broad Jumps every minute, full HYROX standard (chest to floor, two-foot broad jump). Focus on rhythm — smooth is fast.`,'weakness') ]},
+    { sessions:[ S('AM',`Zone 2 Run — ${run} min + mobility`,`Easy pace, ~4:45-5:15/km, then 10 min hip/ankle mobility targeting lunge and burpee positions.`,'aerobic'),
+                 S('PM','Upper Body Strength + Core',`DB/barbell press 4x8, weighted pull-up or row 4x8, single-arm overhead carry 3x30m, core circuit (dead bug, plank, pallof press).`,'strength') ]},
+    { sessions:[ S('AM',`Zone 2 Bike — ${bike} min`,`Steady aerobic spin, Zone 2 HR 126-156bpm. Legs stay fresh for tonight's strength work.`,'aerobic'),
+                 S('PM','Lower Strength + Station Skill',`Front squat or RDL 4x6, walking lunge (bodyweight→light load) ${lunge}m for technique, sled push/pull technique drill 4x20m light, farmers carry 3x40m.`,'strength') ]},
+    { sessions:[ S('AM','Easy Recovery — 30 min','Deliberately short and easy on purpose — walk, spin, or light jog. Legs loose, HR low. Today\'s only job is to arrive at Saturday fresh.','aerobic'),
+                 S('PM','Rest','Full rest — every week, no exceptions.','rest') ]},
+    { sessions:[ S('AM',`Long ${alt?'Bike':'Run'} — ${long} min`,`${alt?'Long steady TT-trainer ride':'Long steady run'}, Zone 2 throughout. Fuel and hydrate as if it's a race rehearsal.`,'aerobic'),
+                 S('PM','Mobility + Foam Roll — 15 min','Hips, ankles, shoulders. Keep it light.','strength') ]},
+    { sessions:[ S('AM','Aerobic Capacity Circuit — 60 min',`Steady-state circuit at low-moderate effort: Row/Ski/Bike intervals + technique-focused Burpee Broad Jump, Sandbag Lunge and Wall Ball work. Effort stays controlled — this is skill and capacity, not a test.`,'weakness'),
+                 condition ? condSession : S('PM','Stretch + Prep — 10 min','Light stretch, plan the week ahead.','rest') ]},
+  ];
+}
+
+
+/* =========================== PHASE 2 : BUILD (wk 7-11) =========================== */
+function buildWeek(w){
+  const reps = Math.min(2+w,6);              // threshold km reps: 3..7
+  const circuitRounds = Math.min(2+w,6);
+  const bikeMin = 60+w*3;
+  const simWeek = w>=4;                       // weeks 10-11 get a partial simulation Sunday
+  return [
+    { sessions:[ S('AM',`Threshold Run — WU + ${reps}x1km @ 4:20-4:30/km`,`15 min warm-up, then ${reps} x 1km at threshold pace (2-3 min jog recovery), 10 min cool-down. This pace should feel "comfortably hard" — controlled, not maxed.`,'aerobic'),
+                 S('PM','Lower Strength-Endurance',`Loaded walking lunges 4x20m/leg (heavier than Base phase), sled push 4x20m heavy, back squat 3x5 heavy. Direct carryover to your weakest station.`,'weakness') ]},
+    { sessions:[ S('AM',`Zone 2 Bike — ${bikeMin} min`,`Steady aerobic ride, Zone 2. Keeps the aerobic volume high while legs absorb strength load.`,'aerobic'),
+                 S('PM',`Compromised Running Circuit — ${circuitRounds} rounds`,`${circuitRounds} rounds: 400m run, 15 Burpee Broad Jumps, 400m run, 20 Sandbag Lunges (or lunge-equivalent), row 250m. Rest as needed between rounds — the goal is quality reps under fatigue, not survival.`,'weakness') ]},
+    { sessions:[ S('AM','Zone 2 Run — 60 min',`Easy pace, ~4:45-5:15/km. Keep this one genuinely easy — it's recovery between two hard days, just at your longer standard length.`,'aerobic'),
+                 S('PM','Upper Strength + Wall Ball / Farmers Technique',`Press/pull strength 4x8, then Wall Ball technique 4x15 (focus on squat depth + target accuracy), Farmers Carry 4x50m heavy grip.`,'strength') ]},
+    { sessions:[ S('AM',`Tempo Bike — ${w%2? 'Sweet-spot 3x10min @ 88-94% FTP':'Steady 60 min Zone 2'}`,`${w%2? 'Structured intervals: 15min WU, 3x10min sweet-spot with 3min easy between, 10min CD.':'Recovery-weighted steady ride to balance the harder days either side.'}`,'aerobic'),
+                 S('PM','Lower Strength + Weakness Lab',`Deadlift or hip hinge 4x5, then Burpee Broad Jump EMOM 15min (10/min) + Sandbag Lunge ladder (20→40→60→40→20m, minimal rest).`,'weakness') ]},
+    { sessions:[ S('AM','Easy Recovery — 25 min','Easy movement only — walk, spin or light jog.','aerobic'),
+                 S('PM','Rest','Full rest.','rest') ]},
+    { sessions: simWeek ? [
+                 S('AM','Warm-Up + Movement Prep — 20 min','Dynamic warm-up, activation drills, light strides.','strength'),
+                 S('MID',`Partial HYROX Simulation — 4x(1km + station)`,`Run 1km into a station, four times through, cycling Ski/Sled Push/Burpee Broad Jump/Sandbag Lunge. Race pace, race transitions — this is a form check under real fatigue.`,'race'),
+                 S('PM','Mobility + Recovery — 15 min','Foam roll, stretch, refuel.','rest')
+               ] : [
+                 S('AM',`Long Threshold Run — WU + ${Math.min(6+w,10)}km progressive`,`Long run building from easy to threshold pace across the back third. Practice fuelling exactly as you plan to race.`,'aerobic'),
+                 S('PM','Mobility — 15 min','Hips, ankles, thoracic spine.','rest')
+               ]},
+    { sessions:[ S('AM',`${simWeek?'Active Recovery — 30 min easy bike':'Aerobic Circuit — 45 min'}`,`${simWeek?"Very easy spin, flush the legs after yesterday's simulation.":'Row/Ski/Bike steady intervals with technical Wall Ball and Row work mixed in.'}`,'aerobic'),
+                 S('PM','Stretch + Weekly Review — 10 min','Light stretch. Note what felt hard this week.','rest') ]},
+  ];
+}
+
+/* =========================== PHASE 3 : PEAK (wk 12-14) =========================== */
+function peakWeek(w){
+  const simFull = w<=2; // weeks 12-13 get full sims, week 14 shorter
+  return [
+    { sessions:[ S('AM','Threshold Intervals — WU + 5x1km @ race pace',`5 x 1km at your target HYROX run pace (~4:25-4:40/km), 90sec jog recovery. This is exactly the pace you want to hold between stations on race day.`,'aerobic'),
+                 S('PM','Race-Pace Strength Circuit',`Back-to-back station pairing at race intensity: Sled Push 25m into Sandbag Lunge 25m, x4 rounds, full effort, full recovery between rounds.`,'weakness') ]},
+    { sessions:[ S('AM','Zone 2 Bike — 60 min easy',`Easy spin, HR 126-156bpm. Volume in the PM sessions is coming down now — this AM ride can stay at your standard length, just keep the effort genuinely easy.`,'aerobic'),
+                 S('PM','Compromised Running — Race-Pace Segments',`4 rounds: 500m @ race pace, Row 300m, Burpee Broad Jump x15, 500m @ race pace, Sandbag Lunge 30m. Practice running fast into and out of your weakest stations.`,'weakness') ]},
+    { sessions:[ S('AM','Easy Run — 25 min shakeout',`Easy pace, legs loose.`,'aerobic'),
+                 S('PM','Weakness Finishing Touches',`Lower volume, higher quality: Sandbag Lunge technique 3x30m focusing on stride length under load, Row 3x300m at race pace, Wall Balls 3x20.`,'weakness') ]},
+    { sessions:[ S('AM','Short Tempo Run — 20 min',`10 min easy, 10 min at threshold, done. Keep it sharp, not long.`,'aerobic'),
+                 S('PM','Full-Body Strength — Maintenance',`Light, low-volume full body: squat 3x5 moderate, press 3x8, row 3x8. Maintain strength without adding fatigue.`,'strength') ]},
+    { sessions:[ S('AM','Shakeout — 20 min easy','Easy movement, stay loose.','aerobic'),
+                 S('PM','Rest','Full rest.','rest') ]},
+    { sessions: simFull ? [
+                 S('AM','Warm-Up + Activation — 20 min','Full dynamic warm-up, drills, race-day nutrition rehearsal.','strength'),
+                 S('MID','FULL HYROX SIMULATION — 8x(1km + station)',`The complete race, all 8 runs and 8 stations, at genuine race intensity. Week 12: establish your race plan and pacing. Week 13: repeat and directly target whatever broke down last time — most likely Sandbag Lunge or Row.`,'race'),
+                 S('PM','Recovery — Ice bath / compression / refuel','Prioritise recovery hard for the next 48 hours.','rest')
+               ] : [
+                 S('AM','Warm-Up + Activation — 15 min','Dynamic warm-up, light drills.','strength'),
+                 S('MID','Shortened Simulation — 6x(1km + station)',`~65-70% of full race volume at full race intensity. Final hard efforts before the taper — protect freshness from here.`,'race'),
+                 S('PM','Recovery — 15 min','Stretch, refuel, early night.','rest')
+               ]},
+    { sessions:[ S('AM','Active Recovery — 30 min easy bike or walk',`Very easy. Flush the legs.`,'aerobic'),
+                 S('PM','Mobility + Weekly Review — 15 min','Stretch, review what worked and what to sharpen.','rest') ]},
+  ];
+}
+
+/* =========================== TAPER (wk 15) =========================== */
+function taperWeek(){
+  return [
+    { sessions:[ S('AM','Threshold Touch — WU + 2x1km @ race pace',`Short and sharp: 2 x 1km at race pace, full recovery between. Just enough to keep the engine primed.`,'aerobic'),
+                 S('PM','Light Strength + Mobility',`Very light full-body movement, 2x8 at easy load. This is about staying loose, not building anything new.`,'strength') ]},
+    { sessions:[ S('AM','Zone 2 Bike — 30 min easy','Easy spin, keep blood moving.','aerobic'),
+                 S('PM','Weakness Touch — Low Volume',`Sandbag Lunge 3x20m and Burpee Broad Jump 3x10, technical focus only. Quality over quantity — no need to chase fatigue this week.`,'weakness') ]},
+    { sessions:[ S('AM','Easy Run — 25 min',`Easy pace, relaxed. Sleep is doing more for you this week than training is.`,'aerobic'),
+                 S('PM','Rest + Mobility — 10 min','Light stretch, early night.','rest') ]},
+    { sessions:[ S('AM','Shakeout + Strides — 20 min',`Easy jog with 4x15sec relaxed strides to keep some sharpness.`,'aerobic'),
+                 S('PM','Rest','Full rest.','rest') ]},
+    { sessions:[ S('AM','Easy Movement — 15 min','Light walk or spin. Sort logistics and race-day gear.','aerobic'),
+                 S('PM','Rest','Full rest.','rest') ]},
+    { sessions:[ S('AM','Very Easy Shakeout — 15 min',`Legs loose only — no effort. Light rehearsal of station movement patterns at walking intensity.`,'aerobic'),
+                 S('PM','Gear + Nutrition Prep','Lay out kit, confirm fuelling plan, hydrate well.','rest') ]},
+    { sessions:[ S('AM','Full Rest',`Nothing planned. Trust the work that's done.`,'rest'),
+                 S('PM','Visualise + Early Night','Walk through the race in your head, station by station. Lights out early.','rest') ]},
+  ];
+}
+
+/* =========================== RACE WEEK (Mon 7 - Wed 9 Dec) =========================== */
+function raceWeekDays(){
+  return [
+    { sessions:[ S('AM','Easy Shakeout — 20 min + strides',`Easy jog, 3-4 relaxed strides. Keep the legs awake, nothing more.`,'aerobic'),
+                 S('PM','Rest + Gear Check','Confirm shoes, kit, nutrition, and travel logistics.','rest') ]},
+    { sessions:[ S('AM','Very Light Movement — 15 min',`Walk or gentle spin, full mobility routine.`,'aerobic'),
+                 S('PM','Rest + Carb-Up','Travel/logistics, start easing carbohydrate intake up, hydrate well.','rest') ]},
+    { sessions:[ S('ALL','RACE DAY — HYROX Melbourne, Open Solo Men',`This is it. Trust the pacing you've rehearsed — hold your target run pace, protect Sandbag Lunge and Row, and let the aerobic base carry you through the back half.`,'race') ]},
+  ];
+}
+
+/* =========================== DOUBLES BRIDGE (Thu 10 - Sun 13 Dec) =========================== */
+function doublesBridgeDays(){
+  return [
+    { sessions:[ S('ALL','Full Recovery Day',`Rest, foam roll, refuel hard. No structured training — today is about being ready to move again tomorrow.`,'rest') ]},
+    { sessions:[ S('AM','Easy Movement — 25 min',`Easy walk or spin, shake yesterday's race out of the legs.`,'aerobic'),
+                 S('PM','Doubles Transition Practice — Light',`With your partner: rehearse handoffs and station splits at low intensity. Communication over intensity today.`,'strength') ]},
+    { sessions:[ S('AM','Doubles Pacing Practice — Light',`Short run + 1-2 stations at conversational pace with your partner. Lock in your split strategy for who takes what.`,'strength'),
+                 S('PM','Rest + Mobility','Stretch, stay off your feet otherwise.','rest') ]},
+    { sessions:[ S('ALL','Rest + Final Prep',`Travel, gear check, race briefing with your partner, early night.`,'rest') ]},
+  ];
+}
+
+/* =========================================================================
+   BUILD THE FULL PROGRAM
+========================================================================= */
+const PHASES = [
+  {key:'base',  label:'Aerobic Base',        range:[1,6],   badgeClass:'phase-base'},
+  {key:'build', label:'Threshold Build',     range:[7,11],  badgeClass:'phase-build'},
+  {key:'peak',  label:'Race-Specific Peak',  range:[12,14], badgeClass:'phase-peak'},
+  {key:'taper', label:'Taper',               range:[15,15], badgeClass:'phase-taper'},
+];
+function phaseForWeek(n){ return PHASES.find(p=>n>=p.range[0]&&n<=p.range[1]); }
+
+const PROGRAM = []; // array of {id, label, dates:[Date x N], phaseLabel, badgeClass, days:[{sessions}]}
+
+for(let w=1; w<=15; w++){
+  const phase = phaseForWeek(w);
+  const wip = w - phase.range[0] + 1; // week-in-phase
+  let days;
+  if(phase.key==='base') days = baseWeek(wip);
+  else if(phase.key==='build') days = buildWeek(wip);
+  else if(phase.key==='peak') days = peakWeek(wip);
+  else days = taperWeek();
+  PROGRAM.push({
+    id:'w'+w, label:'Week '+w, dates:weekDates(w),
+    phaseLabel:phase.label, badgeClass:phase.badgeClass, days
+  });
+}
+// Race week: Mon 7 Dec - Wed 9 Dec
+PROGRAM.push({
+  id:'raceweek', label:'Race Week', dates:[addDays(START_DATE,15*7),addDays(START_DATE,15*7+1),addDays(START_DATE,15*7+2)],
+  phaseLabel:'Solo Race', badgeClass:'phase-race', days:raceWeekDays()
+});
+// Doubles bridge: Thu 10 Dec - Sun 13 Dec
+PROGRAM.push({
+  id:'doublesbridge', label:'Doubles Turnaround', dates:[addDays(START_DATE,15*7+3),addDays(START_DATE,15*7+4),addDays(START_DATE,15*7+5),addDays(START_DATE,15*7+6)],
+  phaseLabel:'Bridge to Doubles', badgeClass:'phase-taper', days:doublesBridgeDays()
+});
+// Doubles race day itself
+PROGRAM.push({
+  id:'doublesrace', label:'Doubles Race Day', dates:[addDays(START_DATE,15*7+7)],
+  phaseLabel:'Pro Doubles', badgeClass:'phase-race',
+  days:[{sessions:[S('ALL','RACE DAY — HYROX Melbourne, Pro Doubles',`Five days on from your solo race. Legs will carry some fatigue — lean on your partner, split the stations to your relative strengths, and treat pacing as a shared resource.`,'race')]}]
+});
+
+/* =========================================================================
+   STORAGE
+========================================================================= */
+const STORE_KEY = 'm2hyrox_v1';
+let store = JSON.parse(localStorage.getItem(STORE_KEY) || '{"done":{},"notes":{}}');
+function saveStore(){ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
+function sid(weekId,dayIdx,sessIdx){ return weekId+'-d'+dayIdx+'-s'+sessIdx; }
+
+/* =========================================================================
+   RENDER: TODAY
+========================================================================= */
+function renderToday(){
+  const now = new Date(); now.setHours(0,0,0,0);
+  document.getElementById('todayDate').textContent = fmtFull(now);
+
+  let found = null;
+  outer: for(const wk of PROGRAM){
+    for(let di=0; di<wk.dates.length; di++){
+      if(sameDay(wk.dates[di], now)){ found = {wk, di}; break outer; }
+    }
+  }
+  const wrap = document.getElementById('todaySessions');
+  wrap.innerHTML='';
+  if(!found){
+    document.getElementById('todayWeek').textContent = now < START_DATE ? 'Program starts ' + fmtShort(START_DATE) : 'Outside the program window';
+    wrap.innerHTML = '<div class="empty-state"><div class="big">Nothing scheduled</div>Check the Program tab for the full 15 weeks.</div>';
+    return;
+  }
+  const {wk, di} = found;
+  document.getElementById('todayWeek').textContent = wk.label + ' — ' + wk.phaseLabel + ' — ' + DAY_NAMES[wk.dates.length===7?di:di];
+  const day = wk.days[di];
+  day.sessions.forEach((s,si)=>{
+    wrap.appendChild(sessionEl(wk.id, di, si, s));
+  });
+}
+
+/* =========================================================================
+   RENDER: PROGRAM (accordion)
+========================================================================= */
+function dayLabelFor(wk, idx){
+  // race week / doubles bridge use real weekday names too
+  return DAY_NAMES[wk.dates[idx].getDay()===0?6:wk.dates[idx].getDay()-1];
+}
+
+function weekCompletion(wk){
+  let total=0, done=0;
+  wk.days.forEach((day,di)=>day.sessions.forEach((s,si)=>{
+    if(s.tag==='rest') return;
+    total++;
+    if(store.done[sid(wk.id,di,si)]) done++;
+  }));
+  return {total, done, pct: total? Math.round(done/total*100):0};
+}
+
+function sessionEl(weekId, dayIdx, sessIdx, s){
+  const id = sid(weekId,dayIdx,sessIdx);
+  const done = !!store.done[id];
+  const el = document.createElement('div');
+  el.className='session';
+  const isRest = s.tag==='rest';
+  el.innerHTML = `
+    <div class="sess-check ${done?'done':''}" data-id="${id}" ${isRest?'style="visibility:hidden"':''}></div>
+    <div class="sess-main">
+      <div class="sess-top">
+        <span class="sess-period">${s.period}</span>
+        <span class="sess-title ${done?'done-txt':''}">${s.title}</span>
+        <span class="tag tag-${s.tag}">${s.tag}</span>
+      </div>
+      <div class="sess-detail">${s.detail}</div>
+      ${isRest? '' : `<textarea class="sess-note" placeholder="Log time, load, RPE or how it felt...">${store.notes[id]||''}</textarea>`}
+    </div>`;
+  if(!isRest){
+    el.querySelector('.sess-check').addEventListener('click', ()=>{
+      store.done[id] = !store.done[id];
+      saveStore();
+      renderAll();
+    });
+    const ta = el.querySelector('.sess-note');
+    ta.addEventListener('input', ()=>{ store.notes[id]=ta.value; saveStore(); });
+    ta.addEventListener('click', e=>e.stopPropagation());
+  }
+  return el;
+}
+
+function renderProgram(){
+  const container = document.getElementById('weeksContainer');
+  container.innerHTML='';
+  PROGRAM.forEach(wk=>{
+    const comp = weekCompletion(wk);
+    const card = document.createElement('div');
+    card.className='week-card';
+    card.innerHTML = `
+      <div class="week-head">
+        <div class="week-head-left">
+          <div class="week-num">${wk.id.startsWith('w')&&!isNaN(parseInt(wk.id.slice(1))) ? wk.id.slice(1) : '★'}</div>
+          <div class="week-info">
+            <div class="wtitle">${wk.label} <span class="week-badge">${wk.phaseLabel}</span></div>
+            <div class="wdates">${fmtShort(wk.dates[0])} – ${fmtShort(wk.dates[wk.dates.length-1])}</div>
+          </div>
+        </div>
+        <div class="week-progress">
+          <div class="prog-bar"><div class="prog-fill" style="width:${comp.pct}%"></div></div>
+          ${comp.done}/${comp.total}
+          <span class="chev">▾</span>
+        </div>
+      </div>
+      <div class="week-body"><div class="week-body-inner"></div></div>`;
+    const body = card.querySelector('.week-body-inner');
+    wk.days.forEach((day,di)=>{
+      const dayEl = document.createElement('div');
+      dayEl.className='day-block';
+      const d = wk.dates[di];
+      const now = new Date(); now.setHours(0,0,0,0);
+      const isToday = sameDay(d, now);
+      dayEl.innerHTML = `<div class="day-head"><span class="day-name ${isToday?'day-today':''}">${DAY_NAMES[d.getDay()===0?6:d.getDay()-1]}</span><span class="day-date">${fmtShort(d)}${isToday?' · TODAY':''}</span></div>`;
+      day.sessions.forEach((s,si)=> dayEl.appendChild(sessionEl(wk.id, di, si, s)));
+      body.appendChild(dayEl);
+    });
+    card.querySelector('.week-head').addEventListener('click', ()=> card.classList.toggle('open'));
+    container.appendChild(card);
+  });
+  // auto-open the current week
+  const now = new Date(); now.setHours(0,0,0,0);
+  const currentIdx = PROGRAM.findIndex(wk=>wk.dates.some(d=>sameDay(d,now)));
+  if(currentIdx>=0) container.children[currentIdx].classList.add('open');
+}
+
+/* =========================================================================
+   RENDER: PROGRESS
+========================================================================= */
+function renderProgress(){
+  let total=0, done=0, weakTotal=0, weakDone=0;
+  PROGRAM.forEach(wk=>{
+    wk.days.forEach((day,di)=>day.sessions.forEach((s,si)=>{
+      if(s.tag==='rest') return;
+      total++;
+      const id = sid(wk.id,di,si);
+      const isDone = !!store.done[id];
+      if(isDone) done++;
+      if(s.tag==='weakness'){ weakTotal++; if(isDone) weakDone++; }
+    }));
+  });
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statPct').textContent = total? Math.round(done/total*100)+'%':'0%';
+  document.getElementById('statWeak').textContent = weakTotal? Math.round(weakDone/weakTotal*100)+'%':'0%';
+
+  const bars = document.getElementById('weekBars');
+  bars.innerHTML='';
+  PROGRAM.forEach(wk=>{
+    const comp = weekCompletion(wk);
+    const row = document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML = `<div class="bar-wk">${wk.id.startsWith('w')&&!isNaN(parseInt(wk.id.slice(1)))?'W'+wk.id.slice(1):wk.label.slice(0,3)}</div><div class="bar-track"><div class="bar-fill" style="width:${comp.pct}%"></div></div><div class="bar-pct">${comp.pct}%</div>`;
+    bars.appendChild(row);
+  });
+}
+
+/* =========================================================================
+   COUNTDOWN
+========================================================================= */
+function renderCountdown(){
+  const now = new Date(); now.setHours(0,0,0,0);
+  const raceDay = new Date(2026,11,9);
+  const diff = Math.ceil((raceDay-now)/MS_DAY);
+  document.getElementById('cdNum').textContent = diff>=0? diff : 'DONE';
+  document.getElementById('cdLbl').textContent = diff>=0? (diff===1?'day to melbourne':'days to melbourne') : 'melbourne complete';
+}
+
+/* =========================================================================
+   TABS + NAV
+========================================================================= */
+function setView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.view===name));
+  document.querySelectorAll('.bn-item').forEach(t=>t.classList.toggle('active', t.dataset.view===name));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tab, .bn-item').forEach(btn=>{
+  btn.addEventListener('click', ()=> setView(btn.dataset.view));
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm('Clear all tracked sessions and notes on this device? This cannot be undone.')){
+    store = {done:{},notes:{}};
+    saveStore();
+    renderAll();
+  }
+});
+
+/* =========================================================================
+   INIT
+========================================================================= */
+function renderAll(){
+  renderCountdown();
+  renderToday();
+  renderProgram();
+  renderProgress();
+}
+renderAll();
+</script>
+</body>
+</html>
