@@ -523,6 +523,40 @@ function sampleData(){
   ];
 }
 
+// GymMaster's import re-polls the same questionnaire completion more than
+// once, which was landing the same person in the sheet — and the Unassigned
+// column — as two or more separate cards. The sheet's "Email" column for
+// GymMaster leads is just GymMaster's generic notification address (not the
+// customer's), so it can't be used to tell people apart; instead we
+// fingerprint a lead by their name, phone and questionnaire answers, which
+// are identical across a duplicate import but would legitimately differ for
+// two different people. When a group of leads share a fingerprint, keep the
+// one that's already been worked (has a trainer assigned, or is otherwise
+// most recently updated) and drop the rest so only one copy ever shows up.
+function dedupeLeads(rawLeads){
+  const groups = new Map();
+  for(const l of rawLeads){
+    const key = [l.name, l.phone, l.reasonForJoining, l.trainerPreference, l.trainingStyle, l.preferredTime]
+      .map(v => (v || "").toString().trim().toLowerCase())
+      .join("|");
+    if(!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(l);
+  }
+  const out = [];
+  for(const group of groups.values()){
+    if(group.length === 1){ out.push(group[0]); continue; }
+    group.sort((a, b) => {
+      const aAssigned = a.trainer ? 1 : 0, bAssigned = b.trainer ? 1 : 0;
+      if(aAssigned !== bAssigned) return bAssigned - aAssigned; // keep the assigned copy first
+      const aTime = new Date(a.lastUpdated || a.receivedAt || 0).getTime();
+      const bTime = new Date(b.lastUpdated || b.receivedAt || 0).getTime();
+      return bTime - aTime; // otherwise keep the most recently touched copy
+    });
+    out.push(group[0]);
+  }
+  return out;
+}
+
 async function fetchLeads(){
   try{
     const url = TRAINER_MODE
@@ -536,7 +570,7 @@ async function fetchLeads(){
       render();
       return;
     }
-    leads = data.leads || [];
+    leads = dedupeLeads(data.leads || []);
     setStatus("Updated " + new Date().toLocaleTimeString(), false);
     render();
   }catch(err){
