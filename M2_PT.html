@@ -426,7 +426,15 @@ const TRAINER_MODE = !!(TRAINER_NAME && TRAINER_KEY);
 
 let leads = [];
 let pollTimer = null;
-let showArchived = false; // Won/Lost leads are hidden from the board until toggled on
+let showArchived = false; // Contacted/Trial Booked/Won/Lost leads are hidden from the board until toggled on
+
+// A lead counts as "archived" the moment it's no longer sitting untouched —
+// i.e. anything past "New". That's Contacted, Trial Booked, Won, or Lost.
+// Once a trainer's made contact, the lead has done its job cluttering the
+// board and drops off automatically; "Show archived" brings it all back.
+function isArchivedStatus(status){
+  return (status || "New") !== "New";
+}
 let trainerTab = "New"; // trainer-mode only: which status tab is currently selected
 
 function $(id){ return document.getElementById(id); }
@@ -628,10 +636,11 @@ function ageLabel(iso){
 }
 
 function matchesFilters(l){
-  // Won/Lost leads are archived off the board by default — they're done,
-  // and leaving them in a trainer's column forever is exactly the clutter
-  // that makes a 50-lead column unreadable. Toggle "Show archived" to see them.
-  if(!showArchived && (l.status === "Won" || l.status === "Lost")) return false;
+  // Leads are archived off the board as soon as they've been contacted —
+  // they're being worked, and leaving them in a trainer's column forever is
+  // exactly the clutter that makes a 50-lead column unreadable. Toggle
+  // "Show archived" to see them.
+  if(!showArchived && isArchivedStatus(l.status)) return false;
 
   const q = $("searchBox").value.trim().toLowerCase();
   if(!q) return true;
@@ -641,7 +650,7 @@ function matchesFilters(l){
 }
 
 function computeStats(){
-  const activeLeads = leads.filter(l => l.status !== "Won" && l.status !== "Lost");
+  const activeLeads = leads.filter(l => !isArchivedStatus(l.status));
   const unassigned = activeLeads.filter(l => !l.trainer);
   const overdue = activeLeads.filter(l => ageLabel(l.receivedAt).overdue);
   const weekAgo = Date.now() - 7*24*3600*1000;
@@ -687,7 +696,7 @@ function renderAttention(){
   const row = $("attentionRow");
   row.innerHTML = "";
   const candidates = leads.filter(l =>
-    matchesFilters(l) && l.status !== "Won" && l.status !== "Lost" &&
+    matchesFilters(l) && !isArchivedStatus(l.status) &&
     (!l.trainer || ageLabel(l.receivedAt).overdue)
   );
   candidates.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
@@ -746,7 +755,7 @@ function renderWorkload(){
   const row = $("workloadRow");
   row.innerHTML = "";
   TRAINERS.forEach(t => {
-    const theirLeads = leads.filter(l => l.trainer === t && l.status !== "Won" && l.status !== "Lost");
+    const theirLeads = leads.filter(l => l.trainer === t && !isArchivedStatus(l.status));
     const chip = document.createElement("div");
     chip.className = "workload-chip";
     let oldestText = "No active leads";
