@@ -8,13 +8,13 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --y:#C8FF00;--yd:#a8d600;--y3:rgba(200,255,0,0.12);--y4:rgba(200,255,0,0.06);
+  --y:#C8F000;--yd:#a8d600;--y3:rgba(200,240,0,0.12);--y4:rgba(200,240,0,0.06);
   --b:#0a0a0a;--s:#111110;--s2:#161615;--s3:#1c1c1a;--s4:#242422;
-  --br:rgba(200,255,0,0.18);--br2:rgba(245,245,242,0.1);--br3:rgba(245,245,242,0.18);
+  --br:rgba(200,240,0,0.18);--br2:rgba(245,245,242,0.1);--br3:rgba(245,245,242,0.18);
   --t:#f5f5f2;--t2:rgba(245,245,242,0.7);--m:rgba(245,245,242,0.42);
   --g:#39d98a;--r:#ff4444;--blue:#5fa8e0;--purple:#a78bfa;
   --font-mono:'JetBrains Mono',monospace;
-  --rad:6px;--rad-s:3px;
+  --rad:2px;--rad-s:2px;
 }
 html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
 
@@ -29,17 +29,17 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .nav-item{position:relative;display:flex;align-items:stretch}
 .nav-btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:0 22px;height:50px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:7px;border-bottom:2px solid transparent;user-select:none}
 .nav-btn:hover{color:var(--t);background:rgba(255,255,255,.04)}
-.nav-btn.active{color:var(--y);border-bottom-color:var(--y);background:rgba(200,255,0,.04)}
+.nav-btn.active{color:var(--y);border-bottom-color:var(--y);background:rgba(200,240,0,.04)}
 .nav-btn .arrow{font-size:9px;transition:transform .2s;opacity:.4}
 .nav-btn.open .arrow{transform:rotate(180deg);opacity:1}
 .nav-icon{font-size:16px}
 
 /* Dropdown */
-.nav-dropdown{display:none;position:absolute;top:100%;left:0;background:var(--s);border:1px solid var(--br3);border-radius:0 14px 14px 14px;min-width:220px;padding:8px;z-index:200;box-shadow:0 20px 50px rgba(0,0,0,.8)}
+.nav-dropdown{display:none;position:absolute;top:100%;left:0;background:var(--s);border:1px solid var(--br3);border-radius:0;min-width:220px;padding:8px;z-index:200;box-shadow:0 12px 32px rgba(0,0,0,.6)}
 .nav-dropdown.open{display:block;animation:fadeIn .15s ease}
 .nav-dd-item{font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;border-radius:4px;cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:10px;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
-.nav-dd-item:hover{background:rgba(200,255,0,.1);color:var(--y)}
-.nav-dd-item.active{background:rgba(200,255,0,.12);color:var(--y);font-weight:600}
+.nav-dd-item:hover{background:rgba(200,240,0,.1);color:var(--y)}
+.nav-dd-item.active{background:rgba(200,240,0,.12);color:var(--y);font-weight:600}
 .nav-dd-item .dd-icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .nav-dd-divider{height:1px;background:var(--br2);margin:4px 8px}
 .nav-dd-item.active::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--y);margin-left:auto;flex-shrink:0}
@@ -76,7 +76,7 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .src-live{color:var(--g);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.4)}
 .src-live::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--g);margin-right:4px;vertical-align:middle;animation:pulse 2s infinite}
 .src-hist{color:var(--t2);background:rgba(176,176,176,.1);border:1px solid rgba(176,176,176,.3)}
-.src-target{color:var(--y);background:rgba(200,255,0,.1);border:1px solid rgba(200,255,0,.35)}
+.src-target{color:var(--y);background:rgba(200,240,0,.1);border:1px solid rgba(200,240,0,.35)}
 /* Movement panel */
 .move-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
 .move{background:var(--s2);border:1px solid var(--br2);border-radius:var(--rad-s);padding:16px 18px}
@@ -119,29 +119,29 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .bv2{font-size:13px;font-weight:600;min-width:60px;text-align:right;flex-shrink:0;color:var(--t2)}
 
 /* ── INSIGHT / ALERT / REC ── */
-.insight{background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.15);border-left:4px solid var(--y);border-radius:0 14px 14px 0;padding:20px 24px;margin-bottom:16px;transition:border-color .2s}
-.insight:hover{border-color:rgba(200,255,0,.3);border-left-color:var(--y)}
+.insight{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--y);border-radius:0;padding:18px 22px;margin-bottom:16px;transition:border-color .2s}
+.insight:hover{border-color:var(--br3);border-left-color:var(--y)}
 .it{font-size:14px;font-weight:700;color:var(--y);margin-bottom:8px;letter-spacing:.2px}
 .ib{font-size:14px;color:var(--t2);line-height:1.75}
 
-.alert{background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.18);border-left:4px solid var(--r);border-radius:0 14px 14px 0;padding:20px 24px;margin-bottom:18px}
+.alert{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--r);border-radius:0;padding:18px 22px;margin-bottom:18px}
 .at{font-size:14px;font-weight:700;color:var(--r);margin-bottom:8px;letter-spacing:.2px}
 .ab{font-size:14px;color:var(--t2);line-height:1.75}
 
-.good-box{background:rgba(74,222,128,.04);border:1px solid rgba(74,222,128,.18);border-left:4px solid var(--g);border-radius:0 14px 14px 0;padding:20px 24px;margin-bottom:16px}
+.good-box{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--g);border-radius:0;padding:18px 22px;margin-bottom:16px}
 .gt{font-size:14px;font-weight:700;color:var(--g);margin-bottom:8px;letter-spacing:.2px}
 .gb{font-size:14px;color:var(--t2);line-height:1.75}
 
-.rec{background:var(--s2);border:1px solid var(--br2);border-left:4px solid var(--y);border-radius:0 14px 14px 0;padding:18px 22px;margin-bottom:14px;transition:border-color .2s}
+.rec{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--y);border-radius:0;padding:16px 20px;margin-bottom:14px;transition:border-color .2s}
 .rec:hover{border-color:var(--br3)}
 .rt{font-size:15px;font-weight:700;color:var(--t);margin-bottom:6px}
 .rb{font-size:14px;color:var(--t2);line-height:1.7}
 
 /* ── STATUS BADGES ── */
-.badge{font-size:11px;padding:4px 12px;border-radius:4px;font-weight:700;letter-spacing:.3px}
+.badge{font-size:11px;padding:4px 12px;border-radius:2px;font-weight:700;letter-spacing:.3px}
 .b-active{background:rgba(74,222,128,.15);color:var(--g)}
 .b-off{background:rgba(136,136,136,.12);color:var(--m)}
-.b-hot{background:rgba(200,255,0,.15);color:var(--y)}
+.b-hot{background:rgba(200,240,0,.15);color:var(--y)}
 .b-warn{background:rgba(248,113,113,.15);color:var(--r)}
 
 /* ── TABLES ── */
@@ -151,7 +151,7 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .tbl td:first-child{color:var(--t);font-weight:600}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:rgba(255,255,255,.03)}
-.tbl-divider td{background:rgba(200,255,0,.06);font-weight:700;color:var(--y);font-size:11px;padding:9px 16px;letter-spacing:.8px;text-transform:uppercase}
+.tbl-divider td{background:rgba(200,240,0,.06);font-weight:700;color:var(--y);font-size:11px;padding:9px 16px;letter-spacing:.8px;text-transform:uppercase}
 
 /* ── PROG BAR ── */
 .prog{height:6px;background:rgba(255,255,255,.07);border-radius:3px;margin-top:10px;overflow:hidden}
@@ -163,26 +163,26 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .ci:last-child{border-bottom:none}
 .ci:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:16px 10px;border-radius:4px}
 .ci-check{width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,.15);flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.ci-check:hover:not(.done){border-color:var(--y);background:rgba(200,255,0,.08)}
+.ci-check:hover:not(.done){border-color:var(--y);background:rgba(200,240,0,.08)}
 .ci-check.done{background:var(--y);border-color:var(--y)}
 .ci-check.done::after{content:'✓';font-size:13px;color:#000;font-weight:700}
 .ci-title{font-size:15px;font-weight:500;color:var(--t)}
 .ci-title.done-text{text-decoration:line-through;color:var(--m)}
-.ci-tag{font-size:11px;padding:2px 9px;border-radius:4px;background:rgba(200,255,0,.12);color:var(--y);margin-left:8px;font-weight:700}
+.ci-tag{font-size:11px;padding:2px 9px;border-radius:4px;background:rgba(200,240,0,.12);color:var(--y);margin-left:8px;font-weight:700}
 .ci-who{font-size:13px;color:var(--m);margin-top:4px}
 
 /* ── INPUTS ── */
 .inp{background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:12px 16px;font-size:15px;color:var(--t);font-family:'Inter',sans-serif;width:100%;transition:all .2s}
-.inp:focus{outline:none;border-color:var(--y);background:var(--s3);box-shadow:0 0 0 3px rgba(200,255,0,.08)}
+.inp:focus{outline:none;border-color:var(--y);background:var(--s3);box-shadow:0 0 0 3px rgba(200,240,0,.08)}
 .inp::placeholder{color:var(--m)}
 select.inp{cursor:pointer}
 .inp-lbl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;font-weight:700}
 .add-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
 .btn{background:var(--y);color:#000;border:none;border-radius:4px;padding:13px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap;letter-spacing:.3px}
-.btn:hover{background:var(--yd);transform:translateY(-1px);box-shadow:0 6px 16px rgba(200,255,0,.3)}
-.btn:active{transform:translateY(0)}
+.btn:hover{background:var(--yd)}
+
 .btn-ghost{background:transparent;border:1px solid var(--br2);border-radius:4px;padding:12px 20px;font-size:14px;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap}
-.btn-ghost:hover{border-color:var(--y);color:var(--y);background:rgba(200,255,0,.05)}
+.btn-ghost:hover{border-color:var(--y);color:var(--y);background:rgba(200,240,0,.05)}
 
 /* ── FUNNEL ── */
 .funnel-row{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s}
@@ -202,17 +202,17 @@ select.inp{cursor:pointer}
 
 /* ── TEXTAREA ── */
 .note-area{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:16px 18px;font-family:'Inter',sans-serif;font-size:15px;color:var(--t);resize:vertical;min-height:120px;line-height:1.7;transition:all .2s}
-.note-area:focus{outline:none;border-color:var(--y);box-shadow:0 0 0 3px rgba(200,255,0,.08)}
+.note-area:focus{outline:none;border-color:var(--y);box-shadow:0 0 0 3px rgba(200,240,0,.08)}
 .note-area::placeholder{color:var(--m)}
 
 /* ── OFFER CARDS ── */
 .offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
 @media(max-width:560px){.offer-grid{grid-template-columns:1fr}}
-.offer{background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:24px 24px;position:relative;transition:border-color .2s;cursor:default}
+.offer{background:var(--s);border:1px solid var(--br2);border-radius:2px;padding:24px 24px;position:relative;transition:border-color .2s;cursor:default}
 .offer:hover{border-color:rgba(255,255,255,.18)}
-.offer.hot{border-color:rgba(200,255,0,.3)}
-.offer.hot:hover{border-color:rgba(200,255,0,.5)}
-.otag{position:absolute;top:-1px;right:18px;background:var(--y);color:#000;font-size:10px;font-weight:700;padding:5px 14px;border-radius:0 0 10px 10px;text-transform:uppercase;letter-spacing:.8px}
+.offer.hot{border-color:rgba(200,240,0,.3)}
+.offer.hot:hover{border-color:rgba(200,240,0,.5)}
+.otag{position:absolute;top:-1px;right:18px;background:var(--y);color:#000;font-size:10px;font-weight:700;padding:5px 14px;border-radius:0;text-transform:uppercase;letter-spacing:.8px}
 .on-name{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--y);margin-bottom:8px;letter-spacing:.5px}
 .o-price{font-size:34px;font-weight:500;color:var(--t);margin-bottom:6px}
 .o-sub{font-size:14px;color:var(--m)}
@@ -220,7 +220,7 @@ select.inp{cursor:pointer}
 
 /* ── SAVE BUTTON ── */
 .save-btn{background:transparent;border:1px solid var(--br2);border-radius:4px;padding:9px 18px;font-size:13px;color:var(--m);cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;transition:all .2s}
-.save-btn:hover{border-color:var(--y);color:var(--y);background:rgba(200,255,0,.05)}
+.save-btn:hover{border-color:var(--y);color:var(--y);background:rgba(200,240,0,.05)}
 .save-btn.saved{color:var(--g);border-color:var(--g)}
 
 /* ── SCROLLBAR ── */
@@ -239,12 +239,12 @@ footer{text-align:center;padding:60px 40px 36px;color:var(--m);font-size:13px;bo
 button,a{-webkit-tap-highlight-color:transparent}
 
 /* ── HERO SNAPSHOT ── */
-.hero-snap{background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:28px 28px 26px;margin-bottom:22px}
+.hero-snap{background:var(--s);border:1px solid var(--br2);border-radius:2px;padding:28px 28px 26px;margin-bottom:22px}
 .hero-snap-badge{display:inline-block;color:var(--g);font-size:12.5px;font-weight:600;margin-bottom:14px}
 .hero-snap-headline{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--t);line-height:1;letter-spacing:.5px}
 .hero-snap-headline .hs-sub{font-family:'Inter',sans-serif;font-size:14px;color:var(--m);font-weight:400;margin-left:10px;letter-spacing:0}
 .hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:22px 0 20px}
-.hstat{background:var(--s2);border:1px solid var(--br2);border-radius:6px;padding:16px 18px}
+.hstat{background:var(--s2);border:1px solid var(--br2);border-radius:2px;padding:16px 18px}
 .hstat-l{font-size:10.5px;color:var(--m);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:7px}
 .hstat-v{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--t);line-height:1}
 .hstat-v.up{color:var(--g)}.hstat-v.down{color:var(--r)}
@@ -458,7 +458,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div style="font-size:13px;color:var(--t2);margin-bottom:20px" id="todo-strip-msg">Checking live data...</div>
 
   <div class="two" style="margin-bottom:20px">
-    <div class="card" style="border-color:rgba(200,255,0,.3)">
+    <div class="card" style="border-color:rgba(200,240,0,.3)">
       <div class="ct">🔥 Do today</div>
       <div id="todo-today-list"></div>
     </div>
@@ -520,7 +520,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic">"Hey [name], it's Tay from M2 Training Club! You signed up for a 3-day trial recently and I just wanted to check in  are you still keen to come in? Happy to book you a time that works. We've got pool, sauna, ice bath, and classes all included. Just reply here 💪"</div>
       <button class="btn-ghost" style="margin-top:12px;width:100%;font-size:13px" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)">View no-show list →</button>
     </div>
-    <div class="card" style="border-color:rgba(200,255,0,.3)">
+    <div class="card" style="border-color:rgba(200,240,0,.3)">
       <div class="ct">📧 Email  trials not yet converted</div>
       <div style="font-size:13px;color:var(--t2);margin-bottom:12px">Anyone who did a trial but hasn't joined yet. Send this within 48 hours of their last visit. Personalise with their name and what they tried.</div>
       <div style="font-size:12px;color:var(--m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Template email to send</div>
@@ -550,7 +550,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <!-- HERO SNAPSHOT · at-a-glance business position -->
   <div class="hero-snap">
     <div class="hero-snap-badge" style="background:var(--y);color:#000">◆ August's $1,731 loss was a rent catch-up entry, confirmed by Taylor  underlying trading stayed profitable</div>
-    <div class="hero-snap-headline">1,763 active memberships<span class="hs-sub">GymMaster export, 31 August 2026</span></div>
+    <div class="hero-snap-headline">1,943 active memberships<span class="hs-sub">GymMaster export, 7 September 2026</span></div>
 
     <div class="hero-stats">
       <div class="hstat">
@@ -577,10 +577,10 @@ button,a{-webkit-tap-highlight-color:transparent}
 
     <div class="hero-flags">
       <div class="flag watch">◆ August posted a $1,731 net loss on paper, but Taylor confirmed the $52,174 Building Rent charge (47.0% of revenue, from 31.2% in July) was a catch-up entry  strip it back to July's level and August clears roughly $15.7K profit</div>
-      <div class="flag watch">⚠ Fitness Passport is now 1,176 of 1,763 active memberships in this export (66.7%)  well above the &lt;45% dependency target and up from 54% a month ago</div>
+      <div class="flag watch">⚠ Fitness Passport is now 1,202 of 1,943 active memberships in this export (61.9%)  still well above the &lt;45% dependency target, though down from 66.7% in the 31 Aug export</div>
       <div class="flag win">✓ 120 new non-trial joins in August (78 Fitness Passport, 30 M2 New, 12 corporate) plus 114 three-day trial starts, 21 already converted to paying within the month</div>
       <div class="flag watch">⚠ 28 of August's 114 trial starts logged zero visits during their trial window</div>
-      <div class="flag watch">⚠ Member-base total in this export (1,763) doesn't reconcile cleanly with the 1,869 figure carried into August  worth a live GymMaster cross-check before treating either as final</div>
+      <div class="flag watch">⚠ Member-base total jumped from 1,763 (31 Aug export) to 1,943 in this 7 Sep export  worth a live GymMaster cross-check before treating the +180 jump as pure net growth rather than an export/reporting change</div>
     </div>
     <div class="hero-foot">Figures above are from the GymMaster CSV exports and August P&amp;L supplied 1 Sept 2026, not the live API feed. Full detail in Member Base, Profit &amp; Loss and Financials below. Live KPIs update from GymMaster every time you open this page.</div>
   </div>
@@ -672,7 +672,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- TRIAL SIGN-UP LIVE TICKER -->
   <div id="trial-ticker" style="margin-bottom:18px;display:none">
-    <div id="trial-flash" style="background:rgba(200,255,0,0.08);border:1px solid rgba(200,255,0,0.4);border-radius:6px;padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;animation:trialFlash 0.6s ease">
+    <div id="trial-flash" style="background:rgba(200,240,0,0.08);border:1px solid rgba(200,240,0,0.4);border-radius:6px;padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;animation:trialFlash 0.6s ease">
       <div style="width:48px;height:48px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;animation:pulse 2s infinite">🔥</div>
       <div style="flex:1">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);letter-spacing:1px;margin-bottom:2px">NEW TRIAL SIGN-UP</div>
@@ -689,7 +689,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div style="margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div id="trial-live-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{document.querySelector('.tnb.on')?.classList.remove('on');},10)" onmouseover="this.style.borderColor='var(--y)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
       <div style="position:relative">
-        <div style="width:44px;height:44px;border-radius:50%;background:rgba(200,255,0,0.12);border:2px solid var(--y);display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(200,240,0,0.12);border:2px solid var(--y);display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
         <div id="trial-dot" style="position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:var(--g);border:2px solid var(--b);animation:pulse 2s infinite;display:none"></div>
       </div>
       <div>
@@ -723,14 +723,14 @@ button,a{-webkit-tap-highlight-color:transparent}
       100%{transform:scale(1);opacity:1}
     }
     @keyframes ringPulse {
-      0%{box-shadow:0 0 0 0 rgba(200,255,0,0.6)}
-      70%{box-shadow:0 0 0 20px rgba(200,255,0,0)}
-      100%{box-shadow:0 0 0 0 rgba(200,255,0,0)}
+      0%{box-shadow:0 0 0 0 rgba(200,240,0,0.6)}
+      70%{box-shadow:0 0 0 20px rgba(200,240,0,0)}
+      100%{box-shadow:0 0 0 0 rgba(200,240,0,0)}
     }
     .trial-ring { animation: ringPulse 1s ease-out 3; }
   </style>
 
-  <div class="alert"><div class="at">Membership income is down 9.6% YoY despite more members</div><div class="ab">More members but lower average revenue per member  driven by the shift toward Fitness Passport ($24/mo avg) replacing owned memberships ($108–195/mo). Your 235 Premium members generate more revenue than your 1,176 Passport members combined (per the August GymMaster export). Every new Perform/Gateway member is worth 8× a Passport member.</div></div>
+  <div class="alert"><div class="at">Membership income is down 9.6% YoY despite more members</div><div class="ab">More members but lower average revenue per member  driven by the shift toward Fitness Passport ($24/mo avg) replacing owned memberships ($108–195/mo). Your 251 Premium members generate more revenue than your 1,202 Passport members combined (per the 7 Sep GymMaster export). Every new Perform/Gateway member is worth 8× a Passport member.</div></div>
 
   <div class="two">
     <div class="card">
@@ -901,7 +901,7 @@ button,a{-webkit-tap-highlight-color:transparent}
           <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">✅ GREEN  Scale it</div>
           <div style="font-size:13px;color:var(--t2)">CPV under $0.40 · CTR above 1.5% · Frequency under 2.5× · CPM under $6 · Steady or rising LPVs</div>
         </div>
-        <div style="background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.2);border-radius:6px;padding:16px">
+        <div style="background:rgba(200,240,0,.04);border:1px solid rgba(200,240,0,.2);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">⚠️ YELLOW  Watch & tweak</div>
           <div style="font-size:13px;color:var(--t2)">CPV $0.40–$0.65 · CTR 0.8–1.5% · Frequency 2.5–3.5× · CPM $6–10 · Flat or small dip in LPVs</div>
         </div>
@@ -916,7 +916,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card" style="margin-bottom:18px">
       <div class="ct">Your 3 campaigns  what the numbers tell you</div>
 
-      <div style="border:1px solid rgba(200,255,0,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(200,255,0,.02)">
+      <div style="border:1px solid rgba(200,240,0,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(200,240,0,.02)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
           <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y)">3 DAY TRIAL</span>
           <span class="badge b-hot">Hot · $1,441/mo</span>
@@ -1067,7 +1067,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- LIVE CONVERSION TRACKER -->
   <div class="two" style="margin-bottom:18px">
-    <div class="card" style="border-color:rgba(200,255,0,.25)">
+    <div class="card" style="border-color:rgba(200,240,0,.25)">
       <div class="ct curmonth" data-tpl="Live {M} funnel">Live May funnel</div>
       <div id="tl-live-funnel">
         <div class="funnel-row"><div class="fn" id="fn-trials"></div><div class="fl">Trial sign-ups this month<div class="prog"><div class="pf" id="fp-trials" style="width:100%"></div></div></div><div class="fb" style="color:var(--y)">100%</div></div>
@@ -1247,7 +1247,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-sub">Live from GymMaster · Updates every time you open this page</div>
   <div class="kg">
     <div class="kpi"><div class="kl">Total members</div><div class="kv" id="mb-total"></div><div class="ks" id="mb-total-sub">Loading...</div></div>
-    <div class="kpi"><div class="kl">Fitness Passport</div><div class="kv">1,176</div><div class="ks r">66.7% of active exports, Aug 31</div></div>
+    <div class="kpi"><div class="kl">Fitness Passport</div><div class="kv">1,202</div><div class="ks r">61.9% of active memberships, 7 Sep export</div></div>
     <div class="kpi"><div class="kl">Visiting members</div><div class="kv" id="mb-visiting"></div><div class="ks" id="mb-visiting-sub">Loading...</div></div>
     <div class="kpi"><div class="kl">New members (month)</div><div class="kv" id="mb-new"></div><div class="ks" id="mb-new-sub">Loading...</div></div>
     <div class="kpi"><div class="kl">Churn rate</div><div class="kv" id="mb-churn"></div><div class="ks" id="mb-churn-sub">Loading...</div></div>
@@ -1362,7 +1362,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div style="font-size:13px;font-weight:700;color:var(--t2);margin-bottom:8px">📉 Conservative  $1.31M</div>
       <div style="font-size:13px;color:var(--m);line-height:1.7">Current pace holds. No major growth or decline. Assumes ~$111.6K/month flat from July onwards. Churn stays around 1.5–2%. No new campaigns launched.</div>
     </div>
-    <div style="background:rgba(200,255,0,.04);border:1px solid rgba(200,255,0,.2);border-top:3px solid var(--y);border-radius:6px;padding:18px">
+    <div style="background:rgba(200,240,0,.04);border:1px solid rgba(200,240,0,.2);border-top:3px solid var(--y);border-radius:6px;padding:18px">
       <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">📊 Base Case  $1.36M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">3% monthly revenue growth. Steady member gains (+45/mo net), Passport income continuing to grow, Meta ads maintained. Realistic if you keep doing what you're doing and fix source tracking.</div>
     </div>
@@ -1463,8 +1463,8 @@ button,a{-webkit-tap-highlight-color:transparent}
 
       // Divider line (actual vs forecast)
       const divX=xPos(actuals.length-1);
-      const divLine=`<line x1="${divX}" y1="${PT}" x2="${divX}" y2="${PT+chartH}" stroke="rgba(200,255,0,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
-        <text x="${divX+6}" y="${PT+14}" font-size="10" fill="rgba(200,255,0,0.6)">FORECAST →</text>`;
+      const divLine=`<line x1="${divX}" y1="${PT}" x2="${divX}" y2="${PT+chartH}" stroke="rgba(200,240,0,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="${divX+6}" y="${PT+14}" font-size="10" fill="rgba(200,240,0,0.6)">FORECAST →</text>`;
 
       // Actual line
       const actualPts=actuals.map((d,i)=>`${xPos(i)},${yScale(d.v)}`).join(' ');
@@ -1476,7 +1476,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       const offset=actuals.length-1;
       const fTypes=[
         {key:'conservative',data:conservative,color:'#888',dash:'6,4',label:'Conservative'},
-        {key:'base',data:baseCase,color:'#C8FF00',dash:'',label:'Base case'},
+        {key:'base',data:baseCase,color:'#C8F000',dash:'',label:'Base case'},
         {key:'optimistic',data:optimistic,color:'#4ade80',dash:'',label:'Optimistic'},
       ];
       fTypes.forEach(ft=>{
@@ -1629,7 +1629,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   </div>
 
   <div id="offers-upsell" class="tab-pnl">
-    <div class="insight"><div class="it">284 Daily/Entry members at $25/wk  biggest upsell pool</div><div class="ib">Converting 20% to Perform ($45/wk) = 57 members × $20/wk extra = $1,140/wk = $4,936/month. No new members, no ad spend.</div></div>
+    <div class="insight"><div class="it">402 Daily/Entry members at $25/wk  biggest upsell pool</div><div class="ib">Converting 20% to Perform ($45/wk) = 80 members × $20/wk extra = $1,600/wk = $6,933/month. No new members, no ad spend.</div></div>
     <div class="card">
       <div class="ct">Daily → Perform upsell ($25 → $45/wk)</div>
       <div class="row"><span class="rl">Daily/Entry members</span><span class="rv">284</span></div>
@@ -1740,7 +1740,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);letter-spacing:2px" id="cal-title"></div>
     <button class="btn-ghost" onclick="nextMonth()">Next →</button>
     <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-      <span style="font-size:10px;background:rgba(200,255,0,.15);color:var(--y);padding:3px 8px;border-radius:4px">Reel</span>
+      <span style="font-size:10px;background:rgba(200,240,0,.15);color:var(--y);padding:3px 8px;border-radius:4px">Reel</span>
       <span style="font-size:10px;background:rgba(96,165,250,.15);color:var(--blue);padding:3px 8px;border-radius:4px">Story</span>
       <span style="font-size:10px;background:rgba(167,139,250,.15);color:var(--purple);padding:3px 8px;border-radius:4px">Carousel</span>
       <span style="font-size:10px;background:rgba(74,222,128,.15);color:var(--g);padding:3px 8px;border-radius:4px">Static</span>
@@ -1938,7 +1938,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addContent()">+ Add</button></div>
   </div>
   <div class="card">
-    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(200,255,0,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:4px;margin-left:4px"></span></div>
+    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(200,240,0,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:4px;margin-left:4px"></span></div>
     <div id="ct-todo"></div>
   </div>
   <div class="card">
@@ -2122,7 +2122,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div class="row" style="font-size:12px"><span class="rl">New members/mo</span><span class="rv">+20 net</span></div>
         <div class="row" style="font-size:12px"><span class="rl">Net profit est</span><span class="rv r">~-$48K/yr</span></div>
       </div>
-      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(200,255,0,.25)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(200,240,0,.25)">
         <div style="font-size:11px;color:var(--y);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Target</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--y);margin-bottom:4px">$1.44M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">+45 net members/month</div>
@@ -2216,13 +2216,10 @@ button,a{-webkit-tap-highlight-color:transparent}
   </div>
 
   <div class="card" style="border-color:rgba(255,68,68,0.25)">
-    <div class="ct">Fitness Passport visit retention <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">snapshot from GymMaster export, verified 19 Aug 2026 · refreshes monthly</span></div>
-    <div class="row"><span class="rl">Total current Fitness Passport members</span><span class="rv">1,143</span></div>
-    <div class="row"><span class="rl">Visited since 1 Jul 2026</span><span class="rv g">683 (60%)</span></div>
-    <div class="row"><span class="rl">Not visited since 1 Jul 2026</span><span class="rv r">461 (40%)</span></div>
-    <div class="row"><span class="rl">↳ Lapsed (used to come, stopped)</span><span class="rv r">435</span></div>
-    <div class="row"><span class="rl">↳ Never visited at all</span><span class="rv r">26</span></div>
-    <div class="row"><span class="rl">Why this matters</span><span class="rv y">You're paid per visit for these members, 461 are currently earning $0</span></div>
+    <div class="ct">Fitness Passport visit retention <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">total from GymMaster export, verified 7 Sep 2026 · visit-cutoff breakdown pending next monthly export</span></div>
+    <div class="row"><span class="rl">Total current Fitness Passport members</span><span class="rv">1,202</span></div>
+    <div class="row"><span class="rl">Visited since cutoff</span><span class="rv y">Awaiting next monthly export (needs last-visit-date data, not in this week's file)</span></div>
+    <div class="row"><span class="rl">Why this matters</span><span class="rv y">You're paid per visit for these members  a lapsed cohort earns $0</span></div>
   </div>
 
   <div class="two">
@@ -2368,7 +2365,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   </div>
 
   <!-- LIVE PROJECTION -->
-  <div class="card" style="border-color:rgba(200,255,0,.3)">
+  <div class="card" style="border-color:rgba(200,240,0,.3)">
     <div class="ct"><span class="curmonth" data-tpl="{MY} projection">September 2026 projection</span>
       <span id="pp-live-badge" style="display:none;align-items:center;gap:4px;font-size:10px;color:var(--g);background:rgba(74,222,128,.1);padding:2px 8px;border-radius:4px;margin-left:8px">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--g);display:inline-block;animation:pulse 2s infinite"></span>
@@ -2448,13 +2445,13 @@ button,a{-webkit-tap-highlight-color:transparent}
             <tr><td>Oct 25</td><td>2,743</td><td>$21,466</td><td style="color:var(--m)">$7.83</td></tr>
             <tr><td>Nov 25</td><td>2,594</td><td>$20,629</td><td style="color:var(--m)">$7.95</td></tr>
             <tr><td>Dec 25</td><td>2,444</td><td>$19,314</td><td style="color:var(--m)">$7.90</td></tr>
-            <tr style="background:rgba(200,255,0,.04)"><td style="color:var(--y)">Jan 26</td><td>2,177</td><td>$17,037</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,255,0,.04)"><td style="color:var(--y)">Feb 26</td><td>2,653</td><td>$20,762</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,255,0,.04)"><td style="color:var(--y)">Mar 26</td><td>2,544</td><td>$19,090</td><td style="color:var(--m)">$7.50</td></tr>
-            <tr style="background:rgba(200,255,0,.04)"><td style="color:var(--y)">Apr 26</td><td>2,772</td><td>$21,700</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,255,0,.04)"><td style="color:var(--y)">May 26</td><td>2,787</td><td>$21,819</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,255,0,.04)"><td style="color:var(--y)">Jun 26</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">n/a</td></tr>
-            <tr style="background:rgba(200,255,0,.04)"><td style="color:var(--y)">Jul 26</td><td>4,246</td><td>$18,176</td><td style="color:var(--r)">$4.28</td></tr>
+            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jan 26</td><td>2,177</td><td>$17,037</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Feb 26</td><td>2,653</td><td>$20,762</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Mar 26</td><td>2,544</td><td>$19,090</td><td style="color:var(--m)">$7.50</td></tr>
+            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Apr 26</td><td>2,772</td><td>$21,700</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">May 26</td><td>2,787</td><td>$21,819</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jun 26</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">n/a</td></tr>
+            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jul 26</td><td>4,246</td><td>$18,176</td><td style="color:var(--r)">$4.28</td></tr>
             <tr style="background:rgba(74,222,128,.05)"><td style="color:var(--g);font-weight:500">Aug 26</td><td style="color:var(--g);font-weight:500">4,497</td><td style="color:var(--g);font-weight:500">$31,201</td><td style="color:var(--r)">$6.94</td></tr>
           </tbody>
         </table>
@@ -2895,7 +2892,7 @@ renderScorecards();
 let calYear=2026, calMonth=4; // 0-indexed, so 4=May
 let calPosts=JSON.parse(localStorage.getItem('m2-cal-posts')||'{}');
 let selectedDay=null;
-const typeColors={'Reel':'rgba(200,255,0,.2)','Story':'rgba(96,165,250,.2)','Carousel':'rgba(167,139,250,.2)','Static':'rgba(74,222,128,.2)','Meta Ad':'rgba(248,113,113,.2)'};
+const typeColors={'Reel':'rgba(200,240,0,.2)','Story':'rgba(96,165,250,.2)','Carousel':'rgba(167,139,250,.2)','Static':'rgba(74,222,128,.2)','Meta Ad':'rgba(248,113,113,.2)'};
 const typeTextColors={'Reel':'var(--y)','Story':'var(--blue)','Carousel':'var(--purple)','Static':'var(--g)','Meta Ad':'var(--r)'};
 const statusDot={'draft':'⚪','scheduled':'🟡','posted':'🟢'};
 
@@ -2912,7 +2909,7 @@ function renderCalendar() {
     const posts=calPosts[key]||[];
     const isToday=d===5&&calMonth===4&&calYear===2026;
     const postPips=posts.slice(0,3).map(p=>`<div style="font-size:8px;padding:1px 4px;border-radius:3px;background:${typeColors[p.type]||'rgba(255,255,255,.1)'};color:${typeTextColors[p.type]||'var(--t)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px">${statusDot[p.status]||''} ${p.type}</div>`).join('');
-    html+=`<div onclick="openDay('${key}',${d})" style="background:${isToday?'rgba(200,255,0,.08)':'var(--s)'};border:1px solid ${isToday?'var(--y)':'var(--br)'};border-radius:6px;padding:5px;min-height:64px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--y)'" onmouseout="this.style.borderColor='${isToday?'var(--y)':'var(--br)'}'">
+    html+=`<div onclick="openDay('${key}',${d})" style="background:${isToday?'rgba(200,240,0,.08)':'var(--s)'};border:1px solid ${isToday?'var(--y)':'var(--br)'};border-radius:6px;padding:5px;min-height:64px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--y)'" onmouseout="this.style.borderColor='${isToday?'var(--y)':'var(--br)'}'">
       <div style="font-size:11px;font-weight:500;color:${isToday?'var(--y)':'var(--t)'};margin-bottom:3px">${d}</div>
       ${postPips}
       ${posts.length>3?`<div style="font-size:8px;color:var(--m)">+${posts.length-3} more</div>`:''}
@@ -2967,7 +2964,7 @@ let campaigns=JSON.parse(localStorage.getItem('m2-campaigns')||'null');
 if(!campaigns) campaigns=[
   {id:1,name:'September Spring Push',obj:'Trial sign-ups',channel:'Meta Ads',start:'2026-08-24',budget:3600,status:'planned',notes:'Pre-empt the Sep danger month. Start last week Aug.'},
   {id:2,name:'Referral Programme Launch',obj:'Referrals',channel:'In-gym',start:'2026-05-15',budget:0,status:'planned',notes:'Refer a mate = 1 week free. Target: double WOM from 23 to 45+ trials/month.'},
-  {id:3,name:'Daily→Perform Upsell Campaign',obj:'Member upsell',channel:'Email/SMS',start:'2026-05-12',budget:0,status:'planned',notes:'Target 284 Daily/Entry members. Upgrade to Perform. +$20/wk. 20% conversion = +$4,936/mo.'},
+  {id:3,name:'Daily→Perform Upsell Campaign',obj:'Member upsell',channel:'Email/SMS',start:'2026-05-12',budget:0,status:'planned',notes:'Target 402 Daily/Entry members. Upgrade to Perform. +$20/wk. 20% conversion = +$6,933/mo.'},
   {id:4,name:'Female Audience Ad Set',obj:'Trial sign-ups',channel:'Meta Ads',start:'2026-05-15',budget:600,status:'planned',notes:'Bekka content. Target women 25–40 Auckland. Close gender gap (currently 36% female trials).'},
   {id:5,name:'Low-Visit Re-engagement',obj:'Retention',channel:'Email/SMS',start:'2026-05-08',budget:0,status:'planned',notes:'271 members with <5 visits. "We miss you  free class this week." Target 20% response.'},
 ];
@@ -4320,13 +4317,14 @@ const MS_HIST = [
   { m:'Feb 26', ym:'2026-02', total:1629, fp:864, est:false },
   { m:'Mar 26', ym:'2026-03', total:1639, fp:829, est:false },
   { m:'Apr 26', ym:'2026-04', total:1685, fp:903, est:false },
+  { m:'Sep 26', ym:'2026-09', total:1943, fp:1202, est:false },
 ];
 
 // Current Fitness Passport member count. GymMaster's kpi.* endpoints expose the
 // live TOTAL but not the FP-only count (that needs a member-type query the worker
 // does not yet proxy). Update this one number when FP changes; M2 Direct is then
 // derived live as (live total − FP) and tracks the live total automatically.
-const FP_CURRENT = 950;
+const FP_CURRENT = 1202;
 
 async function buildMemberSplit() {
   // Render immediately with historical data  never blank
@@ -4407,11 +4405,11 @@ async function _renderMemberSplit(dataset) {
         {
           label: 'M2 Direct',
           data: m2Data,
-          borderColor: '#C8FF00',
-          backgroundColor: 'rgba(200,255,0,0.07)',
+          borderColor: '#C8F000',
+          backgroundColor: 'rgba(200,240,0,0.07)',
           borderWidth: 2,
           pointRadius: rows.map((r,i) => r.live ? 6 : 3),
-          pointBackgroundColor: rows.map(r => r.live ? '#C8FF00' : '#C8FF00'),
+          pointBackgroundColor: rows.map(r => r.live ? '#C8F000' : '#C8F000'),
           pointBorderColor: '#0f0f0f',
           pointBorderWidth: 2,
           tension: 0.35,
