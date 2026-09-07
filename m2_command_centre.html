@@ -1307,10 +1307,10 @@ button,a{-webkit-tap-highlight-color:transparent}
   <!-- FORECAST KPI STRIP -->
   <div class="kg" style="margin-bottom:18px">
     <div class="kpi"><div class="kl">2025 full year</div><div class="kv">$1.19M</div><div class="ks">Actual trading income</div></div>
-    <div class="kpi"><div class="kl">2026 run rate (actual)</div><div class="kv">$1.29M</div><div class="ks g">Based on Jan–Jul avg</div></div>
-    <div class="kpi"><div class="kl">Conservative 2026 forecast</div><div class="kv" style="font-size:32px">$1.31M</div><div class="ks">Flat from current pace</div></div>
-    <div class="kpi"><div class="kl">Base case 2026 forecast</div><div class="kv" style="font-size:32px;color:var(--y)">$1.36M</div><div class="ks y">+3% MoM growth</div></div>
-    <div class="kpi"><div class="kl">Optimistic 2026 forecast</div><div class="kv" style="font-size:32px;color:var(--g)">$1.40M</div><div class="ks g">+5% MoM growth</div></div>
+    <div class="kpi"><div class="kl">2026 run rate (actual)</div><div class="kv">$1.29M</div><div class="ks g">Based on Jan–Aug avg</div></div>
+    <div class="kpi"><div class="kl">Conservative 2026 forecast</div><div class="kv" style="font-size:32px">$1.30M</div><div class="ks">Flat from current pace</div></div>
+    <div class="kpi"><div class="kl">Base case 2026 forecast</div><div class="kv" style="font-size:32px;color:var(--y)">$1.34M</div><div class="ks y">+3% MoM growth</div></div>
+    <div class="kpi"><div class="kl">Optimistic 2026 forecast</div><div class="kv" style="font-size:32px;color:var(--g)">$1.36M</div><div class="ks g">+5% MoM growth</div></div>
     <div class="kpi"><div class="kl">Best month ever</div><div class="kv">$112.9K</div><div class="ks y">Feb 2026</div></div>
   </div>
 
@@ -1361,11 +1361,11 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div style="font-size:13px;color:var(--m);line-height:1.7">Current pace holds. No major growth or decline. Assumes ~$111.6K/month flat from July onwards. Churn stays around 1.5–2%. No new campaigns launched.</div>
     </div>
     <div style="background:rgba(200,240,0,.04);border:1px solid rgba(200,240,0,.2);border-top:3px solid var(--y);border-radius:6px;padding:18px">
-      <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">📊 Base Case  $1.36M</div>
+      <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">📊 Base Case  $1.34M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">3% monthly revenue growth. Steady member gains (+45/mo net), Passport income continuing to grow, Meta ads maintained. Realistic if you keep doing what you're doing and fix source tracking.</div>
     </div>
     <div style="background:rgba(200,240,0,.05);border:1px solid rgba(200,240,0,.2);border-top:3px solid var(--g);border-radius:6px;padding:18px">
-      <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">🚀 Optimistic  $1.40M</div>
+      <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">🚀 Optimistic  $1.36M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">5% monthly revenue growth. Hit 2,000+ members by Dec, launch referral programme, upsell 10% of daily members to Perform, female ad set delivers. Achievable but requires execution on all fronts.</div>
     </div>
   </div>
@@ -1382,10 +1382,10 @@ button,a{-webkit-tap-highlight-color:transparent}
       {m:'Jan 25',v:95500},{m:'Feb 25',v:94900},{m:'Mar 25',v:110800},{m:'Apr 25',v:109800},
       {m:'May 25',v:98200},{m:'Jun 25',v:99100},{m:'Jul 25',v:100800},{m:'Aug 25',v:96000},
       {m:'Sep 25',v:100300},{m:'Oct 25',v:100500},{m:'Nov 25',v:90800},{m:'Dec 25',v:95600},
-      {m:'Jan 26',v:91900},{m:'Feb 26',v:112900},{m:'Mar 26',v:111000},{m:'Apr 26',v:105000},{m:'May 26',v:108905},{m:'Jun 26',v:108529},{m:'Jul 26',v:111614}
+      {m:'Jan 26',v:89744},{m:'Feb 26',v:112312},{m:'Mar 26',v:111434},{m:'Apr 26',v:105335},{m:'May 26',v:108908},{m:'Jun 26',v:108529},{m:'Jul 26',v:111614},{m:'Aug 26',v:110994}
     ];
-    const forecastMonths = ['Aug 26','Sep 26','Oct 26','Nov 26','Dec 26'];
-    const base = 111614;
+    const forecastMonths = ['Sep 26','Oct 26','Nov 26','Dec 26'];
+    const base = 110994;
     const conservative = forecastMonths.map((_,i)=>Math.round(base * Math.pow(1.00,i)));
     const baseCase     = forecastMonths.map((_,i)=>Math.round(base * Math.pow(1.03,i+1)));
     const optimistic   = forecastMonths.map((_,i)=>Math.round(base * Math.pow(1.05,i+1)));
@@ -1394,7 +1394,6 @@ button,a{-webkit-tap-highlight-color:transparent}
     const tbody = document.getElementById('fc-tbody');
     if(tbody){
       const assumptions = [
-        'Referral programme soft launch',
         'Female ad set live',
         '+45 members net maintained',
         'Spring campaign pre-empts Sep dip',
@@ -1956,8 +1955,8 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="kpi"><div class="kl">Aug 26 Revenue</div><div class="kv">$111.0K</div><div class="ks g">Gross income</div><div class="kd flat">▼ flat vs $111.6K Jul</div></div>
     <div class="kpi"><div class="kl">Aug 26 OPEX</div><div class="kv">$112.3K</div><div class="ks r">Operating costs</div><div class="kd down" style="color:var(--r)">▲ up vs $96.7K Jul</div></div>
     <div class="kpi"><div class="kl">Aug 26 Net Profit</div><div class="kv r" style="color:var(--r)">-$1,731</div><div class="ks r">-1.6% margin</div><div class="kd down" style="color:#C8F000">◆ confirmed rent catch-up, not trading</div></div>
-    <div class="kpi"><div class="kl">12mo Net Profit</div><div class="kv r" style="color:var(--r)">-$29.4K</div><div class="ks r">6 of 12 months profitable</div><div class="kd flat">Sep25–Aug26 window · still dragged by Jan's $73.7K one-off hit</div></div>
-    <div class="kpi"><div class="kl">Best month</div><div class="kv">$14.2K</div><div class="ks g">Jul 26 · Feb 2nd, May 3rd</div><div class="kd up">Jul, Feb, May remain 2026's top 3</div></div>
+    <div class="kpi"><div class="kl">12mo Net Profit</div><div class="kv r" style="color:var(--r)">-$27.8K</div><div class="ks r">6 of 12 months profitable</div><div class="kd flat">Sep25–Aug26 window · still dragged by Jan's $73.7K one-off hit</div></div>
+    <div class="kpi"><div class="kl">Best month</div><div class="kv">$15.5K</div><div class="ks g">May 26 · Feb 2nd, Jul 3rd</div><div class="kd up">May, Feb, Jul remain 2026's top 3</div></div>
     <div class="kpi"><div class="kl">Rent % of revenue</div><div class="kv" style="color:var(--r)">47.0%</div><div class="ks r">Aug 26 · biggest cost by far</div><div class="kd down" style="color:var(--r)">▲ up 15.8pt vs Jul's 31.2%</div></div>
   </div>
 
@@ -1979,10 +1978,10 @@ button,a{-webkit-tap-highlight-color:transparent}
         <thead><tr><th>Month</th><th>Revenue</th><th>Gross Profit</th><th>OPEX</th><th>Net Profit</th><th>NP Margin</th></tr></thead>
         <tbody>
           <tr><td>Aug 2026</td><td style="color:var(--t)">$110,994</td><td>$110,559</td><td style="color:var(--r)">$112,290 ⚠</td><td style="color:var(--r)">-$1,731</td><td style="color:var(--r)">-1.6%</td></tr>
-          <tr><td>Jul 2026</td><td style="color:var(--t)">$111,614</td><td>$110,897</td><td>$96,688</td><td style="color:var(--g)">+$14,209</td><td style="color:var(--g)">12.7%</td></tr>
-          <tr><td>Jun 2026</td><td style="color:var(--t)">$108,529</td><td>$108,415</td><td>$98,923</td><td style="color:var(--g)">+$9,492</td><td style="color:var(--g)">8.7%</td></tr>
-          <tr><td>May 2026</td><td style="color:var(--t)">$108,905</td><td>$108,772</td><td>$97,145</td><td style="color:var(--g)">+$11,627</td><td style="color:var(--g)">10.7%</td></tr>
-          <tr><td>Apr 2026</td><td>$104,972</td><td>$104,363</td><td>$102,993</td><td style="color:var(--g)">+$1,370</td><td style="color:var(--g)">1.3%</td></tr>
+          <tr><td>Jul 2026</td><td style="color:var(--t)">$111,614</td><td>$110,897</td><td style="color:var(--r)">$98,383</td><td style="color:var(--g)">+$12,514</td><td style="color:var(--g)">11.2%</td></tr>
+          <tr><td>Jun 2026</td><td style="color:var(--t)">$108,529</td><td>$108,415</td><td>$99,742</td><td style="color:var(--g)">+$8,673</td><td style="color:var(--g)">8.0%</td></tr>
+          <tr><td>May 2026</td><td style="color:var(--t)">$108,908</td><td>$108,775</td><td>$93,232</td><td style="color:var(--g)">+$15,543</td><td style="color:var(--g)">14.3%</td></tr>
+          <tr><td>Apr 2026</td><td>$105,335</td><td>$104,727</td><td>$103,121</td><td style="color:var(--g)">+$1,606</td><td style="color:var(--g)">1.5%</td></tr>
           <tr><td>Mar 2026 †</td><td>$111,434</td><td>$110,050</td><td style="color:var(--y)">$110,677 ⚠</td><td style="color:var(--m)">-$627</td><td style="color:var(--m)">-0.6%</td></tr>
           <tr><td>Feb 2026</td><td style="color:var(--y)">$112,312 🔥</td><td>$111,791</td><td>$98,900</td><td style="color:var(--g)">+$12,891</td><td style="color:var(--g)">11.5%</td></tr>
           <tr><td>Jan 2026</td><td>$89,744</td><td>$89,186</td><td style="color:var(--r)">$162,876 ⚠</td><td style="color:var(--r)">-$73,690</td><td style="color:var(--r)">-82.1%</td></tr>
@@ -2048,7 +2047,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div class="row"><span class="rl">Aug 2026</span><span class="rv g">$10,870</span></div>
         <div class="row"><span class="rl">Jul 2026</span><span class="rv g">$11,009</span></div>
         <div class="row"><span class="rl">Jun 2026</span><span class="rv r">$11,739</span></div>
-        <div class="row"><span class="rl">May 2026</span><span class="rv g">$7,826</span></div>
+        <div class="row"><span class="rl">May 2026</span><span class="rv g">$5,652</span></div>
         <div class="row"><span class="rl">Apr 2026</span><span class="rv g">$6,957</span></div>
         <div class="row"><span class="rl">Mar 2026 †</span><span class="rv y">$27,469 EOFY</span></div>
         <div class="row"><span class="rl">12mo avg</span><span class="rv y">~$9,400/mo</span></div>
@@ -2072,8 +2071,8 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="rec"><div class="rt">Priority 1  Rent is the business. You need $180K/month revenue to make it work.</div><div class="rb">At $56K rent with your current cost structure, you need ~$180K revenue to hit a 10% net margin. That's 4,000 members at $45/wk  or you need rent renegotiated. Every 10 new Perform members = +$1,950/mo revenue. You need 385 more Premium members to reach that revenue level.</div></div>
     <div class="rec"><div class="rt">Priority 2  Power bills are out of control ($16K in Sep, $12K in Mar)</div><div class="rb">These spikes are massive  September was $16,440. Get an energy audit done. Pool, spa, sauna and ice bath are your biggest power draws. Look at off-peak heating, solar quotes, and a smart thermostat system. Even saving $3K/month is $36K/year straight to profit.</div></div>
     <div class="rec"><div class="rt">Priority 3  Towel hire at $2,793/month ($33,516/year)</div><div class="rb">That's a lot. Get a quote on buying your own towel stock and running in-house laundry. Could save $15–20K/year. Worth investigating once cash flow stabilises.</div></div>
-    <div class="rec"><div class="rt">Priority 4  Five months of underlying profit, Apr-Aug, once August's rent catch-up is excluded</div><div class="rb">Rent jumped from $34,783 (31.2% of revenue) in July to $52,174 (47.0%) in August, and that single swing is the difference between July's +$14,209 profit and August's -$1,731 loss  wages actually improved to 21.3%. Taylor has confirmed this was a rent catch-up entry, not a new ongoing rent level, similar to the one-off entries seen in January and March. Treat April through August as a five-month profitable run on the underlying trading, and keep watching whether rent settles back near July's level in September.</div></div>
-    <div class="insight"><div class="it">You only need to add ~10 Perform members to break even consistently</div><div class="ib">Your average monthly result over the trailing 12 months (Sep 2025–Aug 2026) is now roughly a $2,451 loss on the reported figures, still dragged down almost entirely by January's one-off $73K hit and August's confirmed rent catch-up ($17.4K above July's rent level). Strip out both one-offs and the trailing run is comfortably profitable. At $45/week per Perform member that's roughly 10 extra members converting from Daily or new joins to reach consistent break-even even including the one-offs. April through August back to back now support that same underlying trajectory.</div></div>
+    <div class="rec"><div class="rt">Priority 4  Five months of underlying profit, Apr-Aug, once August's rent catch-up is excluded</div><div class="rb">Rent jumped from $34,783 (31.2% of revenue) in July to $52,174 (47.0%) in August, and that single swing is the difference between July's +$12,514 profit and August's -$1,731 loss  wages actually improved to 21.3%. Taylor has confirmed this was a rent catch-up entry, not a new ongoing rent level, similar to the one-off entries seen in January and March. Treat April through August as a five-month profitable run on the underlying trading, and keep watching whether rent settles back near July's level in September.</div></div>
+    <div class="insight"><div class="it">You only need to add ~10 Perform members to break even consistently</div><div class="ib">Your average monthly result over the trailing 12 months (Sep 2025–Aug 2026) is now roughly a $2,315 loss on the reported figures, still dragged down almost entirely by January's one-off $73K hit and August's confirmed rent catch-up ($17.4K above July's rent level). Strip out both one-offs and the trailing run is comfortably profitable. At $45/week per Perform member that's roughly 10 extra members converting from Daily or new joins to reach consistent break-even even including the one-offs. April through August back to back now support that same underlying trajectory.</div></div>
   </div>
 </div>
 
@@ -2087,8 +2086,8 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="kpi"><div class="kl">Membership MRR</div><div class="kv">$65.3K</div><div class="ks">Sales - Memberships line</div></div>
     <div class="kpi"><div class="kl">Passport MRR</div><div class="kv">$31.2K</div><div class="ks y">Up 71.7% vs Jul's $18.2K</div></div>
     <div class="kpi"><div class="kl">Other MRR</div><div class="kv">$14.5K</div><div class="ks">Rent, eftpos, vending, corporate</div></div>
-    <div class="kpi"><div class="kl">MRR per member</div><div class="kv">$63</div><div class="ks">$111.0K ÷ 1,763 active (Aug export)</div></div>
-    <div class="kpi"><div class="kl">2026 run rate</div><div class="kv">$1.29M</div><div class="ks g">+8.0% vs 2025</div></div>
+    <div class="kpi"><div class="kl">MRR per member</div><div class="kv">$57</div><div class="ks">$111.0K ÷ 1,943 active (7 Sep export)</div></div>
+    <div class="kpi"><div class="kl">2026 run rate</div><div class="kv">$1.29M</div><div class="ks g">+8.2% vs 2025</div></div>
   </div>
 
   <div class="two" style="margin-bottom:18px">
