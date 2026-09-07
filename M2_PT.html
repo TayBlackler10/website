@@ -197,6 +197,8 @@
   .card textarea{resize:vertical; min-height:40px;}
   .card .row2{display:flex; gap:6px;}
   .card .row2 select{flex:1;}
+  .card .quick-contacted-btn{width:100%; margin-bottom:6px; background:var(--blue2); border-color:var(--blue); color:var(--blue); font-size:12px; padding:7px 10px;}
+  .card .quick-contacted-btn:hover{background:var(--blue); color:var(--black);}
   .empty-hint{font-size:12px; color:var(--text3); text-align:center; padding:20px 8px;}
   .modal-bg{
     display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); align-items:center; justify-content:center; z-index:50;
@@ -1044,6 +1046,22 @@ function renderCard(l, showTrainerLabel){
   row2.appendChild(trainerSelect);
   row2.appendChild(statusSelect);
   card.appendChild(row2);
+
+  // One-tap shortcut for the most common action: a trainer just spoke to
+  // this lead. Only shown while the lead is still "New" — after that the
+  // status dropdown above already shows/handles Contacted, and the card
+  // is about to disappear off the board anyway.
+  if((l.status || "New") === "New"){
+    const contactedBtn = document.createElement("button");
+    contactedBtn.type = "button";
+    contactedBtn.className = "quick-contacted-btn";
+    contactedBtn.textContent = "\u2713 Mark Contacted";
+    contactedBtn.addEventListener("click", () => {
+      postAction({action:"updateLead", id:l.id, status:"Contacted", trainer: l.trainer||""});
+    });
+    card.appendChild(contactedBtn);
+  }
+
   card.appendChild(notes);
 
   // Drag and drop: drag a card into a trainer's column (or Unassigned) to
