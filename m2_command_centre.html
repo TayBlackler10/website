@@ -12,7 +12,7 @@
   --b:#0a0a0a;--s:#111110;--s2:#161615;--s3:#1c1c1a;--s4:#242422;
   --br:rgba(200,240,0,0.18);--br2:rgba(245,245,242,0.1);--br3:rgba(245,245,242,0.18);
   --t:#f5f5f2;--t2:rgba(245,245,242,0.7);--m:rgba(245,245,242,0.42);
-  --g:#39d98a;--r:#ff4444;--blue:#5fa8e0;--purple:#a78bfa;
+  --g:#C8F000;--r:rgba(245,245,242,0.55);--blue:rgba(245,245,242,0.55);--purple:rgba(245,245,242,0.55);
   --font-mono:'JetBrains Mono',monospace;
   --rad:2px;--rad-s:2px;
 }
@@ -29,7 +29,7 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .nav-item{position:relative;display:flex;align-items:stretch}
 .nav-btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:0 22px;height:50px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:7px;border-bottom:2px solid transparent;user-select:none}
 .nav-btn:hover{color:var(--t);background:rgba(255,255,255,.04)}
-.nav-btn.active{color:var(--y);border-bottom-color:var(--y);background:rgba(200,240,0,.04)}
+.nav-btn.active{color:var(--y);border-bottom-color:var(--y);background:transparent}
 .nav-btn .arrow{font-size:9px;transition:transform .2s;opacity:.4}
 .nav-btn.open .arrow{transform:rotate(180deg);opacity:1}
 .nav-icon{font-size:16px}
@@ -38,8 +38,8 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .nav-dropdown{display:none;position:absolute;top:100%;left:0;background:var(--s);border:1px solid var(--br3);border-radius:0;min-width:220px;padding:8px;z-index:200;box-shadow:0 12px 32px rgba(0,0,0,.6)}
 .nav-dropdown.open{display:block;animation:fadeIn .15s ease}
 .nav-dd-item{font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;border-radius:4px;cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:10px;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
-.nav-dd-item:hover{background:rgba(200,240,0,.1);color:var(--y)}
-.nav-dd-item.active{background:rgba(200,240,0,.12);color:var(--y);font-weight:600}
+.nav-dd-item:hover{background:transparent;color:var(--y)}
+.nav-dd-item.active{background:transparent;color:var(--y);font-weight:600}
 .nav-dd-item .dd-icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .nav-dd-divider{height:1px;background:var(--br2);margin:4px 8px}
 .nav-dd-item.active::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--y);margin-left:auto;flex-shrink:0}
@@ -51,7 +51,7 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 
 /* Section header  pill accent + larger title */
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--y);letter-spacing:2.5px;margin-bottom:4px;line-height:1}
-.section-sub{font-size:14px;color:var(--m);margin-bottom:36px;padding-bottom:24px;border-bottom:2px solid var(--br2);line-height:1.6}
+.section-sub{font-size:14px;color:var(--m);margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--br2);line-height:1.6}
 
 /* ── INNER TABS ── */
 .tab-nav{display:flex;gap:4px;background:var(--s2);padding:6px;border-radius:6px;margin-bottom:28px;overflow-x:auto;scrollbar-width:none;border:1px solid var(--br2)}
@@ -64,8 +64,7 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 
 /* ── KPI GRID ── */
 .kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px}
-.kpi{background:var(--s2);border:1px solid var(--br2);border-radius:var(--rad);padding:24px 22px;transition:border-color .18s;cursor:default;position:relative}
-.kpi:hover{border-color:var(--br3)}
+.kpi{background:var(--s);border:1px solid var(--br2);border-radius:0;padding:22px 20px;cursor:default;position:relative}
 .kl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:12px;font-weight:700}
 .kv{font-family:'Bebas Neue',sans-serif;font-size:46px;color:var(--t);line-height:1;margin-bottom:8px;letter-spacing:.5px;font-weight:400}
 .kv.y{color:var(--y)}.kv.g{color:var(--g)}.kv.r{color:var(--r)}
@@ -73,7 +72,7 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .ks.g{color:var(--g)}.ks.r{color:var(--r)}.ks.y{color:var(--y)}
 /* Source provenance badges */
 .src{position:absolute;top:12px;right:12px;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;line-height:1.4}
-.src-live{color:var(--g);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.4)}
+.src-live{color:var(--g);background:rgba(200,240,0,.12);border:1px solid rgba(200,240,0,.4)}
 .src-live::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--g);margin-right:4px;vertical-align:middle;animation:pulse 2s infinite}
 .src-hist{color:var(--t2);background:rgba(176,176,176,.1);border:1px solid rgba(176,176,176,.3)}
 .src-target{color:var(--y);background:rgba(200,240,0,.1);border:1px solid rgba(200,240,0,.35)}
@@ -88,9 +87,8 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .move-prev{font-size:10px;color:var(--m);margin-top:5px}
 
 /* ── CARDS ── */
-.card{background:var(--s2);border:1px solid var(--br2);border-radius:var(--rad);padding:24px 26px;margin-bottom:18px;transition:border-color .2s}
+.card{background:transparent;border:1px solid var(--br2);border-radius:0;padding:22px 24px;margin-bottom:18px}
 .card:last-child{margin-bottom:0}
-.card:hover{border-color:var(--br3)}
 
 /* Card title  stronger visual break */
 .ct{font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px}
@@ -105,7 +103,7 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 .rv.g{color:var(--g)}.rv.r{color:var(--r)}.rv.y{color:var(--y)}
 
 /* ── GRIDS ── */
-.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
 @media(max-width:900px){.two{grid-template-columns:1fr}.three{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.three{grid-template-columns:1fr}}
@@ -139,10 +137,10 @@ html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-
 
 /* ── STATUS BADGES ── */
 .badge{font-size:11px;padding:4px 12px;border-radius:2px;font-weight:700;letter-spacing:.3px}
-.b-active{background:rgba(74,222,128,.15);color:var(--g)}
-.b-off{background:rgba(136,136,136,.12);color:var(--m)}
-.b-hot{background:rgba(200,240,0,.15);color:var(--y)}
-.b-warn{background:rgba(248,113,113,.15);color:var(--r)}
+.b-active{background:transparent;border:1px solid var(--br3);color:var(--t2)}
+.b-off{background:transparent;border:1px solid var(--br2);color:var(--m)}
+.b-hot{background:var(--y);color:#000}
+.b-warn{background:transparent;border:1px solid var(--br3);color:var(--t)}
 
 /* ── TABLES ── */
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
@@ -210,8 +208,8 @@ select.inp{cursor:pointer}
 @media(max-width:560px){.offer-grid{grid-template-columns:1fr}}
 .offer{background:var(--s);border:1px solid var(--br2);border-radius:2px;padding:24px 24px;position:relative;transition:border-color .2s;cursor:default}
 .offer:hover{border-color:rgba(255,255,255,.18)}
-.offer.hot{border-color:rgba(200,240,0,.3)}
-.offer.hot:hover{border-color:rgba(200,240,0,.5)}
+.offer.hot{border-color:var(--y)}
+.offer.hot:hover{border-color:var(--y)}
 .otag{position:absolute;top:-1px;right:18px;background:var(--y);color:#000;font-size:10px;font-weight:700;padding:5px 14px;border-radius:0;text-transform:uppercase;letter-spacing:.8px}
 .on-name{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--y);margin-bottom:8px;letter-spacing:.5px}
 .o-price{font-size:34px;font-weight:500;color:var(--t);margin-bottom:6px}
@@ -260,7 +258,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 /* ── KPI DELTA + STREAK BADGE ── */
 .kd{font-size:11.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--br2);color:var(--m)}
 .kd.up{color:var(--g)}.kd.down{color:var(--r)}.kd.flat{color:var(--t2)}
-.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:var(--g);font-size:12px;font-weight:700;padding:7px 14px;border-radius:4px;margin-bottom:16px}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(200,240,0,.1);border:1px solid rgba(200,240,0,.25);color:var(--g);font-size:12px;font-weight:700;padding:7px 14px;border-radius:4px;margin-bottom:16px}
 
 /* ── SPARKLINES ── */
 .spark{display:block;margin-top:8px}
@@ -513,7 +511,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- KEY FOLLOW UPS -->
   <div class="two" style="margin-bottom:18px">
-    <div class="card" style="border-color:rgba(248,113,113,.3)">
+    <div class="card" style="border-color:rgba(245,245,242,.3)">
       <div class="ct">👻 April no-shows  still to follow up</div>
       <div style="font-size:13px;color:var(--t2);margin-bottom:12px">26 people signed up for a trial and never came in. At 23% conversion rate that's ~6 lost members = $270/wk or $14K/year. SMS or call each one this week.</div>
       <div style="font-size:12px;color:var(--m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Template SMS to send</div>
@@ -566,7 +564,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="hstat">
         <div class="hstat-l">Net Profit (Aug)</div>
         <div class="hstat-v down" style="color:var(--r)">-$1,731</div>
-        <div class="hstat-d down" style="color:#facc15">◆ rent catch-up, confirmed  down from +$14,209 Jul</div>
+        <div class="hstat-d down" style="color:#C8F000">◆ rent catch-up, confirmed  down from +$14,209 Jul</div>
       </div>
       <div class="hstat">
         <div class="hstat-l">2026 Run Rate</div>
@@ -698,16 +696,16 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div style="font-size:11px;color:var(--y);margin-top:3px;opacity:.7">tap to see trial analytics →</div>
       </div>
     </div>
-    <div id="converted-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','funnel')},100)" onmouseover="this.style.borderColor='rgba(74,222,128,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
-      <div style="width:44px;height:44px;border-radius:50%;background:rgba(74,222,128,0.12);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
+    <div id="converted-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','funnel')},100)" onmouseover="this.style.borderColor='rgba(200,240,0,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(200,240,0,0.12);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
       <div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--g);line-height:1" id="ov-converted-count"></div>
         <div style="font-size:12px;color:var(--m)">converted to member · <span id="ov-conv-rate" style="color:var(--y)">loading...</span></div>
         <div style="font-size:11px;color:var(--g);margin-top:3px;opacity:.7">tap to see conversion funnel →</div>
       </div>
     </div>
-    <div id="noshow-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)" onmouseover="this.style.borderColor='rgba(248,113,113,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
-      <div style="width:44px;height:44px;border-radius:50%;background:rgba(248,113,113,0.12);border:2px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:20px">👻</div>
+    <div id="noshow-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)" onmouseover="this.style.borderColor='rgba(245,245,242,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(245,245,242,0.12);border:2px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:20px">👻</div>
       <div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--r);line-height:1" id="ov-noshow-count"></div>
         <div style="font-size:12px;color:var(--m)">not yet converted · <span style="color:var(--r)">follow up</span></div>
@@ -897,7 +895,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card" style="margin-bottom:18px">
       <div class="ct">How to read your ad signals</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:4px">
-        <div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.25);border-radius:6px;padding:16px">
+        <div style="background:rgba(200,240,0,.07);border:1px solid rgba(200,240,0,.25);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">✅ GREEN  Scale it</div>
           <div style="font-size:13px;color:var(--t2)">CPV under $0.40 · CTR above 1.5% · Frequency under 2.5× · CPM under $6 · Steady or rising LPVs</div>
         </div>
@@ -905,7 +903,7 @@ button,a{-webkit-tap-highlight-color:transparent}
           <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">⚠️ YELLOW  Watch & tweak</div>
           <div style="font-size:13px;color:var(--t2)">CPV $0.40–$0.65 · CTR 0.8–1.5% · Frequency 2.5–3.5× · CPM $6–10 · Flat or small dip in LPVs</div>
         </div>
-        <div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);border-radius:6px;padding:16px">
+        <div style="background:rgba(245,245,242,.06);border:1px solid rgba(245,245,242,.25);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--r);margin-bottom:8px">🔴 RED  Act now</div>
           <div style="font-size:13px;color:var(--t2)">CPV above $0.65 · CTR below 0.8% · Frequency above 3.5× · CPM above $10 · LPVs falling week-on-week</div>
         </div>
@@ -935,7 +933,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         </div>
       </div>
 
-      <div style="border:1px solid rgba(74,222,128,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(74,222,128,.02)">
+      <div style="border:1px solid rgba(200,240,0,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(200,240,0,.02)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
           <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--g)">$45 A WEEK</span>
           <span class="badge b-active">Active · $591/mo</span>
@@ -954,7 +952,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         </div>
       </div>
 
-      <div style="border:1px solid rgba(248,113,113,.2);border-radius:6px;padding:18px;background:rgba(248,113,113,.03)">
+      <div style="border:1px solid rgba(245,245,242,.2);border-radius:6px;padding:18px;background:rgba(245,245,242,.03)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
           <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--r)">PT COURSE</span>
           <span class="badge b-warn">Needs attention · $408/mo</span>
@@ -1137,8 +1135,8 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="card">
         <div class="ct">Visit depth</div>
         <div class="bar-wrap"><div class="bl">0 visits</div><div class="bt"><div class="bf" style="width:100%;background:var(--r)"><span class="bval">26 no-shows</span></div></div></div>
-        <div class="bar-wrap"><div class="bl">1 visit</div><div class="bt"><div class="bf" style="width:100%;background:#facc15"><span class="bval">41</span></div></div></div>
-        <div class="bar-wrap"><div class="bl">2 visits</div><div class="bt"><div class="bf" style="width:51%;background:#facc15"><span class="bval">21</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">1 visit</div><div class="bt"><div class="bf" style="width:100%;background:#C8F000"><span class="bval">41</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">2 visits</div><div class="bt"><div class="bf" style="width:51%;background:#C8F000"><span class="bval">21</span></div></div></div>
         <div class="bar-wrap"><div class="bl">3–5 visits</div><div class="bt"><div class="bf" style="width:62%;background:var(--g)"><span class="bval">28</span></div></div></div>
         <div class="bar-wrap"><div class="bl">6+ visits</div><div class="bt"><div class="bf" style="width:37%;background:var(--y)"><span class="bval">15</span></div></div></div>
       </div>
@@ -1177,7 +1175,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="card">
         <div class="ct">Gender split</div>
         <div class="bar-wrap"><div class="bl">Male</div><div class="bt"><div class="bf" style="width:100%;background:var(--blue)"><span class="bval">76  58%</span></div></div></div>
-        <div class="bar-wrap"><div class="bl">Female</div><div class="bt"><div class="bf" style="width:62%;background:#f472b6"><span class="bval">47  36%</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Female</div><div class="bt"><div class="bf" style="width:62%;background:rgba(245,245,242,0.6)"><span class="bval">47  36%</span></div></div></div>
         <div class="bar-wrap"><div class="bl">Not recorded</div><div class="bt"><div class="bf" style="width:10%;background:var(--m)"><span class="bval">8  6%</span></div></div></div>
       </div>
       <div class="card">
@@ -1366,7 +1364,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">📊 Base Case  $1.36M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">3% monthly revenue growth. Steady member gains (+45/mo net), Passport income continuing to grow, Meta ads maintained. Realistic if you keep doing what you're doing and fix source tracking.</div>
     </div>
-    <div style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-top:3px solid var(--g);border-radius:6px;padding:18px">
+    <div style="background:rgba(200,240,0,.05);border:1px solid rgba(200,240,0,.2);border-top:3px solid var(--g);border-radius:6px;padding:18px">
       <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">🚀 Optimistic  $1.40M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">5% monthly revenue growth. Hit 2,000+ members by Dec, launch referral programme, upsell 10% of daily members to Perform, female ad set delivers. Achievable but requires execution on all fronts.</div>
     </div>
@@ -1468,8 +1466,8 @@ button,a{-webkit-tap-highlight-color:transparent}
 
       // Actual line
       const actualPts=actuals.map((d,i)=>`${xPos(i)},${yScale(d.v)}`).join(' ');
-      const actualLine=`<polyline points="${actualPts}" fill="none" stroke="#60a5fa" stroke-width="2.5" stroke-linejoin="round"/>`;
-      const actualDots=actuals.map((d,i)=>`<circle cx="${xPos(i)}" cy="${yScale(d.v)}" r="3.5" fill="#60a5fa" stroke="#060606" stroke-width="1.5" style="cursor:pointer" onmouseover="showFcTip(event,'${d.m}','$${d.v.toLocaleString()}','Actual')" onmouseout="hideFcTip()"/>`).join('');
+      const actualLine=`<polyline points="${actualPts}" fill="none" stroke="#C8F000" stroke-width="2.5" stroke-linejoin="round"/>`;
+      const actualDots=actuals.map((d,i)=>`<circle cx="${xPos(i)}" cy="${yScale(d.v)}" r="3.5" fill="#C8F000" stroke="#060606" stroke-width="1.5" style="cursor:pointer" onmouseover="showFcTip(event,'${d.m}','$${d.v.toLocaleString()}','Actual')" onmouseout="hideFcTip()"/>`).join('');
 
       // Forecast lines
       let forecastLines='';
@@ -1477,7 +1475,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       const fTypes=[
         {key:'conservative',data:conservative,color:'#888',dash:'6,4',label:'Conservative'},
         {key:'base',data:baseCase,color:'#C8F000',dash:'',label:'Base case'},
-        {key:'optimistic',data:optimistic,color:'#4ade80',dash:'',label:'Optimistic'},
+        {key:'optimistic',data:optimistic,color:'#C8F000',dash:'',label:'Optimistic'},
       ];
       fTypes.forEach(ft=>{
         if(mode!=='all'&&mode!==ft.key) return;
@@ -1496,7 +1494,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         const step=Math.ceil(N/16);
         labelsEl.innerHTML=`<div style="display:flex;width:100%;padding-left:${PL}px;padding-right:${PR}px;box-sizing:border-box">`+
           allMonths.map((m,i)=>i%step===0||i===N-1?
-            `<div style="flex:${step};text-align:left;font-size:10px;color:${i<actuals.length?'#60a5fa':'#888'};white-space:nowrap;overflow:hidden">${m}</div>`:
+            `<div style="flex:${step};text-align:left;font-size:10px;color:${i<actuals.length?'#C8F000':'#888'};white-space:nowrap;overflow:hidden">${m}</div>`:
             `<div style="flex:1"></div>`
           ).join('')+'</div>';
       }
@@ -1564,7 +1562,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <tbody>
         <tr class="tbl-divider"><td colspan="7">2025</td></tr>
         <tr><td>Jan</td><td>~1,185</td><td style="color:var(--g)">148</td><td>29</td><td><div class="mbar-wrap"><span style="color:var(--g)">+50</span><div class="mbar-track"><div class="mbar-fill" style="width:70.4%;background:var(--g)"></div></div></div></td><td></td><td style="color:var(--g)">+5 ✓</td></tr>
-        <tr><td>Feb</td><td>1,235</td><td>110</td><td style="color:var(--r)">50</td><td><div class="mbar-wrap"><span style="color:#facc15">+30</span><div class="mbar-track"><div class="mbar-fill" style="width:42.3%;background:#facc15"></div></div></div></td><td style="color:var(--r)">4.05%</td><td style="color:var(--r)">-15 ✗</td></tr>
+        <tr><td>Feb</td><td>1,235</td><td>110</td><td style="color:var(--r)">50</td><td><div class="mbar-wrap"><span style="color:#C8F000">+30</span><div class="mbar-track"><div class="mbar-fill" style="width:42.3%;background:#C8F000"></div></div></div></td><td style="color:var(--r)">4.05%</td><td style="color:var(--r)">-15 ✗</td></tr>
         <tr><td>Mar</td><td>1,246</td><td>102</td><td>36</td><td><div class="mbar-wrap"><span style="color:var(--r)">+11</span><div class="mbar-track"><div class="mbar-fill" style="width:15.5%;background:var(--r)"></div></div></div></td><td>2.89%</td><td style="color:var(--r)">-34 ✗</td></tr>
         <tr><td>Apr</td><td>1,257</td><td style="color:var(--g)">133</td><td>38</td><td><div class="mbar-wrap"><span style="color:var(--g)">+60</span><div class="mbar-track"><div class="mbar-fill" style="width:84.5%;background:var(--g)"></div></div></div></td><td>3.02%</td><td style="color:var(--g)">+15 ✓</td></tr>
         <tr><td>May</td><td>1,317</td><td>96</td><td>36</td><td><div class="mbar-wrap"><span style="color:var(--g)">+36</span><div class="mbar-track"><div class="mbar-fill" style="width:50.7%;background:var(--g)"></div></div></div></td><td>2.73%</td><td style="color:var(--r)">-9 ✗</td></tr>
@@ -1574,7 +1572,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <tr class="tbl-divider"><td colspan="7">2026</td></tr>
         <tr><td>Jan</td><td>1,528</td><td>84</td><td>25</td><td><div class="mbar-wrap"><span style="color:var(--g)">+46</span><div class="mbar-track"><div class="mbar-fill" style="width:64.8%;background:var(--g)"></div></div></div></td><td>1.64%</td><td style="color:var(--g)">+1 ✓</td></tr>
         <tr><td>Feb</td><td>1,574</td><td style="color:var(--g)">114</td><td>33</td><td><div class="mbar-wrap"><span style="color:var(--g)">+46</span><div class="mbar-track"><div class="mbar-fill" style="width:64.8%;background:var(--g)"></div></div></div></td><td>2.10%</td><td style="color:var(--g)">+1 ✓</td></tr>
-        <tr><td>Mar</td><td>1,620</td><td>91</td><td style="color:var(--r)">42</td><td><div class="mbar-wrap"><span style="color:#facc15">+14</span><div class="mbar-track"><div class="mbar-fill" style="width:19.7%;background:#facc15"></div></div></div></td><td style="color:var(--r)">2.59%</td><td style="color:var(--r)">-31 ✗</td></tr>
+        <tr><td>Mar</td><td>1,620</td><td>91</td><td style="color:var(--r)">42</td><td><div class="mbar-wrap"><span style="color:#C8F000">+14</span><div class="mbar-track"><div class="mbar-fill" style="width:19.7%;background:#C8F000"></div></div></div></td><td style="color:var(--r)">2.59%</td><td style="color:var(--r)">-31 ✗</td></tr>
         <tr><td>Apr</td><td>1,634</td><td>100</td><td style="color:var(--g)">23</td><td><div class="mbar-wrap"><span style="color:var(--g)">+50</span><div class="mbar-track"><div class="mbar-fill" style="width:70.4%;background:var(--g)"></div></div></div></td><td style="color:var(--g)">1.41% ★ best ever</td><td style="color:var(--g)">+5 ✓</td></tr>
         <tr><td>May</td><td>1,684</td><td style="color:var(--g)">100</td><td style="color:var(--g)">31</td><td><div class="mbar-wrap"><span style="color:var(--g)">+69</span><div class="mbar-track"><div class="mbar-fill" style="width:97.2%;background:var(--g)"></div></div></div></td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+24 ✓</td></tr>
         <tr><td>Jun</td><td>1,753</td><td style="color:var(--g)">139</td><td style="color:var(--g)">27</td><td><div class="mbar-wrap"><span style="color:var(--g)">+71 ★ best ever</span><div class="mbar-track"><div class="mbar-fill" style="width:100.0%;background:var(--y)"></div></div></div></td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+26 ✓</td></tr>
@@ -1673,7 +1671,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Weekly Scorecard</div>
   <div class="section-sub">Auto-populated from GymMaster every time you open this page · Add notes then save</div>
 
-  <div id="sc-live-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--g);background:rgba(74,222,128,.1);padding:5px 12px;border-radius:4px;margin-bottom:16px">
+  <div id="sc-live-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--g);background:rgba(200,240,0,.1);padding:5px 12px;border-radius:4px;margin-bottom:16px">
     <span style="width:7px;height:7px;border-radius:50%;background:var(--g);display:inline-block;animation:pulse 2s infinite"></span>
     Live from GymMaster · <span id="sc-updated">Loading...</span>
   </div>
@@ -1741,10 +1739,10 @@ button,a{-webkit-tap-highlight-color:transparent}
     <button class="btn-ghost" onclick="nextMonth()">Next →</button>
     <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
       <span style="font-size:10px;background:rgba(200,240,0,.15);color:var(--y);padding:3px 8px;border-radius:4px">Reel</span>
-      <span style="font-size:10px;background:rgba(96,165,250,.15);color:var(--blue);padding:3px 8px;border-radius:4px">Story</span>
-      <span style="font-size:10px;background:rgba(167,139,250,.15);color:var(--purple);padding:3px 8px;border-radius:4px">Carousel</span>
-      <span style="font-size:10px;background:rgba(74,222,128,.15);color:var(--g);padding:3px 8px;border-radius:4px">Static</span>
-      <span style="font-size:10px;background:rgba(248,113,113,.15);color:var(--r);padding:3px 8px;border-radius:4px">Meta Ad</span>
+      <span style="font-size:10px;background:rgba(245,245,242,.1);color:var(--blue);padding:3px 8px;border-radius:4px">Story</span>
+      <span style="font-size:10px;background:rgba(245,245,242,.15);color:var(--purple);padding:3px 8px;border-radius:4px">Carousel</span>
+      <span style="font-size:10px;background:rgba(200,240,0,.15);color:var(--g);padding:3px 8px;border-radius:4px">Static</span>
+      <span style="font-size:10px;background:rgba(245,245,242,.15);color:var(--r);padding:3px 8px;border-radius:4px">Meta Ad</span>
     </div>
   </div>
 
@@ -1952,12 +1950,12 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Profit & Loss</div>
   <div class="section-sub">June 2025 to August 2026 · 15 months · M2 Training Club Limited</div>
 
-  <div class="streak-badge" style="background:rgba(250,204,21,.15);border-color:rgba(250,204,21,.35);color:#facc15">◆ Aug's $1,731 loss was a confirmed rent catch-up, not a trading dip  5 months of underlying profit, Apr-Aug</div>
+  <div class="streak-badge" style="background:rgba(200,240,0,.15);border-color:rgba(250,204,21,.35);color:#C8F000">◆ Aug's $1,731 loss was a confirmed rent catch-up, not a trading dip  5 months of underlying profit, Apr-Aug</div>
 
   <div class="kg">
     <div class="kpi"><div class="kl">Aug 26 Revenue</div><div class="kv">$111.0K</div><div class="ks g">Gross income</div><div class="kd flat">▼ flat vs $111.6K Jul</div></div>
     <div class="kpi"><div class="kl">Aug 26 OPEX</div><div class="kv">$112.3K</div><div class="ks r">Operating costs</div><div class="kd down" style="color:var(--r)">▲ up vs $96.7K Jul</div></div>
-    <div class="kpi"><div class="kl">Aug 26 Net Profit</div><div class="kv r" style="color:var(--r)">-$1,731</div><div class="ks r">-1.6% margin</div><div class="kd down" style="color:#facc15">◆ confirmed rent catch-up, not trading</div></div>
+    <div class="kpi"><div class="kl">Aug 26 Net Profit</div><div class="kv r" style="color:var(--r)">-$1,731</div><div class="ks r">-1.6% margin</div><div class="kd down" style="color:#C8F000">◆ confirmed rent catch-up, not trading</div></div>
     <div class="kpi"><div class="kl">12mo Net Profit</div><div class="kv r" style="color:var(--r)">-$29.4K</div><div class="ks r">6 of 12 months profitable</div><div class="kd flat">Sep25–Aug26 window · still dragged by Jan's $73.7K one-off hit</div></div>
     <div class="kpi"><div class="kl">Best month</div><div class="kv">$14.2K</div><div class="ks g">Jul 26 · Feb 2nd, May 3rd</div><div class="kd up">Jul, Feb, May remain 2026's top 3</div></div>
     <div class="kpi"><div class="kl">Rent % of revenue</div><div class="kv" style="color:var(--r)">47.0%</div><div class="ks r">Aug 26 · biggest cost by far</div><div class="kd down" style="color:var(--r)">▲ up 15.8pt vs Jul's 31.2%</div></div>
@@ -2035,7 +2033,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card">
       <div class="ct">Top expenses  August 2026 (% of revenue)</div>
       <div class="bar-wrap"><div class="bl">Rent Building</div><div class="bt"><div class="bf" style="width:100%;background:var(--r)"><span class="bval">$52,174  47.0%</span></div></div></div>
-      <div class="bar-wrap"><div class="bl">Wages</div><div class="bt"><div class="bf" style="width:45.4%;background:#facc15"><span class="bval">$23,681  21.3%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Wages</div><div class="bt"><div class="bf" style="width:45.4%;background:#C8F000"><span class="bval">$23,681  21.3%</span></div></div></div>
       <div class="bar-wrap"><div class="bl">Light & Power</div><div class="bt"><div class="bf" style="width:20.8%;background:var(--purple)"><span class="bval">$10,870  9.8%</span></div></div></div>
       <div class="bar-wrap"><div class="bl">Repairs & Maintenance</div><div class="bt"><div class="bf" style="width:11.4%;background:var(--m)"><span class="bval">$5,959  5.4%</span></div></div></div>
       <div class="bar-wrap"><div class="bl">Lease Expenses</div><div class="bt"><div class="bf" style="width:7.2%;background:var(--m)"><span class="bval">$3,747  3.4%</span></div></div></div>
@@ -2130,7 +2128,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <div class="row" style="font-size:12px"><span class="rl">New members/mo</span><span class="rv y">+45 net</span></div>
         <div class="row" style="font-size:12px"><span class="rl">Net profit est</span><span class="rv g">~+$204K/yr</span></div>
       </div>
-      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(74,222,128,.2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(200,240,0,.2)">
         <div style="font-size:11px;color:var(--g);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Stretch</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--g);margin-bottom:4px">$1.8M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">2,000+ members + upsells</div>
@@ -2215,7 +2213,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="row"><span class="rl">Re-engagement email/SMS cost</span><span class="rv g">~$0 if via GymMaster</span></div>
   </div>
 
-  <div class="card" style="border-color:rgba(255,68,68,0.25)">
+  <div class="card" style="border-color:rgba(245,245,242,.2)">
     <div class="ct">Fitness Passport visit retention <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">total from GymMaster export, verified 7 Sep 2026 · visit-cutoff breakdown pending next monthly export</span></div>
     <div class="row"><span class="rl">Total current Fitness Passport members</span><span class="rv">1,202</span></div>
     <div class="row"><span class="rl">Visited since cutoff</span><span class="rv y">Awaiting next monthly export (needs last-visit-date data, not in this week's file)</span></div>
@@ -2318,7 +2316,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       </div>
     </div>
     <div>
-      <div class="card" style="border-color:rgba(255,68,68,0.25)">
+      <div class="card" style="border-color:rgba(245,245,242,.2)">
         <div class="ct">Competitor tracker <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">confirmed 18 Aug 2026</span></div>
         <div class="row"><span class="rl">Allfit Newmarket</span><span class="rv r">Opens Sept 2026</span></div>
         <div class="row"><span class="rl">↳ Pricing</span><span class="rv" style="font-size:12px">$12.95-$19.95/wk, 12mo min term</span></div>
@@ -2367,7 +2365,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <!-- LIVE PROJECTION -->
   <div class="card" style="border-color:rgba(200,240,0,.3)">
     <div class="ct"><span class="curmonth" data-tpl="{MY} projection">September 2026 projection</span>
-      <span id="pp-live-badge" style="display:none;align-items:center;gap:4px;font-size:10px;color:var(--g);background:rgba(74,222,128,.1);padding:2px 8px;border-radius:4px;margin-left:8px">
+      <span id="pp-live-badge" style="display:none;align-items:center;gap:4px;font-size:10px;color:var(--g);background:rgba(200,240,0,.1);padding:2px 8px;border-radius:4px;margin-left:8px">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--g);display:inline-block;animation:pulse 2s infinite"></span>
         Live
       </span>
@@ -2452,7 +2450,7 @@ button,a{-webkit-tap-highlight-color:transparent}
             <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">May 26</td><td>2,787</td><td>$21,819</td><td style="color:var(--m)">$7.83</td></tr>
             <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jun 26</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">n/a</td></tr>
             <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jul 26</td><td>4,246</td><td>$18,176</td><td style="color:var(--r)">$4.28</td></tr>
-            <tr style="background:rgba(74,222,128,.05)"><td style="color:var(--g);font-weight:500">Aug 26</td><td style="color:var(--g);font-weight:500">4,497</td><td style="color:var(--g);font-weight:500">$31,201</td><td style="color:var(--r)">$6.94</td></tr>
+            <tr style="background:rgba(200,240,0,.05)"><td style="color:var(--g);font-weight:500">Aug 26</td><td style="color:var(--g);font-weight:500">4,497</td><td style="color:var(--g);font-weight:500">$31,201</td><td style="color:var(--r)">$6.94</td></tr>
           </tbody>
         </table>
       </div>
@@ -2892,7 +2890,7 @@ renderScorecards();
 let calYear=2026, calMonth=4; // 0-indexed, so 4=May
 let calPosts=JSON.parse(localStorage.getItem('m2-cal-posts')||'{}');
 let selectedDay=null;
-const typeColors={'Reel':'rgba(200,240,0,.2)','Story':'rgba(96,165,250,.2)','Carousel':'rgba(167,139,250,.2)','Static':'rgba(74,222,128,.2)','Meta Ad':'rgba(248,113,113,.2)'};
+const typeColors={'Reel':'rgba(200,240,0,.2)','Story':'rgba(96,165,250,.2)','Carousel':'rgba(245,245,242,.2)','Static':'rgba(200,240,0,.2)','Meta Ad':'rgba(245,245,242,.2)'};
 const typeTextColors={'Reel':'var(--y)','Story':'var(--blue)','Carousel':'var(--purple)','Static':'var(--g)','Meta Ad':'var(--r)'};
 const statusDot={'draft':'⚪','scheduled':'🟡','posted':'🟢'};
 
@@ -2968,8 +2966,8 @@ if(!campaigns) campaigns=[
   {id:4,name:'Female Audience Ad Set',obj:'Trial sign-ups',channel:'Meta Ads',start:'2026-05-15',budget:600,status:'planned',notes:'Bekka content. Target women 25–40 Auckland. Close gender gap (currently 36% female trials).'},
   {id:5,name:'Low-Visit Re-engagement',obj:'Retention',channel:'Email/SMS',start:'2026-05-08',budget:0,status:'planned',notes:'271 members with <5 visits. "We miss you  free class this week." Target 20% response.'},
 ];
-const statusColors={planned:'rgba(250,204,21,.15)',active:'rgba(74,222,128,.15)',completed:'rgba(136,136,136,.15)',paused:'rgba(248,113,113,.15)'};
-const statusText={planned:'#facc15',active:'var(--g)',completed:'var(--m)',paused:'var(--r)'};
+const statusColors={planned:'rgba(200,240,0,.15)',active:'rgba(200,240,0,.15)',completed:'rgba(136,136,136,.15)',paused:'rgba(245,245,242,.15)'};
+const statusText={planned:'#C8F000',active:'var(--g)',completed:'var(--m)',paused:'var(--r)'};
 function addCampaign(){
   const name=document.getElementById('camp-name').value.trim();
   if(!name)return;
@@ -3023,8 +3021,8 @@ function advancePT(id){
   savePT(); renderPT();
 }
 function savePT(){localStorage.setItem('m2-pt-leads',JSON.stringify(ptLeads));}
-const ptColors={interested:'rgba(96,165,250,.15)',quoted:'rgba(250,204,21,.15)',signed:'rgba(74,222,128,.15)',completed:'rgba(136,136,136,.15)'};
-const ptText={interested:'var(--blue)',quoted:'#facc15',signed:'var(--g)',completed:'var(--m)'};
+const ptColors={interested:'rgba(245,245,242,.1)',quoted:'rgba(200,240,0,.15)',signed:'rgba(200,240,0,.15)',completed:'rgba(136,136,136,.15)'};
+const ptText={interested:'var(--blue)',quoted:'#C8F000',signed:'var(--g)',completed:'var(--m)'};
 function renderPT(){
   const active=ptLeads.filter(l=>l.stage==='interested'||l.stage==='quoted');
   const signed=ptLeads.filter(l=>l.stage==='signed'||l.stage==='completed');
@@ -3063,7 +3061,7 @@ function addKeyword(){
   renderSEOKw();
 }
 function renderSEOKw(){
-  const rankColor={'\#1':'var(--g)','Top 3':'var(--g)','Top 10':'#facc15','Tracking':'var(--blue)','Not ranking':'var(--r)'};
+  const rankColor={'\#1':'var(--g)','Top 3':'var(--g)','Top 10':'#C8F000','Tracking':'var(--blue)','Not ranking':'var(--r)'};
   const el=document.getElementById('seo-kw-list');
   if(el) el.innerHTML=seoKwList.map(k=>`<div class="row"><span class="rl">${k.kw}</span><span class="rv" style="color:${rankColor[k.rank]||'var(--m)'}">${k.rank}</span></div>`).join('');
 }
@@ -3507,7 +3505,7 @@ async function loadMemberBaseLive() {
   if(r['kpi.gendersplit'] && r['kpi.gendersplit'].segments) {
     const segs = r['kpi.gendersplit'].segments;
     const total = segs.reduce((s,x)=>s+x.count,0);
-    const colors = {Female:'#f472b6',Male:'var(--blue)','Prefer not to say':'var(--g)',Unspecified:'var(--m)'};
+    const colors = {Female:'rgba(245,245,242,0.6)',Male:'var(--blue)','Prefer not to say':'var(--g)',Unspecified:'var(--m)'};
     const gEl = document.getElementById('mb-gender-bars');
     if(gEl) gEl.innerHTML = segs.map(s=>`
       <div class="bar-wrap">
@@ -3533,7 +3531,7 @@ async function loadMemberBaseLive() {
   if(r['kpi.sourcepromotion'] && r['kpi.sourcepromotion'].segments) {
     const segs = r['kpi.sourcepromotion'].segments.slice(0,8);
     const maxCount = Math.max(...segs.map(s=>s.count));
-    const srcCols = ['var(--g)','var(--g)','var(--blue)','var(--purple)','var(--y)','#f472b6','var(--m)','var(--m)'];
+    const srcCols = ['var(--g)','var(--g)','var(--blue)','var(--purple)','var(--y)','rgba(245,245,242,0.6)','var(--m)','var(--m)'];
     const sEl = document.getElementById('mb-source-bars');
     if(sEl) sEl.innerHTML = segs.map((s,i)=>`
       <div class="bar-wrap">
@@ -3557,7 +3555,7 @@ async function loadMemberBaseLive() {
 
 // ── META ADS LIVE ─────────────────────────────────────────
 const META = `${GM_BASE}/?source=meta&endpoint=`;
-const campColors = ['var(--y)','var(--blue)','var(--purple)','var(--g)','#f472b6','#fb923c','var(--m)'];
+const campColors = ['var(--y)','var(--blue)','var(--purple)','var(--g)','rgba(245,245,242,0.6)','rgba(245,245,242,0.6)','var(--m)'];
 const act = (c,type) => parseInt(c.actions?.find(a=>a.action_type===type)?.value||0);
 const fmtK = n => n>=1000000?(n/1000000).toFixed(1)+'M':n>=1000?(n/1000).toFixed(0)+'K':String(n);
 const fmtS = n => '$'+parseFloat(n).toFixed(2);
@@ -3604,8 +3602,8 @@ async function loadMetaLive() {
       if (alertEl) {
         alertEl.style.display = 'block';
         alertEl.innerHTML = isAuth
-          ? '<div style="background:rgba(248,113,113,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta is disconnected.</strong> The access token has expired, so live ad data cannot load. Generate a fresh long-lived token in Meta Business and update it in the worker, then refresh this page. All other sections are unaffected.</div>'
-          : '<div style="background:rgba(248,113,113,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta API error.</strong> ' + (metaErr.value.error.message || '') + '</div>';
+          ? '<div style="background:rgba(245,245,242,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta is disconnected.</strong> The access token has expired, so live ad data cannot load. Generate a fresh long-lived token in Meta Business and update it in the worker, then refresh this page. All other sections are unaffected.</div>'
+          : '<div style="background:rgba(245,245,242,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta API error.</strong> ' + (metaErr.value.error.message || '') + '</div>';
       }
       return;
     }
@@ -4234,7 +4232,7 @@ function buildPassport() {
   const incomeBars = ppData.map(d=>`
     <div style="display:flex;align-items:flex-end;flex-direction:column;gap:3px;flex:1">
       <div style="font-size:8px;color:var(--m);writing-mode:vertical-rl;transform:rotate(180deg);height:28px;overflow:hidden">${d.month}</div>
-      <div style="width:100%;background:${d.month.includes('26')?'var(--g)':'rgba(74,222,128,.4)'};border-radius:3px 3px 0 0;height:${Math.round(d.income/maxIncome*120)}px;min-height:4px" title="${d.month}: $${d.income.toLocaleString()}"></div>
+      <div style="width:100%;background:${d.month.includes('26')?'var(--g)':'rgba(200,240,0,.4)'};border-radius:3px 3px 0 0;height:${Math.round(d.income/maxIncome*120)}px;min-height:4px" title="${d.month}: $${d.income.toLocaleString()}"></div>
       <div style="font-size:8px;color:var(--m);text-align:center">$${Math.round(d.income/1000)}K</div>
     </div>`).join('');
 
@@ -4418,11 +4416,11 @@ async function _renderMemberSplit(dataset) {
         {
           label: 'Fitness Passport',
           data: fpData,
-          borderColor: '#60a5fa',
+          borderColor: '#C8F000',
           backgroundColor: 'rgba(96,165,250,0.07)',
           borderWidth: 2,
           pointRadius: rows.map(r => r.live ? 6 : 3),
-          pointBackgroundColor: '#60a5fa',
+          pointBackgroundColor: '#C8F000',
           pointBorderColor: '#0f0f0f',
           pointBorderWidth: 2,
           tension: 0.35,
@@ -4483,7 +4481,7 @@ async function _renderMemberSplit(dataset) {
     const m2Pct = 100 - r.fpPct;
 
     const tr = document.createElement('tr');
-    if (r.live) tr.style.background = 'rgba(74,222,128,0.05)';
+    if (r.live) tr.style.background = 'rgba(200,240,0,0.05)';
     tr.innerHTML = `
       <td style="color:${r.live ? 'var(--g)' : 'var(--t)'}">
         ${r.m}${r.live ? ' <span style="font-size:9px;color:var(--g);letter-spacing:1px">LIVE</span>' : ''}
@@ -4497,7 +4495,7 @@ async function _renderMemberSplit(dataset) {
       <td style="color:${fpChg === null ? 'var(--m)' : fpChg >= 0 ? 'var(--g)' : 'var(--r)'}">
         ${fpChg === null ? '' : (fpChg >= 0 ? '+' : '') + fpChg}
       </td>
-      <td style="color:${r.fpPct >= 53 ? 'var(--r)' : r.fpPct >= 48 ? '#facc15' : 'var(--g)'}">${r.fpPct}%</td>
+      <td style="color:${r.fpPct >= 53 ? 'var(--r)' : r.fpPct >= 48 ? '#C8F000' : 'var(--g)'}">${r.fpPct}%</td>
       <td>
         <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;width:100px;margin-left:auto;background:var(--br2)">
           <div style="width:${m2Pct}%;background:var(--y)"></div>
