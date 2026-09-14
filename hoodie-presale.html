@@ -10,6 +10,31 @@
   gtag('config', 'G-1PW3XYQ1F8');
 </script>
 
+<!-- M2 Conversion Event Tracking -->
+<script>
+document.addEventListener('click', function(e) {
+  var el = e.target.closest('a');
+  if (!el) return;
+  var href = el.getAttribute('href') || '';
+  var label = '';
+  if (href.indexOf('gymmasteronline.com') !== -1) {
+    var t = (el.textContent || '').toLowerCase();
+    label = (href.indexOf('trial') !== -1 || t.indexOf('trial') !== -1) ? 'trial_signup_click' : 'membership_signup_click';
+  } else if (href.indexOf('tel:') === 0) {
+    label = 'phone_click';
+  } else if (href.indexOf('mailto:') === 0) {
+    label = 'email_click';
+  }
+  if (label && typeof gtag === 'function') {
+    gtag('event', label, {
+      'event_category': 'conversion',
+      'event_label': href,
+      'page_location': window.location.href
+    });
+  }
+}, true);
+</script>
+
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
