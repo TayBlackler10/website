@@ -424,6 +424,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <button class="nav-dd-item" id="dd-calendar" onclick="showSection('calendar');closeNav()"><span class="dd-icon">📅</span>Social Calendar</button>
       <button class="nav-dd-item" id="dd-content" onclick="showSection('content');closeNav()"><span class="dd-icon">🎬</span>Content Pipeline</button>
       <button class="nav-dd-item" id="dd-seo" onclick="showSection('seo');closeNav()"><span class="dd-icon">🔍</span>SEO & Website</button>
+      <button class="nav-dd-item" id="dd-competitors" onclick="showSection('competitors');closeNav()"><span class="dd-icon">🥊</span>Competitors</button>
     </div>
   </div>
 
@@ -2221,9 +2222,12 @@ button,a{-webkit-tap-highlight-color:transparent}
   </div>
 
   <div class="card" style="border-color:rgba(245,245,242,.2)">
-    <div class="ct">Fitness Passport visit retention <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">total from GymMaster export, verified 7 Sep 2026 · visit-cutoff breakdown pending next monthly export</span></div>
-    <div class="row"><span class="rl">Total current Fitness Passport members</span><span class="rv">1,202</span></div>
-    <div class="row"><span class="rl">Visited since cutoff</span><span class="rv y">Awaiting next monthly export (needs last-visit-date data, not in this week's file)</span></div>
+    <div class="ct">Fitness Passport visit retention <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">from GymMaster export, period 1-16 Sep 2026 (month to date)</span></div>
+    <div class="row"><span class="rl">Total current Fitness Passport members</span><span class="rv">1,220</span></div>
+    <div class="row"><span class="rl">Visited in period</span><span class="rv g">559 (45.8%)</span></div>
+    <div class="row"><span class="rl">Not visited in period</span><span class="rv r">661 (54.2%)</span></div>
+    <div class="row"><span class="rl">↳ of those, no email on file</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">41  can't be reached for a re-engagement email</span></div>
+    <div class="row"><span class="rl">↳ of those, zero lifetime visits ever</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">27  signed up but have never once used the gym</span></div>
     <div class="row"><span class="rl">Why this matters</span><span class="rv y">You're paid per visit for these members  a lapsed cohort earns $0</span></div>
   </div>
 
@@ -2308,7 +2312,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 <!-- ===== NOTES ===== -->
 <div id="s-notes" class="section">
   <div class="section-title">Strategy Notes</div>
-  <div class="section-sub">Weekly focus · Ideas · Competitor notes · Retention · All saves automatically in your browser</div>
+  <div class="section-sub">Weekly focus · Ideas · Retention · Competitor intel now lives under Marketing · All saves automatically in your browser</div>
   <div class="two">
     <div>
       <div class="card">
@@ -2323,21 +2327,6 @@ button,a{-webkit-tap-highlight-color:transparent}
       </div>
     </div>
     <div>
-      <div class="card" style="border-color:rgba(245,245,242,.2)">
-        <div class="ct">Competitor tracker <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">checked 15 Sep 2026</span></div>
-        <div class="row"><span class="rl">Allfit Newmarket</span><span class="rv y">Not yet open, still pre-sale</span></div>
-        <div class="row"><span class="rl">↳ Status</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">Own site confirms "under construction", opening in Sept. Running Stage 2 Foundation Membership pre-sale, capped at first 100 sign-ups, ~$260 savings pitched, exact weekly price still not public</span></div>
-        <div class="row"><span class="rl">↳ Amenities</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">Sauna + Normatec recovery room, no pool/ice bath seen</span></div>
-        <div class="row"><span class="rl">↳ Where M2 wins</span><span class="rv g" style="font-size:12px">No lock-in vs their 12mo contract, real pool + ice bath, HYROX coach who's raced it</span></div>
-        <div class="row"><span class="rl">Muscle Club Newmarket</span><span class="rv y">No sign of launch yet</span></div>
-        <div class="row"><span class="rl">↳ Status</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">Main site (muscleclub.co.nz) still only lists their Albany club, no Newmarket branch linked anywhere. Still very early stage, keep watching @muscle_club_newmarket</span></div>
-        <div class="row"><span class="rl">Les Mills</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">The established giant, big-box, cinematic brand marketing, persistent multi-month remarketing. M2's edge: authentic, boutique, community-led</span></div>
-      </div>
-      <div class="card">
-        <div class="ct">Competitor notes</div>
-        <textarea class="note-area" id="n-comp" placeholder="What are other Auckland gyms doing?"></textarea>
-        <button class="save-btn" id="save-comp" onclick="saveNote('comp')">Save</button>
-      </div>
       <div class="card">
         <div class="ct">Retention notes</div>
         <textarea class="note-area" id="n-ret" placeholder="Follow-up plans, at-risk members, re-engagement..."></textarea>
@@ -2352,6 +2341,47 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="row"><span class="rl">GymMaster</span><a href="https://m2trainingclub.gymmasteronline.com" target="_blank" style="color:var(--y);font-size:12px">GymMaster Portal ↗</a></div>
     <div class="row"><span class="rl">Trial sign-up page</span><a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" target="_blank" style="color:var(--y);font-size:12px">Free Trial Link ↗</a></div>
     <div class="row"><span class="rl">Annual memberships</span><a href="https://m2club.co.nz/annual-memberships.html" target="_blank" style="color:var(--y);font-size:12px">Annual page ↗</a></div>
+  </div>
+</div>
+
+<!-- ===== COMPETITORS ===== -->
+<div id="s-competitors" class="section">
+  <div class="section-title">Competitor Intelligence</div>
+  <div class="section-sub">Auckland gym market · Threat tracking · Positioning · Manually updated, not a live feed</div>
+
+  <div class="kg">
+    <div class="kpi"><div class="kl">Competitors tracked</div><div class="kv">3</div><div class="ks">Newmarket & established players</div></div>
+    <div class="kpi"><div class="kl">Highest threat</div><div class="kv" style="font-size:22px;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px">Allfit Newmarket</div><div class="ks y">opening Sept 2026</div></div>
+    <div class="kpi"><div class="kl">New entrants this year</div><div class="kv">2</div><div class="ks">Allfit + Muscle Club</div></div>
+    <div class="kpi"><div class="kl">Last checked</div><div class="kv" style="font-size:22px;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px">15 Sep 2026</div><div class="ks">update monthly</div></div>
+  </div>
+
+  <div class="card" style="border-color:rgba(245,245,242,.2)">
+    <div class="ct">Allfit Newmarket <span class="badge b-hot" style="margin-left:10px">Highest threat</span><span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:auto">checked 15 Sep 2026</span></div>
+    <div class="row"><span class="rl">Status</span><span class="rv y">Not yet open, still pre-sale</span></div>
+    <div class="row"><span class="rl">Detail</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2);text-align:right;max-width:62%">Own site confirms "under construction", opening in Sept. Running Stage 2 Foundation Membership pre-sale, capped at first 100 sign-ups, ~$260 savings pitched, exact weekly price still not public</span></div>
+    <div class="row"><span class="rl">Contract terms</span><span class="rv">12-month minimum</span></div>
+    <div class="row"><span class="rl">Amenities</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2)">Sauna + Normatec recovery room, no pool/ice bath seen</span></div>
+    <div class="row"><span class="rl">Where M2 wins</span><span class="rv g">No lock-in vs their 12mo contract, real pool + ice bath, HYROX coach who's raced it</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Muscle Club Newmarket <span class="badge b-off" style="margin-left:10px">Early stage</span></div>
+    <div class="row"><span class="rl">Status</span><span class="rv">No sign of launch yet</span></div>
+    <div class="row"><span class="rl">Detail</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2);text-align:right;max-width:62%">Main site (muscleclub.co.nz) still only lists their Albany club, no Newmarket branch linked anywhere. Very early stage, keep watching @muscle_club_newmarket</span></div>
+    <div class="row"><span class="rl">Where M2 wins</span><span class="rv g">First-mover in the area with an established member base while they're still pre-launch</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Les Mills <span class="badge b-active" style="margin-left:10px">Established</span></div>
+    <div class="row"><span class="rl">Status</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2);text-align:right;max-width:62%">The established giant  big-box, cinematic brand marketing, persistent multi-month remarketing</span></div>
+    <div class="row"><span class="rl">Where M2 wins</span><span class="rv g">Authentic, boutique, community-led  the opposite of their big-box feel</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Competitor notes</div>
+    <textarea class="note-area" id="n-comp" placeholder="What are other Auckland gyms doing?"></textarea>
+    <button class="save-btn" id="save-comp" onclick="saveNote('comp')">Save</button>
   </div>
 </div>
 
@@ -2604,7 +2634,7 @@ let msChart = null;
 const sectionToNav = {
   overview:'overview', todo:'overview', goals:'overview', scorecard:'overview', notes:'overview',
   members:'members', trials:'members', retention:'members', passport:'members', membersplit:'members',
-  meta:'marketing', campaigns:'marketing', calendar:'marketing', content:'marketing', seo:'marketing', pt:'marketing',
+  meta:'marketing', campaigns:'marketing', calendar:'marketing', content:'marketing', seo:'marketing', pt:'marketing', competitors:'marketing',
   pnl:'finance', mrr:'finance', offers:'finance', financials:'finance'
 };
 
