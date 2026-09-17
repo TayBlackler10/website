@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080808">
+<title>M2 // HYROX Auckland 2-Week Kickstart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --volt:#DFFF00;
+    --volt-dim:#C8FF00;
+    --black:#080808;
+    --panel:#121212;
+    --panel-2:#171717;
+    --line:#2a2a2a;
+    --text:#F2F2ED;
+    --text-dim:#9b9b95;
+    --text-faint:#5f5f5a;
+    --red:#FF4D4D;
+    --font-display:'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+    --font-body:'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono:'DM Mono', 'SF Mono', monospace;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--black);color:var(--text);font-family:var(--font-body);}
+  body{padding-bottom:96px; overflow-x:hidden;}
+  a{color:inherit;}
+  ::selection{background:var(--volt); color:#000;}
+
+  .topbar{position:sticky; top:0; z-index:50; background:rgba(8,8,8,0.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); padding:14px 18px 12px;}
+  .topbar-row{display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:center; gap:8px;}
+  .brand-logo{height:28px; width:auto; display:block;}
+  .brand-sub{font-family:var(--font-mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim);}
+  .duration-badge{font-family:var(--font-mono); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--volt); border:1px solid var(--line); padding:6px 10px; border-radius:20px;}
+
+  .hero{padding:22px 18px 8px;}
+  .hero-title{font-family:var(--font-display); font-size:40px; line-height:0.94; letter-spacing:0.5px; margin:0 0 6px;}
+  .hero-title em{font-style:normal; color:var(--volt);}
+  .hero-meta{font-family:var(--font-mono); font-size:12px; color:var(--text-dim); line-height:1.6;}
+  .hero-meta b{color:var(--text);}
+
+  .tabs{display:flex; gap:0; padding:0 18px; margin-top:20px; border-bottom:1px solid var(--line); overflow-x:auto;}
+  .tab{font-family:var(--font-mono); font-size:11px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); background:none; border:none; padding:10px 4px; margin-right:22px; border-bottom:2px solid transparent; cursor:pointer; white-space:nowrap;}
+  .tab.active{color:var(--volt); border-bottom-color:var(--volt);}
+
+  .view{display:none; padding:18px;}
+  .view.active{display:block;}
+
+  .sec-label{font-family:var(--font-mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--volt); margin:26px 0 8px;}
+  .sec-label:first-child{margin-top:0;}
+  h2.block-title{font-family:var(--font-display); font-size:26px; letter-spacing:0.3px; margin:0 0 10px;}
+  p.lede{color:var(--text-dim); font-size:14px; line-height:1.6; margin:0 0 16px;}
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:2px; padding:16px; margin-bottom:12px;}
+  .card-title{font-weight:700; font-size:14px; margin:0 0 6px; display:flex; align-items:center; gap:8px;}
+  .card-title .num{font-family:var(--font-mono); font-size:11px; color:var(--volt);}
+  .card-body{font-size:13px; color:var(--text-dim); line-height:1.6;}
+
+  .phase-track{display:flex; border:1px solid var(--line); border-radius:2px; overflow:hidden; margin-bottom:6px;}
+  .phase-seg{padding:10px 8px; font-family:var(--font-mono); font-size:10px; text-align:center; border-right:1px solid var(--line); flex-shrink:0; flex:1;}
+  .phase-seg:last-child{border-right:none;}
+  .phase-seg .n{font-family:var(--font-display); font-size:18px; display:block;}
+  .phase-1{background:#141c08;}
+  .phase-2{background:#1c1608;}
+  .phase-race{background:var(--volt); color:#000;}
+
+  .callout{border-left:3px solid var(--volt); background:var(--panel); padding:14px 16px; margin:14px 0; font-size:13px; line-height:1.65; color:var(--text-dim);}
+  .callout b{color:var(--text);}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media(max-width:520px){.grid2{grid-template-columns:1fr;}}
+  .princ{background:var(--panel); border:1px solid var(--line); padding:14px;}
+  .princ .k{font-family:var(--font-mono); font-size:10px; color:var(--volt); letter-spacing:1px;}
+  .princ .t{font-weight:700; font-size:14px; margin:4px 0 6px;}
+  .princ .d{font-size:12.5px; color:var(--text-dim); line-height:1.55;}
+
+  .week-card{border:1px solid var(--line); margin-bottom:10px; background:var(--panel); border-radius:2px; overflow:hidden;}
+  .week-head{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer;}
+  .week-head-left{display:flex; align-items:center; gap:12px;}
+  .week-num{font-family:var(--font-display); font-size:26px; color:var(--volt); min-width:40px;}
+  .week-info .wtitle{font-weight:700; font-size:14px;}
+  .week-info .wsub{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:2px;}
+  .week-progress{font-family:var(--font-mono); font-size:11px; color:var(--text-dim); display:flex; align-items:center; gap:8px;}
+  .prog-bar{width:36px; height:4px; background:#2a2a2a; position:relative; border-radius:2px; overflow:hidden;}
+  .prog-fill{position:absolute; left:0; top:0; bottom:0; background:var(--volt);}
+  .chev{transition:transform .2s ease; color:var(--text-faint); font-size:12px;}
+  .week-card.open .chev{transform:rotate(180deg);}
+  .week-body{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .week-card.open .week-body{max-height:6000px;}
+  .week-body-inner{padding:0 16px 16px;}
+
+  .day-block{border-top:1px solid var(--line); padding:12px 0;}
+  .day-head{display:flex; align-items:baseline; gap:8px; margin-bottom:8px;}
+  .day-name{font-family:var(--font-display); font-size:16px; letter-spacing:0.5px;}
+  .day-sub{font-family:var(--font-mono); font-size:10px; color:var(--text-faint);}
+
+  .session{display:flex; gap:10px; padding:9px 0; border-top:1px dashed #232323;}
+  .day-block .session:first-of-type{border-top:none;}
+  .sess-check{flex:0 0 auto; width:20px; height:20px; margin-top:2px; border:1.5px solid var(--text-faint); border-radius:3px; cursor:pointer; position:relative;}
+  .sess-check.done{background:var(--volt); border-color:var(--volt);}
+  .sess-check.done::after{content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#000;}
+  .sess-main{flex:1; min-width:0;}
+  .sess-top{display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+  .sess-period{font-family:var(--font-mono); font-size:9px; letter-spacing:1px; color:var(--text-faint); border:1px solid var(--line); padding:1px 5px; border-radius:2px;}
+  .sess-title{font-weight:700; font-size:13.5px;}
+  .sess-title.done-txt{color:var(--text-faint); text-decoration:line-through;}
+  .tag{font-family:var(--font-mono); font-size:8.5px; letter-spacing:0.5px; text-transform:uppercase; padding:1px 6px; border-radius:20px;}
+  .tag-aerobic{background:#0e2e12; color:#7be08a;}
+  .tag-strength{background:#2e230e; color:#e0b87b;}
+  .tag-weakness{background:#3a0e10; color:#ff8f8f;}
+  .tag-race{background:var(--volt); color:#000;}
+  .tag-rest{background:#151515; color:var(--text-faint);}
+  .sess-detail{font-size:12.5px; color:var(--text-dim); line-height:1.55; margin-top:4px;}
+  .sess-note{width:100%; margin-top:7px; background:var(--black); border:1px solid var(--line); color:var(--text); font-family:var(--font-body); font-size:12px; padding:7px 9px; border-radius:2px; resize:vertical; min-height:30px;}
+  .sess-note::placeholder{color:var(--text-faint);}
+
+  .stat-row{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:18px;}
+  .stat-box{background:var(--panel); border:1px solid var(--line); padding:14px 10px; text-align:center;}
+  .stat-num{font-family:var(--font-display); font-size:30px; color:var(--volt); line-height:1;}
+  .stat-lbl{font-family:var(--font-mono); font-size:9px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; margin-top:4px;}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:7px;}
+  .bar-wk{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); width:34px; flex-shrink:0;}
+  .bar-track{flex:1; height:14px; background:var(--panel-2); border:1px solid var(--line); position:relative; overflow:hidden;}
+  .bar-fill{height:100%; background:linear-gradient(90deg,#8a9c00,var(--volt));}
+  .bar-pct{font-family:var(--font-mono); font-size:10px; color:var(--text-dim); width:32px; text-align:right; flex-shrink:0;}
+
+  .station-card{background:var(--panel); border:1px solid var(--line); border-radius:2px; padding:14px 16px; margin-bottom:10px;}
+  .station-head{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .station-num{font-family:var(--font-display); font-size:20px; color:var(--volt); min-width:26px;}
+  .station-name{font-weight:700; font-size:14.5px;}
+  .station-tip{font-size:12.5px; color:var(--text-dim); line-height:1.6;}
+
+  .cta-band{background:var(--panel); border:1px solid var(--volt); border-radius:4px; padding:18px 20px; margin:20px 0; text-align:center;}
+  .cta-band .t{font-family:var(--font-display); font-size:20px; margin-bottom:6px;}
+  .cta-band .d{font-size:12.5px; color:var(--text-dim); margin-bottom:12px;}
+  .cta-btn{display:inline-block; background:var(--volt); color:#000; font-weight:700; font-size:13px; padding:10px 20px; border-radius:3px; text-decoration:none;}
+
+  .bottomnav{position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; background:#0c0c0c; border-top:1px solid var(--line); padding:8px 6px calc(10px + env(safe-area-inset-bottom));}
+  .bn-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--text-faint); font-family:var(--font-mono); font-size:9px; letter-spacing:0.5px; text-transform:uppercase; padding:4px 0; cursor:pointer;}
+  .bn-item.active{color:var(--volt);}
+
+  .reset-link{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); text-decoration:underline; cursor:pointer; margin-top:20px; display:inline-block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row">
+    <div class="brand">
+      <img class="brand-logo" src="/assets/M2_ICON_YELLOW%20(5).png" alt="M2 Training Club">
+      <span class="brand-sub">Training&nbsp;Club</span>
+    </div>
+    <div class="duration-badge">14 Days</div>
+  </div>
+</div>
+
+<div class="hero">
+  <h1 class="hero-title">HYROX AUCKLAND<br><em>2-WEEK</em> KICKSTART</h1>
+  <div class="hero-meta">Beginner plan &middot; No HYROX experience needed &middot; Built by the M2 coaching team</div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-view="overview">Overview</button>
+  <button class="tab" data-view="program">Program</button>
+  <button class="tab" data-view="stations">Stations</button>
+  <button class="tab" data-view="progress">Progress</button>
+</div>
+
+<!-- ===================== OVERVIEW ===================== -->
+<div class="view active" id="view-overview">
+  <div class="sec-label">The Kickstart</div>
+  <h2 class="block-title">14 days, two phases</h2>
+  <p class="lede">This isn't a shortcut to race fitness, it's a way to walk into your first proper HYROX session (or your first race build with Dave or Bekka) already knowing what the 8 stations feel like, without being wrecked by them.</p>
+
+  <div class="phase-track">
+    <div class="phase-seg phase-1">DAY 1&ndash;7<span class="n">LEARN</span></div>
+    <div class="phase-seg phase-2">DAY 8&ndash;14<span class="n">APPLY</span></div>
+    <div class="phase-seg phase-race">SAT<span class="n">CLASS</span></div>
+  </div>
+
+  <div class="callout">
+    <b>Why this order:</b> Most beginners get hurt or put off HYROX by going too hard on stations they've never practised, sled push and sandbag lunges especially. Week 1 is about technique and confidence on all 8 stations at low load. Week 2 turns that into your first taste of race pacing, then hands you straight into M2's free Saturday HYROX class to put it all together with a coach watching your form.
+  </div>
+
+  <div class="sec-label">How it fits together</div>
+  <div class="grid2">
+    <div class="princ"><div class="k">Frequency</div><div class="t">5 sessions a week, 2 rest days</div><div class="d">Short, manageable sessions. This plan assumes you're starting from a reasonable general fitness base, not zero, but you don't need any HYROX background.</div></div>
+    <div class="princ"><div class="k">The 8 stations</div><div class="t">Every station, every week</div><div class="d">Ski erg, sled push, sled pull, burpee broad jumps, rowing, farmers carry, sandbag lunges and wall balls all get practice time before race day ever comes.</div></div>
+    <div class="princ"><div class="k">Saturdays</div><div class="t">Free class + free technique session</div><div class="d">Both Saturdays in this plan line up with M2's free HYROX Saturdays class and the free technique session straight after. Book both via the Technogym app.</div></div>
+    <div class="princ"><div class="k">What's next</div><div class="t">Talk to Dave or Bekka</div><div class="d">Once you've got two weeks under your belt, they'll know exactly where to take your training next, whether that's online coaching or the M2 HYROX membership.</div></div>
+  </div>
+</div>
+
+<!-- ===================== PROGRAM ===================== -->
+<div class="view" id="view-program">
+  <div class="sec-label">Full Program</div>
+  <h2 class="block-title">Day by day</h2>
+  <p class="lede">Tap a week to expand it. Tick off sessions as you go, everything saves on this device automatically.</p>
+  <div id="weeksContainer"></div>
+  <div style="text-align:center;">
+    <span class="reset-link" id="resetBtn">Reset all tracked data</span>
+  </div>
+</div>
+
+<!-- ===================== STATIONS ===================== -->
+<div class="view" id="view-stations">
+  <div class="sec-label">Know Before You Go</div>
+  <h2 class="block-title">The 8 HYROX stations</h2>
+  <p class="lede">A quick primer so nothing on race day (or in your first M2 HYROX class) comes as a surprise.</p>
+
+  <div class="station-card"><div class="station-head"><span class="station-num">01</span><span class="station-name">SkiErg</span></div><div class="station-tip">1000m. Drive with your legs and hips, not just your arms, most beginners burn out their arms in the first 200m by pulling with the upper body alone.</div></div>
+  <div class="station-card"><div class="station-head"><span class="station-num">02</span><span class="station-name">Sled Push</span></div><div class="station-tip">50m. Low body position, short powerful steps, eyes up. Get comfortable driving through a loaded sled before race day, it's not intuitive the first time.</div></div>
+  <div class="station-card"><div class="station-head"><span class="station-num">03</span><span class="station-name">Sled Pull</span></div><div class="station-tip">50m. Hand-over-hand rope pull, lean back and use your bodyweight, not just your arms and back.</div></div>
+  <div class="station-card"><div class="station-head"><span class="station-num">04</span><span class="station-name">Burpee Broad Jumps</span></div><div class="station-tip">80m. Chest to floor, then a two-foot broad jump forward. Rhythm beats speed, find a pace you can hold for the full distance rather than sprinting the first 20m.</div></div>
+  <div class="station-card"><div class="station-head"><span class="station-num">05</span><span class="station-name">Rowing</span></div><div class="station-tip">1000m. Legs, then lean, then arms on the drive, reverse on the return. A common weak point for beginners, worth extra practice.</div></div>
+  <div class="station-card"><div class="station-head"><span class="station-num">06</span><span class="station-name">Farmers Carry</span></div><div class="station-tip">200m. Heavy kettlebells or handles, walk tall, brace your core. Grip usually gives out before your legs do, so grip work pays off.</div></div>
+  <div class="station-card"><div class="station-head"><span class="station-num">07</span><span class="station-name">Sandbag Lunges</span></div><div class="station-tip">100m. Sandbag on the back, controlled walking lunges. This one humbles almost every beginner, so the extra practice in this plan is deliberate.</div></div>
+  <div class="station-card"><div class="station-head"><span class="station-num">08</span><span class="station-name">Wall Balls</span></div><div class="station-tip">100 reps. Full squat depth, hit the target height every rep. Find a pace and rep scheme (e.g. sets of 10) you can actually sustain rather than going out too hot.</div></div>
+
+  <div class="cta-band">
+    <div class="t">Want it coached, not just written down?</div>
+    <div class="d">Dave and Bekka both offer online HYROX coaching at a discount for anyone racing HYROX Auckland.</div>
+    <a href="hyrox-auckland.html#top" class="cta-btn">See Their Offer &#8594;</a>
+  </div>
+</div>
+
+<!-- ===================== PROGRESS ===================== -->
+<div class="view" id="view-progress">
+  <div class="sec-label">Progress</div>
+  <h2 class="block-title">Adherence</h2>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-num" id="statDone">0</div><div class="stat-lbl">Sessions logged</div></div>
+    <div class="stat-box"><div class="stat-num" id="statPct">0%</div><div class="stat-lbl">Completion</div></div>
+    <div class="stat-box"><div class="stat-num" id="statWeak">0%</div><div class="stat-lbl">Weak-point hit rate</div></div>
+  </div>
+  <div class="sec-label">By week</div>
+  <div id="weekBars"></div>
+</div>
+
+<div class="bottomnav" id="bottomnav">
+  <button class="bn-item active" data-view="overview">Overview</button>
+  <button class="bn-item" data-view="program">Program</button>
+  <button class="bn-item" data-view="stations">Stations</button>
+  <button class="bn-item" data-view="progress">Progress</button>
+</div>
+
+<script>
+/* =========================================================================
+   M2 // HYROX AUCKLAND 2-WEEK KICKSTART
+   Static beginner program + local tracking. All data stored on-device via
+   localStorage — nothing leaves the phone, no personal data collected here.
+========================================================================= */
+
+function S(period,title,detail,tag){ return {period,title,detail,tag}; }
+
+const WEEK1_LABEL = 'Learn the Stations';
+const WEEK2_LABEL = 'Apply It & Race Pace';
+
+const WEEK1_DAYS = [
+  { name:'Day 1', sub:'Monday', sessions:[
+      S('AM','Easy Run — 20 min','Conversational pace. This is just to open the legs, not a fitness test.','aerobic'),
+      S('PM','Station Walkthrough — All 8 Stations','Technique only, light load, no clock: SkiErg 200m, Sled Push 10m, Sled Pull 10m, 10 Burpee Broad Jumps, Row 200m, Farmers Carry 2x20m, Sandbag Lunge 10m (empty or very light bag), 15 Wall Balls. The goal is just to feel each movement once.','strength') ]},
+  { name:'Day 2', sub:'Tuesday', sessions:[
+      S('AM','Rest or Easy Walk','Legs loose, nothing structured.','rest'),
+      S('PM','Strength Fundamentals','3 rounds: 10 bodyweight or goblet squats, 10 walking lunges (bodyweight), 10 push-ups (any variation), 10 kettlebell or dumbbell rows, 30 sec plank. Moderate effort, focus on form.','strength') ]},
+  { name:'Day 3', sub:'Wednesday', sessions:[
+      S('AM','Easy Run — 20 min','Easy, comfortable pace.','aerobic'),
+      S('PM','Engine Intervals','On Row, Ski Erg or Bike (whichever is free): 30 sec on at moderate effort, 30 sec easy, repeat 10 times. Builds confidence with the machines you'+"'"+'ll use on race day.','aerobic') ]},
+  { name:'Day 4', sub:'Thursday', sessions:[
+      S('AM','Rest','Full rest day.','rest'),
+      S('PM','Mobility — 15 min','Hips, ankles and shoulders. Nothing intense, just movement.','rest') ]},
+  { name:'Day 5', sub:'Friday', sessions:[
+      S('AM','Easy Run — 20 min','Easy pace, relaxed effort.','aerobic'),
+      S('PM','Weak-Point Primer — Burpees & Lunges','3 rounds: 10 Burpee Broad Jumps, 20m Sandbag or Backpack Lunge. These two trip up almost every beginner, so they get extra attention early. Technique over speed.','weakness') ]},
+  { name:'Day 6', sub:'Saturday', sessions:[
+      S('ALL','HYROX Saturdays (Free Class)','Join M2\'s free HYROX-format class, open to everyone. Book your spot via the Technogym app before you come in.','race') ]},
+  { name:'Day 7', sub:'Sunday', sessions:[
+      S('AM','Free HYROX Technique Session','Straight after Saturday\'s class, or as a standalone booking, this free session covers sled, wall balls, farmers carry and the stations that make or break your race time. Book via the Technogym app.','strength'),
+      S('PM','Rest','Full rest. You\'ve earned it after the weekend session.','rest') ]},
+];
+
+const WEEK2_DAYS = [
+  { name:'Day 8', sub:'Monday', sessions:[
+      S('AM','Easy Run — 20 min','Easy pace, stay relaxed.','aerobic'),
+      S('PM','Mini Simulation Prep — 4 Rounds','4 rounds of: 200m run + 1 station (rotate through Ski, Sled Push, Row, Wall Balls across the 4 rounds). Moderate effort, this is a step up from Week 1\'s technique-only pace.','race') ]},
+  { name:'Day 9', sub:'Tuesday', sessions:[
+      S('AM','Rest or Easy Walk','Keep it light.','rest'),
+      S('PM','Strength & Grip','4x30m Farmers Carry (heavier than last week if you can), 4x20m Sandbag or Backpack Lunge, core finisher (3x30 sec plank or dead bug).','weakness') ]},
+  { name:'Day 10', sub:'Wednesday', sessions:[
+      S('AM','Threshold Touch — 20 min','10 min easy, then 5x1 min at a faster but controlled pace with 1 min easy between, 5 min cool-down.','aerobic'),
+      S('PM','Rest / Mobility — 15 min','Light stretch, hips and shoulders.','rest') ]},
+  { name:'Day 11', sub:'Thursday', sessions:[
+      S('AM','Warm-Up — 15 min','Dynamic warm-up, easy jog, activation drills.','strength'),
+      S('MID','Mini HYROX Simulation — 4x(400m + Station)','Run 400m into a station, four times through, cycling Sled Push, Burpee Broad Jumps, Row and Sandbag Lunge. Race-day effort, this is your benchmark session for the block.','race') ]},
+  { name:'Day 12', sub:'Friday', sessions:[
+      S('AM','Rest','Full rest ahead of the weekend.','rest'),
+      S('PM','Rest','Full rest, every week, no exceptions.','rest') ]},
+  { name:'Day 13', sub:'Saturday', sessions:[
+      S('ALL','HYROX Saturdays (Free Class)','Second time around, put what you\'ve learned into the group setting. Book via the Technogym app.','race') ]},
+  { name:'Day 14', sub:'Sunday', sessions:[
+      S('AM','Free HYROX Technique Session','Book via the Technogym app, straight after Saturday\'s class.','strength'),
+      S('PM','Shakeout + Reflect — 15 min','Easy walk or jog. Note which station felt hardest, that\'s exactly what Dave or Bekka will want to know if you take your training further with them.','rest') ]},
+];
+
+const PROGRAM = [
+  { id:'w1', label:'Week 1', sub:WEEK1_LABEL, badgeClass:'phase-1', days:WEEK1_DAYS },
+  { id:'w2', label:'Week 2', sub:WEEK2_LABEL, badgeClass:'phase-2', days:WEEK2_DAYS },
+];
+
+/* =========================================================================
+   STORAGE
+========================================================================= */
+const STORE_KEY = 'm2hyrox_2week_v1';
+let store = JSON.parse(localStorage.getItem(STORE_KEY) || '{"done":{},"notes":{}}');
+function saveStore(){ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
+function sid(weekId,dayIdx,sessIdx){ return weekId+'-d'+dayIdx+'-s'+sessIdx; }
+
+function weekCompletion(wk){
+  let total=0, done=0;
+  wk.days.forEach((day,di)=>day.sessions.forEach((s,si)=>{
+    if(s.tag==='rest') return;
+    total++;
+    if(store.done[sid(wk.id,di,si)]) done++;
+  }));
+  return {total, done, pct: total? Math.round(done/total*100):0};
+}
+
+function sessionEl(weekId, dayIdx, sessIdx, s){
+  const id = sid(weekId,dayIdx,sessIdx);
+  const done = !!store.done[id];
+  const el = document.createElement('div');
+  el.className='session';
+  const isRest = s.tag==='rest';
+  el.innerHTML = `
+    <div class="sess-check ${done?'done':''}" data-id="${id}" ${isRest?'style="visibility:hidden"':''}></div>
+    <div class="sess-main">
+      <div class="sess-top">
+        <span class="sess-period">${s.period}</span>
+        <span class="sess-title ${done?'done-txt':''}">${s.title}</span>
+        <span class="tag tag-${s.tag}">${s.tag}</span>
+      </div>
+      <div class="sess-detail">${s.detail}</div>
+      ${isRest? '' : `<textarea class="sess-note" placeholder="Log time, load, RPE or how it felt...">${store.notes[id]||''}</textarea>`}
+    </div>`;
+  if(!isRest){
+    el.querySelector('.sess-check').addEventListener('click', ()=>{
+      store.done[id] = !store.done[id];
+      saveStore();
+      renderAll();
+    });
+    const ta = el.querySelector('.sess-note');
+    ta.addEventListener('input', ()=>{ store.notes[id]=ta.value; saveStore(); });
+    ta.addEventListener('click', e=>e.stopPropagation());
+  }
+  return el;
+}
+
+function renderProgram(){
+  const container = document.getElementById('weeksContainer');
+  container.innerHTML='';
+  PROGRAM.forEach((wk,wIdx)=>{
+    const comp = weekCompletion(wk);
+    const card = document.createElement('div');
+    card.className='week-card'+(wIdx===0?' open':'');
+    card.innerHTML = `
+      <div class="week-head">
+        <div class="week-head-left">
+          <div class="week-num">${wIdx+1}</div>
+          <div class="week-info">
+            <div class="wtitle">${wk.label}</div>
+            <div class="wsub">${wk.sub}</div>
+          </div>
+        </div>
+        <div class="week-progress">
+          <div class="prog-bar"><div class="prog-fill" style="width:${comp.pct}%"></div></div>
+          ${comp.done}/${comp.total}
+          <span class="chev">▾</span>
+        </div>
+      </div>
+      <div class="week-body"><div class="week-body-inner"></div></div>`;
+    const body = card.querySelector('.week-body-inner');
+    wk.days.forEach((day,di)=>{
+      const dayEl = document.createElement('div');
+      dayEl.className='day-block';
+      dayEl.innerHTML = `<div class="day-head"><span class="day-name">${day.name}</span><span class="day-sub">${day.sub}</span></div>`;
+      day.sessions.forEach((s,si)=> dayEl.appendChild(sessionEl(wk.id, di, si, s)));
+      body.appendChild(dayEl);
+    });
+    card.querySelector('.week-head').addEventListener('click', ()=> card.classList.toggle('open'));
+    container.appendChild(card);
+  });
+}
+
+function renderProgress(){
+  let total=0, done=0, weakTotal=0, weakDone=0;
+  PROGRAM.forEach(wk=>{
+    wk.days.forEach((day,di)=>day.sessions.forEach((s,si)=>{
+      if(s.tag==='rest') return;
+      total++;
+      const id = sid(wk.id,di,si);
+      const isDone = !!store.done[id];
+      if(isDone) done++;
+      if(s.tag==='weakness'){ weakTotal++; if(isDone) weakDone++; }
+    }));
+  });
+  document.getElementById('statDone').textContent = done;
+  document.getElementById('statPct').textContent = total? Math.round(done/total*100)+'%':'0%';
+  document.getElementById('statWeak').textContent = weakTotal? Math.round(weakDone/weakTotal*100)+'%':'0%';
+
+  const bars = document.getElementById('weekBars');
+  bars.innerHTML='';
+  PROGRAM.forEach((wk,wIdx)=>{
+    const comp = weekCompletion(wk);
+    const row = document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML = `<div class="bar-wk">W${wIdx+1}</div><div class="bar-track"><div class="bar-fill" style="width:${comp.pct}%"></div></div><div class="bar-pct">${comp.pct}%</div>`;
+    bars.appendChild(row);
+  });
+}
+
+function setView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.view===name));
+  document.querySelectorAll('.bn-item').forEach(t=>t.classList.toggle('active', t.dataset.view===name));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tab, .bn-item').forEach(btn=>{
+  btn.addEventListener('click', ()=> setView(btn.dataset.view));
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm('Clear all tracked sessions and notes on this device? This cannot be undone.')){
+    store = {done:{},notes:{}};
+    saveStore();
+    renderAll();
+  }
+});
+
+function renderAll(){
+  renderProgram();
+  renderProgress();
+}
+renderAll();
+</script>
+</body>
+</html>
