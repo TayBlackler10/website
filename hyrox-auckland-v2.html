@@ -119,8 +119,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .split-hero-h1 .y{color:var(--yellow);}
   .split-hero-sub{color:var(--dim);font-size:1.02rem;max-width:480px;margin-bottom:32px;}
   .split-hero-actions{display:flex;gap:16px;flex-wrap:wrap;}
-  .split-hero-media{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:4/5;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black);transform:translateZ(0);}
-  .split-hero-media img,.split-hero-media video{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;position:relative;z-index:0;}
+  .split-hero-media{position:relative;border-radius:6px;overflow:hidden;height:0;padding-bottom:125%;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black);}
+  .split-hero-media img,.split-hero-media video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
   .chip-row{position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:8px;}
   .chip{background:rgba(10,10,10,.82);backdrop-filter:blur(6px);border:1px solid var(--line-strong);border-radius:20px;padding:8px 14px;font-size:.72rem;letter-spacing:.04em;color:var(--white);}
   .chip b{color:var(--yellow);}
