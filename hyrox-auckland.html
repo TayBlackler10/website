@@ -21,6 +21,7 @@ document.addEventListener('click', function(e) {
   if (href.indexOf('gymmasteronline.com') !== -1) {
     var t = (el.textContent || '').toLowerCase();
     label = (href.indexOf('trial') !== -1 || t.indexOf('trial') !== -1) ? 'trial_signup_click' : 'membership_signup_click';
+    if (typeof fbq === 'function') { fbq('track', 'Lead', { content_name: 'HYROX Auckland - Free Plan Signup Click' }); }
   } else if (href.indexOf('mywellness.com') !== -1) {
     label = 'class_booking_click';
   } else if (href.indexOf('mailto:') === 0) {
