@@ -94,7 +94,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   "url": "https://m2club.co.nz",
   "telephone": "+6495581408",
   "email": "reception@m2club.co.nz",
-  "description": "Auckland's #1 official HYROX Training Club in Grafton. Gym floor, unlimited group fitness classes, swimming pool, spa pool, ice bath, sauna and recovery area.",
+  "description": "Official HYROX Training Club in Grafton, Auckland. Gym floor, unlimited group fitness classes, swimming pool, spa pool, ice bath, sauna and recovery area.",
   "priceRange": "$$",
   "address": {
     "@type": "PostalAddress",
@@ -205,6 +205,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .ticket-value{font-family:var(--display);font-size:3.6rem;color:var(--yellow);line-height:1;margin:6px 0;}
   .ticket-per{color:var(--dim-2);font-size:.85rem;}
 
+  /* ---------- community grid ---------- */
+  .community-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+  @media(max-width:760px){.community-grid{grid-template-columns:1fr;}}
+  .community-grid .g-item{aspect-ratio:4/3;}
+
   /* ---------- faq 2col ---------- */
   .faq-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;}
   @media(max-width:760px){.faq-2col{grid-template-columns:1fr;}}
@@ -271,6 +276,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     <a href="#coaches">Coaches</a>
     <a href="#plan">Free Plan</a>
     <a href="#saturdays">Saturdays</a>
+    <a href="#community">Community</a>
     <a href="#results">Results</a>
     <a href="#faq">FAQ</a>
   </div>
@@ -357,6 +363,9 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
         <div class="ticket-value">$35.00</div>
         <div class="ticket-per">per week</div>
       </div>
+    </div>
+    <div style="text-align:center;margin-top:24px;">
+      <a href="#plan" class="btn btn-solid">Get The Free 2-Week Plan First <span class="arrow">&#8594;</span></a>
     </div>
     <p style="text-align:center;color:var(--dim);font-size:.85rem;margin-top:20px;">8 Nugent Street, Grafton, Auckland &middot; <a href="contact.html" style="color:var(--yellow);">Get directions &#8594;</a></p>
   </div>
@@ -450,12 +459,33 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   </div>
 </section>
 
+<!-- ===================== COMMUNITY ===================== -->
+<section class="section-pad" id="community" style="padding-top:0;">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="section-h2">More than a gym. A squad.</h2>
+      <p class="section-note">HYROX is better with people around you. This is the M2 crew training, racing and celebrating together.</p>
+    </div>
+  </div>
+  <div class="wrap" style="max-width:1000px;">
+    <div class="community-grid reveal">
+      <div class="g-item" data-label="The Squad"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/HYROX%20Community%20A.jpg" alt="M2 HYROX squad training together on the gym floor"></div>
+      <div class="g-item" data-label="Oceania Champs"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/HYROX%20Community%20B.jpg" alt="M2 athletes celebrating HYROX Oceania Championship podium finishes"></div>
+      <div class="g-item" data-label="Race Day Crew"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/HYROX%20Community%20C.jpg" alt="Large group of M2 HYROX athletes together on race day"></div>
+      <div class="g-item" data-label="Training Together"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/HYROX%20Community%20D.jpg" alt="M2 athletes training together as a team"></div>
+    </div>
+    <div style="text-align:center;margin-top:28px;">
+      <a href="#plan" class="btn btn-solid">Join The Squad &mdash; Get The Free Plan <span class="arrow">&#8594;</span></a>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== ATHLETE GALLERY ===================== -->
 <section class="section-pad" id="results" style="padding-top:0;">
   <div class="wrap">
     <div class="section-head reveal">
       <h2 class="section-h2">Real people. Race day results.</h2>
-      <p class="section-note">Our athletes on the HYROX floor, Auckland's #1 official HYROX Training Club.</p>
+      <p class="section-note">Our athletes on the HYROX floor, training out of Auckland's official HYROX Training Club.</p>
     </div>
   </div>
   <div class="gallery-grid reveal">
@@ -467,6 +497,9 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     <div class="g-item" data-label="Shane"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Shane.JPG" alt="HYROX athlete Shane at M2 Training Club"></div>
     <div class="g-item" data-label="Taylor & Theo"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Taylor%20%26%20Theo%20.JPG" alt="HYROX athletes Taylor and Theo at M2 Training Club"></div>
     <div class="g-item" data-label="Thomas"><img src="https://raw.githubusercontent.com/TayBlackler10/website/main/Hyrox%20Thomas.JPG" alt="HYROX athlete Thomas at M2 Training Club"></div>
+  </div>
+  <div class="wrap" style="text-align:center;margin-top:32px;">
+    <a href="#plan" class="btn btn-solid">Get The Free 2-Week Plan <span class="arrow">&#8594;</span></a>
   </div>
 </section>
 
@@ -486,6 +519,9 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
         <div class="faq-item"><div class="faq-q"><span>What counts as proof of my race ticket?</span><span class="plus"></span></div><div class="faq-a-wrap"><p class="faq-a">Your HYROX Auckland registration confirmation, whether that's an email, a screenshot or your entry showing in the HYROX app.</p></div></div>
         <div class="faq-item"><div class="faq-q"><span>Can I get a personalised training program instead of the free plan?</span><span class="plus"></span></div><div class="faq-a-wrap"><p class="faq-a">Yes. Dave and Bekka both offer online HYROX coaching at a discount for anyone racing HYROX Auckland. Enquire above and they'll build something around your own schedule and goals.</p></div></div>
       </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+      <a href="#plan" class="btn btn-solid">Get The Free 2-Week Plan <span class="arrow">&#8594;</span></a>
     </div>
   </div>
 </section>
