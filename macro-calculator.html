@@ -28,7 +28,6 @@
     --protein:#5c6b00;
     --carbs:#146a6a;
     --fat:#7a4a1f;
-    --bar-ink:#ffffff;
     --success:#1c8a4c;
     --success-soft:#e0f3e7;
     --warning:#a66a00;
@@ -57,7 +56,6 @@
       --protein:#c8f000;
       --carbs:#3fb8b8;
       --fat:#e0a03d;
-      --bar-ink:#0a0a08;
       --success:#39b06c;
       --success-soft:#123423;
       --warning:#e0ab3d;
@@ -83,7 +81,6 @@
     --protein:#c8f000;
     --carbs:#3fb8b8;
     --fat:#e0a03d;
-    --bar-ink:#0a0a08;
     --success:#39b06c;
     --success-soft:#123423;
     --warning:#e0ab3d;
@@ -185,7 +182,7 @@
   .bar{
     height:26px;border-radius:8px;overflow:hidden;display:flex;background:var(--surface-2);border:1px solid var(--border);
   }
-  .bar span{height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bar-ink);
+  .bar span{height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;
     transition:width .25s ease;white-space:nowrap;overflow:hidden;}
   .bar .seg-protein{background:var(--protein);}
   .bar .seg-carbs{background:var(--carbs);}
@@ -213,6 +210,37 @@
   }
   .macro-warning svg{width:16px;height:16px;flex:none;margin-top:1px;color:var(--warning);}
   .macro-warning b{font-weight:700;}
+
+  /* ---------- remaining-today panel ---------- */
+  .remaining-panel{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+    padding:14px 16px;box-shadow:var(--shadow);margin-bottom:16px;display:grid;gap:10px;
+  }
+  .remaining-head h3{font-size:14px;text-transform:uppercase;letter-spacing:.05em;}
+  .remaining-head p{margin:2px 0 0;font-size:12px;color:var(--text-dim);}
+  .remaining-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  @media (max-width:640px){ .remaining-grid{grid-template-columns:repeat(2,1fr);} }
+  .remaining-grid .tile{padding:10px 12px 9px;gap:5px;}
+  .remaining-grid .tile-rows{justify-content:flex-start;}
+  .remaining-grid .v{font-size:17px;}
+
+  /* ---------- per-meal target hint ---------- */
+  .meal-hint{padding:7px 14px 0;font-size:11.5px;color:var(--text-dim);line-height:1.4;}
+  .meal-hint b{color:var(--text);font-family:'IBM Plex Mono',monospace;font-weight:600;}
+
+  /* ---------- suggest-foods panel ---------- */
+  .suggest-panel{border-top:1px solid var(--border);background:var(--surface-2);padding:12px 14px;display:grid;gap:10px;}
+  .suggest-intro{font-size:12px;color:var(--text-dim);}
+  .suggest-empty{font-size:12.5px;color:var(--text-dim);}
+  .suggest-list{display:grid;gap:8px;}
+  .suggest-row{
+    display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:8px 10px;flex-wrap:wrap;
+  }
+  .suggest-food{display:flex;flex-direction:column;gap:1px;min-width:120px;flex:1;}
+  .suggest-food b{font-size:13px;}
+  .suggest-qty{font-size:11px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;}
+  .suggest-macros{font-size:11.5px;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
 
   /* ---------- tabs ---------- */
   .tabs{display:flex;gap:4px;margin:26px 0 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
@@ -457,162 +485,6 @@
   .gate-fine{font-size:11px;color:var(--text-faint);margin-top:14px;line-height:1.5;}
   .gate-fine a{color:var(--text-dim);}
   [hidden]{display:none!important;}
-
-  /* ---------- install banner ---------- */
-  .install-banner{
-    margin:14px auto 0;max-width:1080px;padding:0 20px;
-  }
-  .install-banner-inner{
-    display:flex;align-items:center;gap:12px;
-    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-    padding:12px 14px;box-shadow:var(--shadow);
-  }
-  .install-banner-icon{
-    flex:none;width:36px;height:36px;border-radius:9px;background:var(--accent-fill);
-    display:flex;align-items:center;justify-content:center;color:var(--accent-ink);
-  }
-  .install-banner-icon svg{width:19px;height:19px;}
-  .install-banner-text{flex:1;min-width:0;}
-  .install-banner-text .t{font-weight:700;font-size:13.5px;color:var(--text);}
-  .install-banner-text .s{font-size:12px;color:var(--text-dim);margin-top:1px;}
-  .install-banner-actions{flex:none;display:flex;align-items:center;gap:6px;}
-  .install-banner-btn{
-    appearance:none;cursor:pointer;border:none;border-radius:8px;font-weight:700;font-size:12.5px;
-    padding:8px 12px;background:var(--accent-fill);color:var(--accent-ink);white-space:nowrap;
-  }
-  .install-banner-btn:hover{filter:brightness(1.06);}
-  .install-banner-dismiss{
-    appearance:none;cursor:pointer;border:none;background:transparent;color:var(--text-faint);
-    width:30px;height:30px;border-radius:8px;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;
-  }
-  .install-banner-dismiss:hover{background:var(--bg);color:var(--text);}
-  @media (max-width:560px){
-    .install-banner-text .s{display:none;}
-  }
-
-  .install-modal-overlay{
-    position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.55);
-    display:flex;align-items:center;justify-content:center;padding:24px;
-  }
-  .install-modal{
-    width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);
-    box-shadow:var(--shadow);padding:24px 22px 22px;
-  }
-  .install-modal h2{font-size:19px;margin:0 0 4px;}
-  .install-modal p.im-sub{font-size:12.5px;color:var(--text-dim);margin:0 0 16px;}
-  .install-modal ol{margin:0 0 18px;padding-left:20px;display:flex;flex-direction:column;gap:8px;}
-  .install-modal ol li{font-size:13.5px;line-height:1.4;color:var(--text);}
-  .install-modal .im-close{
-    width:100%;appearance:none;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);
-    border-radius:9px;padding:11px 16px;font-weight:700;font-size:13.5px;
-  }
-
-  /* ---------- mobile: tighter, calmer sizing ---------- */
-  @media (max-width:640px){
-    .wrap{padding-inline:14px;}
-    main{padding-block:14px 40px;}
-
-    /* header */
-    .header-inner{padding-block:10px;gap:10px;}
-    .brand{gap:9px;}
-    .brand-mark{height:22px;}
-    .brand-text .word{font-size:14px;}
-    .brand-text .sub{font-size:9px;letter-spacing:.1em;margin-top:3px;}
-    .header-meta{gap:9px;}
-    .header-meta .date{font-size:11px;}
-    .theme-btn{width:28px;height:28px;border-radius:8px;}
-    .theme-btn svg{width:14px;height:14px;}
-
-    /* install banner */
-    .install-banner{padding:0 14px;margin-top:10px;}
-    .install-banner-inner{padding:10px 11px;gap:9px;}
-    .install-banner-icon{width:30px;height:30px;}
-
-    /* dashboard tiles */
-    .dashboard{gap:8px;margin-bottom:14px;}
-    .stat-grid{gap:8px;}
-    .tile{padding:10px 10px 8px;gap:4px;}
-    .tile-label{font-size:9.5px;}
-    .tile-col .k{font-size:8.5px;}
-    .tile-col .v{font-size:16px;}
-    .tile-chip{font-size:9.5px;padding:2px 7px;}
-
-    /* fuel mix */
-    .fuelmix{padding:12px 13px;gap:11px;border-radius:var(--radius-md);}
-    .fuelmix-head h2{font-size:12.5px;}
-    .legend{gap:10px;}
-    .legend-item{font-size:10.5px;gap:5px;}
-    .swatch{width:8px;height:8px;}
-    .target-editor{padding:9px 10px;gap:10px 14px;}
-    .target-editor .te-intro{font-size:10px;max-width:100%;flex-basis:100%;}
-    .te-field input{width:76px;padding:5px 6px;font-size:11.5px;}
-    .te-field label{font-size:9px;}
-    .fuelmix-row{grid-template-columns:44px 1fr;gap:8px;}
-    .fuelmix-row .rl{font-size:9.5px;}
-    .bar{height:22px;border-radius:7px;}
-    .bar span{font-size:10px;}
-    .compare-toggle{gap:8px;}
-    .compare-toggle-label{font-size:10.5px;}
-    .segmented{padding:2px;}
-    .segmented button{padding:5px 9px;font-size:11px;}
-    .macro-warning{padding:8px 10px;font-size:11.5px;}
-
-    /* tabs */
-    .tabs{margin:18px 0 10px;gap:0;}
-    .tab-btn{padding:8px 2px;margin-right:16px;font-size:12px;}
-    .tab-count{font-size:9.5px;padding:1px 5px;margin-left:4px;}
-
-    /* toolbar / buttons */
-    .toolbar{margin-bottom:10px;gap:8px;}
-    .toolbar .title-block h2{font-size:17px;}
-    .toolbar .title-block p{font-size:11px;}
-    .btn{padding:7px 11px;font-size:12px;border-radius:9px;}
-    .btn-sm{padding:4px 8px;font-size:10.5px;}
-    .btn svg{width:12px;height:12px;}
-
-    /* example / empty banners */
-    .example-banner{padding:9px 11px;font-size:11.5px;gap:8px;}
-    .empty-note{padding:22px 16px;font-size:12.5px;}
-
-    /* meal cards */
-    .meal-list{gap:10px;}
-    .meal-head{padding:10px 11px;gap:8px;}
-    .meal-name{font-size:16px;min-width:60px;}
-    .meal-head .meal-total{font-size:10px;}
-    .option-head{padding:8px 11px 3px;gap:6px;}
-    .option-pill{font-size:8.5px;padding:2px 6px;}
-    .option-name{font-size:12px;}
-    .option-total{font-size:10px;}
-    .option-foot{padding:5px 11px 10px;}
-    .meal-foot{padding:8px 11px;}
-
-    /* meal item table — trim to essentials, hide secondary columns */
-    table.items{min-width:0;}
-    table.items th, table.items td{padding:6px 7px;font-size:11.5px;}
-    table.items th{font-size:9px;}
-    .cell-food{min-width:120px;}
-    .cell-extra{display:none;}
-    .food-input{font-size:12px;padding:5px 6px;}
-    .qty-wrap{gap:3px;}
-    .qty-input{width:46px;padding:5px 4px;font-size:12px;}
-    .unit{font-size:10px;min-width:20px;}
-    .num{font-size:11.5px;}
-    .icon-btn svg{width:12px;height:12px;}
-
-    /* library */
-    .lib-toolbar{gap:8px;margin-bottom:10px;}
-    .search-input{padding:8px 10px;font-size:12.5px;min-width:0;}
-    details.food-group summary{padding:9px 11px;font-size:12.5px;}
-    table.lib{min-width:0;}
-    table.lib th, table.lib td{padding:5px 8px;font-size:11.5px;}
-    .addfood-form{padding:11px;gap:8px;}
-    .field label{font-size:9.5px;}
-    .field input, .field select{padding:6px 8px;font-size:12px;}
-
-    /* pdf export */
-    .export-controls{padding:10px 11px;gap:10px;}
-    .doc-page{padding:20px 16px 18px;}
-  }
 </style>
 
 <div class="gate-overlay" id="gate-overlay" hidden>
@@ -655,31 +527,6 @@
     </div>
   </div>
 </header>
-
-<div class="install-banner" id="install-banner" hidden>
-  <div class="install-banner-inner">
-    <div class="install-banner-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-    </div>
-    <div class="install-banner-text">
-      <div class="t">Add this to your home screen</div>
-      <div class="s">Get one-tap access, like an app &mdash; no App Store needed.</div>
-    </div>
-    <div class="install-banner-actions">
-      <button class="install-banner-btn" id="install-banner-cta" type="button">Show me how</button>
-      <button class="install-banner-dismiss" id="install-banner-dismiss" type="button" aria-label="Dismiss">&times;</button>
-    </div>
-  </div>
-</div>
-
-<div class="install-modal-overlay" id="install-modal-overlay" hidden>
-  <div class="install-modal">
-    <h2 id="install-modal-title">Add to Home Screen</h2>
-    <p class="im-sub" id="install-modal-sub">Follow these steps to install the Macro Planner as an app.</p>
-    <ol id="install-modal-steps"></ol>
-    <button class="im-close" id="install-modal-close" type="button">Got it</button>
-  </div>
-</div>
 
 <main class="wrap">
 
@@ -1029,6 +876,70 @@
     };
   }
 
+  /* Target minus everything logged (and active) so far today for that day type (Meal Plan &
+     Today's Log share the Training Day target; Rest Day has its own). This is the MFP-style
+     "remaining" figure — negative means over target. */
+  function remainingFor(kind){
+    var t = targetsFor(kind);
+    var consumed = dayTotals(dayOf(kind));
+    return {
+      calories: (t.calories||0) - consumed.calories,
+      protein: (t.protein||0) - consumed.protein,
+      carbs: (t.carbs||0) - consumed.carbs,
+      fat: (t.fat||0) - consumed.fat
+    };
+  }
+
+  function remainingStatus(val, target){
+    var tol = Math.max(10, Math.abs(target||0)*0.03);
+    if(val < -tol) return {cls:'chip-bad', label: n1(Math.abs(val))+' over'};
+    if(Math.abs(val) <= tol) return {cls:'chip-ok', label:'On track'};
+    return {cls:'chip-warn', label: n1(val)+' left'};
+  }
+
+  /* Rounds a suggested serving to something a person would actually measure out: nearest 5g/5ml
+     for bulk foods, nearest half-unit for countable ones (eggs, bars, scoops, servings). */
+  function roundServing(qty, unit){
+    if(unit==='g' || unit==='ml'){
+      var r = Math.round(qty/5)*5;
+      return r<5 ? Math.max(1, Math.round(qty)) : r;
+    }
+    var r2 = Math.round(qty*2)/2;
+    return r2<0.5 ? 0.5 : r2;
+  }
+
+  /* "Build a meal to fit" — given remaining macros for the day, ranks foods from the library by
+     how well a sensible single serving of each would use up what's left, without blowing the
+     calorie budget. Returns the top matches with a suggested quantity, not a full meal — the
+     coach/member picks from the list and adds what looks good. */
+  function suggestFoodsForRemaining(remain, opts){
+    opts = opts || {};
+    var limit = opts.limit || 8;
+    var neededKeys = ['protein','carbs','fat'].filter(function(k){ return remain[k] > 0.5; });
+    if(neededKeys.length===0 || remain.calories<=0) return [];
+    var calCushion = Math.max(30, remain.calories*0.12);
+    var candidates = [];
+    allFoods().forEach(function(food){
+      if(!food.refQty) return;
+      var perUnit = {
+        protein: food.protein/food.refQty, carbs: food.carbs/food.refQty,
+        fat: food.fat/food.refQty, calories: food.calories/food.refQty
+      };
+      var caps = [];
+      neededKeys.forEach(function(k){ if(perUnit[k]>0) caps.push(remain[k]/perUnit[k]); });
+      if(remain.calories>0 && perUnit.calories>0) caps.push(remain.calories/perUnit.calories);
+      if(caps.length===0) return; // food has none of the macros still needed
+      var qty = roundServing(Math.min.apply(Math, caps), food.unit);
+      if(!qty || qty<=0) return;
+      var got = { protein: perUnit.protein*qty, carbs: perUnit.carbs*qty, fat: perUnit.fat*qty, calories: perUnit.calories*qty };
+      if(got.calories > remain.calories + calCushion) return;
+      var coverage = neededKeys.reduce(function(sum,k){ return sum + Math.min(got[k]/remain[k], 1); }, 0) / neededKeys.length;
+      candidates.push({ food: food, qty: qty, got: got, coverage: coverage });
+    });
+    candidates.sort(function(a,b){ return b.coverage - a.coverage; });
+    return candidates.slice(0, limit);
+  }
+
   /* ============ FORMAT HELPERS ============ */
   function n0(v){ return Math.round(v||0).toLocaleString(); }
   function n1(v){ return (Math.round((v||0)*10)/10).toLocaleString(); }
@@ -1156,13 +1067,75 @@
     restday: 'A separate meal plan for non-training days — pick "Rest Day" in the fuel-mix compare above to check it against target.'
   };
 
+  /* Which meal (if any) currently has its "Suggest foods to fit" panel open. Transient UI state —
+     not persisted, and not scoped per-kind since meal ids are unique across plan/today/restday. */
+  var suggestOpenId = null;
+
+  var REMAINING_ROWS = [
+    {key:'calories', label:'Calories', unit:'kcal', fmt:n0},
+    {key:'protein', label:'Protein', unit:'g', fmt:n1},
+    {key:'carbs', label:'Carbs', unit:'g', fmt:n1},
+    {key:'fat', label:'Fat', unit:'g', fmt:n1}
+  ];
+
+  /* MyFitnessPal-style "remaining" strip: target minus everything logged (and active) so far,
+     for whichever day panel (Meal Plan / Today's Log / Rest Day) is being rendered. */
+  function renderRemainingPanel(kind, targets){
+    var remain = remainingFor(kind);
+    var html = '<div class="remaining-panel"><div class="remaining-head"><h3>What\'s left '+(kind==='today'?'today':'in this day')+'</h3>'+
+      '<p>Target minus everything logged so far below.</p></div><div class="remaining-grid">';
+    REMAINING_ROWS.forEach(function(r){
+      var val = remain[r.key];
+      var st = remainingStatus(val, targets[r.key]);
+      html += '<div class="tile"><div class="tile-label">'+r.label+'</div>'+
+        '<div class="tile-rows"><div class="tile-col"><span class="v mono">'+r.fmt(val)+' '+r.unit+'</span></div></div>'+
+        '<div class="tile-chip '+st.cls+'">'+st.label+'</div></div>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  /* "Build a meal to fit" — the suggestion panel shown under a meal once its "Suggest foods to
+     fit" button is toggled open. Ranks the food library against what's left for the WHOLE day
+     (everything logged so far, including this meal's own items), so it always points at food
+     that closes the actual remaining gap, and adds straight into this meal's first option. */
+  function renderSuggestPanel(kind, meal){
+    var remain = remainingFor(kind);
+    var html = '<div class="suggest-panel">';
+    if(remain.calories<=0){
+      html += '<div class="suggest-empty">You\'ve already hit (or passed) today\'s calorie target — nothing left to suggest. Adjust the target above if that\'s not right.</div>';
+    } else {
+      var suggestions = suggestFoodsForRemaining(remain, {limit:8});
+      html += '<div class="suggest-intro">Foods that best fill what\'s left for the day right now — '+
+        n0(remain.calories)+' kcal · '+n1(Math.max(remain.protein,0))+'g protein · '+n1(Math.max(remain.carbs,0))+'g carbs · '+n1(Math.max(remain.fat,0))+'g fat. Tap Add to drop it straight into this meal.</div>';
+      if(suggestions.length===0){
+        html += '<div class="suggest-empty">No good single-food match for what\'s left — try splitting the remaining macros across a couple of foods manually, or check the Food Library for something with a closer protein/carb/fat mix.</div>';
+      } else {
+        html += '<div class="suggest-list">';
+        suggestions.forEach(function(s){
+          html += '<div class="suggest-row">'+
+            '<div class="suggest-food"><b>'+escAttr(s.food.name)+'</b><span class="suggest-qty">'+n1(s.qty)+' '+s.food.unit+'</span></div>'+
+            '<div class="suggest-macros">'+n0(s.got.calories)+' kcal · '+n1(s.got.protein)+'P '+n1(s.got.carbs)+'C '+n1(s.got.fat)+'F</div>'+
+            '<button class="btn btn-primary btn-sm" data-action="add-suggested" data-kind="'+kind+'" data-meal-id="'+meal.id+'" data-food-name="'+escAttr(s.food.name)+'" data-qty="'+s.qty+'">+ Add</button>'+
+          '</div>';
+        });
+        html += '</div>';
+      }
+    }
+    html += '</div>';
+    return html;
+  }
+
   function renderDayPanel(kind, preserveFocus){
     var focus = preserveFocus ? captureFocus() : null;
     var day = dayOf(kind);
     var panel = document.getElementById('panel-'+kind);
     var label = KIND_LABEL[kind];
+    var targets = targetsFor(kind);
 
     var html = '';
+    html += renderRemainingPanel(kind, targets);
+
     if(state.seeded[kind]){
       html += '<div class="example-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>'+
         '<span>This '+(kind==='today'?'log':'meal plan')+' is loaded with example items from the M2 template — edit the rows below or clear the day to start fresh.</span></div>';
@@ -1184,12 +1157,19 @@
       html += '<div class="meal-list">';
       day.meals.forEach(function(meal){
         var mt = mealTotals(meal);
+        var mealShare = {
+          calories: (targets.calories||0)/day.meals.length,
+          protein: (targets.protein||0)/day.meals.length,
+          carbs: (targets.carbs||0)/day.meals.length,
+          fat: (targets.fat||0)/day.meals.length
+        };
         html += '<div class="meal-card" data-meal-id="'+meal.id+'">'+
           '<div class="meal-head">'+
             '<input class="meal-name" type="text" value="'+escAttr(meal.name)+'" data-kind="'+kind+'" data-meal-id="'+meal.id+'" data-field="mealname">'+
             '<div class="meal-total">'+n0(mt.calories)+' <span style="opacity:.6">kcal</span> · <b>'+n1(mt.protein)+'P</b> '+n1(mt.carbs)+'C '+n1(mt.fat)+'F</div>'+
             '<button class="icon-btn" title="Remove meal" data-action="del-meal" data-kind="'+kind+'" data-meal-id="'+meal.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>'+
-          '</div>';
+          '</div>'+
+          '<div class="meal-hint">Aim for roughly <b>'+n0(mealShare.calories)+' kcal</b> · <b>'+n1(mealShare.protein)+'g P</b> '+n1(mealShare.carbs)+'g C '+n1(mealShare.fat)+'g F in this meal — that\'s the day\'s target split evenly across '+day.meals.length+' meal'+(day.meals.length===1?'':'s')+'.</div>';
         meal.options.forEach(function(option){
           var ot = optionTotals(option);
           html += '<div class="option-block" data-option-id="'+option.id+'">'+
@@ -1200,7 +1180,7 @@
               (meal.options.length>1 ? '<button class="icon-btn" title="Remove option" data-action="del-option" data-kind="'+kind+'" data-meal-id="'+meal.id+'" data-option-id="'+option.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' : '')+
             '</div>'+
             '<div class="table-scroll"><table class="items"><thead><tr>'+
-              '<th class="cell-food">Food</th><th>Qty</th><th>Kcal</th><th>Protein</th><th>Carbs</th><th>Fat</th><th class="cell-extra">Sugar</th><th class="cell-extra">Sodium</th><th>Count</th><th></th>'+
+              '<th class="cell-food">Food</th><th>Qty</th><th>Kcal</th><th>Protein</th><th>Carbs</th><th>Fat</th><th>Sugar</th><th>Sodium</th><th>Count</th><th></th>'+
             '</tr></thead><tbody>';
           option.items.forEach(function(item){
             var m = itemMacros(item);
@@ -1214,8 +1194,8 @@
               '<td class="num dim">'+n1(display.protein)+'</td>'+
               '<td class="num dim">'+n1(display.carbs)+'</td>'+
               '<td class="num dim">'+n1(display.fat)+'</td>'+
-              '<td class="num dim cell-extra">'+n1(display.sugar)+'</td>'+
-              '<td class="num dim cell-extra">'+n0(display.sodium)+'</td>'+
+              '<td class="num dim">'+n1(display.sugar)+'</td>'+
+              '<td class="num dim">'+n0(display.sodium)+'</td>'+
               '<td class="no-strike"><input class="chk" type="checkbox" title="Count toward totals" '+(item.active?'checked':'')+' data-kind="'+kind+'" data-meal-id="'+meal.id+'" data-option-id="'+option.id+'" data-item-id="'+item.id+'" data-field="active"></td>'+
               '<td class="no-strike"><button class="icon-btn" title="Remove item" data-action="del-item" data-kind="'+kind+'" data-meal-id="'+meal.id+'" data-option-id="'+option.id+'" data-item-id="'+item.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></td>'+
             '</tr>';
@@ -1224,7 +1204,11 @@
             '<div class="option-foot"><button class="btn btn-ghost btn-sm" data-action="add-item" data-kind="'+kind+'" data-meal-id="'+meal.id+'" data-option-id="'+option.id+'">+ Add food</button></div>'+
           '</div>';
         });
-        html += '<div class="meal-foot"><button class="btn btn-ghost btn-sm" data-action="add-option" data-kind="'+kind+'" data-meal-id="'+meal.id+'">+ Add option</button></div>'+
+        html += '<div class="meal-foot">'+
+            '<button class="btn btn-ghost btn-sm" data-action="add-option" data-kind="'+kind+'" data-meal-id="'+meal.id+'">+ Add option</button>'+
+            '<button class="btn btn-sm" data-action="suggest-toggle" data-kind="'+kind+'" data-meal-id="'+meal.id+'">'+(suggestOpenId===meal.id?'Hide suggestions':'Suggest foods to fit')+'</button>'+
+          '</div>'+
+          (suggestOpenId===meal.id ? renderSuggestPanel(kind, meal) : '')+
         '</div>';
       });
       html += '</div>';
@@ -1690,75 +1674,6 @@
     });
   })();
 
-  (function initInstallBanner(){
-    var banner = document.getElementById('install-banner');
-    var ctaBtn = document.getElementById('install-banner-cta');
-    var dismissBtn = document.getElementById('install-banner-dismiss');
-    var modalOverlay = document.getElementById('install-modal-overlay');
-    var modalTitle = document.getElementById('install-modal-title');
-    var modalSteps = document.getElementById('install-modal-steps');
-    var modalClose = document.getElementById('install-modal-close');
-    if(!banner) return;
-
-    // Already installed / running as a home-screen app — nothing to prompt.
-    var isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-      window.navigator.standalone === true;
-    if(isStandalone) return;
-
-    if(loadLS('m2_install_dismissed', false)) return;
-
-    var ua = navigator.userAgent || '';
-    var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    var isAndroid = /Android/.test(ua);
-    var isChrome = /Chrome|CriOS/.test(ua);
-    var isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua);
-
-    var deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', function(ev){
-      ev.preventDefault();
-      deferredPrompt = ev;
-      ctaBtn.textContent = 'Install app';
-    });
-
-    var steps;
-    if(isIOS && isSafari){
-      steps = ['Tap the <strong>Share</strong> icon in Safari’s toolbar.', 'Scroll down and tap <strong>Add to Home Screen</strong>.', 'Tap <strong>Add</strong> — the M2 icon will appear on your home screen.'];
-    } else if(isIOS){
-      steps = ['Open this page in <strong>Safari</strong> (not this browser — iOS only allows installing from Safari).', 'Tap the <strong>Share</strong> icon, then <strong>Add to Home Screen</strong>.', 'Tap <strong>Add</strong> — the M2 icon will appear on your home screen.'];
-    } else if(isAndroid && isChrome){
-      steps = ['Tap the <strong>&#8942;</strong> menu in the top-right corner.', 'Tap <strong>Add to Home screen</strong> (or <strong>Install app</strong>).', 'Confirm — the M2 icon will appear on your home screen.'];
-    } else if(isAndroid){
-      steps = ['Open this page in <strong>Chrome</strong> for the smoothest install.', 'Tap the menu icon, then <strong>Add to Home screen</strong>.', 'Confirm — the M2 icon will appear on your home screen.'];
-    } else {
-      steps = ['Open this page on your phone.', 'On iPhone: tap Share &rarr; Add to Home Screen (in Safari).', 'On Android: tap the menu &rarr; Add to Home screen (in Chrome).'];
-    }
-
-    banner.hidden = false;
-
-    function openModal(){
-      if(deferredPrompt){
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.finally(function(){ deferredPrompt = null; });
-        return;
-      }
-      modalTitle.textContent = 'Add to Home Screen';
-      modalSteps.innerHTML = steps.map(function(s){ return '<li>'+s+'</li>'; }).join('');
-      modalOverlay.hidden = false;
-    }
-    function closeModal(){ modalOverlay.hidden = true; }
-    function dismissBanner(){
-      banner.hidden = true;
-      saveLS('m2_install_dismissed', true);
-    }
-
-    ctaBtn.addEventListener('click', openModal);
-    dismissBtn.addEventListener('click', dismissBanner);
-    modalClose.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', function(ev){ if(ev.target === modalOverlay) closeModal(); });
-
-    window.addEventListener('appinstalled', function(){ banner.hidden = true; });
-  })();
-
   document.querySelectorAll('.tab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       state.tab = btn.dataset.tab;
@@ -1784,7 +1699,22 @@
   document.querySelector('.dashboard').addEventListener('input', function(e){
     var key = e.target.dataset && e.target.dataset.targetField;
     if(!key) return;
-    targetsFor(state.compareKind)[key] = e.target.value===''?0:parseFloat(e.target.value);
+    var targets = targetsFor(state.compareKind);
+    targets[key] = e.target.value===''?0:parseFloat(e.target.value);
+    /* Changing the calorie target resets the macro split to a 40% protein / 40% carbs / 20% fat
+       default — the coach's standard starting point — rather than leaving stale gram values that
+       no longer match the new calorie figure. Update the other three inputs directly (not via a
+       full renderTargetEditor rebuild) so the field the coach is still typing in keeps focus/cursor. */
+    if(key==='calories'){
+      var cals = targets.calories||0;
+      targets.protein = Math.round((cals*0.40/CAL_FACTOR.protein)*10)/10;
+      targets.carbs = Math.round((cals*0.40/CAL_FACTOR.carbs)*10)/10;
+      targets.fat = Math.round((cals*0.20/CAL_FACTOR.fat)*10)/10;
+      ['protein','carbs','fat'].forEach(function(k){
+        var inp = document.getElementById('target-'+k);
+        if(inp) inp.value = targets[k];
+      });
+    }
     persistAll();
     renderDashboard(false);
     renderExportPanel();
@@ -1879,6 +1809,18 @@
       } else if(action==='del-food'){
         state.customFoods = state.customFoods.filter(function(f){ return f.name !== t.dataset.foodName; });
         persistAll(); renderLibrary(); refreshFoodDatalist(); renderDashboard(); renderDayPanel('plan',false); renderDayPanel('today',false); renderDayPanel('restday',false); renderExportPanel();
+      } else if(action==='suggest-toggle'){
+        suggestOpenId = (suggestOpenId===t.dataset.mealId) ? null : t.dataset.mealId;
+        renderDayPanel(kind, false);
+      } else if(action==='add-suggested'){
+        var day7 = dayOf(kind);
+        var meal7 = findMeal(day7, t.dataset.mealId);
+        if(meal7){
+          if(!meal7.options.length) meal7.options.push(opt('Option 1', []));
+          meal7.options[0].items.push({id:uid(), name:t.dataset.foodName, qty:parseFloat(t.dataset.qty)||0, active:true});
+        }
+        state.seeded[kind] = false;
+        persistAll(); renderDashboard(); renderDayPanel(kind,false); renderExportPanel();
       }
     });
 
