@@ -24,18 +24,18 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v=20260929">
-<link rel="preload" as="image" href="/assets/img/floor-wide-2-1600.jpg">
+<link rel="preload" as="image" type="image/webp" imagesrcset="/assets/img/floor-wide-2-800.webp 800w, /assets/img/floor-wide-2-1600.webp 1600w" imagesizes="100vw">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How far is M2 from the Auckland CBD?","acceptedAnswer":{"@type":"Answer","text":"M2 Training Club is at 8 Nugent Street, Grafton, a few minutes from the Auckland CBD. It's easy to get to by car, bus or train."}},{"@type":"Question","name":"Is there parking at M2?","acceptedAnswer":{"@type":"Answer","text":"Yes. There's parking on site at 8 Nugent Street, Grafton."}},{"@type":"Question","name":"Can I get to M2 by public transport?","acceptedAnswer":{"@type":"Answer","text":"Yes. Grafton train station is a short walk away, and it's an easy bus trip from the CBD."}},{"@type":"Question","name":"What time does M2 open?","acceptedAnswer":{"@type":"Answer","text":"Monday to Friday 5am to 10pm, and Saturday and Sunday 7am to 7pm. The 5am start suits anyone who likes to train before work."}},{"@type":"Question","name":"How much is a membership at M2?","acceptedAnswer":{"@type":"Answer","text":"Memberships start from $27.50 a week for the gym floor. M2 Classes and Recovery are $35 a week, and Perform, which includes everything, is $49.50 a week."}},{"@type":"Question","name":"Can I use Fitness Passport at M2?","acceptedAnswer":{"@type":"Answer","text":"Yes. Fitness Passport members get full access to the gym, every class including HYROX, and the recovery area."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"Gym near Auckland CBD","item":"https://m2club.co.nz/gym-auckland-cbd.html"}]}</script>
-<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
+addEventListener('load',function(){setTimeout(go,1200);});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
@@ -84,7 +84,7 @@
 </style>
 
 <section class="page-hero compact" data-section="hero">
-  <div class="ph-media"><img src="/assets/img/floor-wide-2-1600.jpg" srcset="/assets/img/floor-wide-2-800.jpg 800w, /assets/img/floor-wide-2-1600.jpg 1600w" sizes="100vw" alt="The gym floor at M2 Training Club in Grafton, near the Auckland CBD" fetchpriority="high"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/floor-wide-2-800.webp 800w, /assets/img/floor-wide-2-1600.webp 1600w" sizes="100vw"><img src="/assets/img/floor-wide-2-1600.jpg" srcset="/assets/img/floor-wide-2-800.jpg 800w, /assets/img/floor-wide-2-1600.jpg 1600w" sizes="100vw" alt="The gym floor at M2 Training Club in Grafton, near the Auckland CBD" fetchpriority="high"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Gym near Auckland CBD</span></nav>
@@ -163,19 +163,19 @@
     </div>
     <div class="cbd-tiles reveal">
       <a class="tile zoom" href="/memberships.html">
-        <img src="/assets/img/floor-functional-800.jpg" alt="Racks and the functional zone on the M2 gym floor" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/floor-functional-800.webp"><img src="/assets/img/floor-functional-800.jpg" alt="Racks and the functional zone on the M2 gym floor" loading="lazy"></picture>
         <span class="tile-cap"><strong>Gym floor</strong><span>Strength and conditioning, open every day.</span></span>
       </a>
       <a class="tile zoom" href="/classes.html">
-        <img src="/assets/img/class-busy-800.jpg" alt="A busy group class at M2 Training Club" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/class-busy-800.webp"><img src="/assets/img/class-busy-800.jpg" alt="A busy group class at M2 Training Club" loading="lazy"></picture>
         <span class="tile-cap"><strong>Classes</strong><span>HYROX, Strength Club and yoga.</span></span>
       </a>
       <a class="tile zoom" href="/hyrox-gym-auckland.html">
-        <img src="/assets/img/class-sled-800.jpg" alt="Members pushing sleds in a HYROX class at M2" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/class-sled-800.webp"><img src="/assets/img/class-sled-800.jpg" alt="Members pushing sleds in a HYROX class at M2" loading="lazy"></picture>
         <span class="tile-cap"><strong>HYROX</strong><span>Official HYROX Training Club.</span></span>
       </a>
       <a class="tile zoom" href="/recovery.html">
-        <img src="/assets/img/pool-800.jpg" alt="The 20 metre pool at M2 Training Club" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/pool-800.webp"><img src="/assets/img/pool-800.jpg" alt="The 20 metre pool at M2 Training Club" loading="lazy"></picture>
         <span class="tile-cap"><strong>Recovery</strong><span>20m pool, sauna, spa and ice bath.</span></span>
       </a>
     </div>

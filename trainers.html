@@ -24,17 +24,17 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v=20260929">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","name":"Personal trainers at M2 Training Club","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"Person","name":"Eden Rapana","jobTitle":"Personal Trainer","knowsAbout":["Body recomposition","Strength training","Sustainable weight loss","Hormone-aware training and nutrition"],"sameAs":["https://www.instagram.com/edenrapana/"],"worksFor":{"@id":"https://m2club.co.nz/#gym"}}},{"@type":"ListItem","position":2,"item":{"@type":"Person","name":"Joe","jobTitle":"Personal Trainer, Strength, Conditioning and Boxing","worksFor":{"@id":"https://m2club.co.nz/#gym"}}},{"@type":"ListItem","position":3,"item":{"@type":"Person","name":"Te","jobTitle":"Coach and Personal Trainer","worksFor":{"@id":"https://m2club.co.nz/#gym"}}},{"@type":"ListItem","position":4,"item":{"@type":"Person","name":"Dave","jobTitle":"Coach and Personal Trainer","worksFor":{"@id":"https://m2club.co.nz/#gym"}}},{"@type":"ListItem","position":5,"item":{"@type":"Person","name":"Bekka","jobTitle":"Coach and Personal Trainer","worksFor":{"@id":"https://m2club.co.nz/#gym"}}},{"@type":"ListItem","position":6,"item":{"@type":"Person","name":"Taylor","jobTitle":"Owner and Coach","worksFor":{"@id":"https://m2club.co.nz/#gym"}}},{"@type":"ListItem","position":7,"item":{"@type":"Person","name":"Tim","jobTitle":"Owner and Coach","worksFor":{"@id":"https://m2club.co.nz/#gym"}}},{"@type":"ListItem","position":8,"item":{"@type":"Person","name":"Madeliene","jobTitle":"Strength and Transformation Coach","worksFor":{"@id":"https://m2club.co.nz/#gym"}}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"Trainers","item":"https://m2club.co.nz/trainers.html"}]}</script>
-<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
+addEventListener('load',function(){setTimeout(go,1200);});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
@@ -89,7 +89,7 @@
 </style>
 
 <section class="page-hero" data-section="hero">
-  <div class="ph-media"><img src="/assets/img/coaching-1600.jpg" srcset="/assets/img/coaching-800.jpg 800w, /assets/img/coaching-1600.jpg 1600w" sizes="100vw" alt="An M2 coach working with members on the gym floor in Grafton" fetchpriority="high"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/coaching-800.webp 800w, /assets/img/coaching-1600.webp 1600w" sizes="100vw"><img src="/assets/img/coaching-1600.jpg" srcset="/assets/img/coaching-800.jpg 800w, /assets/img/coaching-1600.jpg 1600w" sizes="100vw" alt="An M2 coach working with members on the gym floor in Grafton" fetchpriority="high"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Trainers</span></nav>
@@ -114,7 +114,7 @@
     </div>
     <div class="pt-grid reveal">
       <article class="pt-card">
-        <a href="/personal-trainer-eden.html" aria-hidden="true" tabindex="-1" style="display:block"><img src="/assets/img/coach-eden-800.jpg" alt="Eden Rapana, personal trainer at M2 Training Club in Grafton, Auckland" width="667" height="1000" loading="lazy"></a>
+        <a href="/personal-trainer-eden.html" aria-hidden="true" tabindex="-1" style="display:block"><picture><source type="image/webp" srcset="/assets/img/coach-eden-800.webp"><img src="/assets/img/coach-eden-800.jpg" alt="Eden Rapana, personal trainer at M2 Training Club in Grafton, Auckland" width="667" height="1000" loading="lazy"></picture></a>
         <div class="pt-body">
           <h3><a href="/personal-trainer-eden.html">Eden</a> <span class="badge" style="vertical-align:middle;margin-left:6px">New</span></h3>
           <span class="pt-role">Personal Trainer</span>
@@ -124,7 +124,7 @@
         </div>
       </article>
       <article class="pt-card">
-        <a href="/personal-trainer-joe.html" aria-hidden="true" tabindex="-1" style="display:block"><img src="/assets/img/coach-joe-800.jpg" alt="Coach Joe, strength, conditioning and boxing trainer at M2 Training Club" width="667" height="1000" loading="lazy"></a>
+        <a href="/personal-trainer-joe.html" aria-hidden="true" tabindex="-1" style="display:block"><picture><source type="image/webp" srcset="/assets/img/coach-joe-800.webp"><img src="/assets/img/coach-joe-800.jpg" alt="Coach Joe, strength, conditioning and boxing trainer at M2 Training Club" width="667" height="1000" loading="lazy"></picture></a>
         <div class="pt-body">
           <h3><a href="/personal-trainer-joe.html">Joe</a> <span class="badge" style="vertical-align:middle;margin-left:6px">New</span></h3>
           <span class="pt-role">Strength, Conditioning and Boxing</span>
@@ -134,7 +134,7 @@
         </div>
       </article>
       <article class="pt-card">
-        <a href="/personal-trainer-te.html" aria-hidden="true" tabindex="-1" style="display:block"><img src="/assets/img/coach-te-800.jpg" alt="Coach Te, strength and recovery trainer at M2 Training Club" width="667" height="1000" loading="lazy"></a>
+        <a href="/personal-trainer-te.html" aria-hidden="true" tabindex="-1" style="display:block"><picture><source type="image/webp" srcset="/assets/img/coach-te-800.webp"><img src="/assets/img/coach-te-800.jpg" alt="Coach Te, strength and recovery trainer at M2 Training Club" width="667" height="1000" loading="lazy"></picture></a>
         <div class="pt-body">
           <h3><a href="/personal-trainer-te.html">Te</a> <span class="badge" style="vertical-align:middle;margin-left:6px">New</span></h3>
           <span class="pt-role">Coach and Personal Trainer</span>
@@ -144,7 +144,7 @@
         </div>
       </article>
       <article class="pt-card">
-        <img src="/assets/img/coach-dave-800.jpg" alt="Coach Dave, HYROX and strength trainer at M2 Training Club" width="667" height="1000" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/coach-dave-800.webp"><img src="/assets/img/coach-dave-800.jpg" alt="Coach Dave, HYROX and strength trainer at M2 Training Club" width="667" height="1000" loading="lazy"></picture>
         <div class="pt-body">
           <h3>Dave</h3>
           <span class="pt-role">Coach and Personal Trainer · 8 years</span>
@@ -154,7 +154,7 @@
         </div>
       </article>
       <article class="pt-card">
-        <img src="/assets/img/coach-bekka-800.jpg" alt="Coach Bekka, race prep and HYROX trainer at M2 Training Club" width="667" height="1000" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/coach-bekka-800.webp"><img src="/assets/img/coach-bekka-800.jpg" alt="Coach Bekka, race prep and HYROX trainer at M2 Training Club" width="667" height="1000" loading="lazy"></picture>
         <div class="pt-body">
           <h3>Bekka</h3>
           <span class="pt-role">Coach and Personal Trainer</span>
@@ -164,7 +164,7 @@
         </div>
       </article>
       <article class="pt-card">
-        <img src="/assets/img/coach-taylor-800.jpg" alt="Taylor, owner and coach at M2 Training Club" width="667" height="1000" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/coach-taylor-800.webp"><img src="/assets/img/coach-taylor-800.jpg" alt="Taylor, owner and coach at M2 Training Club" width="667" height="1000" loading="lazy"></picture>
         <div class="pt-body">
           <h3>Taylor</h3>
           <span class="pt-role">Owner and Coach</span>
@@ -174,7 +174,7 @@
         </div>
       </article>
       <article class="pt-card">
-        <img src="/assets/img/coach-tim-800.jpg" alt="Tim, owner and coach at M2 Training Club" width="667" height="1000" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/coach-tim-800.webp"><img src="/assets/img/coach-tim-800.jpg" alt="Tim, owner and coach at M2 Training Club" width="667" height="1000" loading="lazy"></picture>
         <div class="pt-body">
           <h3>Tim</h3>
           <span class="pt-role">Owner and Coach</span>
@@ -184,7 +184,7 @@
         </div>
       </article>
       <article class="pt-card">
-        <img src="/assets/img/coach-madeliene-800.jpg" alt="Coach Madeliene, powerlifting and transformation trainer at M2 Training Club" width="667" height="1000" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/coach-madeliene-800.webp"><img src="/assets/img/coach-madeliene-800.jpg" alt="Coach Madeliene, powerlifting and transformation trainer at M2 Training Club" width="667" height="1000" loading="lazy"></picture>
         <div class="pt-body">
           <h3>Madeliene</h3>
           <span class="pt-role">Strength and Transformation Coach</span>
@@ -238,7 +238,7 @@
         <p style="font-size:14px;color:var(--muted-dark)">Not included with Recovery memberships.</p>
       </div>
       <div class="split-media">
-        <img src="/assets/img/boxing-pt-1600.jpg" srcset="/assets/img/boxing-pt-800.jpg 800w, /assets/img/boxing-pt-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 50vw" alt="A PT boxing session at M2 Training Club in Grafton" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/boxing-pt-800.webp 800w, /assets/img/boxing-pt-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 50vw"><img src="/assets/img/boxing-pt-1600.jpg" srcset="/assets/img/boxing-pt-800.jpg 800w, /assets/img/boxing-pt-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 50vw" alt="A PT boxing session at M2 Training Club in Grafton" loading="lazy"></picture>
       </div>
     </div>
   </div>

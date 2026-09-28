@@ -24,17 +24,17 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v=20260929">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does my Fitness Passport work at M2?","acceptedAnswer":{"@type":"Answer","text":"Yes. M2 Training Club is a registered Fitness Passport facility. Log in to your Fitness Passport portal to confirm M2 is included in your employer's plan."}},{"@type":"Question","name":"What do Fitness Passport members get at M2?","acceptedAnswer":{"@type":"Answer","text":"Full Perform membership benefits: the gym floor, unlimited group classes including HYROX, and the full recovery area with the ice bath, sauna, spa pool and 20m pool."}},{"@type":"Question","name":"Is access really unlimited?","acceptedAnswer":{"@type":"Answer","text":"Yes. No visit caps, no class limits and no blacked-out peak hours. Train, take classes and use the recovery area as often as you like, whenever we're open."}},{"@type":"Question","name":"Is there any cost for Fitness Passport members?","acceptedAnswer":{"@type":"Answer","text":"Just a one-off $25 key tag fee on your first visit. After that, the gym, classes and recovery area are all included."}},{"@type":"Question","name":"Do I need to register before my first visit?","acceptedAnswer":{"@type":"Answer","text":"No. Just come in with your card or app and we'll check you in at reception."}},{"@type":"Question","name":"Can Fitness Passport members use M2's deals and offers?","acceptedAnswer":{"@type":"Answer","text":"No. Fitness Passport members are excluded from all M2 deals and offers."}},{"@type":"Question","name":"My employer doesn't offer Fitness Passport. Can I still join M2?","acceptedAnswer":{"@type":"Answer","text":"Yes. M2 memberships start from $27.50 a week, and every membership has a Flexi option."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"Memberships","item":"https://m2club.co.nz/memberships.html"},{"@type":"ListItem","position":3,"name":"Fitness Passport","item":"https://m2club.co.nz/fitness-passport.html"}]}</script>
-<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
+addEventListener('load',function(){setTimeout(go,1200);});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
@@ -70,7 +70,7 @@
 </div>
 <main id="main">
 <section class="page-hero" data-section="hero">
-  <div class="ph-media"><img src="/assets/img/pool-1600.jpg" srcset="/assets/img/pool-800.jpg 800w, /assets/img/pool-1600.jpg 1600w" sizes="100vw" alt="The 20m pool at M2 Training Club in Grafton, included for Fitness Passport members" fetchpriority="high"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/pool-800.webp 800w, /assets/img/pool-1600.webp 1600w" sizes="100vw"><img src="/assets/img/pool-1600.jpg" srcset="/assets/img/pool-800.jpg 800w, /assets/img/pool-1600.jpg 1600w" sizes="100vw" alt="The 20m pool at M2 Training Club in Grafton, included for Fitness Passport members" fetchpriority="high"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/memberships.html">Memberships</a><span>/</span><span>Fitness Passport</span></nav>
@@ -101,9 +101,9 @@
       </div>
       <div class="split-media">
         <div class="collage">
-          <div class="tall zoom"><img src="/assets/img/rig-zone-800.jpg" alt="Squat racks on the gym floor at M2 Training Club" loading="lazy"></div>
-          <div class="zoom"><img src="/assets/img/sauna-800.jpg" alt="The sauna at M2 Training Club" loading="lazy"></div>
-          <div class="zoom"><img src="/assets/img/ice-bath-800.jpg" alt="The ice bath at M2 Training Club" loading="lazy"></div>
+          <div class="tall zoom"><picture><source type="image/webp" srcset="/assets/img/rig-zone-800.webp"><img src="/assets/img/rig-zone-800.jpg" alt="Squat racks on the gym floor at M2 Training Club" loading="lazy"></picture></div>
+          <div class="zoom"><picture><source type="image/webp" srcset="/assets/img/sauna-800.webp"><img src="/assets/img/sauna-800.jpg" alt="The sauna at M2 Training Club" loading="lazy"></picture></div>
+          <div class="zoom"><picture><source type="image/webp" srcset="/assets/img/ice-bath-800.webp"><img src="/assets/img/ice-bath-800.jpg" alt="The ice bath at M2 Training Club" loading="lazy"></picture></div>
         </div>
       </div>
     </div>

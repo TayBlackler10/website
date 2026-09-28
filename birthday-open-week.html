@@ -24,18 +24,18 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v=20260929">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Event","name":"M2 Birthday Open Week","description":"M2 Training Club turns 3. Anyone can train free for a week at our gym in Grafton, Auckland: gym floor, group classes, HYROX and the recovery area with pool, sauna, spa and ice bath. Register online first.","url":"https://m2club.co.nz/birthday-open-week.html","image":["https://m2club.co.nz/assets/img/og-community.jpg"],"startDate":"2026-10-12T05:00:00+13:00","endDate":"2026-10-18T19:00:00+13:00","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","eventStatus":"https://schema.org/EventScheduled","isAccessibleForFree":true,"location":{"@type":"Place","name":"M2 Training Club","address":{"@type":"PostalAddress","streetAddress":"8 Nugent Street","addressLocality":"Grafton","addressRegion":"Auckland","postalCode":"1023","addressCountry":"NZ"}},"organizer":{"@id":"https://m2club.co.nz/#gym"},"offers":{"@type":"Offer","price":"0","priceCurrency":"NZD","availability":"https://schema.org/InStock","url":"https://m2club.co.nz/birthday-open-week.html"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is Birthday Open Week really free?","acceptedAnswer":{"@type":"Answer","text":"Yes. No card needed. Just register online, then come in any day from 12 to 18 October."}},{"@type":"Question","name":"Do I need to book classes?","acceptedAnswer":{"@type":"Answer","text":"Yes. Book classes through the Technogym app. Spots are limited because classes fill up, so book early."}},{"@type":"Question","name":"What should I bring?","acceptedAnswer":{"@type":"Answer","text":"A towel, a water bottle and your training gear. There's parking on site."}},{"@type":"Question","name":"Can I bring a friend?","acceptedAnswer":{"@type":"Answer","text":"Yes. They just need to register too."}},{"@type":"Question","name":"I'm already a member. Do I need to do anything?","acceptedAnswer":{"@type":"Answer","text":"No. Just train as normal."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"Birthday Open Week","item":"https://m2club.co.nz/birthday-open-week.html"}]}</script>
-<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
+addEventListener('load',function(){setTimeout(go,1200);});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
@@ -70,7 +70,7 @@
 </div>
 <main id="main">
 <section class="page-hero" data-section="hero-after" data-from="2026-10-18T11:00:00Z" hidden>
-  <div class="ph-media"><img src="/assets/img/group-2-1600.jpg" srcset="/assets/img/group-2-800.jpg 800w, /assets/img/group-2-1600.jpg 1600w" sizes="100vw" alt="A big group of M2 members together at the gym in Grafton, Auckland"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/group-2-800.webp 800w, /assets/img/group-2-1600.webp 1600w" sizes="100vw"><img src="/assets/img/group-2-1600.jpg" srcset="/assets/img/group-2-800.jpg 800w, /assets/img/group-2-1600.jpg 1600w" sizes="100vw" alt="A big group of M2 members together at the gym in Grafton, Auckland"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Birthday Open Week</span></nav>
@@ -114,7 +114,7 @@
 </section>
 
 <section data-until="2026-10-18T11:00:00Z" class="page-hero" data-section="hero">
-  <div class="ph-media"><img src="/assets/img/group-2-1600.jpg" srcset="/assets/img/group-2-800.jpg 800w, /assets/img/group-2-1600.jpg 1600w" sizes="100vw" alt="A big group of M2 members together at the gym in Grafton, Auckland" fetchpriority="high"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/group-2-800.webp 800w, /assets/img/group-2-1600.webp 1600w" sizes="100vw"><img src="/assets/img/group-2-1600.jpg" srcset="/assets/img/group-2-800.jpg 800w, /assets/img/group-2-1600.jpg 1600w" sizes="100vw" alt="A big group of M2 members together at the gym in Grafton, Auckland" fetchpriority="high"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Birthday Open Week</span></nav>
@@ -219,19 +219,19 @@
     </div>
     <div class="grid-4 scroll-mobile reveal">
       <div class="tile" style="min-height:360px">
-        <img src="/assets/img/floor-functional-800.jpg" alt="Racks, dumbbells and the functional zone on the M2 gym floor in Grafton" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/floor-functional-800.webp"><img src="/assets/img/floor-functional-800.jpg" alt="Racks, dumbbells and the functional zone on the M2 gym floor in Grafton" loading="lazy"></picture>
         <span class="tile-cap"><strong>Gym floor</strong><span>Racks, free weights, machines and cardio. Come in whenever suits.</span></span>
       </div>
       <a class="tile zoom" href="/classes.html" style="min-height:360px">
-        <img src="/assets/img/class-busy-800.jpg" alt="A busy group class on the M2 training floor" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/class-busy-800.webp"><img src="/assets/img/class-busy-800.jpg" alt="A busy group class on the M2 training floor" loading="lazy"></picture>
         <span class="tile-cap"><strong>Classes and HYROX</strong><span>Book your spot in the Technogym app.</span><em>View the timetable →</em></span>
       </a>
       <a class="tile zoom" href="/recovery.html" style="min-height:360px">
-        <img src="/assets/img/pool-800.jpg" alt="The 20 metre lap pool at M2 Training Club" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/pool-800.webp"><img src="/assets/img/pool-800.jpg" alt="The 20 metre lap pool at M2 Training Club" loading="lazy"></picture>
         <span class="tile-cap"><strong>Pool and spa</strong><span>20m pool plus a spa pool.</span><em>See the recovery area →</em></span>
       </a>
       <a class="tile zoom" href="/recovery.html" style="min-height:360px">
-        <img src="/assets/img/ice-bath-member-800.jpg" alt="A member in the ice bath at M2" loading="lazy" style="object-position:center 30%">
+        <picture><source type="image/webp" srcset="/assets/img/ice-bath-member-800.webp"><img src="/assets/img/ice-bath-member-800.jpg" alt="A member in the ice bath at M2" loading="lazy" style="object-position:center 30%"></picture>
         <span class="tile-cap"><strong>Sauna and ice bath</strong><span>Warm up, cool down, go again.</span><em>See the recovery area →</em></span>
       </a>
     </div>

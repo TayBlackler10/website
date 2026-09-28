@@ -24,18 +24,18 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v=20260929">
-<link rel="preload" as="image" href="/assets/img/class-sled-1600.jpg">
+<link rel="preload" as="image" type="image/webp" imagesrcset="/assets/img/class-sled-800.webp 800w, /assets/img/class-sled-1600.webp 1600w" imagesizes="100vw">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which memberships include classes at M2?","acceptedAnswer":{"@type":"Answer","text":"Unlimited classes, including HYROX, come with the M2 Classes membership ($35 a week) and the Perform membership ($49.50 a week). The Daily membership is gym floor only and doesn't include classes."}},{"@type":"Question","name":"Do I need to book classes?","acceptedAnswer":{"@type":"Answer","text":"Yes. Book your spot through the timetable on this page, which runs on Technogym's Mywellness, or in the Technogym app."}},{"@type":"Question","name":"Are the classes OK for beginners?","acceptedAnswer":{"@type":"Answer","text":"Yes. HYROX Threshold and Strength Club are open to all levels, and you don't need any HYROX experience for HYROX Teams. Your coach will scale the session to where you're at."}},{"@type":"Question","name":"When is yoga at M2?","acceptedAnswer":{"@type":"Answer","text":"Coach Rhea runs Hatha yoga on Mondays at 6:30pm and Yin yoga on Wednesdays at 6:30pm."}},{"@type":"Question","name":"Can I try a class before I join?","acceptedAnswer":{"@type":"Answer","text":"Yes. Our trial gives you full access to the club, including classes, so you can try a few before you pick a membership."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"Classes","item":"https://m2club.co.nz/classes.html"}]}</script>
-<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
+addEventListener('load',function(){setTimeout(go,1200);});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
@@ -84,7 +84,7 @@
 </style>
 
 <section class="page-hero" data-section="hero">
-  <div class="ph-media"><img src="/assets/img/class-sled-1600.jpg" srcset="/assets/img/class-sled-800.jpg 800w, /assets/img/class-sled-1600.jpg 1600w" sizes="100vw" alt="Members pushing sleds during a HYROX class at M2 Training Club in Grafton" fetchpriority="high" style="object-position:center 40%"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/class-sled-800.webp 800w, /assets/img/class-sled-1600.webp 1600w" sizes="100vw"><img src="/assets/img/class-sled-1600.jpg" srcset="/assets/img/class-sled-800.jpg 800w, /assets/img/class-sled-1600.jpg 1600w" sizes="100vw" alt="Members pushing sleds during a HYROX class at M2 Training Club in Grafton" fetchpriority="high" style="object-position:center 40%"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Classes</span></nav>
@@ -158,23 +158,23 @@
     </div>
     <div class="bento classes-photos reveal">
       <div class="tile zoom big">
-        <img src="/assets/img/class-busy-1600.jpg" srcset="/assets/img/class-busy-800.jpg 800w, /assets/img/class-busy-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 50vw" alt="A busy group class on the gym floor at M2 Training Club, Grafton" loading="lazy" style="object-position:center 60%">
+        <picture><source type="image/webp" srcset="/assets/img/class-busy-800.webp 800w, /assets/img/class-busy-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 50vw"><img src="/assets/img/class-busy-1600.jpg" srcset="/assets/img/class-busy-800.jpg 800w, /assets/img/class-busy-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 50vw" alt="A busy group class on the gym floor at M2 Training Club, Grafton" loading="lazy" style="object-position:center 60%"></picture>
         <span class="tile-cap"><strong>Proper coaching</strong><span>Real feedback and programming that builds week to week.</span></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/class-sled-2-800.jpg" alt="A member driving a sled push in a HYROX class at M2" loading="lazy" style="object-position:center 60%">
+        <picture><source type="image/webp" srcset="/assets/img/class-sled-2-800.webp"><img src="/assets/img/class-sled-2-800.jpg" alt="A member driving a sled push in a HYROX class at M2" loading="lazy" style="object-position:center 60%"></picture>
         <span class="tile-cap"><strong>Sleds, ski ergs and rowers</strong></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/coaching-800.jpg" alt="An M2 coach giving a member instructions during a session" loading="lazy" style="object-position:center 30%">
+        <picture><source type="image/webp" srcset="/assets/img/coaching-800.webp"><img src="/assets/img/coaching-800.jpg" alt="An M2 coach giving a member instructions during a session" loading="lazy" style="object-position:center 30%"></picture>
         <span class="tile-cap"><strong>Coaches who care</strong></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/class-1-800.jpg" alt="Members training in a group class at M2 Training Club" loading="lazy" style="object-position:center 35%">
+        <picture><source type="image/webp" srcset="/assets/img/class-1-800.webp"><img src="/assets/img/class-1-800.jpg" alt="Members training in a group class at M2 Training Club" loading="lazy" style="object-position:center 35%"></picture>
         <span class="tile-cap"><strong>All levels</strong></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/member-bike-800.jpg" alt="A member working hard on an air bike during an M2 class" loading="lazy" style="object-position:center 30%">
+        <picture><source type="image/webp" srcset="/assets/img/member-bike-800.webp"><img src="/assets/img/member-bike-800.jpg" alt="A member working hard on an air bike during an M2 class" loading="lazy" style="object-position:center 30%"></picture>
         <span class="tile-cap"><strong>A great crew</strong></span>
       </div>
     </div>

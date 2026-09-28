@@ -24,18 +24,18 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v=20260929">
-<link rel="preload" as="image" href="/assets/img/ice-bath-member-1600.jpg">
+<link rel="preload" as="image" type="image/webp" imagesrcset="/assets/img/ice-bath-member-800.webp 800w, /assets/img/ice-bath-member-1600.webp 1600w" imagesizes="100vw">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which memberships include the recovery area at M2?","acceptedAnswer":{"@type":"Answer","text":"The ice bath, sauna, spa pool and 20m pool are included with Perform ($49.50 a week) and the Recovery membership ($35 a week). Daily and M2 Classes memberships don't include recovery."}},{"@type":"Question","name":"Do I need to book the ice bath or sauna?","acceptedAnswer":{"@type":"Answer","text":"No booking needed. The recovery area is first come, first served during opening hours: Monday to Friday 5am to 10pm, and Saturday and Sunday 7am to 7pm."}},{"@type":"Question","name":"How cold is the ice bath?","acceptedAnswer":{"@type":"Answer","text":"It's kept at around 8 to 12°C. Start with 2 to 3 minute sessions and build up gradually."}},{"@type":"Question","name":"How should I use the ice bath and sauna together?","acceptedAnswer":{"@type":"Answer","text":"Try 3 minutes in the ice bath then 10 minutes in the sauna, and repeat 2 to 3 rounds. Finish cold for recovery or warm to relax. Two or three sessions a week makes a noticeable difference."}},{"@type":"Question","name":"Do Fitness Passport members get recovery access?","acceptedAnswer":{"@type":"Answer","text":"Yes. Fitness Passport members at M2 get full Perform benefits, including the ice bath, sauna, spa pool and 20m pool."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"Recovery","item":"https://m2club.co.nz/recovery.html"}]}</script>
-<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
+addEventListener('load',function(){setTimeout(go,1200);});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
@@ -79,7 +79,7 @@
 </style>
 
 <section class="page-hero" data-section="hero">
-  <div class="ph-media"><img src="/assets/img/ice-bath-member-1600.jpg" srcset="/assets/img/ice-bath-member-800.jpg 800w, /assets/img/ice-bath-member-1600.jpg 1600w" sizes="100vw" alt="A member in the ice bath at M2 Training Club in Grafton, Auckland" fetchpriority="high" style="object-position:center 35%"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/ice-bath-member-800.webp 800w, /assets/img/ice-bath-member-1600.webp 1600w" sizes="100vw"><img src="/assets/img/ice-bath-member-1600.jpg" srcset="/assets/img/ice-bath-member-800.jpg 800w, /assets/img/ice-bath-member-1600.jpg 1600w" sizes="100vw" alt="A member in the ice bath at M2 Training Club in Grafton, Auckland" fetchpriority="high" style="object-position:center 35%"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>Recovery</span></nav>
@@ -104,19 +104,19 @@
     </div>
     <div class="rec-tiles reveal">
       <div class="tile zoom">
-        <img src="/assets/img/pool-800.jpg" alt="The 20 metre lap pool at M2 Training Club, Grafton" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/pool-800.webp"><img src="/assets/img/pool-800.jpg" alt="The 20 metre lap pool at M2 Training Club, Grafton" loading="lazy"></picture>
         <span class="tile-cap"><strong>20m pool</strong><span>Lap pool for easy recovery swims or cardio. Open every day.</span></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/ice-bath-800.jpg" alt="The wooden ice bath in the M2 recovery area" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/ice-bath-800.webp"><img src="/assets/img/ice-bath-800.jpg" alt="The wooden ice bath in the M2 recovery area" loading="lazy"></picture>
         <span class="tile-cap"><strong>Ice bath</strong><span>Cold water immersion, kept at around 8 to 12°C.</span></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/sauna-800.jpg" alt="Inside the traditional sauna at M2 Training Club" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/sauna-800.webp"><img src="/assets/img/sauna-800.jpg" alt="Inside the traditional sauna at M2 Training Club" loading="lazy"></picture>
         <span class="tile-cap"><strong>Sauna</strong><span>Traditional sauna. Good for the muscles, good for the mind.</span></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/spa-800.jpg" alt="The spa pool next to the lap pool at M2" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/spa-800.webp"><img src="/assets/img/spa-800.jpg" alt="The spa pool next to the lap pool at M2" loading="lazy"></picture>
         <span class="tile-cap"><strong>Spa pool</strong><span>Warm jets to ease off after a hard session.</span></span>
       </div>
     </div>
@@ -138,7 +138,7 @@
         <p class="muted" style="font-size:15px;margin-top:4px"><strong style="color:var(--text)">Carrying an injury?</strong> Prana Physio is in-house at M2 for treatment and rehab. <a class="text-link" href="https://www.pranaphysio.co.nz/" rel="noopener" data-track="physio_click" style="color:var(--text)">Book with Prana Physio →</a></p>
       </div>
       <div class="split-media">
-        <img src="/assets/img/sauna-2-1600.jpg" srcset="/assets/img/sauna-2-800.jpg 800w, /assets/img/sauna-2-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 50vw" alt="Wooden benches and sauna bucket inside the M2 sauna" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/sauna-2-800.webp 800w, /assets/img/sauna-2-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 50vw"><img src="/assets/img/sauna-2-1600.jpg" srcset="/assets/img/sauna-2-800.jpg 800w, /assets/img/sauna-2-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 50vw" alt="Wooden benches and sauna bucket inside the M2 sauna" loading="lazy"></picture>
       </div>
     </div>
   </div>

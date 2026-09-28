@@ -65,6 +65,31 @@ MENU = [
 ]
 
 
+
+import re as _re
+_IMG_RE = _re.compile(r'<img\b[^>]*?src="(/assets/img/[^"]+?)\.jpg"[^>]*>')
+def webpify(html):
+    """Wrap site JPGs in <picture> with a WebP source (WebP files sit next to each JPG)."""
+    def rep(m):
+        tag = m.group(0)
+        if not os.path.exists(os.path.join(ROOT, m.group(1).lstrip('/') + '.webp')):
+            return tag
+        sm = _re.search(r'srcset="([^"]+)"', tag)
+        srcset = sm.group(1) if sm else m.group(1) + '.jpg'
+        webp = _re.sub(r'(/assets/img/[^\s,"]+?)\.jpg', r'\1.webp', srcset)
+        if all(os.path.exists(os.path.join(ROOT, u.lstrip('/'))) for u in _re.findall(r'(/assets/img/[^\s,"]+?\.webp)', webp)):
+            sz = _re.search(r'sizes="([^"]+)"', tag)
+            sizes = f' sizes="{sz.group(1)}"' if sz else ''
+            return f'<picture><source type="image/webp" srcset="{webp}"{sizes}>{tag}</picture>'
+        return tag
+    html = _IMG_RE.sub(rep, html)
+    # video posters: WebP when available
+    def prep(m):
+        w = m.group(2) + '.webp'
+        return f'{m.group(1)}="{w}"' if os.path.exists(os.path.join(ROOT, w.lstrip('/'))) else m.group(0)
+    return _re.sub(r'(poster|data-poster-mobile)="(/assets/img/[^"]+?)\.jpg"', prep, html)
+
+
 def trial_link(cls, loc, label_override=None):
     label = label_override or 'Get your free 3 days'
     lab_attr = '' if label_override else ' data-trial-label'
@@ -95,7 +120,16 @@ def head(meta):
     schema_html = ''.join(
         '<script type="application/ld+json">' + json.dumps(s, ensure_ascii=False, separators=(',', ':')) + '</script>\n'
         for s in schema_blocks)
-    preload = ''.join(f'<link rel="preload" as="image" href="{p}">\n' for p in meta.get('preload', []))
+    def _pl(p):
+        if 'hero-poster' in p and os.path.exists(os.path.join(ROOT, 'assets/img/hero-mobile-poster-800.webp')):
+            return ('<link rel="preload" as="image" type="image/webp" href="/assets/img/hero-mobile-poster-800.webp" media="(max-width: 960px)">\n'
+                    '<link rel="preload" as="image" type="image/webp" href="/assets/img/hero-poster-1600.webp" media="(min-width: 961px)">\n')
+        m = re.match(r'(/assets/img/.+)-(?:800|1600)\.jpg$', p)
+        if m and os.path.exists(os.path.join(ROOT, m.group(1).lstrip('/') + '-800.webp')) and os.path.exists(os.path.join(ROOT, m.group(1).lstrip('/') + '-1600.webp')):
+            b = m.group(1)
+            return f'<link rel="preload" as="image" type="image/webp" imagesrcset="{b}-800.webp 800w, {b}-1600.webp 1600w" imagesizes="100vw">\n'
+        return f'<link rel="preload" as="image" href="{p}">\n'
+    preload = ''.join(_pl(p) for p in meta.get('preload', []))
     e = html.escape
     return f'''<!DOCTYPE html>
 <html lang="en-NZ">
@@ -123,15 +157,15 @@ def head(meta):
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v={VERSION}">
-{preload}{schema_html}<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+{preload}{schema_html}<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){{if(f.fbq)return;var n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){{var done=0;function go(){{if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){{var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);}});}}
+addEventListener('load',function(){{setTimeout(go,1200);}});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){{addEventListener(e,go,{{once:true,passive:true}});}});}})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 {meta.get('head_extra', '')}</head>
 '''
@@ -257,6 +291,7 @@ def build():
         page = page.replace('href="/birthday-open-week.html"><strong>', f'href="/birthday-open-week.html" data-until="{OPEN_WEEK_UNTIL}"><strong>')
         page = page.replace('<li><a href="/birthday-open-week.html">', f'<li><a href="/birthday-open-week.html" data-until="{OPEN_WEEK_UNTIL}">')
         page = page.replace('<a href="/birthday-open-week.html">Birthday Open Week</a>', f'<a href="/birthday-open-week.html" data-until="{OPEN_WEEK_UNTIL}">Birthday Open Week</a>')
+        page = webpify(page)
         with open(os.path.join(ROOT, meta['out']), 'w', encoding='utf-8') as f:
             f.write(page)
         count += 1

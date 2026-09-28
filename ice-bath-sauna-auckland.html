@@ -24,18 +24,18 @@
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/m2.css?v=20260929">
-<link rel="preload" as="image" href="/assets/img/sauna-1600.jpg">
+<link rel="preload" as="image" type="image/webp" imagesrcset="/assets/img/sauna-800.webp 800w, /assets/img/sauna-1600.webp 1600w" imagesizes="100vw">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I use the ice bath and sauna at M2 without a gym membership?","acceptedAnswer":{"@type":"Answer","text":"Yes. The Recovery membership is $35 a week on a 6 month term and gives you the ice bath, sauna, spa pool and 20m pool without the gym floor or classes. You can also try it all first with a trial."}},{"@type":"Question","name":"How cold is the ice bath at M2?","acceptedAnswer":{"@type":"Answer","text":"It's kept at around 8 to 12°C."}},{"@type":"Question","name":"Do I need to book the ice bath or sauna?","acceptedAnswer":{"@type":"Answer","text":"No. The recovery area is first come, first served during opening hours: Monday to Friday 5am to 10pm, and Saturday and Sunday 7am to 7pm."}},{"@type":"Question","name":"I've never done a cold plunge. How long should I stay in?","acceptedAnswer":{"@type":"Answer","text":"Keep your first few dips short, a minute or two, and build up towards 2 to 3 minutes over time. Get out if you feel unwell. If you have a heart condition or any other health condition, check with your doctor before trying cold or heat exposure."}},{"@type":"Question","name":"Is there a flexible recovery membership?","acceptedAnswer":{"@type":"Answer","text":"Yes. Recovery Flexi is $40 a week with no fixed term. You just give 30 days' notice to cancel."}},{"@type":"Question","name":"Can Fitness Passport members use the ice bath and sauna?","acceptedAnswer":{"@type":"Answer","text":"Yes. Fitness Passport members at M2 get full access, including the ice bath, sauna, spa pool and 20m pool."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"Recovery","item":"https://m2club.co.nz/recovery.html"},{"@type":"ListItem","position":3,"name":"Ice bath and sauna","item":"https://m2club.co.nz/ice-bath-sauna-auckland.html"}]}</script>
-<!-- Google tag (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
-<!-- Meta Pixel -->
-<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<!-- Google tag (GA4) + Meta Pixel. Commands queue straight away; the heavy
+     scripts load after the page is up (or on first interaction) to keep it fast. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');
+!function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window);fbq('init','1173983798207057');fbq('track','PageView');
+(function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
+addEventListener('load',function(){setTimeout(go,1200);});['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
@@ -87,7 +87,7 @@
 </style>
 
 <section class="page-hero compact" data-section="hero">
-  <div class="ph-media"><img src="/assets/img/sauna-1600.jpg" srcset="/assets/img/sauna-800.jpg 800w, /assets/img/sauna-1600.jpg 1600w" sizes="100vw" alt="Inside the sauna at M2 Training Club in Grafton, Auckland" fetchpriority="high"></div>
+  <div class="ph-media"><picture><source type="image/webp" srcset="/assets/img/sauna-800.webp 800w, /assets/img/sauna-1600.webp 1600w" sizes="100vw"><img src="/assets/img/sauna-1600.jpg" srcset="/assets/img/sauna-800.jpg 800w, /assets/img/sauna-1600.jpg 1600w" sizes="100vw" alt="Inside the sauna at M2 Training Club in Grafton, Auckland" fetchpriority="high"></picture></div>
   <div class="ph-shade" aria-hidden="true"></div>
   <div class="wrap ph-content">
     <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/recovery.html">Recovery</a><span>/</span><span>Ice bath and sauna</span></nav>
@@ -112,19 +112,19 @@
     </div>
     <div class="ib-tiles reveal">
       <div class="tile zoom">
-        <img src="/assets/img/ice-bath-member-800.jpg" alt="A member sitting in the ice bath at M2 in Grafton" loading="lazy" style="object-position:center 30%">
+        <picture><source type="image/webp" srcset="/assets/img/ice-bath-member-800.webp"><img src="/assets/img/ice-bath-member-800.jpg" alt="A member sitting in the ice bath at M2 in Grafton" loading="lazy" style="object-position:center 30%"></picture>
         <span class="tile-cap"><strong>Ice bath</strong><span>Cold plunge kept at around 8 to 12°C.</span></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/sauna-2-800.jpg" alt="Wooden benches inside the M2 sauna" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/sauna-2-800.webp"><img src="/assets/img/sauna-2-800.jpg" alt="Wooden benches inside the M2 sauna" loading="lazy"></picture>
         <span class="tile-cap"><strong>Sauna</strong><span>Traditional sauna to warm right through.</span></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/spa-800.jpg" alt="The spa pool at M2 Training Club" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/spa-800.webp"><img src="/assets/img/spa-800.jpg" alt="The spa pool at M2 Training Club" loading="lazy"></picture>
         <span class="tile-cap"><strong>Spa pool</strong><span>Warm water and jets to wind down.</span></span>
       </div>
       <div class="tile zoom">
-        <img src="/assets/img/pool-800.jpg" alt="The 20 metre pool at M2 Training Club" loading="lazy">
+        <picture><source type="image/webp" srcset="/assets/img/pool-800.webp"><img src="/assets/img/pool-800.jpg" alt="The 20 metre pool at M2 Training Club" loading="lazy"></picture>
         <span class="tile-cap"><strong>20m pool</strong><span>For an easy swim before or after.</span></span>
       </div>
     </div>
