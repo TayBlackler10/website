@@ -849,7 +849,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       .then(function(d){
         if (d.ok) {
           var free = !chosen.priceValue;
-          try { if (window.fbq) fbq('track', free ? 'StartTrial' : 'CompleteRegistration', {content_name: chosen.name, value: chosen.priceValue, currency: 'NZD'}); } catch(e){}
+          // CompleteRegistration for every signup (what ads optimise on), plus StartTrial for trials
+          try { if (window.fbq) {
+            fbq('track', 'CompleteRegistration', {content_name: chosen.name, status: free ? 'trial' : 'membership', value: chosen.priceValue, currency: 'NZD'});
+            if (free) fbq('track', 'StartTrial', {content_name: chosen.name, value: 0, currency: 'NZD'});
+          } } catch(e){}
           try { if (window.gtag) gtag('event', 'sign_up', {method: 'website', membership: chosen.name}); } catch(e){}
           finish(payload.firstname, free);
           return;
