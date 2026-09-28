@@ -21,7 +21,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, '_src', 'pages')
 SITE = 'https://m2club.co.nz'
 TRIAL_SWITCH = '2026-09-30T11:00:00Z'
-OPEN_WEEK_FROM = '2026-10-04T11:00:00Z'
+OPEN_WEEK_FROM = '2026-09-27T11:00:00Z'
 OPEN_WEEK_UNTIL = '2026-10-18T11:00:00Z'
 TRIAL_HREF = 'https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46'
 VERSION = datetime.date.today().strftime('%Y%m%d')
@@ -42,16 +42,20 @@ MENU = [
         ('Classes', '/classes.html', 'Timetable, HYROX, strength and yoga'),
         ('Recovery', '/recovery.html', 'Pool, sauna, spa and ice bath'),
         ('Trainers', '/trainers.html', 'Meet our coaches'),
+        ('Ice bath and sauna', '/ice-bath-sauna-auckland.html', 'Contrast therapy in Grafton'),
         ('Free PT session', '/free-pt.html', 'Included for new members'),
     ]),
     ('HYROX', '/hyrox-auckland.html', 'hyrox', [
+        ('HYROX classes', '/hyrox-gym-auckland.html', 'Train for HYROX all year'),
         ('HYROX Auckland', '/hyrox-auckland.html', 'Race ticket offer, $35 a week'),
         ('Free 2 week plan', '/hyrox-auckland-2week-plan.html', 'Download the training plan'),
     ]),
     ('The Club', '/our-story.html', 'club', [
+        ('Birthday Open Week', '/birthday-open-week.html', 'Train free 12 to 18 October'),
         ('Our story', '/our-story.html', 'How M2 started'),
         ('Gallery', '/gallery.html', 'Take a look inside'),
         ('Reviews', '/reviews.html', 'What members say'),
+        ('Training guides', '/guides.html', 'Free how-to guides'),
         ('Become a PT', '/become-a-pt.html', 'Train clients at M2'),
         ('M2 Hoodie', '/hoodie-presale.html', 'Official M2 merch'),
     ]),
@@ -62,6 +66,13 @@ def trial_link(cls, loc, label_override=None):
     label = label_override or 'Get your free 3 days'
     lab_attr = '' if label_override else ' data-trial-label'
     return f'<a class="{cls}" href="{TRIAL_HREF}" data-trial{lab_attr} data-loc="{loc}">{label}</a>'
+
+
+def meta_cta(meta, cls, loc):
+    # A page can swap the footer and sticky mobile button for its own action
+    if meta.get('cta_href'):
+        return f'<a class="{cls}" href="{meta["cta_href"]}" data-loc="{loc}" data-track="{meta.get("cta_track", "cta_click")}">{meta["cta_label"]}</a>'
+    return trial_link(cls, loc)
 
 
 def head(meta):
@@ -136,8 +147,10 @@ def header(meta):
     for label, href, key, links in MENU:
         ls = ''.join(f'<a class="mega-link" href="{h}"><strong>{l}</strong><span>{b}</span></a>' for l, h, b in links)
         cols.append(f'<div class="mega-col"><span class="eyebrow">{label}</span>{ls}</div>')
-    banner = (f'<div class="promo-bar" data-from="{OPEN_WEEK_FROM}" data-until="{OPEN_WEEK_UNTIL}" hidden>'
-              'It’s our 3rd birthday. Anyone can train at M2 free from 12 to 18 October. Just come in.</div>\n')
+    banner = ('' if meta.get('out') == 'birthday-open-week.html' else
+              f'<div class="promo-bar" data-from="{OPEN_WEEK_FROM}" data-until="{OPEN_WEEK_UNTIL}" hidden>'
+              'M2 turns 3. Train free for a week, 12 to 18 October.'
+              '<a href="/birthday-open-week.html" data-track="open_week_banner_click">Register now \u2192</a></div>\n')
     return f'''<body>
 <a class="skip-link" href="#main">Skip to content</a>
 {banner}<header class="site-header{over}" data-section="header">
@@ -179,6 +192,9 @@ def mobile_menu():
 '''
 
 
+FOOTER_TEXT = f'<span data-until="{TRIAL_SWITCH}">3 days, full access, completely free.</span><span data-from="{TRIAL_SWITCH}" hidden>5 days, full access, just $5.</span> No lock-in.'
+
+
 def footer(meta):
     cta_title = meta.get('footer_title', 'Come and see<br>for yourself<span class="dot">.</span>')
     cols = []
@@ -188,14 +204,15 @@ def footer(meta):
     contact = ('<div><h3>Contact</h3><ul><li><a href="tel:095581408">09 558 1408</a></li>'
                '<li><a href="mailto:reception@m2club.co.nz">reception@m2club.co.nz</a></li>'
                '<li><a href="/contact.html">Contact us</a></li>'
+               '<li><a href="/gym-auckland-cbd.html">Getting here</a></li>'
                '<li><a href="https://www.instagram.com/m2trainingclub/" rel="noopener">Instagram</a></li>'
                '<li><a href="https://www.facebook.com/m2trainingclub" rel="noopener">Facebook</a></li></ul></div>')
     year = datetime.date.today().year
     return f'''<footer class="site-footer" data-section="footer">
 <div class="wrap">
 <div class="footer-cta">
-<div><h2>{cta_title}</h2><p><span data-until="{TRIAL_SWITCH}">3 days, full access, completely free.</span><span data-from="{TRIAL_SWITCH}" hidden>5 days, full access, just $5.</span> No lock-in.</p></div>
-{trial_link('btn btn-lime btn-lg', 'footer')}
+<div><h2>{cta_title}</h2><p>{meta.get('footer_text') or FOOTER_TEXT}</p></div>
+{meta_cta(meta, 'btn btn-lime btn-lg', 'footer')}
 </div>
 <div class="footer-cols">
 <div class="footer-brand"><img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="226" height="24" loading="lazy"><p>8 Nugent Street, Grafton<br>Auckland 1023<br>Mon to Fri 5am to 10pm<br>Sat and Sun 7am to 7pm</p></div>
@@ -205,7 +222,7 @@ def footer(meta):
 </div>
 </footer>
 <div class="sticky-cta" data-section="sticky-mobile">
-{trial_link('btn btn-lime', 'sticky-mobile')}
+{meta_cta(meta, 'btn btn-lime', 'sticky-mobile')}
 <a class="call" href="tel:095581408" aria-label="Call M2 on 09 558 1408">{PHONE}</a>
 </div>
 <script src="/assets/js/m2.js?v={VERSION}" defer></script>
@@ -232,6 +249,10 @@ def build():
         meta, body = parse(os.path.join(SRC, name))
         body = body.replace('{{TRIAL_HREF}}', TRIAL_HREF).replace('{{TRIAL_SWITCH}}', TRIAL_SWITCH)
         page = head(meta) + header(meta) + mobile_menu() + '<main id="main">\n' + body.strip() + '\n</main>\n' + footer(meta)
+        # Open Week links in the menus disappear by themselves after the week
+        page = page.replace('href="/birthday-open-week.html"><strong>', f'href="/birthday-open-week.html" data-until="{OPEN_WEEK_UNTIL}"><strong>')
+        page = page.replace('<li><a href="/birthday-open-week.html">', f'<li><a href="/birthday-open-week.html" data-until="{OPEN_WEEK_UNTIL}">')
+        page = page.replace('<a href="/birthday-open-week.html">Birthday Open Week</a>', f'<a href="/birthday-open-week.html" data-until="{OPEN_WEEK_UNTIL}">Birthday Open Week</a>')
         with open(os.path.join(ROOT, meta['out']), 'w', encoding='utf-8') as f:
             f.write(page)
         count += 1
