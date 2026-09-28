@@ -129,3 +129,4 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
 - PT course (Become a PT): $3,000, 25% off the normal $4,000, payment plans available.
 - HYROX Summer Prep page was removed and redirects to /hyrox-auckland.html. Do not link to it.
 - Hoodie is on sale ongoing (printed to order), no pre-sale deadline.
+- On site: in-house physio by Prana Physio (https://www.pranaphysio.co.nz/) and a cafe. The pool is 20m. There is NO steam room.
