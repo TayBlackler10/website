@@ -88,17 +88,17 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
 - Official HYROX Training Club. HYROX Auckland is 4 to 7 February 2027.
 - Weekly memberships (Join links, weekly term / Flexi):
   - Daily $27.50/wk, 12 month term. Gym floor only (NO classes, NO recovery). Free PT session.
-    Join https://m2trainingclub.gymmasteronline.com/portal/membership/4c7b0cdd282ccf6e5b6cd6104417aa13
-    Flexi https://m2trainingclub.gymmasteronline.com/portal/membership/42f7c6b35518609c14cffd2fb5a4e7d8
+    Join https://m2club.co.nz/join.html?m=844760
+    Flexi https://m2club.co.nz/join.html?m=844770
   - M2 Classes $35/wk, 6 month term. Gym floor + unlimited classes incl. HYROX (NO recovery). Free PT session.
-    Join https://m2trainingclub.gymmasteronline.com/portal/membership/f6f757e0a30b8878edc58262d9fad95b
-    Flexi https://m2trainingclub.gymmasteronline.com/portal/membership/1e959b3148d82fadcac1a43123dc7838
+    Join https://m2club.co.nz/join.html?m=844761
+    Flexi https://m2club.co.nz/join.html?m=844768
   - Perform $49.50/wk, 6 month term. Everything: gym, unlimited classes, HYROX, 20m pool, spa pool, sauna, ice bath. Free PT session. Most popular.
-    Join https://m2trainingclub.gymmasteronline.com/portal/membership/859a3d87d55035773e98297ac5c46085
-    Flexi https://m2trainingclub.gymmasteronline.com/portal/membership/a09d7a2301cd116ef7fe1bd818825c21
+    Join https://m2club.co.nz/join.html?m=844762
+    Flexi https://m2club.co.nz/join.html?m=844772
   - Recovery $35/wk, 6 month term. Recovery area only (pool, spa, sauna, ice bath). NO free PT session.
-    Join https://m2trainingclub.gymmasteronline.com/portal/membership/4a7958cdb4e7d5990827fcb4547ff1f2
-    Flexi https://m2trainingclub.gymmasteronline.com/portal/membership/29a32843a9d86ffda472c307fba23758
+    Join https://m2club.co.nz/join.html?m=844763
+    Flexi https://m2club.co.nz/join.html?m=844774
   - Flexi = +$5/wk on any of the above, no fixed term, cancel anytime with 30 days' notice.
   - Joining fee $49, key tag $25.
 - Annual (pay upfront): Perform Annual $1,800 (limited spots) https://m2trainingclub.gymmasteronline.com/portal/membership/d5cce31cefa08dd12719c9186314c6c9 ;
