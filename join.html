@@ -159,6 +159,16 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .sigbox .clear{position:absolute;right:8px;top:6px;border:0;background:none;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;padding:6px}
 
   .loading{color:var(--muted);font-size:15px;padding:20px 0}
+  .promo{margin-top:16px;font-size:14px}
+  .promo .toggle{border:0;background:none;font:inherit;color:var(--muted);cursor:pointer;padding:4px 0}
+  .promo .toggle:hover{color:var(--ink)}
+  .promo .row2{display:flex;gap:10px;margin-top:8px}
+  .promo input{flex:1;text-transform:uppercase;min-height:46px;padding:10px 14px}
+  .promo .apply{appearance:none;border:1px solid var(--black);background:#fff;color:var(--ink);font:inherit;font-weight:600;font-size:14px;border-radius:999px;padding:0 20px;cursor:pointer}
+  .promo .perr{color:var(--danger);font-size:13px;margin-top:6px}
+  .promo .ok{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border-radius:10px;padding:10px 14px;color:var(--ink)}
+  .promo .ok button{border:0;background:none;font:inherit;font-size:13px;color:var(--muted);cursor:pointer}
+  s.was{color:var(--muted);margin-right:6px}
   .notice{background:var(--soft);border-radius:12px;padding:16px 18px;font-size:15px;margin-top:14px}
   .notice b{color:var(--ink)}
 
@@ -262,6 +272,14 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
             </div>
 
             <div class="summary" id="summary"></div>
+            <div class="promo" id="promo" hidden>
+              <button type="button" class="toggle" id="promoToggle">Have a promo code?</button>
+              <div id="promoForm" hidden>
+                <div class="row2"><input type="text" id="promoInput" placeholder="Enter code" autocomplete="off" aria-label="Promo code"><button type="button" class="apply" id="promoApply">Apply</button></div>
+                <div class="perr" id="promoErr" hidden></div>
+              </div>
+              <div class="ok" id="promoOk" hidden><span id="promoOkText"></span><button type="button" id="promoRemove">Remove</button></div>
+            </div>
           </section>
 
           <!-- STEP 2: DETAILS -->
@@ -470,9 +488,18 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     return v;
   }
 
-  fetch(API + '/memberships').then(function(r){ return r.json(); }).then(function(d){
-    if (!d.ok) throw new Error(d.error);
-    all = d.memberships;
+  var promoCode = '';
+  function snapshot(){ return {mode: mode, tier: val('tier'), term: val('term'), freq: val('freq'), trial: val('trial')}; }
+  function restore(st){
+    setMode(st.mode);
+    if (st.trial) check('trial', st.trial);
+    if (st.tier && tiers[st.tier]) { check('tier', st.tier); onTier(); }
+    if (st.term) { check('term', st.term); onTerm(); }
+    if (st.freq) check('freq', st.freq);
+    update();
+  }
+  function ingest(list){
+    all = list; trials = []; tiers = {};
     all.forEach(function(m){
       var p = parse(m);
       if (!p) { trials.push(m); return; }
@@ -480,7 +507,16 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       (tiers[p.tier] = tiers[p.tier] || []).push(m);
     });
     buildTiers(); buildTrials();
+  }
+  function fetchList(code){
+    return fetch(API + '/memberships' + (code ? '?code=' + encodeURIComponent(code) : '')).then(function(r){ return r.json(); });
+  }
+
+  fetchList('').then(function(d){
+    if (!d.ok) throw new Error(d.error);
+    ingest(d.memberships);
     $('pickLoading').hidden = true;
+    $('promo').hidden = false;
     nextBtn.disabled = false;
 
     // Preselect from link: ?m=<membership id>, ?m=trial, ?tier=perform
@@ -495,9 +531,50 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       if (pick) { check('term', pick._p.flexi ? 'flexi' : 'fixed'); onTerm(); check('freq', pick._p.freq); }
     }
     update();
+    var linkCode = (qs.get('code') || qs.get('promo') || '').trim();
+    if (linkCode) { $('promoInput').value = linkCode; applyCode(linkCode, true); }
   }).catch(function(){
     $('pickLoading').innerHTML = 'We couldn\'t load memberships just now. Please refresh, or <a href="' + PORTAL + '" style="font-weight:600;color:#111">sign up here instead</a>.';
   });
+
+  function applyCode(code, fromLink){
+    code = String(code || '').trim().toUpperCase();
+    if (!code) return;
+    var btn = $('promoApply'); btn.disabled = true; btn.textContent = 'Checking...';
+    $('promoErr').hidden = true;
+    fetchList(code).then(function(d){
+      btn.disabled = false; btn.textContent = 'Apply';
+      if (!d.ok) {
+        $('promoForm').hidden = false; $('promoToggle').hidden = true;
+        $('promoErr').textContent = fromLink ? 'The promo code in your link (' + code + ') isn\'t valid any more, so you\'re seeing our normal prices.' : (d.error || 'That code isn\'t valid.');
+        $('promoErr').hidden = false;
+        return;
+      }
+      var st = snapshot();
+      ingest(d.memberships);
+      promoCode = code;
+      $('promoForm').hidden = true; $('promoToggle').hidden = true;
+      var hits = d.memberships.filter(function(m){ return m.discount || m.fullPrice || m.fullSignupFee || m.credit; });
+      $('promoOkText').textContent = 'Code ' + code + ' applied' + (hits.length ? '' : ' (it doesn\'t change the price of these memberships)');
+      $('promoOk').hidden = false;
+      restore(st);
+    }).catch(function(){
+      btn.disabled = false; btn.textContent = 'Apply';
+      $('promoErr').textContent = 'Couldn\'t check that code just now. Please try again.'; $('promoErr').hidden = false;
+    });
+  }
+  function removeCode(){
+    fetchList('').then(function(d){
+      if (!d.ok) return;
+      var st = snapshot(); ingest(d.memberships); promoCode = '';
+      $('promoOk').hidden = true; $('promoToggle').hidden = false; $('promoInput').value = '';
+      restore(st);
+    });
+  }
+  $('promoToggle').addEventListener('click', function(){ $('promoForm').hidden = false; this.hidden = true; $('promoInput').focus(); });
+  $('promoApply').addEventListener('click', function(){ applyCode($('promoInput').value); });
+  $('promoInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); applyCode(this.value); } });
+  $('promoRemove').addEventListener('click', removeCode);
 
   function check(name, value){
     var el = form.querySelector('input[name="' + name + '"][value="' + value + '"]');
@@ -578,8 +655,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     if (!chosen) { s.classList.remove('show'); return; }
     var name = chosen._p ? 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') + ', ' + chosen._p.freq.toLowerCase() : titleCase(chosen.name);
     var h = '<div class="sname">' + esc(name) + '</div>';
-    h += '<div class="sline"><span>' + (chosen._p ? 'Membership' : 'Price') + '</span><span>' + (chosen.priceValue ? esc(per(chosen)) : 'Free') + '</span></div>';
-    if (chosen.signupFee) h += '<div class="sline"><span>Joining fee</span><span>' + esc(chosen.signupFee) + '</span></div>';
+    h += '<div class="sline"><span>' + (chosen._p ? 'Membership' : 'Price') + '</span><span>' + (chosen.fullPrice ? '<s class="was">' + esc(chosen.fullPrice) + '</s>' : '') + (chosen.priceValue ? esc(per(chosen)) : 'Free') + '</span></div>';
+    if (chosen.signupFee) h += '<div class="sline"><span>Joining fee</span><span>' + (chosen.fullSignupFee ? '<s class="was">' + esc(chosen.fullSignupFee) + '</s>' : '') + esc(chosen.signupFee) + '</span></div>';
+    else if (chosen.fullSignupFee) h += '<div class="sline"><span>Joining fee</span><span><s class="was">' + esc(chosen.fullSignupFee) + '</s>Free</span></div>';
+    if (chosen.credit) h += '<div class="sline"><span>Account credit</span><span>' + esc(chosen.credit) + '</span></div>';
+    if (chosen.discount) h += '<div class="snote">' + esc(chosen.discount) + '</div>';
     if (chosen.promo) h += '<div class="snote">' + esc(chosen.promo) + '</div>';
     if (chosen.priceValue > 0) h += '<div class="snote">You\'ll add your payment details at reception when you pick up your key tag. Nothing is charged today.</div>';
     s.innerHTML = h;
@@ -758,7 +838,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       password: val('password'),
       agreed: true,
       signature: signatureData(),
-      source: src
+      source: src,
+      code: promoCode
     };
     nextBtn.disabled = true; nextBtn.textContent = 'Signing you up...';
     errEl.style.display = 'none';

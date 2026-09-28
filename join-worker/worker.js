@@ -2,12 +2,18 @@
 // Backend for m2club.co.nz/join.html. Holds the GymMaster Member Portal API key
 // so it never appears in the website code, and does the signup in GymMaster.
 //
-//   GET  /memberships          online memberships, trimmed for the page (cached 5 min)
+//   GET  /memberships[?code=X] online memberships, trimmed for the page (cached 5 min).
+//                              With a GymMaster discount code, prices come back discounted.
 //   GET  /agreement?id=844686  terms & conditions for a membership type
 //   POST /signup               create the member + membership, log T&Cs, save signature,
-//                              then drop them into the PT Leads sheet (emails Tim)
+//                              then optionally drop them into the PT Leads sheet
+//   GET  /chase?key=K&offset=0 new members (last CHASE_DAYS) on a paid membership with no
+//                              billing method. Checks CHASE_BATCH members per call; call again
+//                              with next_offset until done. Used by the daily reception email.
 //
 // Secrets:  GM_API_KEY     GymMaster "Low Permission API Key" (Settings > Integrations)
+//           GM_STAFF_KEY   GymMaster "High Permission API Key" (only used by /chase)
+//           CHASE_KEY      shared secret the daily email task sends as ?key=
 // Vars:     GM_BASE        https://m2trainingclub.gymmasteronline.com/portal/api
 //           COMPANY_ID     4
 //           PT_SCRIPT      PT Leads Apps Script web app URL ("" to switch off)
@@ -27,7 +33,14 @@ export default {
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
     try {
-      if (url.pathname === "/memberships" && req.method === "GET") return out(await memberships(env), cors, CACHE_SECONDS);
+      if (url.pathname === "/memberships" && req.method === "GET") {
+        const code = clean(url.searchParams.get("code")).toUpperCase();
+        return out(await memberships(env, code), cors, code ? 60 : CACHE_SECONDS);
+      }
+      if (url.pathname === "/chase" && req.method === "GET") {
+        if (!env.CHASE_KEY || url.searchParams.get("key") !== env.CHASE_KEY) return out({ ok: false, error: "Not allowed" }, cors, 0, 403);
+        return out(await chase(env, parseInt(url.searchParams.get("offset") || "0", 10)), cors);
+      }
       if (url.pathname === "/agreement" && req.method === "GET") return out(await agreement(env, url.searchParams.get("id")), cors, CACHE_SECONDS);
       if (url.pathname === "/signup" && req.method === "POST") {
         if (!cors["Access-Control-Allow-Origin"]) return out({ ok: false, error: "Not allowed" }, cors, 0, 403);
@@ -102,9 +115,12 @@ const clean = s => String(s || "").trim().replace(/\s+/g, " ");
 
 /* ---------------- memberships ---------------- */
 
-async function memberships(env) {
-  const d = await gmGet(env, "/v1/memberships");
-  if (d.error) throw new Error(d.error);
+async function memberships(env, code) {
+  const d = await gmGet(env, "/v1/memberships", code ? { discount_code: code, companyid: env.COMPANY_ID } : {});
+  if (d.error) {
+    if (code) return { ok: false, badCode: true, error: /not found/i.test(d.error) ? "That promo code isn't valid." : d.error };
+    throw new Error(d.error);
+  }
   const hide = new Set((env.HIDE_IDS || "").split(",").map(s => s.trim()).filter(Boolean));
   const list = (d.result || [])
     .filter(m => !hide.has(String(m.id)))
@@ -120,9 +136,13 @@ async function memberships(env) {
       signupFee: money(m.signupfee) > 0 ? m.signupfee : null,
       length: m.membership_length,
       promo: m.promotion_period_description || m.promotion_freeuntil_description || null,
+      discount: m.discountdescription || null,
+      fullPrice: m.prediscountprice && m.prediscountprice !== m.price ? m.prediscountprice : null,
+      fullSignupFee: m.prediscountsignupfee && m.prediscountsignupfee !== m.signupfee ? m.prediscountsignupfee : null,
+      credit: money(m.account_credit) > 0 ? m.account_credit : null,
       sort: m.sortorder
     }));
-  return { ok: true, memberships: list };
+  return { ok: true, code: code || null, memberships: list };
 }
 
 async function agreement(env, id) {
@@ -176,7 +196,10 @@ async function signup(env, b) {
   if (!b.agreed) return { ok: false, error: "Please agree to the terms and conditions." };
 
   // Make sure the membership is still one we sell online
-  const ms = (await memberships(env)).memberships;
+  const code = clean(b.code).toUpperCase();
+  const mr = await memberships(env, code);
+  if (!mr.ok) return { ok: false, error: mr.error };
+  const ms = mr.memberships;
   const m = ms.find(x => String(x.id) === f.membershiptypeid);
   if (!m) return { ok: false, error: "That membership isn't available online any more. Please pick another." };
 
@@ -192,6 +215,7 @@ async function signup(env, b) {
   const grace = parseInt(env.BILLING_GRACE_DAYS || "0", 10);
   const paid = m.priceValue > 0;
   const fields = { ...f, companyid: env.COMPANY_ID, startdate: today };
+  if (code) fields.discount_code = code;
   if (paid && grace > 0 && !m.length) fields.firstpaymentdate = addDays(today, grace);
 
   let res = await gmPost(env, "/v1/signup", fields);
@@ -218,7 +242,7 @@ async function signup(env, b) {
 
   // Tell the team: goes into the PT Leads sheet, which emails Tim
   if (env.PT_SCRIPT) {
-    const source = "Online signup: " + m.name + (b.source ? " (" + clean(b.source) + ")" : "");
+    const source = "Online signup: " + m.name + (code ? " [code " + code + "]" : "") + (b.source ? " (" + clean(b.source) + ")" : "");
     const note = [
       "Joined online: " + m.name + " (" + m.price + " " + (m.priceDescription || "") + ")",
       paid ? "BILLING DETAILS NEEDED at reception before key tag" : "Free trial, no billing needed",
@@ -243,7 +267,7 @@ async function signup(env, b) {
     } catch (e) { /* never fail a signup because the notification didn't send */ }
   }
 
-  return { ok: true, memberid, membershipid, paid, membership: m.name, warnings };
+  return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, warnings };
 }
 
 function friendly(err) {
@@ -251,4 +275,65 @@ function friendly(err) {
   if (/already/i.test(e) && /email/i.test(e)) return "You're already in our system with that email.";
   if (/age|old|dob|birth/i.test(e)) return "Sorry, we couldn't sign you up online with that date of birth. Please pop in and see us at reception.";
   return e ? "GymMaster said: " + e : "We couldn't finish your signup. Please try again or call reception.";
+}
+
+/* ---------------- chase: new members with no billing method ---------------- */
+
+async function staffGet(env, path, params = {}) {
+  const u = new URL(env.GM_BASE + path);
+  u.searchParams.set("api_key", env.GM_STAFF_KEY);
+  for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+  return (await fetch(u.toString())).json();
+}
+
+async function chase(env, offset) {
+  const days = parseInt(env.CHASE_DAYS || "21", 10);
+  const batch = parseInt(env.CHASE_BATCH || "12", 10);
+  const today = nzToday();
+  const cutoff = addDays(today, -days);
+  // members updated since the cutoff, then keep only people who joined since then
+  const d = await staffGet(env, "/v1/members", { when: cutoff + " 00:00:00" });
+  if (d.error) return { ok: false, error: d.error };
+  const recentJoins = (d.result || [])
+    .filter(m => m.joindate && m.joindate >= cutoff)
+    .sort((a, b) => a.id - b.id);
+  const slice = recentJoins.slice(offset, offset + batch);
+  const items = [];
+  for (const m of slice) {
+    try {
+      const lg = await fetch(env.GM_BASE + "/v1/login", {
+        method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ api_key: env.GM_STAFF_KEY, memberid: String(m.id) })
+      }).then(r => r.json());
+      const token = lg.result && lg.result.token;
+      if (!token) continue;
+      const [ms, bal] = await Promise.all([
+        staffGet(env, "/v1/member/memberships", { token }),
+        staffGet(env, "/v1/member/outstandingbalance", { token })
+      ]);
+      const paid = (ms.result || []).filter(x => money(x.price) > 0 && (!x.enddate || x.enddate >= today) && !x.onhold);
+      const noBilling = /no default billing|unable to bill/i.test(bal.next_bill || "");
+      // Recurring memberships with no billing will fail every debit. Fixed passes only
+      // matter if there's money owing (otherwise they've been paid at the desk).
+      const owingNow = money(bal.owingamount) > 0;
+      const recurring = paid.filter(x => !x.enddate || x.enddate === "Open Ended");
+      if (!noBilling || !(recurring.length || owingNow)) continue;
+      const first = paid.map(x => x.firstpaymentdate || x.nextpaymentdate).filter(Boolean).sort()[0] || null;
+      items.push({
+        id: m.id,
+        name: (m.firstname + " " + m.surname).trim(),
+        phone: m.phonecell || "",
+        email: m.email || "",
+        joined: m.joindate,
+        daysSinceJoin: Math.round((new Date(today) - new Date(m.joindate)) / 86400000),
+        membership: paid.map(x => x.name).join(", "),
+        firstPayment: first,
+        daysToFirstPayment: first ? Math.round((new Date(first) - new Date(today)) / 86400000) : null,
+        owing: bal.owingamount || null,
+        profile: "https://m2trainingclub.gymmasteronline.com/member/view/" + m.id
+      });
+    } catch (e) { /* skip this member, carry on */ }
+  }
+  const next = offset + slice.length;
+  return { ok: true, today, cutoff, total: recentJoins.length, checked: slice.length, next_offset: next < recentJoins.length ? next : null, items };
 }
