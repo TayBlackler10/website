@@ -1,0 +1,15 @@
+name = "m2-join"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+GM_BASE = "https://m2trainingclub.gymmasteronline.com/portal/api"
+COMPANY_ID = "4"
+PT_SCRIPT = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec"
+BILLING_GRACE_DAYS = "3"
+HIDE_IDS = ""
+ALLOWED_ORIGINS = "https://m2club.co.nz,https://www.m2club.co.nz"
+
+# Secret (not in this file): GM_API_KEY
+#   npx wrangler secret put GM_API_KEY
