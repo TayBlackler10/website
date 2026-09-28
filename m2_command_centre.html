@@ -6,369 +6,297 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="M2 Command">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="robots" content="noindex">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>M2 Training Club  Marketing Command Centre</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>M2 Command Centre</title>
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --y:#C8F000;--yd:#a8d600;--y3:rgba(200,240,0,0.12);--y4:rgba(200,240,0,0.06);
-  --b:#0a0a0a;--s:#111110;--s2:#161615;--s3:#1c1c1a;--s4:#242422;
-  --br:rgba(200,240,0,0.18);--br2:rgba(245,245,242,0.1);--br3:rgba(245,245,242,0.18);
-  --t:#f5f5f2;--t2:rgba(245,245,242,0.7);--m:rgba(245,245,242,0.42);
-  --g:#C8F000;--r:rgba(245,245,242,0.55);--blue:rgba(245,245,242,0.55);--purple:rgba(245,245,242,0.55);
-  --font-mono:'JetBrains Mono',monospace;
-  --rad:2px;--rad-s:2px;
+  /* Light house style, matches the PT Lead System and member emails */
+  --page:#EDEDEA;--card:#FFFFFF;--ink:#111111;--black:#0A0A0A;--lime:#DFFF00;
+  --y:#5E6B12;--yd:#4B5610;--y3:rgba(107,122,30,0.10);--y4:rgba(107,122,30,0.05);
+  --b:#EDEDEA;--s:#FFFFFF;--s2:#F6F6F3;--s3:#EFEFEB;--s4:#E6E6E1;
+  --br:#E3E3DE;--br2:#E3E3DE;--br3:#D6D6D0;
+  --t:#111111;--t2:#3D3D3A;--m:#7A7A74;
+  --g:#1F8A54;--r:#B8402F;--blue:#2F6FB0;--purple:#7A4FB0;
+  --olive-bg:#F1F4E3;--green-bg:#E8F5EE;--red-bg:#FBECEA;
+  --font-mono:'Inter',sans-serif;
+  --rad:14px;--rad-s:10px;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.04);
 }
-html,body{background:var(--b);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+html,body{background:var(--page);color:var(--t2);font-family:'Inter',-apple-system,'Helvetica Neue',Helvetica,Arial,sans-serif;min-height:100vh;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
 
-/* ── TOP BAR ── */
-.topbar{background:rgba(5,5,5,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--br);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:68px;position:sticky;top:0;z-index:100}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--y);letter-spacing:3px}
-.logo span{font-size:13px;color:var(--m);font-family:'Inter',sans-serif;font-weight:400;letter-spacing:.5px;margin-left:14px;vertical-align:middle}
-.topdate{font-size:13px;color:var(--t2);background:var(--s2);padding:7px 16px;border-radius:4px;border:1px solid var(--br2)}
+/* ── HEADER: slim black bar, lime logo ── */
+.topbar{background:var(--black);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{height:24px;width:auto;display:block}
+.brand-sub{font-size:11px;letter-spacing:.1em;color:#8C8C86;text-transform:uppercase;font-weight:500}
+.logo{display:none}
+.topdate{font-size:12.5px;color:#D6D6D0;background:transparent;padding:6px 12px;border-radius:999px;border:1px solid #2E2E2E;white-space:nowrap}
+#live-indicator{color:var(--lime)!important}
+#live-indicator span:first-child{background:var(--lime)!important}
 
-/* ── DROPDOWN NAV ── */
-.nav-bar{background:rgba(6,6,6,0.98);backdrop-filter:blur(10px);padding:0 40px;border-bottom:1px solid var(--br2);position:sticky;top:68px;z-index:99;display:flex;align-items:stretch;gap:2px}
+/* ── NAV ── */
+.nav-bar{background:var(--card);padding:0 32px;border-bottom:1px solid var(--br2);position:sticky;top:56px;z-index:99;display:flex;align-items:stretch;gap:4px}
 .nav-item{position:relative;display:flex;align-items:stretch}
-.nav-btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:0 22px;height:50px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:7px;border-bottom:2px solid transparent;user-select:none}
-.nav-btn:hover{color:var(--t);background:rgba(255,255,255,.04)}
-.nav-btn.active{color:var(--y);border-bottom-color:var(--y);background:transparent}
-.nav-btn .arrow{font-size:9px;transition:transform .2s;opacity:.4}
-.nav-btn.open .arrow{transform:rotate(180deg);opacity:1}
-.nav-icon{font-size:16px}
+.nav-btn{font-family:inherit;font-size:14px;font-weight:500;padding:0 16px;height:48px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:color .15s;display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent;user-select:none}
+.nav-btn:hover{color:var(--ink)}
+.nav-btn.active{color:var(--ink);font-weight:600;border-bottom-color:var(--black)}
+.nav-btn .arrow{font-size:8px;transition:transform .2s;opacity:.45}
+.nav-btn.open .arrow{transform:rotate(180deg);opacity:.8}
+.nav-icon,.dd-icon{display:none!important}
 
-/* Dropdown */
-.nav-dropdown{display:none;position:absolute;top:100%;left:0;background:var(--s);border:1px solid var(--br3);border-radius:0;min-width:220px;padding:8px;z-index:200;box-shadow:0 12px 32px rgba(0,0,0,.6)}
+.nav-dropdown{display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--card);border:1px solid var(--br2);border-radius:12px;min-width:220px;padding:6px;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.10)}
 .nav-dropdown.open{display:block;animation:fadeIn .15s ease}
-.nav-dd-item{font-family:'Inter',sans-serif;font-size:14px;padding:11px 14px;border-radius:4px;cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:10px;transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
-.nav-dd-item:hover{background:transparent;color:var(--y)}
-.nav-dd-item.active{background:transparent;color:var(--y);font-weight:600}
-.nav-dd-item .dd-icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
+.nav-dd-item{font-family:inherit;font-size:14px;padding:10px 12px;border-radius:8px;cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:10px;transition:background .12s;border:none;background:transparent;width:100%;text-align:left}
+.nav-dd-item:hover{background:var(--s2);color:var(--ink)}
+.nav-dd-item.active{background:var(--s2);color:var(--ink);font-weight:600}
 .nav-dd-divider{height:1px;background:var(--br2);margin:4px 8px}
-.nav-dd-item.active::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--y);margin-left:auto;flex-shrink:0}
+.nav-dd-item.active::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--black);margin-left:auto;flex-shrink:0}
 
 /* ── SECTIONS ── */
-.section{display:none;padding:48px 40px;max-width:1300px;margin:0 auto}
-.section.on{display:block;opacity:1;animation:fadeIn .2s ease forwards}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* Section header  pill accent + larger title */
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--y);letter-spacing:2.5px;margin-bottom:4px;line-height:1}
-.section-sub{font-size:14px;color:var(--m);margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--br2);line-height:1.6}
+.section{display:none;padding:32px 32px 48px;max-width:1280px;margin:0 auto}
+.section.on{display:block;animation:fadeIn .2s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-family:inherit;font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:4px;line-height:1.2}
+.section-sub{font-size:13px;color:var(--m);margin-bottom:24px;line-height:1.55}
 
 /* ── INNER TABS ── */
-.tab-nav{display:flex;gap:4px;background:var(--s2);padding:6px;border-radius:6px;margin-bottom:28px;overflow-x:auto;scrollbar-width:none;border:1px solid var(--br2)}
+.tab-nav{display:inline-flex;max-width:100%;gap:2px;background:var(--s4);padding:4px;border-radius:999px;margin-bottom:22px;overflow-x:auto;scrollbar-width:none;border:none}
 .tab-nav::-webkit-scrollbar{display:none}
-.tnb{font-size:14px;font-weight:500;padding:10px 22px;border-radius:4px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .2s;font-family:'Inter',sans-serif}
-.tnb.on{background:var(--s4);color:var(--t);box-shadow:0 2px 10px rgba(0,0,0,.5);border:1px solid var(--br3)}
-.tnb:hover:not(.on){color:var(--t2);background:var(--s3)}
+.tnb{font-size:13px;font-weight:500;padding:8px 16px;border-radius:999px;border:none;cursor:pointer;background:transparent;color:var(--m);white-space:nowrap;transition:all .15s;font-family:inherit}
+.tnb.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tnb:hover:not(.on){color:var(--ink)}
 .tab-pnl{display:none}
 .tab-pnl.on{display:block;animation:fadeIn .15s ease}
 
 /* ── KPI GRID ── */
-.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px}
-.kpi{background:var(--s);border:1px solid var(--br2);border-radius:0;padding:22px 20px;cursor:default;position:relative}
-.kl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:12px;font-weight:700}
-.kv{font-family:'Bebas Neue',sans-serif;font-size:46px;color:var(--t);line-height:1;margin-bottom:8px;letter-spacing:.5px;font-weight:400}
-.kv.y{color:var(--y)}.kv.g{color:var(--g)}.kv.r{color:var(--r)}
-.ks{font-size:12px;color:var(--m);line-height:1.5}
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid transparent;border-radius:var(--rad);box-shadow:var(--shadow);padding:18px 18px 16px;cursor:default;position:relative}
+.kl{font-size:12.5px;color:var(--m);margin-bottom:8px;font-weight:500;padding-right:48px}
+.kv{font-family:inherit;font-size:30px;font-weight:700;color:var(--ink);line-height:1.05;margin-bottom:6px;letter-spacing:-.02em}
+.kv.y{color:var(--ink)}.kv.g{color:var(--g)}.kv.r{color:var(--r)}
+.ks{font-size:12.5px;color:var(--m);line-height:1.5}
 .ks.g{color:var(--g)}.ks.r{color:var(--r)}.ks.y{color:var(--y)}
-/* Source provenance badges */
-.src{position:absolute;top:12px;right:12px;font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:4px;line-height:1.4}
-.src-live{color:var(--g);background:rgba(200,240,0,.12);border:1px solid rgba(200,240,0,.4)}
+.src{position:absolute;top:14px;right:14px;font-size:10px;font-weight:600;letter-spacing:.02em;padding:2px 8px;border-radius:999px;line-height:1.5}
+.src-live{color:var(--g);background:var(--green-bg);border:none}
 .src-live::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--g);margin-right:4px;vertical-align:middle;animation:pulse 2s infinite}
-.src-hist{color:var(--t2);background:rgba(176,176,176,.1);border:1px solid rgba(176,176,176,.3)}
-.src-target{color:var(--y);background:rgba(200,240,0,.1);border:1px solid rgba(200,240,0,.35)}
-/* Movement panel */
-.move-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
-.move{background:var(--s2);border:1px solid var(--br2);border-radius:var(--rad-s);padding:16px 18px}
-.move-l{font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:8px}
+.src-hist{color:var(--m);background:var(--s2);border:none}
+.src-target{color:var(--y);background:var(--olive-bg);border:none}
+
+.move-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:8px}
+.move{background:var(--s2);border:none;border-radius:var(--rad-s);padding:14px 16px}
+.move-l{font-size:12px;color:var(--m);font-weight:500;margin-bottom:6px}
 .move-row{display:flex;align-items:baseline;gap:8px}
-.move-now{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;color:var(--t)}
-.move-delta{font-size:13px;font-weight:700}
+.move-now{font-family:inherit;font-size:22px;font-weight:700;line-height:1;color:var(--ink);letter-spacing:-.01em}
+.move-delta{font-size:13px;font-weight:600}
 .move-delta.up{color:var(--g)}.move-delta.down{color:var(--r)}.move-delta.flat{color:var(--m)}
-.move-prev{font-size:10px;color:var(--m);margin-top:5px}
+.move-prev{font-size:11.5px;color:var(--m);margin-top:5px}
 
 /* ── CARDS ── */
-.card{background:transparent;border:1px solid var(--br2);border-radius:0;padding:22px 24px;margin-bottom:18px}
+.card{background:var(--card);border:none;border-radius:var(--rad);box-shadow:var(--shadow);padding:20px 22px;margin-bottom:14px}
 .card:last-child{margin-bottom:0}
+.ct{font-size:12px;font-weight:600;color:var(--m);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.ct::after{display:none}
 
-/* Card title  stronger visual break */
-.ct{font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.ct::after{content:'';flex:1;height:1px;background:var(--br2)}
-
-/* Rows  more breathing room, clearer label/value split */
-.row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:15px;gap:16px;transition:background .15s}
+.row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--br2);font-size:14px;gap:16px}
 .row:last-child{border-bottom:none}
-.row:hover{background:rgba(255,255,255,.025);margin:0 -10px;padding:14px 10px;border-radius:4px}
 .rl{color:var(--t2);font-size:14px}
-.rv{font-weight:600;color:var(--t);text-align:right;font-size:15px}
+.rv{font-weight:600;color:var(--ink);text-align:right;font-size:14px}
 .rv.g{color:var(--g)}.rv.r{color:var(--r)}.rv.y{color:var(--y)}
 
-/* ── GRIDS ── */
-.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.two > .card,.three > .card{margin-bottom:0}
 @media(max-width:900px){.two{grid-template-columns:1fr}.three{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.three{grid-template-columns:1fr}}
 
 /* ── BARS ── */
-.bar-wrap{display:flex;align-items:center;gap:14px;padding:10px 0}
-.bl{font-size:13px;color:var(--t2);width:160px;flex-shrink:0;text-align:right}
-.bt{flex:1;height:30px;background:rgba(255,255,255,.05);border-radius:6px;overflow:hidden;position:relative}
+.bar-wrap{display:flex;align-items:center;gap:12px;padding:7px 0}
+.bl{font-size:13px;color:var(--t2);width:150px;flex-shrink:0;text-align:right}
+.bt{flex:1;height:26px;background:var(--s2);border-radius:6px;overflow:hidden;position:relative}
 .bf{height:100%;border-radius:6px;position:absolute;left:0;top:0;display:flex;align-items:center;padding-left:10px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-.bval{font-size:11px;font-weight:700;color:rgba(0,0,0,.9);white-space:nowrap}
+.bval{font-size:11.5px;font-weight:600;color:#fff;white-space:nowrap}
 .bv2{font-size:13px;font-weight:600;min-width:60px;text-align:right;flex-shrink:0;color:var(--t2)}
 
 /* ── INSIGHT / ALERT / REC ── */
-.insight{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--y);border-radius:0;padding:18px 22px;margin-bottom:16px;transition:border-color .2s}
-.insight:hover{border-color:var(--br3);border-left-color:var(--y)}
-.it{font-size:14px;font-weight:700;color:var(--y);margin-bottom:8px;letter-spacing:.2px}
-.ib{font-size:14px;color:var(--t2);line-height:1.75}
+.insight,.alert,.good-box,.rec{background:var(--card);border:none;border-left:3px solid var(--y);border-radius:var(--rad-s);box-shadow:var(--shadow);padding:16px 18px;margin-bottom:12px}
+.alert{border-left-color:var(--r)}
+.good-box{border-left-color:var(--g)}
+.insight:hover,.rec:hover{border-left-color:var(--y)}
+.it,.at,.gt{font-size:14px;font-weight:600;margin-bottom:6px;color:var(--ink)}
+.ib,.ab,.gb{font-size:14px;color:var(--t2);line-height:1.65}
+.rt{font-size:14.5px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.rb{font-size:14px;color:var(--t2);line-height:1.65}
 
-.alert{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--r);border-radius:0;padding:18px 22px;margin-bottom:18px}
-.at{font-size:14px;font-weight:700;color:var(--r);margin-bottom:8px;letter-spacing:.2px}
-.ab{font-size:14px;color:var(--t2);line-height:1.75}
-
-.good-box{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--g);border-radius:0;padding:18px 22px;margin-bottom:16px}
-.gt{font-size:14px;font-weight:700;color:var(--g);margin-bottom:8px;letter-spacing:.2px}
-.gb{font-size:14px;color:var(--t2);line-height:1.75}
-
-.rec{background:transparent;border:1px solid var(--br2);border-left:2px solid var(--y);border-radius:0;padding:16px 20px;margin-bottom:14px;transition:border-color .2s}
-.rec:hover{border-color:var(--br3)}
-.rt{font-size:15px;font-weight:700;color:var(--t);margin-bottom:6px}
-.rb{font-size:14px;color:var(--t2);line-height:1.7}
-
-/* ── STATUS BADGES ── */
-.badge{font-size:11px;padding:4px 12px;border-radius:2px;font-weight:700;letter-spacing:.3px}
-.b-active{background:transparent;border:1px solid var(--br3);color:var(--t2)}
-.b-off{background:transparent;border:1px solid var(--br2);color:var(--m)}
-.b-hot{background:var(--y);color:#000}
-.b-warn{background:transparent;border:1px solid var(--br3);color:var(--t)}
+/* ── BADGES ── */
+.badge{font-size:11.5px;padding:3px 10px;border-radius:999px;font-weight:600}
+.b-active{background:var(--green-bg);color:var(--g);border:none}
+.b-off{background:var(--s2);color:var(--m);border:none}
+.b-hot{background:var(--black);color:var(--lime)}
+.b-warn{background:var(--red-bg);color:var(--r);border:none}
 
 /* ── TABLES ── */
-.tbl{width:100%;border-collapse:collapse;font-size:14px}
-.tbl th{text-align:left;padding:14px 16px;font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--br2)}
-.tbl td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle;color:var(--t2)}
-.tbl td:first-child{color:var(--t);font-weight:600}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;padding:10px 14px;font-size:11.5px;font-weight:600;color:var(--m);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--br3);background:transparent}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--br2);vertical-align:middle;color:var(--t2)}
+.tbl td:first-child{color:var(--ink);font-weight:600}
 .tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:rgba(255,255,255,.03)}
-.tbl-divider td{background:rgba(200,240,0,.06);font-weight:700;color:var(--y);font-size:11px;padding:9px 16px;letter-spacing:.8px;text-transform:uppercase}
+.tbl tr:hover td{background:var(--s2)}
+.tbl-divider td{background:var(--s2);font-weight:600;color:var(--m);font-size:11px;padding:8px 14px;letter-spacing:.06em;text-transform:uppercase}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--rad-s)}
 
-/* ── PROG BAR ── */
-.prog{height:6px;background:rgba(255,255,255,.07);border-radius:3px;margin-top:10px;overflow:hidden}
-.pf{height:100%;border-radius:3px;background:var(--y);transition:width .6s cubic-bezier(.4,0,.2,1)}
+/* ── PROGRESS ── */
+.prog{height:6px;background:var(--s3);border-radius:3px;margin-top:10px;overflow:hidden}
+.pf{height:100%;border-radius:3px;background:var(--black);transition:width .6s cubic-bezier(.4,0,.2,1)}
 .pf.g{background:var(--g)}.pf.r{background:var(--r)}
 
-/* ── CONTENT CHECKLIST ── */
-.ci{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s}
+/* ── CHECKLIST ── */
+.ci{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--br2)}
 .ci:last-child{border-bottom:none}
-.ci:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:16px 10px;border-radius:4px}
-.ci-check{width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,.15);flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.ci-check:hover:not(.done){border-color:var(--y);background:rgba(200,240,0,.08)}
-.ci-check.done{background:var(--y);border-color:var(--y)}
-.ci-check.done::after{content:'✓';font-size:13px;color:#000;font-weight:700}
-.ci-title{font-size:15px;font-weight:500;color:var(--t)}
+.ci-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--br3);background:#fff;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ci-check:hover:not(.done){border-color:var(--black)}
+.ci-check.done{background:var(--black);border-color:var(--black)}
+.ci-check.done::after{content:'✓';font-size:12px;color:var(--lime);font-weight:700}
+.ci-title{font-size:14.5px;font-weight:500;color:var(--ink)}
 .ci-title.done-text{text-decoration:line-through;color:var(--m)}
-.ci-tag{font-size:11px;padding:2px 9px;border-radius:4px;background:rgba(200,240,0,.12);color:var(--y);margin-left:8px;font-weight:700}
-.ci-who{font-size:13px;color:var(--m);margin-top:4px}
+.ci-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--olive-bg);color:var(--y);margin-left:8px;font-weight:600}
+.ci-who{font-size:13px;color:var(--m);margin-top:3px}
 
-/* ── INPUTS ── */
-.inp{background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:12px 16px;font-size:15px;color:var(--t);font-family:'Inter',sans-serif;width:100%;transition:all .2s}
-.inp:focus{outline:none;border-color:var(--y);background:var(--s3);box-shadow:0 0 0 3px rgba(200,240,0,.08)}
-.inp::placeholder{color:var(--m)}
+/* ── INPUTS & BUTTONS ── */
+.inp{background:var(--card);border:1px solid var(--br3);border-radius:var(--rad-s);padding:10px 13px;font-size:14px;color:var(--ink);font-family:inherit;width:100%;transition:border-color .15s,box-shadow .15s}
+.inp:focus{outline:none;border-color:var(--black);box-shadow:0 0 0 3px rgba(10,10,10,.07)}
+.inp::placeholder{color:#A5A59E}
 select.inp{cursor:pointer}
-.inp-lbl{font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;font-weight:700}
-.add-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
-.btn{background:var(--y);color:#000;border:none;border-radius:4px;padding:13px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap;letter-spacing:.3px}
-.btn:hover{background:var(--yd)}
-
-.btn-ghost{background:transparent;border:1px solid var(--br2);border-radius:4px;padding:12px 20px;font-size:14px;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap}
-.btn-ghost:hover{border-color:var(--y);color:var(--y);background:rgba(200,240,0,.05)}
+.inp-lbl{font-size:12px;color:var(--m);margin-bottom:6px;font-weight:500}
+.add-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.btn{background:var(--black);color:var(--lime);border:none;border-radius:999px;padding:10px 20px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:filter .15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.4)}
+.btn-ghost{background:var(--card);border:1px solid var(--br3);border-radius:999px;padding:9px 18px;font-size:13.5px;color:var(--t2);cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn-ghost:hover{border-color:var(--black);color:var(--ink)}
+.save-btn{background:var(--card);border:1px solid var(--br3);border-radius:999px;padding:7px 16px;font-size:13px;color:var(--t2);cursor:pointer;font-family:inherit;margin-top:10px;transition:all .15s}
+.save-btn:hover{border-color:var(--black);color:var(--ink)}
+.save-btn.saved{color:var(--g);border-color:var(--g)}
+.note-area{width:100%;background:var(--card);border:1px solid var(--br3);border-radius:var(--rad-s);padding:14px 16px;font-family:inherit;font-size:14.5px;color:var(--ink);resize:vertical;min-height:120px;line-height:1.65}
+.note-area:focus{outline:none;border-color:var(--black);box-shadow:0 0 0 3px rgba(10,10,10,.07)}
+.note-area::placeholder{color:#A5A59E}
 
 /* ── FUNNEL ── */
-.funnel-row{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s}
+.funnel-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--br2)}
 .funnel-row:last-child{border-bottom:none}
-.funnel-row:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:18px 10px;border-radius:4px}
-.fn{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--t);min-width:70px;letter-spacing:.5px}
+.fn{font-family:inherit;font-size:28px;font-weight:700;color:var(--ink);min-width:70px;letter-spacing:-.02em}
 .fl{font-size:14px;color:var(--t2);flex:1}
-.fb{font-size:15px;font-weight:600;min-width:48px;text-align:right}
+.fb{font-size:14px;font-weight:600;min-width:48px;text-align:right}
 
 /* ── NO-SHOW LIST ── */
-.ns-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px;transition:background .15s}
+.ns-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--br2);font-size:14px}
 .ns-item:last-child{border-bottom:none}
-.ns-item:hover{background:rgba(255,255,255,.02);margin:0 -10px;padding:14px 10px;border-radius:6px}
-.ns-name{font-weight:600;color:var(--t);min-width:180px}
+.ns-name{font-weight:600;color:var(--ink);min-width:180px}
 .ns-src{color:var(--m);font-size:13px;min-width:100px}
 .ns-email{color:var(--blue);font-size:13px}
 
-/* ── TEXTAREA ── */
-.note-area{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:16px 18px;font-family:'Inter',sans-serif;font-size:15px;color:var(--t);resize:vertical;min-height:120px;line-height:1.7;transition:all .2s}
-.note-area:focus{outline:none;border-color:var(--y);box-shadow:0 0 0 3px rgba(200,240,0,.08)}
-.note-area::placeholder{color:var(--m)}
-
-/* ── OFFER CARDS ── */
-.offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+/* ── OFFERS ── */
+.offer-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
 @media(max-width:560px){.offer-grid{grid-template-columns:1fr}}
-.offer{background:var(--s);border:1px solid var(--br2);border-radius:2px;padding:24px 24px;position:relative;transition:border-color .2s;cursor:default}
-.offer:hover{border-color:rgba(255,255,255,.18)}
-.offer.hot{border-color:var(--y)}
-.offer.hot:hover{border-color:var(--y)}
-.otag{position:absolute;top:-1px;right:18px;background:var(--y);color:#000;font-size:10px;font-weight:700;padding:5px 14px;border-radius:0;text-transform:uppercase;letter-spacing:.8px}
-.on-name{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--y);margin-bottom:8px;letter-spacing:.5px}
-.o-price{font-size:34px;font-weight:500;color:var(--t);margin-bottom:6px}
-.o-sub{font-size:14px;color:var(--m)}
-.o-save{font-size:14px;color:var(--g);margin-top:10px;font-weight:600}
-
-/* ── SAVE BUTTON ── */
-.save-btn{background:transparent;border:1px solid var(--br2);border-radius:4px;padding:9px 18px;font-size:13px;color:var(--m);cursor:pointer;font-family:'Inter',sans-serif;margin-top:10px;transition:all .2s}
-.save-btn:hover{border-color:var(--y);color:var(--y);background:rgba(200,240,0,.05)}
-.save-btn.saved{color:var(--g);border-color:var(--g)}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--s4);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--m)}
-
-footer{text-align:center;padding:60px 40px 36px;color:var(--m);font-size:13px;border-top:1px solid var(--br2);margin-top:60px}
-
-/* ── TABLE SCROLL WRAPPER ── */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:6px}
-
-/* ── TOUCH TARGETS ── */
-.nav-btn,.nav-dd-item,.tnb,.btn,.btn-ghost{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-button,a{-webkit-tap-highlight-color:transparent}
+.offer{background:var(--card);border:1px solid transparent;border-radius:var(--rad);box-shadow:var(--shadow);padding:22px;position:relative;cursor:default}
+.offer.hot{border-color:var(--black)}
+.otag{position:absolute;top:14px;right:14px;background:var(--black);color:var(--lime);font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px;letter-spacing:.04em}
+.on-name{font-family:inherit;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.o-price{font-size:30px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-.02em}
+.o-sub{font-size:13.5px;color:var(--m)}
+.o-save{font-size:13.5px;color:var(--g);margin-top:10px;font-weight:600}
 
 /* ── HERO SNAPSHOT ── */
-.hero-snap{background:var(--s);border:1px solid var(--br2);border-radius:2px;padding:28px 28px 26px;margin-bottom:22px}
-.hero-snap-badge{display:inline-block;color:var(--g);font-size:12.5px;font-weight:600;margin-bottom:14px}
-.hero-snap-headline{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--t);line-height:1;letter-spacing:.5px}
-.hero-snap-headline .hs-sub{font-family:'Inter',sans-serif;font-size:14px;color:var(--m);font-weight:400;margin-left:10px;letter-spacing:0}
-.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:22px 0 20px}
-.hstat{background:var(--s2);border:1px solid var(--br2);border-radius:2px;padding:16px 18px}
-.hstat-l{font-size:10.5px;color:var(--m);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:7px}
-.hstat-v{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--t);line-height:1}
+.hero-snap{background:var(--card);border:none;border-radius:var(--rad);box-shadow:var(--shadow);padding:24px 24px 22px;margin-bottom:16px}
+.hero-snap-badge{display:inline-block;font-size:12.5px;font-weight:500;margin-bottom:14px;padding:6px 12px;border-radius:8px;background:var(--olive-bg)!important;color:var(--y)!important}
+.hero-snap-headline{font-family:inherit;font-size:30px;font-weight:700;color:var(--ink);line-height:1.15;letter-spacing:-.02em}
+.hero-snap-headline .hs-sub{font-size:14px;color:var(--m);font-weight:400;margin-left:10px;letter-spacing:0}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:20px 0 16px}
+.hstat{background:var(--s2);border:none;border-radius:var(--rad-s);padding:14px 16px}
+.hstat-l{font-size:12px;color:var(--m);font-weight:500;margin-bottom:6px}
+.hstat-v{font-family:inherit;font-size:24px;font-weight:700;color:var(--ink);line-height:1.1;letter-spacing:-.01em}
 .hstat-v.up{color:var(--g)}.hstat-v.down{color:var(--r)}
-.hstat-d{font-size:12px;color:var(--m);margin-top:7px;line-height:1.4}
+.hstat-d{font-size:12px;color:var(--m);margin-top:6px;line-height:1.45}
 .hstat-d.up{color:var(--g)}.hstat-d.down{color:var(--r)}.hstat-d.flat{color:var(--t2)}
 .hero-flags{display:flex;flex-direction:column;gap:0}
-.flag{font-size:13px;padding:10px 0;border-bottom:1px solid var(--br2);font-weight:400;line-height:1.4;color:var(--t2)}
+.flag{font-size:13.5px;padding:9px 0 9px 12px;border-bottom:1px solid var(--br2);line-height:1.45;color:var(--t2)}
 .flag:last-child{border-bottom:none}
-.flag.win{border-left:2px solid var(--g);padding-left:12px}
-.flag.watch{border-left:2px solid var(--r);padding-left:12px}
-.hero-foot{font-size:11px;color:var(--m);margin-top:16px}
+.flag.win{border-left:3px solid var(--g)}
+.flag.watch{border-left:3px solid var(--r)}
+.hero-foot{font-size:11.5px;color:var(--m);margin-top:14px}
 
-/* ── KPI DELTA + STREAK BADGE ── */
-.kd{font-size:11.5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--br2);color:var(--m)}
+.kd{font-size:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--br2);color:var(--m)}
 .kd.up{color:var(--g)}.kd.down{color:var(--r)}.kd.flat{color:var(--t2)}
-.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(200,240,0,.1);border:1px solid rgba(200,240,0,.25);color:var(--g);font-size:12px;font-weight:700;padding:7px 14px;border-radius:4px;margin-bottom:16px}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:var(--olive-bg)!important;border:none!important;color:var(--y)!important;font-size:12.5px;font-weight:500;padding:6px 14px;border-radius:999px;margin-bottom:16px}
 
-/* ── SPARKLINES ── */
 .spark{display:block;margin-top:8px}
-
-/* ── MINI BAR (table trend column) ── */
 .mbar-wrap{display:flex;align-items:center;gap:8px}
 .mbar-track{flex:1;min-width:50px;height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
 .mbar-fill{height:100%;border-radius:3px}
 
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#CFCFC9;border-radius:3px}
+
+footer{text-align:center;padding:40px 32px 32px;color:var(--m);font-size:12.5px;border-top:1px solid var(--br2);margin-top:40px}
+
+.nav-btn,.nav-dd-item,.tnb,.btn,.btn-ghost{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button,a{-webkit-tap-highlight-color:transparent}
+
 /* ── MOBILE ── */
 @media(max-width:768px){
-  .topbar{padding:0 16px;height:54px}
-  .logo{font-size:24px;letter-spacing:2px}
-  .logo span{display:none}
+  .topbar{padding:0 16px;height:52px}
+  .brand img{height:20px}
+  .brand-sub{display:none}
   .topdate{font-size:11px;padding:4px 10px}
-
-  .nav-bar{padding:0 8px;top:54px;gap:0;overflow-x:auto;scrollbar-width:none;backdrop-filter:none;background:#060606}
+  .nav-bar{padding:0 8px;top:52px;gap:0;overflow-x:auto;scrollbar-width:none}
   .nav-bar::-webkit-scrollbar{display:none}
-  .nav-btn{font-size:13px;padding:0 12px;height:44px;gap:4px}
-  .nav-icon{font-size:14px}
-  .nav-btn .arrow{font-size:8px}
-  .nav-dropdown{min-width:180px;left:0}
-
-  .section{padding:20px 16px}
-  .section-title{font-size:30px;margin-bottom:4px}
-  .section-sub{font-size:12px;margin-bottom:20px;padding-bottom:16px}
-
-  .kg{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-  .kpi{padding:16px 14px}
-  .kv{font-size:36px}
-  .kl{font-size:10px;margin-bottom:6px}
-  .ks{font-size:11px}
-
-  .card{padding:18px 16px;margin-bottom:14px;border-radius:6px}
-  .ct{font-size:10px;margin-bottom:14px}
-
-  .row{font-size:13px;padding:12px 0;gap:8px}
-  .row:hover{margin:0;padding:12px 0;border-radius:0}
-  .rl{font-size:12px}
-  .rv{font-size:13px}
-
-  .two{grid-template-columns:1fr;gap:14px}
-  .three{grid-template-columns:1fr;gap:12px}
-
-  .bar-wrap{gap:8px;padding:6px 0}
-  .bl{width:100px;font-size:11px}
-  .bval{font-size:10px}
-  .bt{height:24px}
-
-  .tbl{font-size:12px}
-  .tbl th{padding:10px 10px;font-size:10px}
-  .tbl td{padding:10px 10px}
-
-  .tab-nav{padding:4px;border-radius:4px;margin-bottom:18px}
-  .tnb{font-size:12px;padding:8px 12px;border-radius:6px}
-
-  .insight,.alert,.good-box{padding:16px 16px;border-radius:0 12px 12px 0}
-  .it,.at,.gt{font-size:13px}
-  .ib,.ab,.gb{font-size:13px}
-  .rec{padding:14px 16px;margin-bottom:10px}
-  .rt{font-size:14px}
-  .rb{font-size:13px}
-
-  .fn{font-size:32px;min-width:52px}
-  .fl{font-size:13px}
-  .funnel-row{gap:10px;padding:14px 0}
-  .funnel-row:hover{margin:0;padding:14px 0;border-radius:0}
-
-  .ns-item{flex-wrap:wrap;gap:6px;padding:10px 0}
-  .ns-name{min-width:100%;font-size:13px}
-  .ns-src{font-size:11px}
-  .ns-email{font-size:11px}
-
-  .btn{padding:11px 16px;font-size:13px}
-  .btn-ghost{padding:10px 14px;font-size:13px}
-  .add-row{gap:8px}
-  .add-row .inp{font-size:14px}
-
+  .nav-btn{font-size:13.5px;padding:0 12px;height:44px}
+  .nav-dropdown{position:fixed;top:100px;left:8px;right:8px;min-width:0}
+  .section{padding:20px 16px 36px}
+  .section-title{font-size:22px}
+  .section-sub{font-size:12.5px;margin-bottom:18px}
+  .kg{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+  .kpi{padding:14px}
+  .kv{font-size:24px}
+  .kl{font-size:12px;padding-right:0;margin-top:14px}
+  .src{top:10px;left:14px;right:auto;font-size:9.5px}
+  .card{padding:16px}
+  .row{font-size:13px;padding:10px 0;gap:8px}
+  .rl{font-size:13px}.rv{font-size:13px}
+  .two,.three{grid-template-columns:1fr;gap:12px}
+  .bl{width:96px;font-size:12px}
+  .bt{height:22px}
+  .tbl{font-size:12.5px}
+  .tbl th,.tbl td{padding:9px 10px}
+  .tnb{font-size:12.5px;padding:7px 12px}
+  .fn{font-size:24px;min-width:52px}
+  .ns-item{flex-wrap:wrap;gap:6px}
+  .ns-name{min-width:100%}
   .offer-grid{grid-template-columns:1fr}
-  .o-price{font-size:26px}
-
-  .badge{font-size:11px;padding:3px 9px}
-
+  .o-price{font-size:24px}
+  .hero-snap{padding:18px 16px}
+  .hero-snap-headline{font-size:24px}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .hstat-v{font-size:20px}
   #todo-live-strip{gap:12px;padding:12px 14px}
-  #todo-live-strip > div > div:first-child{font-size:26px}
-
-  footer{padding:32px 16px 24px;margin-top:32px}
-
-  .hero-snap{padding:18px 16px 20px;border-radius:6px}
-  .hero-snap-headline{font-size:32px}
-  .hero-stats{grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 14px}
-  .hstat{padding:12px 14px}
-  .hstat-v{font-size:26px}
-  .flag{font-size:11.5px;padding:7px 12px}
-  .streak-badge{font-size:11px;padding:6px 12px}
+  footer{padding:28px 16px 24px}
 }
+.kv{font-size:30px!important}@media(max-width:768px){.kv{font-size:24px!important}}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div>
-    <span class="logo">M2 <span>Marketing Command Centre</span></span>
+  <div class="brand">
+    <img src="/assets/M2_ICON_YELLOW%20(5).png" alt="M2 Training Club">
+    <span class="brand-sub">Command Centre</span>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <div id="live-indicator" style="display:none;font-size:11px;color:var(--g);display:flex;align-items:center;gap:5px">
@@ -464,12 +392,12 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div style="font-size:13px;color:var(--t2);margin-bottom:20px" id="todo-strip-msg">Checking live data...</div>
 
   <div class="two" style="margin-bottom:20px">
-    <div class="card" style="border-color:rgba(200,240,0,.3)">
-      <div class="ct">🔥 Do today</div>
+    <div class="card" style="border-color:rgba(107,122,30,.3)">
+      <div class="ct">Do today</div>
       <div id="todo-today-list"></div>
     </div>
     <div class="card">
-      <div class="ct">📅 This week</div>
+      <div class="ct">This week</div>
       <div id="todo-week-list"></div>
     </div>
   </div>
@@ -519,15 +447,15 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- KEY FOLLOW UPS -->
   <div class="two" style="margin-bottom:18px">
-    <div class="card" style="border-color:rgba(245,245,242,.3)">
-      <div class="ct">👻 April no-shows  still to follow up</div>
+    <div class="card" style="border-color:rgba(17,17,17,.3)">
+      <div class="ct">April no-shows  still to follow up</div>
       <div style="font-size:13px;color:var(--t2);margin-bottom:12px">26 people signed up for a trial and never came in. At 23% conversion rate that's ~6 lost members = $270/wk or $14K/year. SMS or call each one this week.</div>
       <div style="font-size:12px;color:var(--m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Template SMS to send</div>
       <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic">"Hey [name], it's Tay from M2 Training Club! You signed up for a 3-day trial recently and I just wanted to check in  are you still keen to come in? Happy to book you a time that works. We've got pool, sauna, ice bath, and classes all included. Just reply here 💪"</div>
       <button class="btn-ghost" style="margin-top:12px;width:100%;font-size:13px" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)">View no-show list →</button>
     </div>
-    <div class="card" style="border-color:rgba(200,240,0,.3)">
-      <div class="ct">📧 Email  trials not yet converted</div>
+    <div class="card" style="border-color:rgba(107,122,30,.3)">
+      <div class="ct">Email  trials not yet converted</div>
       <div style="font-size:13px;color:var(--t2);margin-bottom:12px">Anyone who did a trial but hasn't joined yet. Send this within 48 hours of their last visit. Personalise with their name and what they tried.</div>
       <div style="font-size:12px;color:var(--m);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Template email to send</div>
       <div style="background:var(--s2);border:1px solid var(--br2);border-radius:4px;padding:14px;font-size:13px;color:var(--t2);line-height:1.7;font-style:italic">"Hey [name], thanks for coming in this week  stoked you got to check out M2. Just wanted to reach out personally and see how you found it. If you're keen to join, I'd love to get you sorted on a membership. We're running a $45/week Perform membership this month which gets you everything  pool, sauna, ice bath, all classes. Reply here or come in any time and ask for Tay.  Tay Blackler, M2 Training Club"</div>
@@ -535,7 +463,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   </div>
 
   <div class="card">
-    <div class="ct">✅ Your own tasks</div>
+    <div class="ct">Your own tasks</div>
     <div id="todo-custom-list"></div>
     <div class="add-row" style="margin-top:12px">
       <input class="inp" type="text" id="todo-input" placeholder="Add a task..." style="flex:3" onkeydown="if(event.key==='Enter')addTodoTask()">
@@ -555,7 +483,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- HERO SNAPSHOT · at-a-glance business position -->
   <div class="hero-snap">
-    <div class="hero-snap-badge" style="background:var(--y);color:#000">◆ August's $1,731 loss was a rent catch-up entry, confirmed by Taylor  underlying trading stayed profitable</div>
+    <div class="hero-snap-badge" style="background:var(--y);color:#fff">◆ August's $1,731 loss was a rent catch-up entry, confirmed by Taylor  underlying trading stayed profitable</div>
     <div class="hero-snap-headline">1,964 active memberships<span class="hs-sub">GymMaster export, 9 September 2026</span></div>
 
     <div class="hero-stats">
@@ -572,7 +500,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="hstat">
         <div class="hstat-l">Net Profit (Aug)</div>
         <div class="hstat-v down" style="color:var(--r)">-$1,731</div>
-        <div class="hstat-d down" style="color:#C8F000">◆ rent catch-up, confirmed  down from +$14,209 Jul</div>
+        <div class="hstat-d down" style="color:#5E6B12">◆ rent catch-up, confirmed  down from +$14,209 Jul</div>
       </div>
       <div class="hstat">
         <div class="hstat-l">2026 Run Rate</div>
@@ -679,14 +607,14 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- TRIAL SIGN-UP LIVE TICKER -->
   <div id="trial-ticker" style="margin-bottom:18px;display:none">
-    <div id="trial-flash" style="background:rgba(200,240,0,0.08);border:1px solid rgba(200,240,0,0.4);border-radius:6px;padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;animation:trialFlash 0.6s ease">
+    <div id="trial-flash" style="background:rgba(107,122,30,0.08);border:1px solid rgba(107,122,30,0.4);border-radius:6px;padding:18px 22px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;animation:trialFlash 0.6s ease">
       <div style="width:48px;height:48px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;animation:pulse 2s infinite">🔥</div>
       <div style="flex:1">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);letter-spacing:1px;margin-bottom:2px">NEW TRIAL SIGN-UP</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:22px;color:var(--y);letter-spacing:1px;margin-bottom:2px">NEW TRIAL SIGN-UP</div>
         <div style="font-size:14px;color:var(--t2)" id="trial-ticker-count">Loading...</div>
       </div>
       <div style="text-align:right">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--y);line-height:1" id="trial-ticker-num"></div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:48px;color:var(--y);line-height:1" id="trial-ticker-num"></div>
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px">trials this month</div>
       </div>
     </div>
@@ -696,27 +624,27 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div style="margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
     <div id="trial-live-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{document.querySelector('.tnb.on')?.classList.remove('on');},10)" onmouseover="this.style.borderColor='var(--y)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
       <div style="position:relative">
-        <div style="width:44px;height:44px;border-radius:50%;background:rgba(200,240,0,0.12);border:2px solid var(--y);display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(107,122,30,0.12);border:2px solid var(--y);display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
         <div id="trial-dot" style="position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:var(--g);border:2px solid var(--b);animation:pulse 2s infinite;display:none"></div>
       </div>
       <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--y);line-height:1" id="ov-trial-count"></div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:28px;color:var(--y);line-height:1" id="ov-trial-count"></div>
         <div style="font-size:12px;color:var(--m)">trials this month · <span id="ov-trial-pct" style="color:var(--g)">loading...</span></div>
         <div style="font-size:11px;color:var(--y);margin-top:3px;opacity:.7">tap to see trial analytics →</div>
       </div>
     </div>
-    <div id="converted-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','funnel')},100)" onmouseover="this.style.borderColor='rgba(200,240,0,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
-      <div style="width:44px;height:44px;border-radius:50%;background:rgba(200,240,0,0.12);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
+    <div id="converted-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','funnel')},100)" onmouseover="this.style.borderColor='rgba(107,122,30,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(107,122,30,0.12);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
       <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--g);line-height:1" id="ov-converted-count"></div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:28px;color:var(--g);line-height:1" id="ov-converted-count"></div>
         <div style="font-size:12px;color:var(--m)">converted to member · <span id="ov-conv-rate" style="color:var(--y)">loading...</span></div>
         <div style="font-size:11px;color:var(--g);margin-top:3px;opacity:.7">tap to see conversion funnel →</div>
       </div>
     </div>
-    <div id="noshow-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)" onmouseover="this.style.borderColor='rgba(245,245,242,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
-      <div style="width:44px;height:44px;border-radius:50%;background:rgba(245,245,242,0.12);border:2px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:20px">👻</div>
+    <div id="noshow-badge" style="background:var(--s);border:1px solid var(--br2);border-radius:6px;padding:14px 20px;display:flex;align-items:center;gap:14px;flex:1;min-width:200px;cursor:pointer;transition:all .2s" onclick="showSection('trials');setTimeout(()=>{innerTabDirect('trial','noshows')},100)" onmouseover="this.style.borderColor='rgba(17,17,17,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br2)';this.style.transform='translateY(0)'">
+      <div style="width:44px;height:44px;border-radius:50%;background:rgba(17,17,17,0.12);border:2px solid var(--r);display:flex;align-items:center;justify-content:center;font-size:20px">👻</div>
       <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--r);line-height:1" id="ov-noshow-count"></div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:28px;color:var(--r);line-height:1" id="ov-noshow-count"></div>
         <div style="font-size:12px;color:var(--m)">not yet converted · <span style="color:var(--r)">follow up</span></div>
         <div style="font-size:11px;color:var(--r);margin-top:3px;opacity:.7">tap to see no-show list →</div>
       </div>
@@ -730,9 +658,9 @@ button,a{-webkit-tap-highlight-color:transparent}
       100%{transform:scale(1);opacity:1}
     }
     @keyframes ringPulse {
-      0%{box-shadow:0 0 0 0 rgba(200,240,0,0.6)}
-      70%{box-shadow:0 0 0 20px rgba(200,240,0,0)}
-      100%{box-shadow:0 0 0 0 rgba(200,240,0,0)}
+      0%{box-shadow:0 0 0 0 rgba(107,122,30,0.6)}
+      70%{box-shadow:0 0 0 20px rgba(107,122,30,0)}
+      100%{box-shadow:0 0 0 0 rgba(107,122,30,0)}
     }
     .trial-ring { animation: ringPulse 1s ease-out 3; }
   </style>
@@ -896,7 +824,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <!-- PLAYBOOK -->
   <div id="meta-playbook" class="tab-pnl">
     <div style="margin-bottom:20px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--y);letter-spacing:2px;margin-bottom:6px">📖 Meta Ads Playbook  M2 Training Club</div>
+      <div style="font-weight:700;letter-spacing:-.02em;font-size:26px;color:var(--y);letter-spacing:2px;margin-bottom:6px">📖 Meta Ads Playbook  M2 Training Club</div>
       <div style="font-size:14px;color:var(--m);margin-bottom:20px">What to do in every situation. Based on your actual ad account data and M2's business model.</div>
     </div>
 
@@ -904,15 +832,15 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card" style="margin-bottom:18px">
       <div class="ct">How to read your ad signals</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:4px">
-        <div style="background:rgba(200,240,0,.07);border:1px solid rgba(200,240,0,.25);border-radius:6px;padding:16px">
+        <div style="background:rgba(107,122,30,.07);border:1px solid rgba(107,122,30,.25);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">✅ GREEN  Scale it</div>
           <div style="font-size:13px;color:var(--t2)">CPV under $0.40 · CTR above 1.5% · Frequency under 2.5× · CPM under $6 · Steady or rising LPVs</div>
         </div>
-        <div style="background:rgba(200,240,0,.04);border:1px solid rgba(200,240,0,.2);border-radius:6px;padding:16px">
+        <div style="background:rgba(107,122,30,.04);border:1px solid rgba(107,122,30,.2);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">⚠️ YELLOW  Watch & tweak</div>
           <div style="font-size:13px;color:var(--t2)">CPV $0.40–$0.65 · CTR 0.8–1.5% · Frequency 2.5–3.5× · CPM $6–10 · Flat or small dip in LPVs</div>
         </div>
-        <div style="background:rgba(245,245,242,.06);border:1px solid rgba(245,245,242,.25);border-radius:6px;padding:16px">
+        <div style="background:rgba(17,17,17,.06);border:1px solid rgba(17,17,17,.25);border-radius:6px;padding:16px">
           <div style="font-size:13px;font-weight:700;color:var(--r);margin-bottom:8px">🔴 RED  Act now</div>
           <div style="font-size:13px;color:var(--t2)">CPV above $0.65 · CTR below 0.8% · Frequency above 3.5× · CPM above $10 · LPVs falling week-on-week</div>
         </div>
@@ -923,9 +851,9 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card" style="margin-bottom:18px">
       <div class="ct">Your 3 campaigns  what the numbers tell you</div>
 
-      <div style="border:1px solid rgba(200,240,0,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(200,240,0,.02)">
+      <div style="border:1px solid rgba(107,122,30,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(107,122,30,.02)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-          <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--y)">3 DAY TRIAL</span>
+          <span style="font-weight:700;letter-spacing:-.02em;font-size:20px;color:var(--y)">3 DAY TRIAL</span>
           <span class="badge b-hot">Hot · $1,441/mo</span>
           <span style="font-size:13px;color:var(--m)">$0.59/view · $81/day budget</span>
         </div>
@@ -942,9 +870,9 @@ button,a{-webkit-tap-highlight-color:transparent}
         </div>
       </div>
 
-      <div style="border:1px solid rgba(200,240,0,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(200,240,0,.02)">
+      <div style="border:1px solid rgba(107,122,30,.2);border-radius:6px;padding:18px;margin-bottom:12px;background:rgba(107,122,30,.02)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-          <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--g)">$45 A WEEK</span>
+          <span style="font-weight:700;letter-spacing:-.02em;font-size:20px;color:var(--g)">$45 A WEEK</span>
           <span class="badge b-active">Active · $591/mo</span>
           <span style="font-size:13px;color:var(--m)">$0.26/view  best CPV · $33/day budget</span>
         </div>
@@ -961,9 +889,9 @@ button,a{-webkit-tap-highlight-color:transparent}
         </div>
       </div>
 
-      <div style="border:1px solid rgba(245,245,242,.2);border-radius:6px;padding:18px;background:rgba(245,245,242,.03)">
+      <div style="border:1px solid rgba(17,17,17,.2);border-radius:6px;padding:18px;background:rgba(17,17,17,.03)">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-          <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--r)">PT COURSE</span>
+          <span style="font-weight:700;letter-spacing:-.02em;font-size:20px;color:var(--r)">PT COURSE</span>
           <span class="badge b-warn">Needs attention · $408/mo</span>
           <span style="font-size:13px;color:var(--m)">$0.65/view  borderline red · $23/day budget</span>
         </div>
@@ -1074,7 +1002,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <!-- LIVE CONVERSION TRACKER -->
   <div class="two" style="margin-bottom:18px">
-    <div class="card" style="border-color:rgba(200,240,0,.25)">
+    <div class="card" style="border-color:rgba(107,122,30,.25)">
       <div class="ct curmonth" data-tpl="Live {M} funnel">Live May funnel</div>
       <div id="tl-live-funnel">
         <div class="funnel-row"><div class="fn" id="fn-trials"></div><div class="fl">Trial sign-ups this month<div class="prog"><div class="pf" id="fp-trials" style="width:100%"></div></div></div><div class="fb" style="color:var(--y)">100%</div></div>
@@ -1106,7 +1034,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     </div>
   </div>
 
-  <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--m);letter-spacing:1px;margin-bottom:10px">April 2026 deep dive</div>
+  <div style="font-weight:700;letter-spacing:-.02em;font-size:14px;color:var(--m);letter-spacing:1px;margin-bottom:10px">April 2026 deep dive</div>
   <div class="tab-nav">
     <button class="tnb on" onclick="innerTab('trial','funnel')">Funnel</button>
     <button class="tnb" onclick="innerTab('trial','sources')">Sources</button>
@@ -1144,8 +1072,8 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="card">
         <div class="ct">Visit depth</div>
         <div class="bar-wrap"><div class="bl">0 visits</div><div class="bt"><div class="bf" style="width:100%;background:var(--r)"><span class="bval">26 no-shows</span></div></div></div>
-        <div class="bar-wrap"><div class="bl">1 visit</div><div class="bt"><div class="bf" style="width:100%;background:#C8F000"><span class="bval">41</span></div></div></div>
-        <div class="bar-wrap"><div class="bl">2 visits</div><div class="bt"><div class="bf" style="width:51%;background:#C8F000"><span class="bval">21</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">1 visit</div><div class="bt"><div class="bf" style="width:100%;background:#5E6B12"><span class="bval">41</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">2 visits</div><div class="bt"><div class="bf" style="width:51%;background:#5E6B12"><span class="bval">21</span></div></div></div>
         <div class="bar-wrap"><div class="bl">3–5 visits</div><div class="bt"><div class="bf" style="width:62%;background:var(--g)"><span class="bval">28</span></div></div></div>
         <div class="bar-wrap"><div class="bl">6+ visits</div><div class="bt"><div class="bf" style="width:37%;background:var(--y)"><span class="bval">15</span></div></div></div>
       </div>
@@ -1184,7 +1112,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="card">
         <div class="ct">Gender split</div>
         <div class="bar-wrap"><div class="bl">Male</div><div class="bt"><div class="bf" style="width:100%;background:var(--blue)"><span class="bval">76  58%</span></div></div></div>
-        <div class="bar-wrap"><div class="bl">Female</div><div class="bt"><div class="bf" style="width:62%;background:rgba(245,245,242,0.6)"><span class="bval">47  36%</span></div></div></div>
+        <div class="bar-wrap"><div class="bl">Female</div><div class="bt"><div class="bf" style="width:62%;background:rgba(17,17,17,0.6)"><span class="bval">47  36%</span></div></div></div>
         <div class="bar-wrap"><div class="bl">Not recorded</div><div class="bt"><div class="bf" style="width:10%;background:var(--m)"><span class="bval">8  6%</span></div></div></div>
       </div>
       <div class="card">
@@ -1329,7 +1257,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 
     <!-- Scenario selector -->
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <button onclick="setForecast('all')" id="fc-btn-all" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--y);background:var(--y);color:#000;cursor:pointer;font-family:'Inter',sans-serif">All scenarios</button>
+      <button onclick="setForecast('all')" id="fc-btn-all" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--y);background:var(--y);color:#fff;cursor:pointer;font-family:'Inter',sans-serif">All scenarios</button>
       <button onclick="setForecast('conservative')" id="fc-btn-conservative" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif">Conservative</button>
       <button onclick="setForecast('base')" id="fc-btn-base" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif">Base case</button>
       <button onclick="setForecast('optimistic')" id="fc-btn-optimistic" style="font-size:13px;font-weight:600;padding:7px 16px;border-radius:4px;border:1px solid var(--br2);background:transparent;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif">Optimistic</button>
@@ -1369,11 +1297,11 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div style="font-size:13px;font-weight:700;color:var(--t2);margin-bottom:8px">📉 Conservative  $1.31M</div>
       <div style="font-size:13px;color:var(--m);line-height:1.7">Current pace holds. No major growth or decline. Assumes ~$111.6K/month flat from July onwards. Churn stays around 1.5–2%. No new campaigns launched.</div>
     </div>
-    <div style="background:rgba(200,240,0,.04);border:1px solid rgba(200,240,0,.2);border-top:3px solid var(--y);border-radius:6px;padding:18px">
+    <div style="background:rgba(107,122,30,.04);border:1px solid rgba(107,122,30,.2);border-top:3px solid var(--y);border-radius:6px;padding:18px">
       <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:8px">📊 Base Case  $1.34M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">3% monthly revenue growth. Steady member gains (+45/mo net), Passport income continuing to grow, Meta ads maintained. Realistic if you keep doing what you're doing and fix source tracking.</div>
     </div>
-    <div style="background:rgba(200,240,0,.05);border:1px solid rgba(200,240,0,.2);border-top:3px solid var(--g);border-radius:6px;padding:18px">
+    <div style="background:rgba(107,122,30,.05);border:1px solid rgba(107,122,30,.2);border-top:3px solid var(--g);border-radius:6px;padding:18px">
       <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:8px">🚀 Optimistic  $1.36M</div>
       <div style="font-size:13px;color:var(--t2);line-height:1.7">5% monthly revenue growth. Hit 2,000+ members by Dec, launch referral programme, upsell 10% of daily members to Perform, female ad set delivers. Achievable but requires execution on all fronts.</div>
     </div>
@@ -1463,27 +1391,27 @@ button,a{-webkit-tap-highlight-color:transparent}
       gridVals.forEach(v=>{
         const y=yScale(v);
         const label=v>=1000000?`$${(v/1000000).toFixed(1)}M`:`$${Math.round(v/1000)}K`;
-        gridLines+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-          <text x="${PL-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#666">${label}</text>`;
+        gridLines+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>
+          <text x="${PL-6}" y="${y+4}" text-anchor="end" font-size="10" fill="#7A7A74">${label}</text>`;
       });
 
       // Divider line (actual vs forecast)
       const divX=xPos(actuals.length-1);
-      const divLine=`<line x1="${divX}" y1="${PT}" x2="${divX}" y2="${PT+chartH}" stroke="rgba(200,240,0,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
-        <text x="${divX+6}" y="${PT+14}" font-size="10" fill="rgba(200,240,0,0.6)">FORECAST →</text>`;
+      const divLine=`<line x1="${divX}" y1="${PT}" x2="${divX}" y2="${PT+chartH}" stroke="rgba(107,122,30,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="${divX+6}" y="${PT+14}" font-size="10" fill="rgba(107,122,30,0.6)">FORECAST →</text>`;
 
       // Actual line
       const actualPts=actuals.map((d,i)=>`${xPos(i)},${yScale(d.v)}`).join(' ');
-      const actualLine=`<polyline points="${actualPts}" fill="none" stroke="#C8F000" stroke-width="2.5" stroke-linejoin="round"/>`;
-      const actualDots=actuals.map((d,i)=>`<circle cx="${xPos(i)}" cy="${yScale(d.v)}" r="3.5" fill="#C8F000" stroke="#060606" stroke-width="1.5" style="cursor:pointer" onmouseover="showFcTip(event,'${d.m}','$${d.v.toLocaleString()}','Actual')" onmouseout="hideFcTip()"/>`).join('');
+      const actualLine=`<polyline points="${actualPts}" fill="none" stroke="#111111" stroke-width="2.5" stroke-linejoin="round"/>`;
+      const actualDots=actuals.map((d,i)=>`<circle cx="${xPos(i)}" cy="${yScale(d.v)}" r="3.5" fill="#111111" stroke="#fff" stroke-width="1.5" style="cursor:pointer" onmouseover="showFcTip(event,'${d.m}','$${d.v.toLocaleString()}','Actual')" onmouseout="hideFcTip()"/>`).join('');
 
       // Forecast lines
       let forecastLines='';
       const offset=actuals.length-1;
       const fTypes=[
-        {key:'conservative',data:conservative,color:'#888',dash:'6,4',label:'Conservative'},
-        {key:'base',data:baseCase,color:'#C8F000',dash:'',label:'Base case'},
-        {key:'optimistic',data:optimistic,color:'#C8F000',dash:'',label:'Optimistic'},
+        {key:'conservative',data:conservative,color:'#A5A59E',dash:'6,4',label:'Conservative'},
+        {key:'base',data:baseCase,color:'#5E6B12',dash:'',label:'Base case'},
+        {key:'optimistic',data:optimistic,color:'#1F8A54',dash:'',label:'Optimistic'},
       ];
       fTypes.forEach(ft=>{
         if(mode!=='all'&&mode!==ft.key) return;
@@ -1491,7 +1419,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         const pts=[`${startX},${startY}`,...ft.data.map((v,i)=>`${xPos(offset+1+i)},${yScale(v)}`)].join(' ');
         forecastLines+=`<polyline points="${pts}" fill="none" stroke="${ft.color}" stroke-width="2" ${ft.dash?`stroke-dasharray="${ft.dash}"`:''}  stroke-linejoin="round"/>`;
         ft.data.forEach((v,i)=>{
-          forecastLines+=`<circle cx="${xPos(offset+1+i)}" cy="${yScale(v)}" r="3" fill="${ft.color}" stroke="#060606" stroke-width="1.5" style="cursor:pointer" onmouseover="showFcTip(event,'${forecastMonths[i]}','$${v.toLocaleString()}','${ft.label}')" onmouseout="hideFcTip()"/>`;
+          forecastLines+=`<circle cx="${xPos(offset+1+i)}" cy="${yScale(v)}" r="3" fill="${ft.color}" stroke="#fff" stroke-width="1.5" style="cursor:pointer" onmouseover="showFcTip(event,'${forecastMonths[i]}','$${v.toLocaleString()}','${ft.label}')" onmouseout="hideFcTip()"/>`;
         });
       });
 
@@ -1502,7 +1430,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         const step=Math.ceil(N/16);
         labelsEl.innerHTML=`<div style="display:flex;width:100%;padding-left:${PL}px;padding-right:${PR}px;box-sizing:border-box">`+
           allMonths.map((m,i)=>i%step===0||i===N-1?
-            `<div style="flex:${step};text-align:left;font-size:10px;color:${i<actuals.length?'#C8F000':'#888'};white-space:nowrap;overflow:hidden">${m}</div>`:
+            `<div style="flex:${step};text-align:left;font-size:10px;color:${i<actuals.length?'#5E6B12':'#888'};white-space:nowrap;overflow:hidden">${m}</div>`:
             `<div style="flex:1"></div>`
           ).join('')+'</div>';
       }
@@ -1512,7 +1440,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         const btn=document.getElementById('fc-btn-'+k);
         if(btn){
           btn.style.background=k===mode?'var(--y)':'transparent';
-          btn.style.color=k===mode?'#000':'var(--t2)';
+          btn.style.color=k===mode?'#fff':'var(--t2)';
           btn.style.borderColor=k===mode?'var(--y)':'var(--br2)';
         }
       });
@@ -1570,7 +1498,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <tbody>
         <tr class="tbl-divider"><td colspan="7">2025</td></tr>
         <tr><td>Jan</td><td>~1,185</td><td style="color:var(--g)">148</td><td>29</td><td><div class="mbar-wrap"><span style="color:var(--g)">+50</span><div class="mbar-track"><div class="mbar-fill" style="width:70.4%;background:var(--g)"></div></div></div></td><td></td><td style="color:var(--g)">+5 ✓</td></tr>
-        <tr><td>Feb</td><td>1,235</td><td>110</td><td style="color:var(--r)">50</td><td><div class="mbar-wrap"><span style="color:#C8F000">+30</span><div class="mbar-track"><div class="mbar-fill" style="width:42.3%;background:#C8F000"></div></div></div></td><td style="color:var(--r)">4.05%</td><td style="color:var(--r)">-15 ✗</td></tr>
+        <tr><td>Feb</td><td>1,235</td><td>110</td><td style="color:var(--r)">50</td><td><div class="mbar-wrap"><span style="color:#5E6B12">+30</span><div class="mbar-track"><div class="mbar-fill" style="width:42.3%;background:#5E6B12"></div></div></div></td><td style="color:var(--r)">4.05%</td><td style="color:var(--r)">-15 ✗</td></tr>
         <tr><td>Mar</td><td>1,246</td><td>102</td><td>36</td><td><div class="mbar-wrap"><span style="color:var(--r)">+11</span><div class="mbar-track"><div class="mbar-fill" style="width:15.5%;background:var(--r)"></div></div></div></td><td>2.89%</td><td style="color:var(--r)">-34 ✗</td></tr>
         <tr><td>Apr</td><td>1,257</td><td style="color:var(--g)">133</td><td>38</td><td><div class="mbar-wrap"><span style="color:var(--g)">+60</span><div class="mbar-track"><div class="mbar-fill" style="width:84.5%;background:var(--g)"></div></div></div></td><td>3.02%</td><td style="color:var(--g)">+15 ✓</td></tr>
         <tr><td>May</td><td>1,317</td><td>96</td><td>36</td><td><div class="mbar-wrap"><span style="color:var(--g)">+36</span><div class="mbar-track"><div class="mbar-fill" style="width:50.7%;background:var(--g)"></div></div></div></td><td>2.73%</td><td style="color:var(--r)">-9 ✗</td></tr>
@@ -1580,7 +1508,7 @@ button,a{-webkit-tap-highlight-color:transparent}
         <tr class="tbl-divider"><td colspan="7">2026</td></tr>
         <tr><td>Jan</td><td>1,528</td><td>84</td><td>25</td><td><div class="mbar-wrap"><span style="color:var(--g)">+46</span><div class="mbar-track"><div class="mbar-fill" style="width:64.8%;background:var(--g)"></div></div></div></td><td>1.64%</td><td style="color:var(--g)">+1 ✓</td></tr>
         <tr><td>Feb</td><td>1,574</td><td style="color:var(--g)">114</td><td>33</td><td><div class="mbar-wrap"><span style="color:var(--g)">+46</span><div class="mbar-track"><div class="mbar-fill" style="width:64.8%;background:var(--g)"></div></div></div></td><td>2.10%</td><td style="color:var(--g)">+1 ✓</td></tr>
-        <tr><td>Mar</td><td>1,620</td><td>91</td><td style="color:var(--r)">42</td><td><div class="mbar-wrap"><span style="color:#C8F000">+14</span><div class="mbar-track"><div class="mbar-fill" style="width:19.7%;background:#C8F000"></div></div></div></td><td style="color:var(--r)">2.59%</td><td style="color:var(--r)">-31 ✗</td></tr>
+        <tr><td>Mar</td><td>1,620</td><td>91</td><td style="color:var(--r)">42</td><td><div class="mbar-wrap"><span style="color:#5E6B12">+14</span><div class="mbar-track"><div class="mbar-fill" style="width:19.7%;background:#5E6B12"></div></div></div></td><td style="color:var(--r)">2.59%</td><td style="color:var(--r)">-31 ✗</td></tr>
         <tr><td>Apr</td><td>1,634</td><td>100</td><td style="color:var(--g)">23</td><td><div class="mbar-wrap"><span style="color:var(--g)">+50</span><div class="mbar-track"><div class="mbar-fill" style="width:70.4%;background:var(--g)"></div></div></div></td><td style="color:var(--g)">1.41% ★ best ever</td><td style="color:var(--g)">+5 ✓</td></tr>
         <tr><td>May</td><td>1,684</td><td style="color:var(--g)">100</td><td style="color:var(--g)">31</td><td><div class="mbar-wrap"><span style="color:var(--g)">+69</span><div class="mbar-track"><div class="mbar-fill" style="width:97.2%;background:var(--g)"></div></div></div></td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+24 ✓</td></tr>
         <tr><td>Jun</td><td>1,753</td><td style="color:var(--g)">139</td><td style="color:var(--g)">27</td><td><div class="mbar-wrap"><span style="color:var(--g)">+71 ★ best ever</span><div class="mbar-track"><div class="mbar-fill" style="width:100.0%;background:var(--y)"></div></div></div></td><td style="color:var(--g)">1.77%</td><td style="color:var(--g)">+26 ✓</td></tr>
@@ -1679,7 +1607,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Weekly Scorecard</div>
   <div class="section-sub">Auto-populated from GymMaster every time you open this page · Add notes then save</div>
 
-  <div id="sc-live-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--g);background:rgba(200,240,0,.1);padding:5px 12px;border-radius:4px;margin-bottom:16px">
+  <div id="sc-live-badge" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--g);background:rgba(107,122,30,.1);padding:5px 12px;border-radius:4px;margin-bottom:16px">
     <span style="width:7px;height:7px;border-radius:50%;background:var(--g);display:inline-block;animation:pulse 2s infinite"></span>
     Live from GymMaster · <span id="sc-updated">Loading...</span>
   </div>
@@ -1743,14 +1671,14 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-sub">Click any day to add a post · Colour coded by type · Navigate months with arrows</div>
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     <button class="btn-ghost" onclick="prevMonth()">← Prev</button>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--y);letter-spacing:2px" id="cal-title"></div>
+    <div style="font-weight:700;letter-spacing:-.02em;font-size:22px;color:var(--y);letter-spacing:2px" id="cal-title"></div>
     <button class="btn-ghost" onclick="nextMonth()">Next →</button>
     <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-      <span style="font-size:10px;background:rgba(200,240,0,.15);color:var(--y);padding:3px 8px;border-radius:4px">Reel</span>
-      <span style="font-size:10px;background:rgba(245,245,242,.1);color:var(--blue);padding:3px 8px;border-radius:4px">Story</span>
-      <span style="font-size:10px;background:rgba(245,245,242,.15);color:var(--purple);padding:3px 8px;border-radius:4px">Carousel</span>
-      <span style="font-size:10px;background:rgba(200,240,0,.15);color:var(--g);padding:3px 8px;border-radius:4px">Static</span>
-      <span style="font-size:10px;background:rgba(245,245,242,.15);color:var(--r);padding:3px 8px;border-radius:4px">Meta Ad</span>
+      <span style="font-size:10px;background:rgba(107,122,30,.15);color:var(--y);padding:3px 8px;border-radius:4px">Reel</span>
+      <span style="font-size:10px;background:rgba(17,17,17,.1);color:var(--blue);padding:3px 8px;border-radius:4px">Story</span>
+      <span style="font-size:10px;background:rgba(17,17,17,.15);color:var(--purple);padding:3px 8px;border-radius:4px">Carousel</span>
+      <span style="font-size:10px;background:rgba(107,122,30,.15);color:var(--g);padding:3px 8px;border-radius:4px">Static</span>
+      <span style="font-size:10px;background:rgba(17,17,17,.15);color:var(--r);padding:3px 8px;border-radius:4px">Meta Ad</span>
     </div>
   </div>
 
@@ -1944,7 +1872,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addContent()">+ Add</button></div>
   </div>
   <div class="card">
-    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(200,240,0,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:4px;margin-left:4px"></span></div>
+    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(107,122,30,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:4px;margin-left:4px"></span></div>
     <div id="ct-todo"></div>
   </div>
   <div class="card">
@@ -1958,12 +1886,12 @@ button,a{-webkit-tap-highlight-color:transparent}
   <div class="section-title">Profit & Loss</div>
   <div class="section-sub">June 2025 to August 2026 · 15 months · M2 Training Club Limited</div>
 
-  <div class="streak-badge" style="background:rgba(200,240,0,.15);border-color:rgba(250,204,21,.35);color:#C8F000">◆ Aug's $1,731 loss was a confirmed rent catch-up, not a trading dip  5 months of underlying profit, Apr-Aug</div>
+  <div class="streak-badge" style="background:rgba(107,122,30,.15);border-color:rgba(107,122,30,.35);color:#5E6B12">◆ Aug's $1,731 loss was a confirmed rent catch-up, not a trading dip  5 months of underlying profit, Apr-Aug</div>
 
   <div class="kg">
     <div class="kpi"><div class="kl">Aug 26 Revenue</div><div class="kv">$111.0K</div><div class="ks g">Gross income</div><div class="kd flat">▼ flat vs $111.6K Jul</div></div>
     <div class="kpi"><div class="kl">Aug 26 OPEX</div><div class="kv">$112.3K</div><div class="ks r">Operating costs</div><div class="kd down" style="color:var(--r)">▲ up vs $96.7K Jul</div></div>
-    <div class="kpi"><div class="kl">Aug 26 Net Profit</div><div class="kv r" style="color:var(--r)">-$1,731</div><div class="ks r">-1.6% margin</div><div class="kd down" style="color:#C8F000">◆ confirmed rent catch-up, not trading</div></div>
+    <div class="kpi"><div class="kl">Aug 26 Net Profit</div><div class="kv r" style="color:var(--r)">-$1,731</div><div class="ks r">-1.6% margin</div><div class="kd down" style="color:#5E6B12">◆ confirmed rent catch-up, not trading</div></div>
     <div class="kpi"><div class="kl">12mo Net Profit</div><div class="kv r" style="color:var(--r)">-$27.8K</div><div class="ks r">6 of 12 months profitable</div><div class="kd flat">Sep25–Aug26 window · still dragged by Jan's $73.7K one-off hit</div></div>
     <div class="kpi"><div class="kl">Best month</div><div class="kv">$15.5K</div><div class="ks g">May 26 · Feb 2nd, Jul 3rd</div><div class="kd up">May, Feb, Jul remain 2026's top 3</div></div>
     <div class="kpi"><div class="kl">Rent % of revenue</div><div class="kv" style="color:var(--r)">47.0%</div><div class="ks r">Aug 26 · biggest cost by far</div><div class="kd down" style="color:var(--r)">▲ up 15.8pt vs Jul's 31.2%</div></div>
@@ -2041,7 +1969,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="card">
       <div class="ct">Top expenses  August 2026 (% of revenue)</div>
       <div class="bar-wrap"><div class="bl">Rent Building</div><div class="bt"><div class="bf" style="width:100%;background:var(--r)"><span class="bval">$52,174  47.0%</span></div></div></div>
-      <div class="bar-wrap"><div class="bl">Wages</div><div class="bt"><div class="bf" style="width:45.4%;background:#C8F000"><span class="bval">$23,681  21.3%</span></div></div></div>
+      <div class="bar-wrap"><div class="bl">Wages</div><div class="bt"><div class="bf" style="width:45.4%;background:#5E6B12"><span class="bval">$23,681  21.3%</span></div></div></div>
       <div class="bar-wrap"><div class="bl">Light & Power</div><div class="bt"><div class="bf" style="width:20.8%;background:var(--purple)"><span class="bval">$10,870  9.8%</span></div></div></div>
       <div class="bar-wrap"><div class="bl">Repairs & Maintenance</div><div class="bt"><div class="bf" style="width:11.4%;background:var(--m)"><span class="bval">$5,959  5.4%</span></div></div></div>
       <div class="bar-wrap"><div class="bl">Lease Expenses</div><div class="bt"><div class="bf" style="width:7.2%;background:var(--m)"><span class="bval">$3,747  3.4%</span></div></div></div>
@@ -2122,23 +2050,23 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:4px">
       <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Conservative</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--t2);margin-bottom:4px">$1.28M</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:30px;color:var(--t2);margin-bottom:4px">$1.28M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">Current run rate maintained</div>
         <div class="row" style="font-size:12px"><span class="rl">Monthly avg</span><span class="rv">$105K</span></div>
         <div class="row" style="font-size:12px"><span class="rl">New members/mo</span><span class="rv">+20 net</span></div>
         <div class="row" style="font-size:12px"><span class="rl">Net profit est</span><span class="rv r">~-$48K/yr</span></div>
       </div>
-      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(200,240,0,.25)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(107,122,30,.25)">
         <div style="font-size:11px;color:var(--y);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Target</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--y);margin-bottom:4px">$1.44M</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:30px;color:var(--y);margin-bottom:4px">$1.44M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">+45 net members/month</div>
         <div class="row" style="font-size:12px"><span class="rl">Monthly avg</span><span class="rv y">$120K</span></div>
         <div class="row" style="font-size:12px"><span class="rl">New members/mo</span><span class="rv y">+45 net</span></div>
         <div class="row" style="font-size:12px"><span class="rl">Net profit est</span><span class="rv g">~+$204K/yr</span></div>
       </div>
-      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(200,240,0,.2)">
+      <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid rgba(107,122,30,.2)">
         <div style="font-size:11px;color:var(--g);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;font-weight:600">Stretch</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--g);margin-bottom:4px">$1.8M</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:30px;color:var(--g);margin-bottom:4px">$1.8M</div>
         <div style="font-size:12px;color:var(--m);margin-bottom:10px">2,000+ members + upsells</div>
         <div class="row" style="font-size:12px"><span class="rl">Monthly avg</span><span class="rv g">$150K</span></div>
         <div class="row" style="font-size:12px"><span class="rl">New members/mo</span><span class="rv g">+80 net</span></div>
@@ -2162,7 +2090,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="two">
       <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Projected MRR</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--y)" id="mrr-total"></div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:40px;color:var(--y)" id="mrr-total"></div>
       </div>
       <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div class="row" style="font-size:13px"><span class="rl">Perform revenue</span><span class="rv y" id="mrr-r-perform"></span></div>
@@ -2221,7 +2149,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="row"><span class="rl">Re-engagement email/SMS cost</span><span class="rv g">~$0 if via GymMaster</span></div>
   </div>
 
-  <div class="card" style="border-color:rgba(245,245,242,.2)">
+  <div class="card" style="border-color:rgba(17,17,17,.2)">
     <div class="ct">Fitness Passport visit retention <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">from GymMaster export, period 1-16 Sep 2026 (month to date)</span></div>
     <div class="row"><span class="rl">Total current Fitness Passport members</span><span class="rv">1,220</span></div>
     <div class="row"><span class="rl">Visited in period</span><span class="rv g">559 (45.8%)</span></div>
@@ -2299,11 +2227,11 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="two">
       <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Monthly revenue needed</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--y)" id="gl-monthly-needed">$120,000</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:36px;color:var(--y)" id="gl-monthly-needed">$120,000</div>
       </div>
       <div style="background:var(--s2);border-radius:4px;padding:16px;border:1px solid var(--br2)">
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Target net profit/month</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--g)" id="gl-profit-needed">$12,000</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:36px;color:var(--g)" id="gl-profit-needed">$12,000</div>
       </div>
     </div>
   </div>
@@ -2351,12 +2279,12 @@ button,a{-webkit-tap-highlight-color:transparent}
 
   <div class="kg">
     <div class="kpi"><div class="kl">Competitors tracked</div><div class="kv">3</div><div class="ks">Newmarket & established players</div></div>
-    <div class="kpi"><div class="kl">Highest threat</div><div class="kv" style="font-size:22px;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px">Allfit Newmarket</div><div class="ks y">opening Sept 2026</div></div>
+    <div class="kpi"><div class="kl">Highest threat</div><div class="kv" style="font-size:22px;font-weight:700;letter-spacing:-.02em;letter-spacing:.5px">Allfit Newmarket</div><div class="ks y">opening Sept 2026</div></div>
     <div class="kpi"><div class="kl">New entrants this year</div><div class="kv">2</div><div class="ks">Allfit + Muscle Club</div></div>
-    <div class="kpi"><div class="kl">Last checked</div><div class="kv" style="font-size:22px;font-family:'Bebas Neue',sans-serif;letter-spacing:.5px">15 Sep 2026</div><div class="ks">update monthly</div></div>
+    <div class="kpi"><div class="kl">Last checked</div><div class="kv" style="font-size:22px;font-weight:700;letter-spacing:-.02em;letter-spacing:.5px">15 Sep 2026</div><div class="ks">update monthly</div></div>
   </div>
 
-  <div class="card" style="border-color:rgba(245,245,242,.2)">
+  <div class="card" style="border-color:rgba(17,17,17,.2)">
     <div class="ct">Allfit Newmarket <span class="badge b-hot" style="margin-left:10px">Highest threat</span><span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:auto">checked 15 Sep 2026</span></div>
     <div class="row"><span class="rl">Status</span><span class="rv y">Not yet open, still pre-sale</span></div>
     <div class="row"><span class="rl">Detail</span><span class="rv" style="font-size:12px;font-weight:400;color:var(--t2);text-align:right;max-width:62%">Own site confirms "under construction", opening in Sept. Running Stage 2 Foundation Membership pre-sale, capped at first 100 sign-ups, ~$260 savings pitched, exact weekly price still not public</span></div>
@@ -2400,9 +2328,9 @@ button,a{-webkit-tap-highlight-color:transparent}
   </div>
 
   <!-- LIVE PROJECTION -->
-  <div class="card" style="border-color:rgba(200,240,0,.3)">
+  <div class="card" style="border-color:rgba(107,122,30,.3)">
     <div class="ct"><span class="curmonth" data-tpl="{MY} projection">September 2026 projection</span>
-      <span id="pp-live-badge" style="display:none;align-items:center;gap:4px;font-size:10px;color:var(--g);background:rgba(200,240,0,.1);padding:2px 8px;border-radius:4px;margin-left:8px">
+      <span id="pp-live-badge" style="display:none;align-items:center;gap:4px;font-size:10px;color:var(--g);background:rgba(107,122,30,.1);padding:2px 8px;border-radius:4px;margin-left:8px">
         <span style="width:6px;height:6px;border-radius:50%;background:var(--g);display:inline-block;animation:pulse 2s infinite"></span>
         Live
       </span>
@@ -2410,12 +2338,12 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="two" style="margin-bottom:12px">
       <div>
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Visits so far this month</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--y)" id="pp-live-visits">Loading...</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:36px;color:var(--y)" id="pp-live-visits">Loading...</div>
         <div style="font-size:12px;color:var(--m)" id="pp-days-elapsed"></div>
       </div>
       <div>
         <div style="font-size:11px;color:var(--m);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Projected full month income</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--g)" id="pp-live-proj-inc">Loading...</div>
+        <div style="font-weight:700;letter-spacing:-.02em;font-size:36px;color:var(--g)" id="pp-live-proj-inc">Loading...</div>
         <div style="font-size:12px;color:var(--m)">Inc GST · <span id="pp-live-proj-ex" style="color:var(--t2)"></span> exc GST</div>
       </div>
     </div>
@@ -2480,14 +2408,14 @@ button,a{-webkit-tap-highlight-color:transparent}
             <tr><td>Oct 25</td><td>2,743</td><td>$21,466</td><td style="color:var(--m)">$7.83</td></tr>
             <tr><td>Nov 25</td><td>2,594</td><td>$20,629</td><td style="color:var(--m)">$7.95</td></tr>
             <tr><td>Dec 25</td><td>2,444</td><td>$19,314</td><td style="color:var(--m)">$7.90</td></tr>
-            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jan 26</td><td>2,177</td><td>$17,037</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Feb 26</td><td>2,653</td><td>$20,762</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Mar 26</td><td>2,544</td><td>$19,090</td><td style="color:var(--m)">$7.50</td></tr>
-            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Apr 26</td><td>2,772</td><td>$21,700</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">May 26</td><td>2,787</td><td>$21,819</td><td style="color:var(--m)">$7.83</td></tr>
-            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jun 26</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">n/a</td></tr>
-            <tr style="background:rgba(200,240,0,.04)"><td style="color:var(--y)">Jul 26</td><td>4,246</td><td>$18,176</td><td style="color:var(--r)">$4.28</td></tr>
-            <tr style="background:rgba(200,240,0,.05)"><td style="color:var(--g);font-weight:500">Aug 26</td><td style="color:var(--g);font-weight:500">4,497</td><td style="color:var(--g);font-weight:500">$31,201</td><td style="color:var(--r)">$6.94</td></tr>
+            <tr style="background:rgba(107,122,30,.04)"><td style="color:var(--y)">Jan 26</td><td>2,177</td><td>$17,037</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(107,122,30,.04)"><td style="color:var(--y)">Feb 26</td><td>2,653</td><td>$20,762</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(107,122,30,.04)"><td style="color:var(--y)">Mar 26</td><td>2,544</td><td>$19,090</td><td style="color:var(--m)">$7.50</td></tr>
+            <tr style="background:rgba(107,122,30,.04)"><td style="color:var(--y)">Apr 26</td><td>2,772</td><td>$21,700</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(107,122,30,.04)"><td style="color:var(--y)">May 26</td><td>2,787</td><td>$21,819</td><td style="color:var(--m)">$7.83</td></tr>
+            <tr style="background:rgba(107,122,30,.04)"><td style="color:var(--y)">Jun 26</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">not supplied</td><td style="color:var(--m)">n/a</td></tr>
+            <tr style="background:rgba(107,122,30,.04)"><td style="color:var(--y)">Jul 26</td><td>4,246</td><td>$18,176</td><td style="color:var(--r)">$4.28</td></tr>
+            <tr style="background:rgba(107,122,30,.05)"><td style="color:var(--g);font-weight:500">Aug 26</td><td style="color:var(--g);font-weight:500">4,497</td><td style="color:var(--g);font-weight:500">$31,201</td><td style="color:var(--r)">$6.94</td></tr>
           </tbody>
         </table>
       </div>
@@ -2528,7 +2456,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     <div class="ct" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
       <span>M2 Direct vs Fitness Passport  monthly members</span>
       <div style="display:flex;gap:16px;font-size:11px;font-weight:400;text-transform:none;letter-spacing:0">
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:3px;background:var(--y);display:inline-block;border-radius:2px"></span>M2 Direct</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:3px;background:var(--ink);display:inline-block;border-radius:2px"></span>M2 Direct</span>
         <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:3px;background:var(--blue);display:inline-block;border-radius:2px"></span>Fitness Passport</span>
       </div>
     </div>
@@ -2779,11 +2707,11 @@ function renderCustomTasks(){
   if(!customTasks.length){el.innerHTML='<div style="font-size:13px;color:var(--m);padding:8px 0">No custom tasks  add one below</div>';return;}
   el.innerHTML=customTasks.map(t=>`
     <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--br2)">
-      <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${t.done?'var(--y)':'rgba(255,255,255,.15)'};background:${t.done?'var(--y)':'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onclick="toggleCustomTask(${t.id})">
-        ${t.done?'<span style="font-size:13px;color:#000;font-weight:700">✓</span>':''}
+      <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${t.done?'var(--y)':'rgba(0,0,0,.15)'};background:${t.done?'var(--y)':'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onclick="toggleCustomTask(${t.id})">
+        ${t.done?'<span style="font-size:13px;color:#fff;font-weight:700">✓</span>':''}
       </div>
       <div style="flex:1;font-size:14px;color:${t.done?'var(--m)':'var(--t)'};text-decoration:${t.done?'line-through':'none'}">${t.text}</div>
-      <div style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--m)">${t.priority}</div>
+      <div style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(0,0,0,.06);color:var(--m)">${t.priority}</div>
       <button onclick="removeCustomTask(${t.id})" style="background:transparent;border:none;color:var(--m);cursor:pointer;font-size:16px;padding:0 4px">×</button>
     </div>`).join('');
 }
@@ -2912,7 +2840,7 @@ function renderScorecards() {
   if(!scorecards.length){el.innerHTML='<div style="font-size:12px;color:var(--m);padding:8px 0">No scorecards yet.</div>';return;}
   el.innerHTML = scorecards.map(s=>`
     <div style="border:1px solid var(--br);border-radius:4px;padding:12px 14px;margin-bottom:10px">
-      <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y);margin-bottom:8px">Week of ${s.week}</div>
+      <div style="font-weight:600;font-size:14px;color:var(--ink);margin-bottom:8px">Week of ${s.week}</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:8px">
         ${sc_kpi('Trials',s.trials)} ${sc_kpi('New members',s.newmem,'g')} ${sc_kpi('Cancellations',s.cancel,'r')} ${sc_kpi('PP visits',s.ppvisits)} ${sc_kpi('Ad spend','$'+s.adspend)} ${sc_kpi('Revenue','$'+s.rev.toLocaleString(),'g')} ${sc_kpi('PT leads',s.ptleads)} ${sc_kpi('PT sales',s.ptsales,'g')}
       </div>
@@ -2920,14 +2848,14 @@ function renderScorecards() {
       ${s.issues?`<div style="font-size:11px"><span style="color:var(--r)">Issues: </span><span style="color:var(--m)">${s.issues}</span></div>`:''}
     </div>`).join('');
 }
-function sc_kpi(label,val,col=''){return `<div style="background:var(--s2);border-radius:6px;padding:8px 10px"><div style="font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">${label}</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:${col==='g'?'var(--g)':col==='r'?'var(--r)':'var(--y)'}">${val}</div></div>`;}
+function sc_kpi(label,val,col=''){return `<div style="background:var(--s2);border-radius:6px;padding:8px 10px"><div style="font-size:9px;color:var(--m);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">${label}</div><div style="font-weight:700;font-size:17px;color:${col==='g'?'var(--g)':col==='r'?'var(--r)':'var(--ink)'}">${val}</div></div>`;}
 renderScorecards();
 
 // ── SOCIAL CALENDAR ───────────────────────────────────────
 let calYear=2026, calMonth=4; // 0-indexed, so 4=May
 let calPosts=JSON.parse(localStorage.getItem('m2-cal-posts')||'{}');
 let selectedDay=null;
-const typeColors={'Reel':'rgba(200,240,0,.2)','Story':'rgba(96,165,250,.2)','Carousel':'rgba(245,245,242,.2)','Static':'rgba(200,240,0,.2)','Meta Ad':'rgba(245,245,242,.2)'};
+const typeColors={'Reel':'rgba(107,122,30,.2)','Story':'rgba(47,111,176,.2)','Carousel':'rgba(17,17,17,.2)','Static':'rgba(107,122,30,.2)','Meta Ad':'rgba(17,17,17,.2)'};
 const typeTextColors={'Reel':'var(--y)','Story':'var(--blue)','Carousel':'var(--purple)','Static':'var(--g)','Meta Ad':'var(--r)'};
 const statusDot={'draft':'⚪','scheduled':'🟡','posted':'🟢'};
 
@@ -2943,8 +2871,8 @@ function renderCalendar() {
     const key=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const posts=calPosts[key]||[];
     const isToday=d===5&&calMonth===4&&calYear===2026;
-    const postPips=posts.slice(0,3).map(p=>`<div style="font-size:8px;padding:1px 4px;border-radius:3px;background:${typeColors[p.type]||'rgba(255,255,255,.1)'};color:${typeTextColors[p.type]||'var(--t)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px">${statusDot[p.status]||''} ${p.type}</div>`).join('');
-    html+=`<div onclick="openDay('${key}',${d})" style="background:${isToday?'rgba(200,240,0,.08)':'var(--s)'};border:1px solid ${isToday?'var(--y)':'var(--br)'};border-radius:6px;padding:5px;min-height:64px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--y)'" onmouseout="this.style.borderColor='${isToday?'var(--y)':'var(--br)'}'">
+    const postPips=posts.slice(0,3).map(p=>`<div style="font-size:8px;padding:1px 4px;border-radius:3px;background:${typeColors[p.type]||'rgba(0,0,0,.1)'};color:${typeTextColors[p.type]||'var(--t)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px">${statusDot[p.status]||''} ${p.type}</div>`).join('');
+    html+=`<div onclick="openDay('${key}',${d})" style="background:${isToday?'rgba(107,122,30,.08)':'var(--s)'};border:1px solid ${isToday?'var(--y)':'var(--br)'};border-radius:6px;padding:5px;min-height:64px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--y)'" onmouseout="this.style.borderColor='${isToday?'var(--y)':'var(--br)'}'">
       <div style="font-size:11px;font-weight:500;color:${isToday?'var(--y)':'var(--t)'};margin-bottom:3px">${d}</div>
       ${postPips}
       ${posts.length>3?`<div style="font-size:8px;color:var(--m)">+${posts.length-3} more</div>`:''}
@@ -2984,9 +2912,9 @@ function renderPostList(){
   const el=document.getElementById('cal-post-list');
   if(!allPosts.length){el.innerHTML='<div style="font-size:12px;color:var(--m);padding:8px 0">No posts this month yet. Click any day to add one.</div>';return;}
   el.innerHTML=allPosts.map(p=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px">
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.04);font-size:12px">
       <div style="font-size:9px;color:var(--m);min-width:60px">${p.date.slice(5)}</div>
-      <div style="font-size:9px;padding:2px 7px;border-radius:4px;background:${typeColors[p.type]||'rgba(255,255,255,.1)'};color:${typeTextColors[p.type]||'var(--t)'};min-width:55px;text-align:center">${p.type}</div>
+      <div style="font-size:9px;padding:2px 7px;border-radius:4px;background:${typeColors[p.type]||'rgba(0,0,0,.1)'};color:${typeTextColors[p.type]||'var(--t)'};min-width:55px;text-align:center">${p.type}</div>
       <div style="flex:1;color:var(--t)">${p.caption||'(no caption)'}</div>
       <div style="font-size:10px;color:var(--m)">${p.platform}</div>
       <div style="font-size:11px">${statusDot[p.status]||''} ${p.status}</div>
@@ -3003,8 +2931,8 @@ if(!campaigns) campaigns=[
   {id:4,name:'Female Audience Ad Set',obj:'Trial sign-ups',channel:'Meta Ads',start:'2026-05-15',budget:600,status:'planned',notes:'Bekka content. Target women 25–40 Auckland. Close gender gap (currently 36% female trials).'},
   {id:5,name:'Low-Visit Re-engagement',obj:'Retention',channel:'Email/SMS',start:'2026-05-08',budget:0,status:'planned',notes:'271 members with <5 visits. "We miss you  free class this week." Target 20% response.'},
 ];
-const statusColors={planned:'rgba(200,240,0,.15)',active:'rgba(200,240,0,.15)',completed:'rgba(136,136,136,.15)',paused:'rgba(245,245,242,.15)'};
-const statusText={planned:'#C8F000',active:'var(--g)',completed:'var(--m)',paused:'var(--r)'};
+const statusColors={planned:'rgba(107,122,30,.15)',active:'rgba(107,122,30,.15)',completed:'rgba(0,0,0,.05)',paused:'rgba(17,17,17,.15)'};
+const statusText={planned:'#5E6B12',active:'var(--g)',completed:'var(--m)',paused:'var(--r)'};
 function addCampaign(){
   const name=document.getElementById('camp-name').value.trim();
   if(!name)return;
@@ -3026,7 +2954,7 @@ function renderCampaigns(){
   el.innerHTML=campaigns.map(c=>`
     <div style="background:var(--s);border:1px solid var(--br);border-radius:4px;padding:13px 15px;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
-        <div style="font-family:\'Bebas Neue\',sans-serif;font-size:16px;color:var(--y);flex:1">${c.name}</div>
+        <div style="font-weight:600;font-size:16px;color:var(--ink);flex:1">${c.name}</div>
         <button onclick="toggleCampStatus(${c.id})" style="font-size:10px;padding:3px 10px;border-radius:4px;border:none;cursor:pointer;background:${statusColors[c.status]};color:${statusText[c.status]};font-family:\'DM Sans\',sans-serif;font-weight:500">${c.status}</button>
       </div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--m)">
@@ -3035,7 +2963,7 @@ function renderCampaigns(){
         ${c.start?`<span>Start: <strong style="color:var(--t)">${c.start}</strong></span>`:''}
         ${c.budget?`<span>Budget: <strong style="color:var(--y)">$${c.budget.toLocaleString()}</strong></span>`:'<span>Budget: <strong style="color:var(--g)">$0 organic</strong></span>'}
       </div>
-      ${c.notes?`<div style="margin-top:8px;font-size:11px;color:var(--m);border-top:1px solid rgba(255,255,255,.05);padding-top:8px">${c.notes}</div>`:''}
+      ${c.notes?`<div style="margin-top:8px;font-size:11px;color:var(--m);border-top:1px solid rgba(0,0,0,.05);padding-top:8px">${c.notes}</div>`:''}
     </div>`).join('');
 }
 renderCampaigns();
@@ -3058,8 +2986,8 @@ function advancePT(id){
   savePT(); renderPT();
 }
 function savePT(){localStorage.setItem('m2-pt-leads',JSON.stringify(ptLeads));}
-const ptColors={interested:'rgba(245,245,242,.1)',quoted:'rgba(200,240,0,.15)',signed:'rgba(200,240,0,.15)',completed:'rgba(136,136,136,.15)'};
-const ptText={interested:'var(--blue)',quoted:'#C8F000',signed:'var(--g)',completed:'var(--m)'};
+const ptColors={interested:'rgba(17,17,17,.1)',quoted:'rgba(107,122,30,.15)',signed:'rgba(107,122,30,.15)',completed:'rgba(0,0,0,.05)'};
+const ptText={interested:'var(--blue)',quoted:'#5E6B12',signed:'var(--g)',completed:'var(--m)'};
 function renderPT(){
   const active=ptLeads.filter(l=>l.stage==='interested'||l.stage==='quoted');
   const signed=ptLeads.filter(l=>l.stage==='signed'||l.stage==='completed');
@@ -3071,11 +2999,11 @@ function renderPT(){
   const mayEl=document.getElementById('pt-may-rev');
   if(pvEl) pvEl.textContent='$'+pipelineVal.toLocaleString();
   if(mayEl) mayEl.textContent='$'+signedVal.toLocaleString();
-  const renderCard=l=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px">
+  const renderCard=l=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.04);font-size:12px">
     <div style="flex:1;font-weight:500;color:var(--t)">${l.name}</div>
     <div style="font-size:10px;color:var(--m)">${l.source}</div>
     <button onclick="advancePT(${l.id})" style="font-size:9px;padding:2px 8px;border-radius:4px;border:none;cursor:pointer;background:${ptColors[l.stage]};color:${ptText[l.stage]};font-family:\'DM Sans\',sans-serif">${l.stage} →</button>
-    <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y)">$${l.price.toLocaleString()}</div>
+    <div style="font-weight:600;font-size:14px;color:var(--ink)">$${l.price.toLocaleString()}</div>
   </div>`;
   if(el1) el1.innerHTML=active.length?active.map(renderCard).join(''):'<div style="font-size:12px;color:var(--m);padding:8px 0">No active leads.</div>';
   if(el2) el2.innerHTML=signed.length?signed.map(renderCard).join(''):'<div style="font-size:12px;color:var(--m);padding:8px 0">No signed leads yet.</div>';
@@ -3098,7 +3026,7 @@ function addKeyword(){
   renderSEOKw();
 }
 function renderSEOKw(){
-  const rankColor={'\#1':'var(--g)','Top 3':'var(--g)','Top 10':'#C8F000','Tracking':'var(--blue)','Not ranking':'var(--r)'};
+  const rankColor={'\#1':'var(--g)','Top 3':'var(--g)','Top 10':'#5E6B12','Tracking':'var(--blue)','Not ranking':'var(--r)'};
   const el=document.getElementById('seo-kw-list');
   if(el) el.innerHTML=seoKwList.map(k=>`<div class="row"><span class="rl">${k.kw}</span><span class="rv" style="color:${rankColor[k.rank]||'var(--m)'}">${k.rank}</span></div>`).join('');
 }
@@ -3413,7 +3341,7 @@ function renderScorecardHistory() {
   if(!history.length){ el.innerHTML='<div style="font-size:13px;color:var(--m);padding:8px 0">No notes saved yet.</div>'; return; }
   el.innerHTML = history.map(h=>`
     <div style="border:1px solid var(--br2);border-radius:4px;padding:12px 14px;margin-bottom:10px">
-      <div style="font-family:\'Bebas Neue\',sans-serif;font-size:14px;color:var(--y);margin-bottom:8px">${h.week}</div>
+      <div style="font-weight:600;font-size:14px;color:var(--ink);margin-bottom:8px">${h.week}</div>
       ${h.wins?`<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--g);font-weight:500">Wins: </span><span style="color:var(--t2)">${h.wins}</span></div>`:''}
       ${h.issues?`<div style="font-size:12px;margin-bottom:6px"><span style="color:var(--r);font-weight:500">Issues: </span><span style="color:var(--t2)">${h.issues}</span></div>`:''}
       ${h.focus?`<div style="font-size:12px"><span style="color:var(--y);font-weight:500">Focus next week: </span><span style="color:var(--t2)">${h.focus}</span></div>`:''}
@@ -3542,7 +3470,7 @@ async function loadMemberBaseLive() {
   if(r['kpi.gendersplit'] && r['kpi.gendersplit'].segments) {
     const segs = r['kpi.gendersplit'].segments;
     const total = segs.reduce((s,x)=>s+x.count,0);
-    const colors = {Female:'rgba(245,245,242,0.6)',Male:'var(--blue)','Prefer not to say':'var(--g)',Unspecified:'var(--m)'};
+    const colors = {Female:'rgba(17,17,17,0.6)',Male:'var(--blue)','Prefer not to say':'var(--g)',Unspecified:'var(--m)'};
     const gEl = document.getElementById('mb-gender-bars');
     if(gEl) gEl.innerHTML = segs.map(s=>`
       <div class="bar-wrap">
@@ -3568,7 +3496,7 @@ async function loadMemberBaseLive() {
   if(r['kpi.sourcepromotion'] && r['kpi.sourcepromotion'].segments) {
     const segs = r['kpi.sourcepromotion'].segments.slice(0,8);
     const maxCount = Math.max(...segs.map(s=>s.count));
-    const srcCols = ['var(--g)','var(--g)','var(--blue)','var(--purple)','var(--y)','rgba(245,245,242,0.6)','var(--m)','var(--m)'];
+    const srcCols = ['var(--g)','var(--g)','var(--blue)','var(--purple)','var(--y)','rgba(17,17,17,0.6)','var(--m)','var(--m)'];
     const sEl = document.getElementById('mb-source-bars');
     if(sEl) sEl.innerHTML = segs.map((s,i)=>`
       <div class="bar-wrap">
@@ -3592,7 +3520,7 @@ async function loadMemberBaseLive() {
 
 // ── META ADS LIVE ─────────────────────────────────────────
 const META = `${GM_BASE}/?source=meta&endpoint=`;
-const campColors = ['var(--y)','var(--blue)','var(--purple)','var(--g)','rgba(245,245,242,0.6)','rgba(245,245,242,0.6)','var(--m)'];
+const campColors = ['var(--y)','var(--blue)','var(--purple)','var(--g)','rgba(17,17,17,0.6)','rgba(17,17,17,0.6)','var(--m)'];
 const act = (c,type) => parseInt(c.actions?.find(a=>a.action_type===type)?.value||0);
 const fmtK = n => n>=1000000?(n/1000000).toFixed(1)+'M':n>=1000?(n/1000).toFixed(0)+'K':String(n);
 const fmtS = n => '$'+parseFloat(n).toFixed(2);
@@ -3639,8 +3567,8 @@ async function loadMetaLive() {
       if (alertEl) {
         alertEl.style.display = 'block';
         alertEl.innerHTML = isAuth
-          ? '<div style="background:rgba(245,245,242,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta is disconnected.</strong> The access token has expired, so live ad data cannot load. Generate a fresh long-lived token in Meta Business and update it in the worker, then refresh this page. All other sections are unaffected.</div>'
-          : '<div style="background:rgba(245,245,242,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta API error.</strong> ' + (metaErr.value.error.message || '') + '</div>';
+          ? '<div style="background:rgba(17,17,17,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta is disconnected.</strong> The access token has expired, so live ad data cannot load. Generate a fresh long-lived token in Meta Business and update it in the worker, then refresh this page. All other sections are unaffected.</div>'
+          : '<div style="background:rgba(17,17,17,.12);border:1px solid var(--r);border-radius:4px;padding:14px 16px"><strong style="color:var(--r)">Meta API error.</strong> ' + (metaErr.value.error.message || '') + '</div>';
       }
       return;
     }
@@ -4269,7 +4197,7 @@ function buildPassport() {
   const incomeBars = ppData.map(d=>`
     <div style="display:flex;align-items:flex-end;flex-direction:column;gap:3px;flex:1">
       <div style="font-size:8px;color:var(--m);writing-mode:vertical-rl;transform:rotate(180deg);height:28px;overflow:hidden">${d.month}</div>
-      <div style="width:100%;background:${d.month.includes('26')?'var(--g)':'rgba(200,240,0,.4)'};border-radius:3px 3px 0 0;height:${Math.round(d.income/maxIncome*120)}px;min-height:4px" title="${d.month}: $${d.income.toLocaleString()}"></div>
+      <div style="width:100%;background:${d.month.includes('26')?'var(--g)':'rgba(107,122,30,.4)'};border-radius:3px 3px 0 0;height:${Math.round(d.income/maxIncome*120)}px;min-height:4px" title="${d.month}: $${d.income.toLocaleString()}"></div>
       <div style="font-size:8px;color:var(--m);text-align:center">$${Math.round(d.income/1000)}K</div>
     </div>`).join('');
 
@@ -4440,12 +4368,12 @@ async function _renderMemberSplit(dataset) {
         {
           label: 'M2 Direct',
           data: m2Data,
-          borderColor: '#C8F000',
-          backgroundColor: 'rgba(200,240,0,0.07)',
+          borderColor: '#111111',
+          backgroundColor: 'rgba(17,17,17,0.04)',
           borderWidth: 2,
           pointRadius: rows.map((r,i) => r.live ? 6 : 3),
-          pointBackgroundColor: rows.map(r => r.live ? '#C8F000' : '#C8F000'),
-          pointBorderColor: '#0f0f0f',
+          pointBackgroundColor: '#111111',
+          pointBorderColor: '#fff',
           pointBorderWidth: 2,
           tension: 0.35,
           fill: true,
@@ -4453,12 +4381,12 @@ async function _renderMemberSplit(dataset) {
         {
           label: 'Fitness Passport',
           data: fpData,
-          borderColor: '#C8F000',
-          backgroundColor: 'rgba(96,165,250,0.07)',
+          borderColor: '#2F6FB0',
+          backgroundColor: 'rgba(47,111,176,0.06)',
           borderWidth: 2,
           pointRadius: rows.map(r => r.live ? 6 : 3),
-          pointBackgroundColor: '#C8F000',
-          pointBorderColor: '#0f0f0f',
+          pointBackgroundColor: '#2F6FB0',
+          pointBorderColor: '#fff',
           pointBorderWidth: 2,
           tension: 0.35,
           fill: true,
@@ -4473,8 +4401,8 @@ async function _renderMemberSplit(dataset) {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#181818',
-          borderColor: '#333',
+          backgroundColor: '#111111',
+          borderColor: '#111111',
           borderWidth: 1,
           titleColor: '#aaa',
           bodyColor: '#f0f0f0',
@@ -4494,14 +4422,14 @@ async function _renderMemberSplit(dataset) {
       },
       scales: {
         x: {
-          grid: { color: 'rgba(255,255,255,0.04)' },
-          ticks: { color: '#555', font: { size: 11 } },
-          border: { color: '#222' }
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: { color: '#7A7A74', font: { size: 11 } },
+          border: { color: '#D6D6D0' }
         },
         y: {
-          grid: { color: 'rgba(255,255,255,0.04)' },
-          ticks: { color: '#555', font: { size: 11 }, callback: v => v.toLocaleString() },
-          border: { color: '#222' }
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: { color: '#7A7A74', font: { size: 11 }, callback: v => v.toLocaleString() },
+          border: { color: '#D6D6D0' }
         }
       }
     }
@@ -4518,7 +4446,7 @@ async function _renderMemberSplit(dataset) {
     const m2Pct = 100 - r.fpPct;
 
     const tr = document.createElement('tr');
-    if (r.live) tr.style.background = 'rgba(200,240,0,0.05)';
+    if (r.live) tr.style.background = 'rgba(107,122,30,0.05)';
     tr.innerHTML = `
       <td style="color:${r.live ? 'var(--g)' : 'var(--t)'}">
         ${r.m}${r.live ? ' <span style="font-size:9px;color:var(--g);letter-spacing:1px">LIVE</span>' : ''}
@@ -4532,7 +4460,7 @@ async function _renderMemberSplit(dataset) {
       <td style="color:${fpChg === null ? 'var(--m)' : fpChg >= 0 ? 'var(--g)' : 'var(--r)'}">
         ${fpChg === null ? '' : (fpChg >= 0 ? '+' : '') + fpChg}
       </td>
-      <td style="color:${r.fpPct >= 53 ? 'var(--r)' : r.fpPct >= 48 ? '#C8F000' : 'var(--g)'}">${r.fpPct}%</td>
+      <td style="color:${r.fpPct >= 53 ? 'var(--r)' : r.fpPct >= 48 ? '#5E6B12' : 'var(--g)'}">${r.fpPct}%</td>
       <td>
         <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;width:100px;margin-left:auto;background:var(--br2)">
           <div style="width:${m2Pct}%;background:var(--y)"></div>
