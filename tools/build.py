@@ -37,6 +37,8 @@ MENU = [
         ('Annual memberships', '/annual-memberships.html', 'Pay upfront and save'),
         ('Fitness Passport', '/fitness-passport.html', 'Train at M2 through your work'),
         ('Free trial', TRIAL_HREF, 'Try the whole club first'),
+        ('Bring a Mate', '/bring-a-mate.html', 'You both get 4 weeks free'),
+        ('Corporate', '/corporate-memberships.html', 'For teams of 10 or more'),
     ]),
     ('Train', '/classes.html', 'train', [
         ('Classes', '/classes.html', 'Timetable, HYROX, strength and yoga'),
@@ -49,6 +51,7 @@ MENU = [
         ('HYROX classes', '/hyrox-gym-auckland.html', 'Train for HYROX all year'),
         ('HYROX Auckland', '/hyrox-auckland.html', 'Race ticket offer, $35 a week'),
         ('Free 2 week plan', '/hyrox-auckland-2week-plan.html', 'Download the training plan'),
+        ('HYROX guides', '/guides.html', 'Training plan, stations and race tips'),
     ]),
     ('The Club', '/our-story.html', 'club', [
         ('Birthday Open Week', '/birthday-open-week.html', 'Train free 12 to 18 October'),
