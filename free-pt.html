@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-1PW3XYQ1F8');
+</script>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1173983798207057');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Your Free PT Session | M2 Training Club</title>
+<meta name="description" content="Book your free personal training session at M2 Training Club, Grafton, Auckland. Tell us a bit about you and we'll match you with the right trainer.">
+<link rel="canonical" href="https://m2club.co.nz/free-pt.html">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="Book Your Free PT Session | M2 Training Club">
+<meta property="og:description" content="Tell us a bit about you and we'll match you with the right trainer.">
+<meta property="og:image" content="https://m2club.co.nz/assets/email-pt.jpg">
+<meta property="og:url" content="https://m2club.co.nz/free-pt.html">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --page:#EDEDEA;
+    --card:#FFFFFF;
+    --ink:#111111;
+    --body:#3D3D3A;
+    --muted:#7A7A74;
+    --line:#E3E3DE;
+    --soft:#F5F5F2;
+    --olive:#6B7A1E;
+    --lime:#DFFF00;
+    --black:#0A0A0A;
+    --danger:#B3261E;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--page);
+    color:var(--body);
+    font-family:Inter,-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding:32px 16px 48px;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:620px;margin:0 auto}
+
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:0 1px 2px rgba(0,0,0,.04),0 12px 32px rgba(0,0,0,.06);
+  }
+  .bar{
+    background:var(--black);
+    padding:16px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .bar img{height:26px;width:auto;display:block}
+  .bar span{color:#8C8C86;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+  .hero{display:block;width:100%;aspect-ratio:12/7;object-fit:cover;background:#ddd}
+
+  .inner{padding:34px 36px 38px}
+  .label{
+    color:var(--olive);font-size:12px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;
+  }
+  h1{
+    color:var(--ink);font-size:30px;line-height:1.2;font-weight:700;
+    letter-spacing:-.02em;margin-bottom:14px;
+  }
+  .intro p{margin-bottom:12px}
+  .intro p:last-child{margin-bottom:0}
+
+  .info{
+    background:var(--soft);border-radius:12px;
+    padding:18px 20px;margin:24px 0 8px;
+  }
+  .info ol{list-style:none;counter-reset:s}
+  .info li{counter-increment:s;position:relative;padding-left:34px;margin:6px 0;font-size:15px}
+  .info li::before{
+    content:counter(s);position:absolute;left:0;top:1px;
+    width:22px;height:22px;border-radius:50%;
+    background:var(--black);color:var(--lime);
+    font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* progress */
+  .progress{display:flex;gap:6px;margin:30px 0 8px}
+  .progress i{flex:1;height:4px;border-radius:4px;background:var(--line);transition:background .25s}
+  .progress i.on{background:var(--black)}
+  .stepcount{font-size:13px;color:var(--muted);margin-bottom:22px}
+
+  .step{display:none}
+  .step.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .step h2{color:var(--ink);font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:18px}
+
+  .field{margin-bottom:20px}
+  .field > label, .q{
+    display:block;color:var(--ink);font-size:15px;font-weight:500;margin-bottom:8px;
+  }
+  .q small, .field > label small{color:var(--muted);font-weight:400}
+  input[type=text],input[type=tel],input[type=email],textarea{
+    width:100%;font:inherit;color:var(--ink);
+    background:#fff;border:1px solid #D6D6D0;border-radius:10px;
+    padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s;
+    -webkit-appearance:none;
+  }
+  textarea{min-height:96px;resize:vertical}
+  input:focus,textarea:focus{border-color:var(--black);box-shadow:0 0 0 3px rgba(10,10,10,.08)}
+  .field.err input,.field.err textarea,.field.err .opts{border-color:var(--danger)}
+  .msg{display:none;color:var(--danger);font-size:13px;margin-top:6px}
+  .field.err .msg{display:block}
+
+  /* option pills */
+  .opts{display:grid;gap:10px;border-radius:12px}
+  .opts.two{grid-template-columns:1fr 1fr}
+  .opt{position:relative}
+  .opt input{position:absolute;opacity:0;pointer-events:none}
+  .opt span{
+    display:flex;align-items:center;min-height:50px;
+    padding:12px 14px 12px 44px;border:1px solid #D6D6D0;border-radius:10px;
+    font-size:15px;color:var(--ink);cursor:pointer;background:#fff;
+    transition:border-color .15s,background .15s;position:relative;line-height:1.35;
+  }
+  .opt span::before{
+    content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;border-radius:50%;border:1.5px solid #B9B9B2;background:#fff;
+    transition:all .15s;
+  }
+  .opt input:checked + span{border-color:var(--black);background:var(--soft)}
+  .opt input:checked + span::before{border:6px solid var(--black)}
+  .opt input:focus-visible + span{box-shadow:0 0 0 3px rgba(10,10,10,.12)}
+
+  /* buttons */
+  .actions{display:flex;gap:12px;align-items:center;margin-top:28px}
+  .btn{
+    appearance:none;border:0;cursor:pointer;font:inherit;font-weight:600;font-size:15px;
+    background:var(--black);color:var(--lime);
+    padding:15px 28px;border-radius:999px;transition:transform .1s,opacity .15s;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn[disabled]{opacity:.55;cursor:default}
+  .btn.full{flex:1}
+  .back{
+    appearance:none;border:0;background:none;cursor:pointer;font:inherit;
+    color:var(--muted);font-size:15px;padding:15px 8px;
+  }
+  .back:hover{color:var(--ink)}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .submit-err{display:none;margin-top:14px;font-size:14px;color:var(--danger)}
+
+  /* done */
+  .done{display:none;text-align:left}
+  .done.active{display:block;animation:fade .3s ease}
+  .tick{
+    width:52px;height:52px;border-radius:50%;background:var(--black);
+    display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  }
+  .sig{display:flex;align-items:center;gap:14px;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+  .sig img{width:52px;height:52px;border-radius:50%;object-fit:cover}
+  .sig div{font-size:14px;line-height:1.45;color:var(--body)}
+  .sig b{color:var(--ink);font-weight:600}
+
+  footer{text-align:center;padding:26px 16px 0;font-size:13px;color:var(--muted)}
+  footer .social{display:flex;justify-content:center;gap:18px;margin-bottom:10px}
+  footer .social a{color:#55554F;font-weight:500}
+  footer .social a:hover{color:var(--ink)}
+  footer p{margin-top:4px}
+
+  @media (max-width:560px){
+    body{padding:0 0 36px}
+    .card{border-radius:0}
+    .bar{padding:14px 18px}
+    .inner{padding:26px 20px 30px}
+    h1{font-size:26px}
+    .opts.two{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card">
+    <div class="bar">
+      <a href="/"><img src="/assets/M2_ICON_YELLOW%20(5).png" alt="M2 Training Club"></a>
+      <span>Free PT Session</span>
+    </div>
+    <img class="hero" src="/assets/email-pt.jpg" alt="M2 coach running a pad work session with a member">
+
+    <div class="inner">
+      <div id="formView">
+        <div class="intro">
+          <div class="label">Your free session</div>
+          <h1>Let's get you started properly.</h1>
+          <p>Every new M2 membership comes with a free one-on-one session with one of our coaches. It's the best way to get comfortable on the floor, sort out a plan that actually suits you, and hit the ground running.</p>
+          <p>Answer a few quick questions below and we'll match you with the right trainer. Takes about a minute.</p>
+        </div>
+
+        <div class="info">
+          <ol>
+            <li>Tell us about you and what you're after</li>
+            <li>We match you with the best coach for it</li>
+            <li>Your coach gets in touch to lock in a time</li>
+          </ol>
+        </div>
+
+        <div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+        <div class="stepcount" id="stepcount">Step 1 of 4</div>
+
+        <form id="ptForm" novalidate>
+          <div class="hp" aria-hidden="true">
+            <label>Leave this empty <input type="text" name="company" tabindex="-1" autocomplete="off"></label>
+          </div>
+
+          <!-- STEP 1 -->
+          <section class="step active" data-step="1">
+            <h2>About you</h2>
+            <div class="field" data-req="name">
+              <label for="name">Your first &amp; last name</label>
+              <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Sam Smith">
+              <div class="msg">Please add your first and last name.</div>
+            </div>
+            <div class="field" data-req="phone">
+              <label for="phone">Phone number to contact on</label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="021 123 4567">
+              <div class="msg">Please add a phone number so your coach can reach you.</div>
+            </div>
+            <div class="field" data-req="email">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email" placeholder="you@email.com">
+              <div class="msg">Please add a valid email.</div>
+            </div>
+          </section>
+
+          <!-- STEP 2 -->
+          <section class="step" data-step="2">
+            <h2>Your goals</h2>
+            <div class="field" data-req="reasonForJoining">
+              <label for="reason">What best describes your reason for joining the gym?</label>
+              <textarea id="reason" name="reasonForJoining" placeholder="e.g. Get stronger, lose a bit of weight, train for HYROX, get back into it after a break"></textarea>
+              <div class="msg">Give us a quick idea of what you're after.</div>
+            </div>
+            <div class="field" data-req="trainingStyle">
+              <span class="q">What best describes your preferred training style?</span>
+              <div class="opts two">
+                <label class="opt"><input type="radio" name="trainingStyle" value="Strength Training - weights &amp; machines"><span>Strength training, weights &amp; machines</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="High Intensity Interval or Circuit Training"><span>HIIT or circuit training</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="Cardio/Fitness Focus"><span>Cardio / fitness focus</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="Olympic Lifting"><span>Olympic lifting</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="Power Lifting"><span>Powerlifting</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="Mobility/Movement"><span>Mobility / movement</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="Bodyweight"><span>Bodyweight</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="Sports Specific"><span>Sports specific</span></label>
+                <label class="opt"><input type="radio" name="trainingStyle" value="Not sure"><span>Not sure yet</span></label>
+              </div>
+              <div class="msg">Pick the one closest to you.</div>
+            </div>
+          </section>
+
+          <!-- STEP 3 -->
+          <section class="step" data-step="3">
+            <h2>Your session</h2>
+            <div class="field" data-req="trainerPreference">
+              <span class="q">Would you prefer to train with:</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="trainerPreference" value="a Male trainer"><span>A male trainer</span></label>
+                <label class="opt"><input type="radio" name="trainerPreference" value="a Female trainer"><span>A female trainer</span></label>
+                <label class="opt"><input type="radio" name="trainerPreference" value="I do not have a preference"><span>No preference</span></label>
+              </div>
+              <div class="msg">Pick one.</div>
+            </div>
+            <div class="field" data-req="preferredTime">
+              <span class="q">What time of day suits you best for your free session?</span>
+              <div class="opts two">
+                <label class="opt"><input type="radio" name="preferredTime" value="Weekday - Early morning"><span>Weekday, early morning</span></label>
+                <label class="opt"><input type="radio" name="preferredTime" value="Weekday - Midday"><span>Weekday, midday</span></label>
+                <label class="opt"><input type="radio" name="preferredTime" value="Weekday - Evenings"><span>Weekday, evenings</span></label>
+                <label class="opt"><input type="radio" name="preferredTime" value="Weekend - Morning / Midday"><span>Weekend, morning / midday</span></label>
+                <label class="opt"><input type="radio" name="preferredTime" value="Any - I'm flexible"><span>Any time, I'm flexible</span></label>
+              </div>
+              <div class="msg">Pick the time that works best.</div>
+            </div>
+          </section>
+
+          <!-- STEP 4 -->
+          <section class="step" data-step="4">
+            <h2>Anything we should know?</h2>
+            <div class="field">
+              <label for="injuries">Do you have any injuries or medical issues our trainers should be aware of? <small>(optional)</small></label>
+              <textarea id="injuries" name="injuries" placeholder="e.g. Old knee injury, lower back gets tight. Leave blank if nothing."></textarea>
+            </div>
+          </section>
+
+          <div class="actions">
+            <button type="button" class="back" id="backBtn" hidden>Back</button>
+            <button type="button" class="btn full" id="nextBtn">Next</button>
+          </div>
+          <div class="submit-err" id="submitErr">Something went wrong sending that. Please try again, or give us a call on reception.</div>
+        </form>
+      </div>
+
+      <!-- DONE -->
+      <div class="done" id="doneView">
+        <div class="tick"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="label">You're booked in</div>
+        <h1 id="doneTitle">Nice one, you're all set.</h1>
+        <div class="intro">
+          <p>We've got your details. We'll match you with the right coach and they'll be in touch within a day or two to lock in a time that suits.</p>
+          <p>If you've got any questions in the meantime, just reply to any of our emails or pop in and see us at reception.</p>
+        </div>
+        <div class="sig">
+          <img src="/assets/email-taylor.png" alt="Taylor Blackler">
+          <div>Kind Regards,<br><b>Taylor Blackler</b><br>CEO, M2 Training Club</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="social">
+      <a href="https://www.instagram.com/m2trainingclub/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/m2trainingclub" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://m2club.co.nz">m2club.co.nz</a>
+    </div>
+    <p>M2 Training Club, 8 Nugent Street, Grafton, Auckland</p>
+    <p><a href="/privacy-policy.html">Privacy policy</a></p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  // Same Apps Script web app the PT Lead System dashboard uses.
+  // New submissions land in the "M2 PT Leads" sheet as New leads.
+  var LEADS_URL = "https://script.google.com/macros/s/AKfycbwWmapYAz0ce2tVmdi-bLkxKGfaE0nIokWml_eNmP5g9JaoAJg03zzIzl3j54p4KrUM/exec";
+
+  var form = document.getElementById('ptForm');
+  var steps = [].slice.call(form.querySelectorAll('.step'));
+  var bars = [].slice.call(document.querySelectorAll('.progress i'));
+  var nextBtn = document.getElementById('nextBtn');
+  var backBtn = document.getElementById('backBtn');
+  var countEl = document.getElementById('stepcount');
+  var current = 0;
+  var qs = new URLSearchParams(location.search);
+
+  // Pre-fill from the link if GymMaster / ads pass details through,
+  // e.g. free-pt.html?name=Sam%20Smith&email=sam@x.com&phone=0211234567
+  ['name','email','phone'].forEach(function(k){
+    var v = qs.get(k) || qs.get(k === 'name' ? 'fullname' : k);
+    if (!v && k === 'name' && (qs.get('first') || qs.get('last'))) v = ((qs.get('first')||'') + ' ' + (qs.get('last')||'')).trim();
+    if (v && !/^\{|\[|%/.test(v)) form.elements[k].value = v;
+  });
+
+  function val(name){
+    var el = form.elements[name];
+    if (!el) return '';
+    if (el.length && !el.tagName) { // radio group
+      for (var i=0;i<el.length;i++) if (el[i].checked) return el[i].value;
+      return '';
+    }
+    return (el.value || '').trim();
+  }
+
+  function valid(name){
+    var v = val(name);
+    if (name === 'name') return v.split(/\s+/).length >= 2;
+    if (name === 'phone') return v.replace(/\D/g,'').length >= 7;
+    if (name === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    return v.length > 0;
+  }
+
+  function checkStep(i){
+    var ok = true, first = null;
+    steps[i].querySelectorAll('.field[data-req]').forEach(function(f){
+      var good = valid(f.getAttribute('data-req'));
+      f.classList.toggle('err', !good);
+      if (!good && ok) { ok = false; first = f; }
+    });
+    if (first) {
+      var inp = first.querySelector('input,textarea');
+      first.scrollIntoView({behavior:'smooth', block:'center'});
+      if (inp && inp.type !== 'radio') setTimeout(function(){ inp.focus(); }, 250);
+    }
+    return ok;
+  }
+
+  // Clear an error as soon as it's fixed
+  form.addEventListener('input', function(e){
+    var f = e.target.closest('.field[data-req]');
+    if (f && f.classList.contains('err') && valid(f.getAttribute('data-req'))) f.classList.remove('err');
+  });
+  form.addEventListener('change', function(e){
+    var f = e.target.closest('.field[data-req]');
+    if (f && valid(f.getAttribute('data-req'))) f.classList.remove('err');
+  });
+
+  function show(i){
+    steps.forEach(function(s,j){ s.classList.toggle('active', j===i); });
+    bars.forEach(function(b,j){ b.classList.toggle('on', j<=i); });
+    countEl.textContent = 'Step ' + (i+1) + ' of ' + steps.length;
+    backBtn.hidden = i === 0;
+    nextBtn.textContent = i === steps.length-1 ? 'Book my free session' : 'Next';
+    current = i;
+    document.querySelector('.progress').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  backBtn.addEventListener('click', function(){ if (current>0) show(current-1); });
+  nextBtn.addEventListener('click', function(){
+    if (!checkStep(current)) return;
+    if (current < steps.length-1) { show(current+1); return; }
+    submit();
+  });
+  // Enter key moves forward instead of submitting early
+  form.addEventListener('submit', function(e){ e.preventDefault(); nextBtn.click(); });
+  form.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); nextBtn.click(); }
+  });
+
+  function formatPhone(p){
+    var d = p.replace(/[^\d+]/g,'');
+    if (d.indexOf('+64') === 0) d = '0' + d.slice(3);
+    if (/^\d/.test(d) && d.charAt(0) !== '0') d = '0' + d;
+    return d;
+  }
+
+  function submit(){
+    if (form.elements.company.value) { finish(); return; } // bot
+    var src = qs.get('utm_source') || qs.get('src') || '';
+    var payload = {
+      action: 'addLead',
+      name: val('name'),
+      phone: formatPhone(val('phone')),
+      email: val('email'),
+      reasonForJoining: val('reasonForJoining'),
+      trainerPreference: val('trainerPreference'),
+      trainingStyle: val('trainingStyle'),
+      injuries: val('injuries'),
+      preferredTime: val('preferredTime'),
+      source: 'Website' + (src ? ' (' + src + ')' : '')
+    };
+
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Sending...';
+    document.getElementById('submitErr').style.display = 'none';
+
+    // text/plain + no-cors avoids the CORS preflight Apps Script can't answer.
+    fetch(LEADS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    }).then(function(){
+      try { if (window.fbq) fbq('track', 'Lead', {content_name: 'Free PT Session'}); } catch(e){}
+      try { if (window.gtag) gtag('event', 'generate_lead', {event_category:'conversion', event_label:'free_pt_form'}); } catch(e){}
+      finish(payload.name);
+    }).catch(function(){
+      nextBtn.disabled = false;
+      nextBtn.textContent = 'Book my free session';
+      document.getElementById('submitErr').style.display = 'block';
+    });
+  }
+
+  function finish(name){
+    var first = (name || '').split(' ')[0];
+    if (first) document.getElementById('doneTitle').textContent = 'Nice one ' + first + ', you’re all set.';
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('doneView').classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+})();
+</script>
+</body>
+</html>
