@@ -381,6 +381,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
         <h1 id="doneTitle">Welcome to M2.</h1>
         <div class="intro"><p id="doneLead">You're all signed up.</p></div>
         <ol class="next" id="doneNext"></ol>
+        <div id="ptWrap" hidden style="margin:22px 0 26px"><a class="btn" id="ptBtn" href="/free-pt.html">Book my free PT session</a></div>
         <div class="intro"><p>Any questions, just reply to any of our emails or give reception a call. See you soon.</p></div>
         <div class="sig">
           <img src="/assets/email-taylor.png" alt="Taylor Blackler">
@@ -791,8 +792,14 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
            : '<b>Bring your bank or card details.</b> We\'ll pop them in for your payments while you\'re at the desk. Nothing comes out today.',
       '<b>Download the GymMaster app</b> and log in with the email and password you just made.'
     ];
-    if (!/recovery/i.test(chosen.name) && !/24 hour/i.test(chosen.name)) steps.push('<b>Your free PT session.</b> One of our coaches will be in touch to book it in.');
+    var ptOn = !/recovery/i.test(chosen.name) && !/24 hour/i.test(chosen.name);
+    if (ptOn) steps.push('<b>Book your free PT session.</b> Tell us a bit about your goals and we\'ll match you with the right coach.');
     $('doneNext').innerHTML = steps.map(function(s){ return '<li>' + s + '</li>'; }).join('');
+    if (ptOn) {
+      var ptUrl = '/free-pt.html?' + new URLSearchParams({name: (val('firstname') + ' ' + val('surname')).trim(), email: val('email'), phone: formatPhone(val('phone')), utm_source: 'join'}).toString();
+      $('ptBtn').href = ptUrl;
+      $('ptWrap').hidden = false;
+    }
     $('formView').style.display = 'none';
     $('doneView').classList.add('active');
     window.scrollTo({top:0, behavior:'smooth'});

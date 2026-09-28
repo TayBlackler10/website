@@ -6,7 +6,7 @@ workers_dev = true
 [vars]
 GM_BASE = "https://m2trainingclub.gymmasteronline.com/portal/api"
 COMPANY_ID = "4"
-PT_SCRIPT = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec"
+PT_SCRIPT = ""   # off: new members book via the free-pt.html button on the confirmation screen
 BILLING_GRACE_DAYS = "3"
 HIDE_IDS = ""
 ALLOWED_ORIGINS = "https://m2club.co.nz,https://www.m2club.co.nz"
