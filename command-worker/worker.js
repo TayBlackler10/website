@@ -181,7 +181,7 @@ const redirectUri = url => `${url.origin}/xero/callback`;
 async function xeroConnect(env, url) {
   const state = crypto.randomUUID();
   await env.M2CC.put("xero:state:" + state, "1", { expirationTtl: 600 });
-  const scopes = env.XERO_SCOPES || "openid profile email offline_access accounting.reports.read accounting.settings.read";
+  const scopes = env.XERO_SCOPES || "openid profile email offline_access accounting.reports.read";
   const u = new URL(XERO_AUTH);
   u.search = new URLSearchParams({ response_type: "code", client_id: env.XERO_CLIENT_ID, redirect_uri: redirectUri(url), scope: scopes, state }).toString();
   return Response.redirect(u.toString(), 302);
@@ -243,16 +243,6 @@ function pnlTotals(rep) {
 async function xeroPnl(env, from, to) {
   return pnlTotals(await xeroGet(env, `/Reports/ProfitAndLoss?fromDate=${from}&toDate=${to}`));
 }
-async function xeroCash(env, date) {
-  const rep = await xeroGet(env, `/Reports/BankSummary?fromDate=${date}&toDate=${date}`);
-  let total = null;
-  const walk = rs => (rs || []).forEach(r => {
-    if (r.Rows) walk(r.Rows);
-    else if (r.Cells && /^Total$/i.test(r.Cells[0].Value || "")) total = parseFloat(r.Cells[r.Cells.length - 1].Value) || 0;
-  });
-  walk(rep.Reports[0].Rows);
-  return total;
-}
 async function xeroSummary(env, fresh) {
   if (!fresh) {
     const c = JSON.parse((await env.M2CC.get("xero:cache")) || "null");
@@ -263,14 +253,13 @@ async function xeroSummary(env, fresh) {
     const from = `${n.y}-${pad(n.m)}-01`;
     const pm = n.m === 1 ? 12 : n.m - 1, py = n.m === 1 ? n.y - 1 : n.y;
     const pmDay = Math.min(n.d, lastDay(py, pm));
-    const [month, lastMonthToDate, lastMonth, cash] = await Promise.all([
+    const [month, lastMonthToDate, lastMonth] = await Promise.all([
       xeroPnl(env, from, n.iso),
       xeroPnl(env, `${py}-${pad(pm)}-01`, `${py}-${pad(pm)}-${pad(pmDay)}`),
-      xeroPnl(env, `${py}-${pad(pm)}-01`, `${py}-${pad(pm)}-${pad(lastDay(py, pm))}`),
-      xeroCash(env, n.iso)
+      xeroPnl(env, `${py}-${pad(pm)}-01`, `${py}-${pad(pm)}-${pad(lastDay(py, pm))}`)
     ]);
     lastMonth.label = new Date(Date.UTC(py, pm - 1, 1)).toLocaleDateString("en-NZ", { month: "short", timeZone: "UTC" });
-    const out = { at: Date.now(), month, lastMonthToDate, lastMonth, cash };
+    const out = { at: Date.now(), month, lastMonthToDate, lastMonth };
     await env.M2CC.put("xero:cache", JSON.stringify(out));
     return out;
   } catch (e) {
@@ -313,20 +302,20 @@ async function ga4Summary(env, fresh) {
 async function takeSnapshot(env) {
   const n = nzDate();
   const [mem, newM, cancels, visits, trials] = await Promise.all(["kpi.member_today", "kpi.member_new", "kpi.member_cancel", "kpi.visit_month", "kpi.prospects_month"].map(ep => gmKpi(env, ep)));
-  let ptLeads = null, net = null, income = null, cash = null;
+  let ptLeads = null, net = null, income = null;
   try {
     const r = await fetch(`${env.PT_SCRIPT}?action=list&key=${encodeURIComponent(env.PT_ADMIN_KEY)}`, { redirect: "follow" });
     const leads = dedupeLeads((await r.json()).leads);
     ptLeads = leads.filter(l => nzDate(new Date(l.receivedAt)).ym === n.ym).length;
   } catch {}
   const x = await xeroSummary(env, true);
-  if (x && !x.error) { net = x.month.net; income = x.month.income; cash = x.cash; }
+  if (x && !x.error) { net = x.month.net; income = x.month.income; }
   const snap = {
     month: n.ym, takenOn: n.iso, final: n.d === lastDay(n.y, n.m),
     members: mem ? +mem.primary : null, visiting: mem ? +mem.subset : null,
     newMembers: newM ? +newM.primary : null, cancels: cancels ? +cancels.primary : null,
     visits: visits ? +visits.primary : null, trials: trials ? +trials.primary : null,
-    ptLeads, income, net, cash
+    ptLeads, income, net
   };
   await env.M2CC.put("snap:" + n.ym, JSON.stringify(snap));
   return snap;
