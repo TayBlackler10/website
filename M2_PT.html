@@ -3,279 +3,253 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
 <title>M2 PT Lead System</title>
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --lime:#d4f53c;--lime2:#b8d630;--lime3:rgba(212,245,60,0.12);--lime4:rgba(212,245,60,0.06);
-    --black:#0a0a0a;--black2:#111;--black3:#161616;--black4:#1c1c1c;
-    --text:#f0f0f0;--text2:#aaa;--text3:#666;
-    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.18);
-    --red:#ff4444;--red2:rgba(255,68,68,0.12);
-    --green:#39d98a;--green2:rgba(57,217,138,0.1);
-    --amber:#ffb020;--amber2:rgba(255,176,32,0.1);
-    --blue:#5fa8e0;--blue2:rgba(95,168,224,0.1);
-    --purple:#b47eea;--purple2:rgba(180,126,234,0.1);
-    --teal:#4fd1c5;--teal2:rgba(79,209,197,0.1);
-    --pink:#e08fd6;--pink2:rgba(224,143,214,0.1);
-    --r:14px;--rs:8px;
+    --page:#EDEDEA; --panel:#F6F6F3; --card:#FFFFFF;
+    --ink:#111111; --body:#3D3D3A; --muted:#7A7A74; --faint:#A5A59E;
+    --line:#E3E3DE; --line2:#D6D6D0;
+    --black:#0A0A0A; --lime:#DFFF00; --olive:#6B7A1E;
+    --red:#C0362C; --red-bg:#FBECEA; --red-line:#F1C9C4;
+    --blue:#2F6FB0; --blue-bg:#EAF1F9; --blue-line:#C9DBEE;
+    --amber:#A56A00; --amber-bg:#FBF3E2;
+    --green:#1F8A54; --green-bg:#E8F5EE; --green-line:#C3E4D1;
+    --pink:#A8467F; --pink-bg:#F8ECF3;
+    --olive-bg:#F1F4E3;
+    --av1:#E4ED9E; --av2:#CFE0F2; --av3:#F4DDB3; --av4:#E2D6F2; --av5:#C9E8E3; --av6:#F2D3E4; --av7:#D3EAD9;
+    --r:14px; --rs:10px;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.04);
   }
   *{box-sizing:border-box;}
   body{
-    margin:0; font-family:'DM Sans',sans-serif;
-    background:var(--black); color:var(--text); min-height:100vh; position:relative;
+    margin:0; font-family:Inter,-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    background:var(--page); color:var(--body); min-height:100vh; font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
   }
-  body::before{
-    content:""; position:fixed; top:-110px; left:50%; transform:translateX(-50%);
-    width:720px; height:280px; pointer-events:none; z-index:0;
-    background:radial-gradient(ellipse at center, rgba(212,245,60,0.11), transparent 70%);
-  }
+  a{color:inherit; text-decoration:none;}
+
+  /* Header: slim black bar, lime logo, same as the emails */
   header{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:16px 24px; background:rgba(10,10,10,0.94); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid var(--border); flex-wrap:wrap; position:sticky; top:0; z-index:40;
+    padding:12px 24px; background:var(--black); flex-wrap:wrap; position:sticky; top:0; z-index:40;
   }
-  .brand{display:flex; align-items:center; gap:12px;}
-  .m2logo{font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--lime); letter-spacing:3px; line-height:1;}
-  .brand-sep{width:1px; height:20px; background:var(--border2);}
-  .brand-sub{font-size:11px; letter-spacing:1.5px; color:var(--text3); text-transform:uppercase; font-weight:600;}
+  .brand{display:flex; align-items:center; gap:14px;}
+  .brand img{height:24px; width:auto; display:block;}
+  .brand-sub{font-size:11px; letter-spacing:.1em; color:#8C8C86; text-transform:uppercase; font-weight:500;}
   .controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
   input, select, textarea, button{
-    font-family:'DM Sans',sans-serif; font-size:13px; border-radius:var(--rs); border:1px solid var(--border2);
-    background:var(--black3); color:var(--text); padding:9px 12px;
+    font-family:inherit; font-size:13px; border-radius:var(--rs); border:1px solid var(--line2);
+    background:var(--card); color:var(--ink); padding:9px 12px;
   }
-  input::placeholder, textarea::placeholder{color:var(--text3);}
-  input:focus, select:focus, textarea:focus{outline:none; border-color:var(--lime);}
-  button{cursor:pointer; font-weight:600; transition:all 0.15s; border-color:var(--border2);}
-  button.primary{
-    background:var(--lime); border-color:var(--lime); color:var(--black);
-    font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1px; padding:9px 18px;
+  input::placeholder, textarea::placeholder{color:var(--faint);}
+  input:focus, select:focus, textarea:focus{outline:none; border-color:var(--black); box-shadow:0 0 0 3px rgba(10,10,10,.07);}
+  select{
+    -webkit-appearance:none; appearance:none; padding-right:30px; cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237A7A74' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 11px center;
   }
-  button.primary:hover{background:var(--lime2);}
-  button.ghost:hover{background:var(--black4); border-color:var(--border3);}
-  button.ghost.active{background:var(--lime3); border-color:var(--lime); color:var(--lime);}
+  button{cursor:pointer; font-weight:500; transition:background .15s, border-color .15s, color .15s;}
+  header input{background:#1A1A1A; border-color:#2A2A2A; color:#fff; min-width:220px;}
+  header input::placeholder{color:#77776F;}
+  header input:focus{border-color:#55554F; box-shadow:none;}
+  header button.ghost{background:transparent; border-color:#2E2E2E; color:#D6D6D0;}
+  header button.ghost:hover{border-color:#55554F; color:#fff;}
+  header button.ghost.active{border-color:var(--lime); color:var(--lime);}
+  button.primary{background:var(--lime); border-color:var(--lime); color:var(--black); font-weight:600; padding:9px 16px; border-radius:999px;}
+  button.primary:hover{filter:brightness(.95);}
+  .modal button.primary{background:var(--black); border-color:var(--black); color:var(--lime);}
+  .modal button.ghost{background:transparent; border-color:transparent; color:var(--muted);}
+  .modal button.ghost:hover{color:var(--ink);}
   #status-msg{display:none;}
 
-  .greeting-bar{
-    position:relative; z-index:1; padding:16px 24px 2px; display:flex; align-items:flex-end;
-    justify-content:space-between; flex-wrap:wrap; gap:10px;
-  }
-  .greeting-text{font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:.5px; color:#fff;}
-  .greeting-sub{font-size:11.5px; color:var(--text3); margin-top:3px;}
+  .wrap{max-width:1500px; margin:0 auto;}
+  .greeting-bar{padding:28px 24px 4px; display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .greeting-label{color:var(--olive); font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px;}
+  .greeting-text{font-size:26px; font-weight:700; letter-spacing:-.02em; color:var(--ink); line-height:1.2;}
+  .greeting-sub{font-size:13px; color:var(--muted); margin-top:4px;}
   .live-badge{
-    display:inline-flex; align-items:center; gap:6px; font-size:10px; font-weight:700; letter-spacing:.07em;
-    text-transform:uppercase; color:var(--green); background:var(--green2); border:1px solid rgba(57,217,138,0.3);
-    border-radius:20px; padding:6px 11px 6px 9px; white-space:nowrap;
+    display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:500;
+    color:var(--green); background:var(--card); border:1px solid var(--line);
+    border-radius:999px; padding:6px 12px 6px 10px; white-space:nowrap;
   }
-  .live-badge.error{color:var(--red); background:var(--red2); border-color:rgba(255,68,68,0.3);}
-  .live-dot{width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 2s infinite;}
+  .live-badge.error{color:var(--red);}
+  .live-dot{width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 2s infinite;}
   .live-badge.error .live-dot{background:var(--red); animation:none;}
-  @keyframes pulse{
-    0%{box-shadow:0 0 0 0 rgba(57,217,138,0.5);} 70%{box-shadow:0 0 0 6px rgba(57,217,138,0);} 100%{box-shadow:0 0 0 0 rgba(57,217,138,0);}
-  }
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,138,84,.45);}70%{box-shadow:0 0 0 6px rgba(31,138,84,0);}100%{box-shadow:0 0 0 0 rgba(31,138,84,0);}}
 
-  .summary-bar{display:flex; gap:12px; padding:14px 24px 0; flex-wrap:wrap; position:relative; z-index:1;}
-  .stat-card{
-    background:var(--black2); border:1px solid var(--border); border-radius:var(--r);
-    padding:13px 20px; flex:1; min-width:130px;
-  }
-  .stat-card .stat-icon{font-size:15px; line-height:1; margin-bottom:5px; opacity:.9;}
-  .stat-card .stat-num{font-family:'Bebas Neue',sans-serif; font-size:32px; line-height:1; color:#fff;}
-  .stat-card.urgent{border-color:rgba(255,68,68,0.35); background:linear-gradient(135deg, rgba(255,68,68,0.08), var(--black2));}
+  .summary-bar{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; padding:18px 24px 0;}
+  body.trainer-mode .summary-bar{grid-template-columns:repeat(2,1fr); max-width:688px; margin:0 auto; padding-left:24px; padding-right:24px;}
+  .stat-card{background:var(--card); border-radius:var(--r); padding:16px 18px; box-shadow:var(--shadow); border:1px solid transparent;}
+  .stat-card .stat-num{font-size:30px; font-weight:700; letter-spacing:-.02em; line-height:1; color:var(--ink);}
+  .stat-card .stat-label{font-size:12.5px; color:var(--muted); margin-top:6px;}
+  .stat-card.urgent{border-color:var(--red-line);}
   .stat-card.urgent .stat-num{color:var(--red);}
-  .stat-card.type-active{border-color:rgba(95,168,224,0.28); background:linear-gradient(135deg, rgba(95,168,224,0.07), var(--black2));}
-  .stat-card.type-active .stat-num{color:var(--blue);}
-  .stat-card.type-week{border-color:rgba(212,245,60,0.28); background:linear-gradient(135deg, rgba(212,245,60,0.07), var(--black2));}
-  .stat-card.type-week .stat-num{color:var(--lime);}
-  .stat-card .stat-label{font-size:10.5px; color:var(--text3); text-transform:uppercase; letter-spacing:.06em; margin-top:3px; font-weight:600;}
 
-  .section-row{margin-top:20px; position:relative; z-index:1;}
-  .section-label{
-    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
-    color:var(--text3); padding:0 24px; display:flex; align-items:center; gap:7px;
-  }
-  .section-label .ic{font-size:13px;}
-  .section-label .dot{width:6px; height:6px; border-radius:50%; background:var(--red);}
+  .section-row{margin-top:26px;}
+  .section-label{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:0 24px; display:flex; align-items:center; gap:8px;}
+  .section-label .count-pill{font-size:11px; letter-spacing:0; background:var(--card); border:1px solid var(--line); color:var(--body); border-radius:999px; padding:1px 8px;}
 
-  .attention-row{display:flex; gap:10px; overflow-x:auto; padding:10px 24px 6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
+  .attention-row, .workload-row{display:flex; gap:10px; overflow-x:auto; padding:10px 24px 8px; scroll-snap-type:x proximity; scroll-padding:0 24px; -webkit-overflow-scrolling:touch;}
   .attention-card{
-    background:linear-gradient(160deg, rgba(255,68,68,0.07), var(--black2) 65%);
-    border:1px solid var(--border); border-left:3px solid var(--red);
-    border-radius:var(--rs); padding:12px 14px; min-width:235px; flex-shrink:0; scroll-snap-align:start;
+    background:var(--card); border-radius:var(--rs); box-shadow:var(--shadow);
+    border-left:3px solid var(--red); padding:13px 14px; min-width:240px; flex-shrink:0; scroll-snap-align:start;
   }
-  .a-top{display:flex; align-items:center; gap:10px; margin-bottom:9px;}
-  .avatar{
-    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue',sans-serif; font-size:13px; color:#0a0a0a; flex-shrink:0; letter-spacing:.3px;
+  .a-top{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .avatar, .w-avatar, .mini-avatar{
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-weight:600; color:var(--ink); flex-shrink:0; letter-spacing:.01em;
   }
-  .attention-card .a-name{font-family:'Bebas Neue',sans-serif; font-size:17px; color:#fff; letter-spacing:.3px;}
-  .a-reason-badge{
-    display:inline-flex; align-items:center; gap:4px; font-size:9.5px; font-weight:700; letter-spacing:.04em;
-    text-transform:uppercase; color:var(--red); background:var(--red2); border:1px solid rgba(255,68,68,0.25);
-    border-radius:20px; padding:3px 8px; margin-top:3px; width:fit-content;
-  }
-  .attention-card select{width:100%; font-size:12px; padding:8px 9px;}
-  .attention-empty, .workload-empty{font-size:12px; color:var(--text3); padding:12px 24px;}
+  .avatar{width:34px; height:34px; font-size:12px;}
+  .attention-card .a-name{font-size:14.5px; font-weight:600; color:var(--ink);}
+  .a-reason-badge{font-size:12px; color:var(--red); margin-top:1px;}
+  .attention-card select{width:100%; font-size:13px;}
+  .attention-empty, .workload-empty{font-size:13px; color:var(--muted); padding:10px 24px;}
 
-  .workload-row{display:flex; gap:10px; overflow-x:auto; padding:10px 24px 6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;}
   .workload-chip{
-    background:var(--black2); border:1px solid var(--border); border-radius:var(--rs);
-    padding:11px 16px; min-width:150px; cursor:pointer; transition:border-color .15s, transform .15s; flex-shrink:0;
+    background:var(--card); border-radius:var(--rs); box-shadow:var(--shadow); border:1px solid transparent;
+    padding:11px 16px 11px 12px; min-width:160px; cursor:pointer; transition:border-color .15s; flex-shrink:0;
     display:flex; align-items:center; gap:11px; scroll-snap-align:start;
   }
-  .workload-chip:hover{border-color:var(--lime); transform:translateY(-1px);}
-  .w-avatar{
-    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue',sans-serif; font-size:14px; color:#0a0a0a; flex-shrink:0; position:relative;
-  }
+  .workload-chip:hover{border-color:var(--line2);}
+  .w-avatar{width:36px; height:36px; font-size:12.5px; position:relative;}
   .w-avatar .w-badge{
-    position:absolute; top:-5px; right:-5px; background:var(--lime); color:var(--black);
-    font-family:'DM Sans',sans-serif; font-size:10px; font-weight:800; min-width:17px; height:17px;
-    border-radius:20px; display:flex; align-items:center; justify-content:center; padding:0 3px; border:2px solid var(--black2);
+    position:absolute; top:-4px; right:-6px; background:var(--black); color:var(--lime);
+    font-size:10px; font-weight:700; min-width:18px; height:18px; border-radius:999px;
+    display:flex; align-items:center; justify-content:center; padding:0 4px; border:2px solid var(--card);
   }
   .w-info{display:flex; flex-direction:column;}
-  .workload-chip .w-name{font-family:'Bebas Neue',sans-serif; font-size:15px; color:#fff; letter-spacing:.4px;}
-  .workload-chip .w-oldest{font-size:10px; color:var(--text3); margin-top:2px;}
-  .workload-chip .w-oldest.overdue{color:var(--red); font-weight:700;}
+  .workload-chip .w-name{font-size:14px; font-weight:600; color:var(--ink);}
+  .workload-chip .w-oldest{font-size:12px; color:var(--muted);}
+  .workload-chip .w-oldest.overdue{color:var(--red);}
 
-  #board{
-    display:flex; gap:14px; padding:18px 24px 24px; overflow-x:auto; align-items:flex-start;
-  }
+  #board{display:flex; gap:14px; padding:12px 24px 24px; overflow-x:auto; align-items:flex-start; scroll-padding:0 24px;}
+  body.trainer-mode .board-label-row{display:none;}
+  body.trainer-mode header .controls{width:auto;}
   .column{
-    background:var(--black2); border:1px solid var(--border); border-radius:var(--r);
-    min-width:280px; max-width:300px; flex:1 0 280px; display:flex; flex-direction:column; max-height:calc(100vh - 160px);
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--r);
+    min-width:290px; max-width:310px; flex:1 0 290px; display:flex; flex-direction:column; max-height:calc(100vh - 150px);
   }
   .column-head{
-    padding:12px 14px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1.5px; text-transform:uppercase;
-    border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;
-    position:sticky; top:0; background:var(--black2); border-radius:var(--r) var(--r) 0 0;
+    padding:13px 14px; font-size:14px; font-weight:600; color:var(--ink);
+    border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;
+    position:sticky; top:0; background:var(--panel); border-radius:var(--r) var(--r) 0 0;
   }
-  .column-head .ch-left{display:flex; align-items:center; gap:8px;}
-  .column-head .mini-avatar{
-    width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
-    font-family:'Bebas Neue',sans-serif; font-size:10px; color:#0a0a0a; flex-shrink:0;
-  }
-  .column-head .count{
-    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; color:var(--black);
-    background:var(--text3); border-radius:20px; padding:2px 8px; letter-spacing:0;
-  }
-  .column-head .count{background:var(--lime); color:var(--black);}
-  .column-head.unassigned .count{background:var(--red);}
-  .column-body{padding:12px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; transition:background 0.15s, outline 0.15s; border-radius:0 0 var(--r) var(--r);}
-  .column-body.drag-over{background:var(--lime4); outline:2px dashed var(--lime); outline-offset:-2px;}
+  .column-head .ch-left{display:flex; align-items:center; gap:9px;}
+  .mini-avatar{width:24px; height:24px; font-size:10px;}
+  .column-head .count{font-size:12px; font-weight:600; color:var(--body); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:1px 9px;}
+  .column-head.unassigned .count{background:var(--black); border-color:var(--black); color:var(--lime);}
+  .column-body{padding:12px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; transition:background .15s; border-radius:0 0 var(--r) var(--r);}
+  .column-body.drag-over{background:var(--olive-bg); outline:2px dashed var(--olive); outline-offset:-4px;}
+
   .card{
-    background:var(--black3); border:1px solid var(--border); border-radius:var(--rs); padding:12px 14px;
-    border-left:3px solid var(--text3); cursor:grab;
+    background:var(--card); border-radius:var(--rs); padding:14px 14px 12px; box-shadow:var(--shadow);
+    border-left:3px solid var(--line2); cursor:grab; position:relative;
   }
-  .card.dragging{opacity:.35;}
+  .card.dragging{opacity:.4;}
   .card.st-new{border-left-color:var(--red);}
   .card.st-contacted{border-left-color:var(--blue);}
-  .card.st-trial{border-left-color:var(--lime); background:linear-gradient(135deg, rgba(212,245,60,0.05), var(--black3) 60%);}
-  .card.st-won{border-left-color:var(--green); background:linear-gradient(135deg, rgba(57,217,138,0.07), var(--black3) 60%);}
-  .card.st-lost{border-left-color:var(--text3); opacity:.6;}
-  .card .other-trainer{font-size:10.5px; font-weight:700; letter-spacing:.03em; color:var(--lime); text-transform:uppercase; margin-bottom:4px;}
-  .card .name{font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:.5px; color:#fff; margin-bottom:2px;}
-  .card .meta{font-size:11px; color:var(--text3); margin-bottom:8px;}
-  .chips{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;}
-  .chip{
-    font-size:10.5px; font-weight:600; padding:3px 9px; border-radius:20px; border:1px solid var(--border2);
-    color:var(--text2); background:var(--black4); white-space:nowrap;
-  }
-  .chip.reason{color:var(--text2);}
-  .chip.pref-m{color:var(--blue); border-color:rgba(95,168,224,0.3); background:var(--blue2);}
-  .chip.pref-f{color:#e08fd6; border-color:rgba(224,143,214,0.3); background:rgba(224,143,214,0.1);}
-  .chip.pref-any{color:var(--text2);}
-  .chip.time{color:var(--lime); border-color:rgba(212,245,60,0.25); background:var(--lime4);}
-  .chip.injury{color:var(--red); border-color:rgba(255,68,68,0.3); background:var(--red2);}
-  .detail-line{font-size:11.5px; color:var(--text2); margin-bottom:3px; line-height:1.4;}
-  .detail-line b{color:var(--text); font-weight:600;}
-  .age{font-size:11px; font-weight:700; margin:8px 0; letter-spacing:.02em;}
+  .card.st-trial{border-left-color:var(--olive);}
+  .card.st-won{border-left-color:var(--green);}
+  .card.st-lost{border-left-color:var(--line2); opacity:.65;}
+  .card .other-trainer{font-size:11px; font-weight:600; letter-spacing:.06em; color:var(--olive); text-transform:uppercase; margin-bottom:4px;}
+  .card .name{font-size:15.5px; font-weight:600; color:var(--ink); letter-spacing:-.01em; margin-bottom:2px;}
+  .card .meta{font-size:12.5px; color:var(--muted); margin-bottom:2px; word-break:break-word;}
+  .card .meta a:hover{color:var(--ink);}
+  .card .meta.src{font-size:11.5px; color:var(--faint); margin-bottom:10px;}
+  .chips{display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 10px;}
+  .chip{font-size:11.5px; font-weight:500; padding:3px 9px; border-radius:999px; color:var(--body); background:#F1F1EE; white-space:nowrap;}
+  .chip.pref-m{color:var(--blue); background:var(--blue-bg);}
+  .chip.pref-f{color:var(--pink); background:var(--pink-bg);}
+  .chip.time{color:var(--olive); background:var(--olive-bg);}
+  .chip.injury{color:var(--red); background:var(--red-bg);}
+  .detail-line{font-size:13px; color:var(--body); margin-bottom:4px; line-height:1.45;}
+  .detail-line b{color:var(--muted); font-weight:500;}
+  .age{font-size:12px; font-weight:500; margin:10px 0 10px;}
   .age.overdue{color:var(--red);}
-  .age.ok{color:var(--text3);}
-  .card select, .card textarea{width:100%; margin-bottom:6px; font-size:12px; padding:7px 10px;}
-  .card textarea{resize:vertical; min-height:40px;}
+  .age.ok{color:var(--muted);}
+  .card select, .card textarea{width:100%; margin-bottom:6px; font-size:13px; padding:8px 10px;}
+  .card select{padding-right:28px;}
+  .card textarea{resize:vertical; min-height:42px; background:#FAFAF8;}
   .card .row2{display:flex; gap:6px;}
-  .card .row2 select{flex:1;}
-  .card .quick-contacted-btn{width:100%; margin-bottom:6px; background:var(--blue2); border-color:var(--blue); color:var(--blue); font-size:12px; padding:7px 10px;}
-  .card .quick-contacted-btn:hover{background:var(--blue); color:var(--black);}
-  .empty-hint{font-size:12px; color:var(--text3); text-align:center; padding:20px 8px;}
-  .modal-bg{
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); align-items:center; justify-content:center; z-index:50;
+  .card .row2 select{flex:1; min-width:0;}
+  .card .quick-contacted-btn{
+    width:100%; margin-bottom:6px; background:var(--black); border-color:var(--black); color:var(--lime);
+    font-size:13px; font-weight:600; padding:9px 10px; border-radius:999px;
   }
-  .modal-bg.open{display:flex;}
-  .modal{background:var(--black2); border:1px solid var(--border2); border-radius:var(--r); padding:20px; width:380px; max-width:90vw; max-height:85vh; overflow-y:auto;}
-  .modal h2{margin:0 0 14px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.5px; color:#fff;}
-  .modal label{font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:.04em; font-weight:600; display:block; margin:10px 0 4px;}
-  .modal input, .modal select, .modal textarea{width:100%;}
-  .modal .actions{display:flex; justify-content:flex-end; gap:8px; margin-top:18px;}
-  #configBanner{
-    display:none; background:var(--amber2); border:1px solid rgba(255,176,32,0.3); color:var(--amber); padding:9px 24px; font-size:12px;
-  }
-  #configBanner.show{display:block;}
-  a{color:var(--lime);}
-  .footer-note{padding:6px 24px 24px; font-size:11px; color:var(--text3);}
-  ::-webkit-scrollbar{height:8px; width:8px;}
-  ::-webkit-scrollbar-thumb{background:var(--border3); border-radius:8px;}
+  .card .quick-contacted-btn:hover{filter:brightness(1.3);}
+  .empty-hint{font-size:13px; color:var(--faint); text-align:center; padding:22px 8px;}
 
-  /* Trainer's own private, filtered view (?t=&k= in the URL) — no board,
-     no other trainers, no admin controls, just their own leads. */
+  .modal-bg{display:none; position:fixed; inset:0; background:rgba(10,10,10,.45); align-items:center; justify-content:center; z-index:50; padding:16px;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--card); border-radius:18px; width:420px; max-width:100%; max-height:88vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,.2);}
+  .modal-head{background:var(--black); padding:14px 22px; display:flex; align-items:center; justify-content:space-between;}
+  .modal-head img{height:20px;}
+  .modal-head span{color:#8C8C86; font-size:11px; letter-spacing:.1em; text-transform:uppercase;}
+  .modal-body{padding:22px; overflow-y:auto;}
+  .modal h2{margin:0 0 6px; font-size:20px; font-weight:700; letter-spacing:-.01em; color:var(--ink);}
+  .modal label{font-size:13px; color:var(--ink); font-weight:500; display:block; margin:14px 0 6px;}
+  .modal input, .modal select, .modal textarea{width:100%; font-size:14px; padding:11px 12px;}
+  .modal .actions{display:flex; justify-content:flex-end; gap:8px; margin-top:22px;}
+  #configBanner{display:none; background:var(--amber-bg); color:var(--amber); padding:10px 24px; font-size:13px;}
+  #configBanner.show{display:block;}
+  .footer-note{padding:4px 24px 32px; font-size:12.5px; color:var(--muted); max-width:760px;}
+  ::-webkit-scrollbar{height:8px; width:8px;}
+  ::-webkit-scrollbar-thumb{background:#CFCFC9; border-radius:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+
+  /* Trainer's own private view */
   body.trainer-mode #searchBox,
   body.trainer-mode #archiveToggleBtn,
   body.trainer-mode #newLeadBtn,
   body.trainer-mode .admin-only,
   body.trainer-mode #mobileNav{display:none;}
+  body.trainer-mode .greeting-bar, body.trainer-mode .section-label, body.trainer-mode .footer-note{max-width:688px; margin-left:auto; margin-right:auto;}
   body.trainer-mode #board{justify-content:center;}
-  body.trainer-mode .column{max-width:640px; flex:1 1 640px;}
-  body.trainer-mode .card{cursor:default;}
-  body.trainer-mode .meta a{color:var(--text2); text-decoration:none;}
-  body.trainer-mode .meta a:hover{color:var(--lime);}
+  body.trainer-mode .column{max-width:640px; flex:1 1 640px; max-height:none; background:transparent; border:0;}
+  body.trainer-mode .column-head{background:transparent; padding:6px 2px 10px; border:0;}
+  body.trainer-mode .column-body{padding:12px 0;}
+  body.trainer-mode .card{cursor:default; padding:18px 18px 14px;}
+  body.trainer-mode .card .name{font-size:17px;}
 
-  .trainer-tabs{display:flex; gap:6px; flex-wrap:wrap; padding:10px 14px 12px; border-bottom:1px solid var(--border);}
+  .trainer-tabs{display:flex; gap:6px; flex-wrap:wrap; padding:0 0 4px;}
   .trainer-tab{
-    display:inline-flex; align-items:center; gap:6px; font-family:'DM Sans',sans-serif; font-size:11.5px; font-weight:700;
-    letter-spacing:.02em; padding:6px 12px; border-radius:20px; border:1px solid var(--border2);
-    background:var(--black4); color:var(--text2); cursor:pointer; transition:all .15s;
+    display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:500;
+    padding:7px 13px; border-radius:999px; border:1px solid var(--line2); background:var(--card); color:var(--body);
   }
-  .trainer-tab .tab-count{
-    font-size:10px; font-weight:800; background:rgba(255,255,255,0.12); border-radius:20px; padding:1px 6px; color:var(--text);
-  }
-  .trainer-tab.st-new{border-color:rgba(255,68,68,0.3);}
-  .trainer-tab.st-new.active{background:var(--red2); border-color:var(--red); color:var(--red);}
-  .trainer-tab.st-contacted{border-color:rgba(95,168,224,0.3);}
-  .trainer-tab.st-contacted.active{background:var(--blue2); border-color:var(--blue); color:var(--blue);}
-  .trainer-tab.st-trial{border-color:rgba(212,245,60,0.3);}
-  .trainer-tab.st-trial.active{background:var(--lime4); border-color:var(--lime); color:var(--lime);}
-  .trainer-tab.st-won{border-color:rgba(57,217,138,0.3);}
-  .trainer-tab.st-won.active{background:var(--green2); border-color:var(--green); color:var(--green);}
-  .trainer-tab.st-lost{opacity:.75;}
-  .trainer-tab.st-lost.active{background:var(--black4); border-color:var(--text3); color:var(--text); opacity:1;}
+  .trainer-tab .tab-count{font-size:11px; font-weight:600; background:#F1F1EE; border-radius:999px; padding:0 7px; color:var(--body);}
+  .trainer-tab:hover{border-color:var(--faint);}
+  .trainer-tab.active{background:var(--black); border-color:var(--black); color:#fff;}
+  .trainer-tab.active .tab-count{background:var(--lime); color:var(--black);}
 
   .mobile-nav{display:none;}
   @media (max-width:760px){
-    body{padding-bottom:74px;}
-    header{padding:14px 16px;}
-    .greeting-bar{padding:14px 16px 2px;}
-    .greeting-text{font-size:23px;}
-    .summary-bar{padding:12px 16px 0;}
+    body{padding-bottom:78px;}
+    header{padding:12px 16px;}
+    header .controls{width:100%;}
+    header input{flex:1 1 100%; min-width:0;}
+    header .controls button{flex:1;}
+    #newLeadBtn{display:none;}
+    .greeting-bar{padding:22px 16px 2px;}
+    .greeting-text{font-size:22px;}
+    .summary-bar, body.trainer-mode .summary-bar{grid-template-columns:repeat(2,1fr); padding:14px 16px 0;}
     .section-label{padding:0 16px;}
-    .attention-row, .workload-row{padding:10px 16px 6px;}
-    .footer-note{padding:6px 16px 20px;}
-    #board{padding:16px 16px 20px; scroll-snap-type:x mandatory;}
+    .attention-row, .workload-row{padding:10px 16px 8px; scroll-padding:0 16px;}
+    .footer-note{padding:4px 16px 24px;}
+    #board{padding:10px 16px 20px; scroll-snap-type:x mandatory; scroll-padding:0 16px;}
     .column{min-width:86vw; max-width:90vw; flex:1 0 86vw; scroll-snap-align:start; max-height:none;}
-    .stat-card{min-width:calc(50% - 6px);}
+    body.trainer-mode .column{min-width:0; max-width:100%; flex:1 1 100%;}
     .mobile-nav{
       display:flex; position:fixed; bottom:0; left:0; right:0; z-index:45;
-      background:rgba(10,10,10,0.96); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      border-top:1px solid var(--border); padding:7px 4px calc(6px + env(safe-area-inset-bottom));
-      justify-content:space-around;
+      background:var(--black); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); justify-content:space-around;
     }
-    .mobile-nav button{
-      background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px;
-      font-size:18px; color:var(--text2); padding:5px 12px; border-radius:10px;
-    }
-    .mobile-nav button span{font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--text3);}
-    .mobile-nav button:active{background:var(--black4);}
+    .mobile-nav button{background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:4px; color:#D6D6D0; padding:4px 12px; font-size:11px; font-weight:500;}
+    .mobile-nav button svg{width:20px; height:20px;}
+    .mobile-nav button.new{color:var(--lime);}
   }
 </style>
 </head>
@@ -285,21 +259,22 @@
 
 <header>
   <div class="brand">
-    <span class="m2logo">M2</span>
-    <span class="brand-sep"></span>
+    <img src="/assets/M2_ICON_YELLOW%20(5).png" alt="M2">
     <span class="brand-sub">PT Lead System</span>
   </div>
   <div class="controls">
-    <input id="searchBox" type="text" placeholder="Search name / phone / email...">
+    <input id="searchBox" type="text" placeholder="Search name, phone or email">
     <button class="ghost" id="archiveToggleBtn">Show archived</button>
     <button class="ghost" id="refreshBtn">Refresh</button>
-    <button class="primary" id="newLeadBtn">+ New Lead</button>
+    <button class="primary" id="newLeadBtn">+ New lead</button>
   </div>
 </header>
 <div id="status-msg">Loading leads...</div>
 
+<div class="wrap">
 <div class="greeting-bar">
   <div>
+    <div class="greeting-label" id="greetingLabel">PT leads</div>
     <div class="greeting-text" id="greetingText">Hey, Tim</div>
     <div class="greeting-sub" id="greetingSub">Loading leads&hellip;</div>
   </div>
@@ -309,31 +284,34 @@
 <div id="summaryBar" class="summary-bar"></div>
 
 <div class="section-row admin-only">
-  <div class="section-label"><span class="ic">&#128680;</span> Needs Attention</div>
+  <div class="section-label">Needs attention</div>
   <div id="attentionRow" class="attention-row"></div>
 </div>
 
 <div class="section-row admin-only">
-  <div class="section-label"><span class="ic">&#128170;</span> Trainer Workload</div>
+  <div class="section-label">Trainer workload</div>
   <div id="workloadRow" class="workload-row"></div>
 </div>
 
-<div class="section-row">
-  <div class="section-label"><span class="ic">&#128203;</span> <span id="boardLabelText">Full Board</span></div>
+<div class="section-row board-label-row">
+  <div class="section-label"><span id="boardLabelText">Full board</span></div>
 </div>
 <div id="board"></div>
 
-<div class="footer-note" id="footerNote">Leads flow in automatically from the GymMaster "Free PT" questionnaire &middot; drag a card into a trainer's column (or use the dropdown) to assign it &mdash; the trainer gets emailed the lead's details instantly.</div>
+<div class="footer-note" id="footerNote">New bookings from m2club.co.nz/free-pt.html land in Unassigned automatically. Drag a card into a trainer's column, or use the dropdown, to assign it. The trainer gets emailed the lead's details straight away.</div>
+</div>
 
 <nav class="mobile-nav" id="mobileNav">
-  <button data-scroll="attentionRow">&#128680;<span>Attention</span></button>
-  <button data-scroll="workloadRow">&#128170;<span>Team</span></button>
-  <button data-scroll="board">&#128203;<span>Board</span></button>
-  <button id="mobileNewBtn">&#65291;<span>New</span></button>
+  <button data-scroll="attentionRow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Attention</button>
+  <button data-scroll="workloadRow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.8a3.5 3.5 0 010 6.4M18.5 14.8c1.6.8 2.6 2.6 3 5.2"/></svg>Team</button>
+  <button data-scroll="board"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></svg>Board</button>
+  <button id="mobileNewBtn" class="new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New</button>
 </nav>
 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
+    <div class="modal-head"><img src="/assets/M2_ICON_YELLOW%20(5).png" alt="M2"><span>New lead</span></div>
+    <div class="modal-body">
     <h2>Add a lead manually</h2>
     <label>Name</label>
     <input id="mName" type="text">
@@ -377,6 +355,7 @@
     <div class="actions">
       <button class="ghost" id="mCancel">Cancel</button>
       <button class="primary" id="mSave">Save lead</button>
+    </div>
     </div>
   </div>
 </div>
@@ -443,7 +422,7 @@ function $(id){ return document.getElementById(id); }
 
 // Deterministic avatar colour + initials so a given trainer/lead always
 // gets the same look across the attention row, workload chips and board.
-const AVATAR_COLORS = ["var(--lime)","var(--blue)","var(--amber)","var(--purple)","var(--teal)","var(--pink)","var(--green)"];
+const AVATAR_COLORS = ["var(--av1)","var(--av2)","var(--av3)","var(--av4)","var(--av5)","var(--av6)","var(--av7)"];
 function avatarColor(name){
   let h = 0;
   const s = name || "";
@@ -487,14 +466,15 @@ function statusMeta(status){
 function init(){
   if(TRAINER_MODE){
     document.body.classList.add("trainer-mode");
-    $("boardLabelText").textContent = "My Leads";
-    $("footerNote").textContent = "This is your private lead list — only you can see it. Update the status and add notes as you follow up; Tim and Taylor can see your notes on the main board.";
+    $("boardLabelText").textContent = "My leads";
+    $("greetingLabel").textContent = "Your PT leads";
+    $("footerNote").textContent = "This is your private lead list, only you can see it. Update the status and add notes as you follow up. Tim and Taylor can see your notes on the main board.";
   }
   $("greetingText").textContent = greetingText(TRAINER_MODE ? TRAINER_NAME : "Tim");
 
   if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
     $("configBanner").classList.add("show");
-    setStatus("Not connected — showing sample data only.", true);
+    setStatus("Not connected, showing sample data only.", true);
     leads = TRAINER_MODE ? sampleData().filter(l => l.trainer === TRAINER_NAME) : sampleData();
     render();
     return;
@@ -576,7 +556,7 @@ async function fetchLeads(){
     const data = await res.json();
     if(data.error){
       leads = [];
-      setStatus(data.error === "Not authorized" ? "This link isn't valid — ask Tim or Taylor for a new one." : data.error, true);
+      setStatus(data.error === "Not authorized" ? "This link isn't valid. Ask Tim or Taylor for a new one." : data.error, true);
       render();
       return;
     }
@@ -584,7 +564,7 @@ async function fetchLeads(){
     setStatus("Updated " + new Date().toLocaleTimeString(), false);
     render();
   }catch(err){
-    setStatus("Couldn't reach the lead sheet — check your connection.", true);
+    setStatus("Couldn't reach the lead sheet. Check your connection.", true);
     console.error(err);
   }
 }
@@ -603,7 +583,7 @@ async function postAction(payload){
     await fetchLeads();
   }catch(err){
     console.error(err);
-    setStatus("Save failed — check your connection and try again.", true);
+    setStatus("Save failed. Check your connection and try again.", true);
   }
 }
 
@@ -625,7 +605,7 @@ async function postMine(payload){
     await fetchLeads();
   }catch(err){
     console.error(err);
-    setStatus("Save failed — check your connection and try again.", true);
+    setStatus("Save failed. Check your connection and try again.", true);
   }
 }
 
@@ -669,24 +649,20 @@ function renderSummary(){
   const s = computeStats();
   $("summaryBar").innerHTML = `
     <div class="stat-card ${s.unassignedCount>0?'urgent':''}">
-      <div class="stat-icon">&#127919;</div>
       <div class="stat-num">${s.unassignedCount}</div>
       <div class="stat-label">Unassigned</div>
     </div>
     <div class="stat-card ${s.overdueCount>0?'urgent':''}">
-      <div class="stat-icon">&#9200;</div>
       <div class="stat-num">${s.overdueCount}</div>
-      <div class="stat-label">Overdue Follow-up</div>
+      <div class="stat-label">Overdue follow-up</div>
     </div>
     <div class="stat-card type-active">
-      <div class="stat-icon">&#128203;</div>
       <div class="stat-num">${s.activeCount}</div>
-      <div class="stat-label">Active In Pipeline</div>
+      <div class="stat-label">Active in pipeline</div>
     </div>
     <div class="stat-card type-week">
-      <div class="stat-icon">&#127881;</div>
       <div class="stat-num">${s.weekCount}</div>
-      <div class="stat-label">New This Week</div>
+      <div class="stat-label">New this week</div>
     </div>
   `;
 }
@@ -719,8 +695,7 @@ function renderAttentionCard_(l){
   card.className = "attention-card";
   const age = ageLabel(l.receivedAt);
   const reason = !l.trainer ? "Unassigned" : "Overdue follow-up";
-  const icon = !l.trainer ? "&#127919;" : "&#9200;";
-  const name = l.name || "(no name)";
+    const name = l.name || "(no name)";
 
   const trainerSelect = document.createElement("select");
   const noneOpt = document.createElement("option");
@@ -741,7 +716,7 @@ function renderAttentionCard_(l){
       <div class="avatar" style="background:${avatarColor(name)}">${initials(name)}</div>
       <div>
         <div class="a-name">${escapeHtml(name)}</div>
-        <div class="a-reason-badge">${icon} ${reason} &middot; ${age.text}</div>
+        <div class="a-reason-badge">${reason} &middot; ${age.text}</div>
       </div>
     </div>
   `;
@@ -866,14 +841,12 @@ function renderTrainerView(){
 
   $("summaryBar").innerHTML = `
     <div class="stat-card ${overdue.length>0?'urgent':''}">
-      <div class="stat-icon">&#9200;</div>
       <div class="stat-num">${overdue.length}</div>
-      <div class="stat-label">Need Follow-up</div>
+      <div class="stat-label">Need follow-up</div>
     </div>
     <div class="stat-card type-active">
-      <div class="stat-icon">&#128203;</div>
       <div class="stat-num">${active.length}</div>
-      <div class="stat-label">Active Leads</div>
+      <div class="stat-label">Active leads</div>
     </div>
   `;
 
@@ -886,7 +859,7 @@ function renderTrainerView(){
   const colEl = document.createElement("div");
   colEl.className = "column";
   colEl.innerHTML = `
-    <div class="column-head"><span class="ch-left"><span>My Leads</span></span><span class="count">${mine.length}</span></div>
+    <div class="column-head"><span class="ch-left"><span>My leads</span></span><span class="count">${mine.length}</span></div>
     <div class="trainer-tabs" id="trainerTabsRow"></div>
     <div class="column-body" id="myLeadsBody"></div>
   `;
@@ -964,7 +937,7 @@ function renderTrainerCard_(l){
     </div>
     <div class="chips">${chips}</div>
     ${details}
-    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " — follow up!" : ""}</div>
+    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " · follow up" : ""}</div>
   `;
   card.appendChild(statusSelect);
   card.appendChild(notes);
@@ -1035,11 +1008,12 @@ function renderCard(l, showTrainerLabel){
   card.innerHTML = `
     ${otherLabel}
     <div class="name">${escapeHtml(l.name||"(no name)")}</div>
-    <div class="meta">${escapeHtml(l.phone||"")} ${l.phone && l.email ? "&middot;" : ""} ${escapeHtml(l.email||"")}</div>
-    <div class="meta">Source: ${escapeHtml(l.source||"Manual")}</div>
+    <div class="meta">${l.phone ? `<a href="tel:${escapeHtml(l.phone)}">${escapeHtml(l.phone)}</a>` : ""}</div>
+    ${l.email ? `<div class="meta"><a href="mailto:${escapeHtml(l.email)}">${escapeHtml(l.email)}</a></div>` : ""}
+    <div class="meta src">Source: ${escapeHtml(l.source||"Manual")}</div>
     <div class="chips">${chips}</div>
     ${details}
-    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " — follow up!" : ""}</div>
+    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " · follow up" : ""}</div>
   `;
   const row2 = document.createElement("div");
   row2.className = "row2";
@@ -1055,7 +1029,7 @@ function renderCard(l, showTrainerLabel){
     const contactedBtn = document.createElement("button");
     contactedBtn.type = "button";
     contactedBtn.className = "quick-contacted-btn";
-    contactedBtn.textContent = "\u2713 Mark Contacted";
+    contactedBtn.textContent = "Mark as contacted";
     contactedBtn.addEventListener("click", () => {
       postAction({action:"updateLead", id:l.id, status:"Contacted", trainer: l.trainer||""});
     });
