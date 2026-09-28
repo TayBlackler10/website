@@ -14,6 +14,7 @@
 <title>M2 Command Centre</title>
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>window.M2_ON_WORKER = /workers\.dev$/.test(location.hostname) || /^cc\./.test(location.hostname);</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -288,6 +289,32 @@ button,a{-webkit-tap-highlight-color:transparent}
   #todo-live-strip{gap:12px;padding:12px 14px}
   footer{padding:28px 16px 24px}
 }
+
+/* ── TODAY (phone-first home) ── */
+.today-greet{font-size:13px;color:var(--m);margin-bottom:2px}
+.today-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 22px}
+.tile{background:var(--card);border-radius:var(--rad);box-shadow:var(--shadow);padding:18px;cursor:pointer;border:1px solid transparent;transition:border-color .15s;text-align:left;font-family:inherit;display:block;width:100%}
+.tile:hover{border-color:var(--br3)}
+.tile-l{font-size:12.5px;color:var(--m);font-weight:500;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tile-v{font-size:34px;font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.1;margin:8px 0 4px}
+.tile-s{font-size:12.5px;color:var(--m);line-height:1.4}
+.tile-v.g{color:var(--g)}.tile-v.r{color:var(--r)}
+.tile .dot{width:6px;height:6px;border-radius:50%;background:var(--g);display:inline-block}
+.tile .dot.off{background:#C9C9C3}
+.attn{background:var(--card);border-radius:var(--rad);box-shadow:var(--shadow);padding:6px 18px;margin-bottom:22px}
+.attn-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--br2);cursor:pointer}
+.attn-row:last-child{border-bottom:none}
+.attn-t{font-size:14px;color:var(--ink)}
+.attn-n{font-size:14px;font-weight:600;white-space:nowrap}
+.jump{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.jump button{background:var(--card);border:1px solid var(--br2);border-radius:10px;padding:12px;font-family:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;text-align:left}
+.jump button:hover{border-color:var(--black)}
+@media(max-width:768px){
+  .today-grid{grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 18px}
+  .tile{padding:14px}
+  .tile-v{font-size:27px}
+  .jump{grid-template-columns:1fr 1fr}
+}
 .kv{font-size:30px!important}@media(max-width:768px){.kv{font-size:24px!important}}
 </style>
 </head>
@@ -318,11 +345,11 @@ button,a{-webkit-tap-highlight-color:transparent}
       <span class="nav-icon">🏠</span> Home <span class="arrow">▼</span>
     </button>
     <div class="nav-dropdown" id="nav-dd-overview">
-      <button class="nav-dd-item active" id="dd-overview" onclick="showSection('overview');closeNav()"><span class="dd-icon">📊</span>Dashboard Overview</button>
+      <button class="nav-dd-item active" id="dd-today" onclick="showSection('today');closeNav()"><span class="dd-icon"></span>Today</button>
+      <button class="nav-dd-item" id="dd-overview" onclick="showSection('overview');closeNav()"><span class="dd-icon">📊</span>Dashboard Overview</button>
       <button class="nav-dd-item" id="dd-todo" onclick="showSection('todo');closeNav()"><span class="dd-icon">✅</span>Daily To Do</button>
       <button class="nav-dd-item" id="dd-scorecard" onclick="showSection('scorecard');closeNav()"><span class="dd-icon">📋</span>Weekly Scorecard</button>
       <button class="nav-dd-item" id="dd-goals" onclick="showSection('goals');closeNav()"><span class="dd-icon">🎯</span>Goals & Milestones</button>
-      <button class="nav-dd-item" id="dd-notes" onclick="showSection('notes');closeNav()"><span class="dd-icon">📝</span>Strategy Notes</button>
     </div>
   </div>
 
@@ -347,10 +374,7 @@ button,a{-webkit-tap-highlight-color:transparent}
     </button>
     <div class="nav-dropdown" id="nav-dd-marketing">
       <button class="nav-dd-item" id="dd-meta" onclick="showSection('meta');closeNav()"><span class="dd-icon">📘</span>Meta Ads</button>
-      <button class="nav-dd-item" id="dd-campaigns" onclick="showSection('campaigns');closeNav()"><span class="dd-icon">🚀</span>Campaigns</button>
       <button class="nav-dd-item" id="dd-pt" onclick="showSection('pt');closeNav()"><span class="dd-icon">💪</span>PT Leads</button>
-      <button class="nav-dd-item" id="dd-calendar" onclick="showSection('calendar');closeNav()"><span class="dd-icon">📅</span>Social Calendar</button>
-      <button class="nav-dd-item" id="dd-content" onclick="showSection('content');closeNav()"><span class="dd-icon">🎬</span>Content Pipeline</button>
       <button class="nav-dd-item" id="dd-seo" onclick="showSection('seo');closeNav()"><span class="dd-icon">🔍</span>SEO & Website</button>
       <button class="nav-dd-item" id="dd-competitors" onclick="showSection('competitors');closeNav()"><span class="dd-icon">🥊</span>Competitors</button>
     </div>
@@ -373,6 +397,38 @@ button,a{-webkit-tap-highlight-color:transparent}
 
 <!-- Click outside to close -->
 <div id="nav-overlay" style="display:none;position:fixed;inset:0;z-index:98" onclick="closeNav()"></div>
+
+<!-- ===== TODAY ===== -->
+<div id="s-today" class="section on">
+  <div class="today-greet" id="today-date"></div>
+  <div class="section-title" id="today-hello">Morning, Taylor</div>
+
+  <div class="today-grid">
+    <button class="tile" onclick="showSection('members')"><div class="tile-l">Members <span class="dot off" id="td-dot-mem"></span></div><div class="tile-v" id="td-mem">–</div><div class="tile-s" id="td-mem-s">GymMaster</div></button>
+    <button class="tile" onclick="showSection('overview')"><div class="tile-l">Visits today <span class="dot off" id="td-dot-vis"></span></div><div class="tile-v" id="td-vis">–</div><div class="tile-s" id="td-vis-s">GymMaster</div></button>
+    <button class="tile" onclick="showSection('trials')"><div class="tile-l">Trials this month <span class="dot off" id="td-dot-tri"></span></div><div class="tile-v" id="td-tri">–</div><div class="tile-s" id="td-tri-s">GymMaster</div></button>
+    <button class="tile" onclick="showSection('pt')"><div class="tile-l">PT leads waiting <span class="dot off" id="td-dot-pt"></span></div><div class="tile-v r" id="td-pt">–</div><div class="tile-s" id="td-pt-s">PT Leads sheet</div></button>
+    <button class="tile" onclick="showSection('pnl')"><div class="tile-l">Cash in bank <span class="dot off" id="td-dot-cash"></span></div><div class="tile-v" id="td-cash">$10.9K</div><div class="tile-s" id="td-cash-s">Xero, 28 Sep</div></button>
+    <button class="tile" onclick="showSection('pnl')"><div class="tile-l">Profit this month <span class="dot off" id="td-dot-np"></span></div><div class="tile-v g" id="td-np">+$14.2K</div><div class="tile-s" id="td-np-s">Xero, 1 to 28 Sep</div></button>
+  </div>
+
+  <div class="ct" style="margin-bottom:10px">Needs attention</div>
+  <div class="attn" id="td-attn">
+    <div class="attn-row"><span class="attn-t" style="color:var(--m)">Checking...</span></div>
+  </div>
+
+  <div class="ct" style="margin-bottom:10px">Everything else</div>
+  <div class="jump">
+    <button onclick="showSection('overview')">Business overview</button>
+    <button onclick="showSection('todo')">Daily to do</button>
+    <button onclick="showSection('pt')">PT leads</button>
+    <button onclick="showSection('meta')">Meta ads</button>
+    <button onclick="showSection('retention')">Retention</button>
+    <button onclick="showSection('passport')">Fitness Passport</button>
+    <button onclick="showSection('pnl')">Profit &amp; loss</button>
+    <button onclick="showSection('membersplit')">Membership split</button>
+  </div>
+</div>
 
 <!-- ===== TO DO LIST ===== -->
 <div id="s-todo" class="section">
@@ -477,7 +533,7 @@ button,a{-webkit-tap-highlight-color:transparent}
 </div>
 
 <!-- ===== OVERVIEW ===== -->
-<div id="s-overview" class="section on">
+<div id="s-overview" class="section">
   <div class="section-title">Business Overview</div>
   <div class="section-sub">M2 Training Club · Grafton, Auckland · <span id="overview-updated" style="color:var(--g)">Loading live data...</span></div>
 
@@ -1666,85 +1722,8 @@ button,a{-webkit-tap-highlight-color:transparent}
 </div>
 
 <!-- ===== SOCIAL CALENDAR ===== -->
-<div id="s-calendar" class="section">
-  <div class="section-title">Social Media Calendar</div>
-  <div class="section-sub">Click any day to add a post · Colour coded by type · Navigate months with arrows</div>
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-    <button class="btn-ghost" onclick="prevMonth()">← Prev</button>
-    <div style="font-weight:700;letter-spacing:-.02em;font-size:22px;color:var(--y);letter-spacing:2px" id="cal-title"></div>
-    <button class="btn-ghost" onclick="nextMonth()">Next →</button>
-    <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
-      <span style="font-size:10px;background:rgba(107,122,30,.15);color:var(--y);padding:3px 8px;border-radius:4px">Reel</span>
-      <span style="font-size:10px;background:rgba(17,17,17,.1);color:var(--blue);padding:3px 8px;border-radius:4px">Story</span>
-      <span style="font-size:10px;background:rgba(17,17,17,.15);color:var(--purple);padding:3px 8px;border-radius:4px">Carousel</span>
-      <span style="font-size:10px;background:rgba(107,122,30,.15);color:var(--g);padding:3px 8px;border-radius:4px">Static</span>
-      <span style="font-size:10px;background:rgba(17,17,17,.15);color:var(--r);padding:3px 8px;border-radius:4px">Meta Ad</span>
-    </div>
-  </div>
-
-  <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px"></div>
-
-  <!-- Add post modal -->
-  <div id="cal-modal" style="display:none;background:var(--s);border:1px solid var(--br);border-radius:4px;padding:16px;margin-bottom:12px">
-    <div class="ct" id="cal-modal-title">Add post</div>
-    <div class="three" style="margin-bottom:10px">
-      <div><div class="inp-lbl">Type</div>
-        <select class="inp" id="cal-type">
-          <option value="Reel">Reel</option>
-          <option value="Story">Story</option>
-          <option value="Carousel">Carousel</option>
-          <option value="Static">Static</option>
-          <option value="Meta Ad">Meta Ad</option>
-        </select>
-      </div>
-      <div><div class="inp-lbl">Platform</div>
-        <select class="inp" id="cal-platform">
-          <option>Instagram</option>
-          <option>Facebook</option>
-          <option>Both</option>
-        </select>
-      </div>
-      <div><div class="inp-lbl">Status</div>
-        <select class="inp" id="cal-status">
-          <option value="draft">Draft</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="posted">Posted</option>
-        </select>
-      </div>
-    </div>
-    <div style="margin-bottom:10px"><div class="inp-lbl">Caption / description</div><input class="inp" type="text" id="cal-caption" placeholder="e.g. Tay recovery reel  sauna + ice bath routine"></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn" onclick="savePost()">Save post</button>
-      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="ct">All posts this month</div>
-    <div id="cal-post-list"><div style="font-size:12px;color:var(--m);padding:8px 0">Click any day to add a post.</div></div>
-  </div>
-</div>
 
 <!-- ===== CAMPAIGN PLANNER ===== -->
-<div id="s-campaigns" class="section">
-  <div class="section-title">Campaign Planner</div>
-  <div class="section-sub">Plan and track campaigns · Click status badge to update · Pre-loaded with 5 priority campaigns</div>
-  <div class="add-row" style="margin-bottom:12px;flex-wrap:wrap">
-    <div style="flex:3;min-width:160px"><div class="inp-lbl">Campaign name</div><input class="inp" type="text" id="camp-name" placeholder="e.g. September Spring Push"></div>
-    <div style="flex:1;min-width:110px"><div class="inp-lbl">Objective</div>
-      <select class="inp" id="camp-obj"><option>Trial sign-ups</option><option>Member upsell</option><option>PT Course leads</option><option>Brand awareness</option><option>Referrals</option><option>Retention</option></select>
-    </div>
-    <div style="flex:1;min-width:110px"><div class="inp-lbl">Channel</div>
-      <select class="inp" id="camp-channel"><option>Meta Ads</option><option>Instagram Organic</option><option>Both</option><option>Email/SMS</option><option>In-gym</option></select>
-    </div>
-    <div style="flex:1;min-width:100px"><div class="inp-lbl">Start date</div><input class="inp" type="date" id="camp-start"></div>
-    <div style="flex:1;min-width:80px"><div class="inp-lbl">Budget ($)</div><input class="inp" type="number" id="camp-budget" placeholder="e.g. 1500"></div>
-    <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addCampaign()">+ Add</button></div>
-  </div>
-  <div id="camp-list">
-    <!-- Pre-populated with known planned campaigns -->
-  </div>
-</div>
 
 <!-- ===== PT PIPELINE ===== -->
 <div id="s-pt" class="section">
@@ -1840,7 +1819,8 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="row"><span class="rl">Instagram</span><a href="https://www.instagram.com/m2trainingclub/" target="_blank" style="color:var(--y);font-size:12px">@m2trainingclub ↗</a></div>
     </div>
     <div class="card">
-      <div class="ct">Website analytics <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px">GA4, 29 Aug to 27 Sep 2026</span></div>
+      <div class="ct">Website analytics <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;margin-left:8px"><span id="ga4-when">GA4, 29 Aug to 27 Sep 2026</span></span></div>
+      <div id="ga4-rows">
       <div class="row"><span class="rl">Total sessions, last 30 days</span><span class="rv">22,171 <span style="color:var(--g);font-weight:500">▲ 68% vs 13,226</span></span></div>
       <div class="row"><span class="rl">Paid Social</span><span class="rv">17,991 (81%) · 14% engaged</span></div>
       <div class="row"><span class="rl">Organic Search</span><span class="rv g">1,957 (9%) · 64% engaged</span></div>
@@ -1849,6 +1829,7 @@ button,a{-webkit-tap-highlight-color:transparent}
       <div class="row"><span class="rl">Key events (form sends, sign-ups)</span><span class="rv">522 · 232 referral, 151 organic, 25 paid</span></div>
       <div class="row"><span class="rl">Top landing pages</span><span class="rv" style="font-weight:400;font-size:13px">HYROX Auckland 7,575 · Home 6,754 · Trial sign-up 2,798 · Become a PT 1,979 · Fitness Passport 1,263</span></div>
       <div class="row"><span class="rl">Read</span><span class="rv" style="font-size:12.5px;font-weight:400;color:var(--t2);max-width:60%">Meta ads are driving most of the traffic but only 14% of those visits engage and they produced 25 key events. Organic and referral visitors are far fewer but convert much better. Worth checking the ad landing pages load fast and match the ad.</span></div>
+      </div>
       <div class="ct" style="margin-top:20px">Manual override, if needed</div>
       <div style="margin-bottom:8px"><div class="inp-lbl">Monthly sessions</div><input class="inp" type="number" id="seo-sessions" placeholder="e.g. 3200" oninput="saveSEO()"></div>
       <div style="margin-bottom:8px"><div class="inp-lbl">Avg session duration (sec)</div><input class="inp" type="number" id="seo-duration" placeholder="e.g. 95" oninput="saveSEO()"></div>
@@ -1893,33 +1874,16 @@ button,a{-webkit-tap-highlight-color:transparent}
 </div>
 
 <!-- ===== CONTENT ===== -->
-<div id="s-content" class="section">
-  <div class="section-title">Content Pipeline</div>
-  <div class="section-sub curmonth" data-tpl="{MY} · Tick off items as completed · Data saves in your browser">May 2026 · Tick off items as completed · Data saves in your browser</div>
-  <div class="add-row" style="margin-bottom:12px">
-    <div style="flex:3"><div class="inp-lbl">Content title</div><input class="inp" type="text" id="ct-title" placeholder="Content title..."></div>
-    <div style="flex:1"><div class="inp-lbl">Assignee</div>
-      <select class="inp" id="ct-who"><option>Taylor</option><option>Bekka</option><option>Tay</option><option>Videographer</option><option>Tim</option><option>Me</option></select>
-    </div>
-    <div style="flex:1"><div class="inp-lbl">Type</div>
-      <select class="inp" id="ct-type"><option>Reel</option><option>Story</option><option>Meta Ad</option><option>Graphic</option><option>Website</option></select>
-    </div>
-    <div style="display:flex;align-items:flex-end"><button class="btn" onclick="addContent()">+ Add</button></div>
-  </div>
-  <div class="card">
-    <div class="ct">To do <span id="ct-todo-count" style="background:rgba(107,122,30,.1);color:var(--y);font-size:9px;padding:1px 7px;border-radius:4px;margin-left:4px"></span></div>
-    <div id="ct-todo"></div>
-  </div>
-  <div class="card">
-    <div class="ct">Completed</div>
-    <div id="ct-done"></div>
-  </div>
-</div>
 
 <!-- ===== P&L DASHBOARD ===== -->
 <div id="s-pnl" class="section">
   <div class="section-title">Profit & Loss</div>
   <div class="section-sub">June 2025 to September 2026 (September to the 28th) · M2 Training Club Limited · pulled from Xero 28 Sep 2026</div>
+
+  <div class="card" id="xero-live" style="display:none;margin-bottom:16px">
+    <div class="ct">Live from Xero <span id="xero-live-when" style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11.5px;margin-left:6px"></span></div>
+    <div class="kg" style="margin-bottom:0" id="xero-live-kpis"></div>
+  </div>
 
   <div class="streak-badge">September is on track for a profitable month · Aug's $1,731 loss was a confirmed rent catch-up, not a trading dip</div>
 
@@ -2280,39 +2244,6 @@ button,a{-webkit-tap-highlight-color:transparent}
 </div>
 
 <!-- ===== NOTES ===== -->
-<div id="s-notes" class="section">
-  <div class="section-title">Strategy Notes</div>
-  <div class="section-sub">Weekly focus · Ideas · Retention · Competitor intel now lives under Marketing · All saves automatically in your browser</div>
-  <div class="two">
-    <div>
-      <div class="card">
-        <div class="ct">Weekly focus</div>
-        <textarea class="note-area" id="n-weekly" placeholder="This week's priorities..."></textarea>
-        <button class="save-btn" id="save-weekly" onclick="saveNote('weekly')">Save</button>
-      </div>
-      <div class="card">
-        <div class="ct">Campaign ideas</div>
-        <textarea class="note-area" id="n-ideas" placeholder="Ideas to test, future campaigns, creative angles..."></textarea>
-        <button class="save-btn" id="save-ideas" onclick="saveNote('ideas')">Save</button>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <div class="ct">Retention notes</div>
-        <textarea class="note-area" id="n-ret" placeholder="Follow-up plans, at-risk members, re-engagement..."></textarea>
-        <button class="save-btn" id="save-ret" onclick="saveNote('ret')">Save</button>
-      </div>
-    </div>
-  </div>
-  <div class="card" style="margin-top:4px">
-    <div class="ct">Quick links</div>
-    <div class="row"><span class="rl">Website</span><a href="https://m2club.co.nz" target="_blank" style="color:var(--y);font-size:12px">m2club.co.nz ↗</a></div>
-    <div class="row"><span class="rl">Instagram</span><a href="https://www.instagram.com/m2trainingclub/" target="_blank" style="color:var(--y);font-size:12px">@m2trainingclub ↗</a></div>
-    <div class="row"><span class="rl">GymMaster</span><a href="https://m2trainingclub.gymmasteronline.com" target="_blank" style="color:var(--y);font-size:12px">GymMaster Portal ↗</a></div>
-    <div class="row"><span class="rl">Trial sign-up page</span><a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" target="_blank" style="color:var(--y);font-size:12px">Free Trial Link ↗</a></div>
-    <div class="row"><span class="rl">Annual memberships</span><a href="https://m2club.co.nz/annual-memberships.html" target="_blank" style="color:var(--y);font-size:12px">Annual page ↗</a></div>
-  </div>
-</div>
 
 <!-- ===== COMPETITORS ===== -->
 <div id="s-competitors" class="section">
@@ -2480,6 +2411,10 @@ button,a{-webkit-tap-highlight-color:transparent}
 
 <!-- ===== MEMBERSHIP SPLIT ===== -->
 <div id="s-membersplit" class="section">
+  <div class="card" id="snap-card" style="display:none;margin-bottom:16px">
+    <div class="ct">Month-end snapshots <span style="color:var(--m);font-weight:400;text-transform:none;letter-spacing:0;font-size:11.5px;margin-left:6px">saved automatically every night, the last one each month is the month-end figure</span></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Month</th><th>Members</th><th>Visiting</th><th>New</th><th>Cancels</th><th>Visits</th><th>PT leads</th><th>Net profit</th><th>Cash</th></tr></thead><tbody id="snap-body"></tbody></table></div>
+  </div>
   <div class="section-title">Membership Split</div>
   <div class="section-sub">M2 Direct Members vs Fitness Passport · January 2025 to present - Historical data + live current month</div>
 
@@ -2602,7 +2537,7 @@ let ppBuilt = false;
 let msBlt = false;
 let msChart = null;
 const sectionToNav = {
-  overview:'overview', todo:'overview', goals:'overview', scorecard:'overview', notes:'overview',
+  today:'overview', overview:'overview', todo:'overview', goals:'overview', scorecard:'overview', notes:'overview',
   members:'members', trials:'members', retention:'members', passport:'members', membersplit:'members',
   meta:'marketing', campaigns:'marketing', calendar:'marketing', content:'marketing', seo:'marketing', pt:'marketing', competitors:'marketing',
   pnl:'finance', mrr:'finance', offers:'finance', financials:'finance'
@@ -2845,12 +2780,12 @@ function saveNote(key) {
 function loadNotes() {
   ['weekly','ideas','comp','ret'].forEach(k=>{
     const val = localStorage.getItem('m2-note-'+k);
-    if(val) document.getElementById('n-'+k).value = val;
+    const el=document.getElementById('n-'+k); if(val && el) el.value = val;
   });
 }
 
-loadContent();
-loadNotes();
+if(document.getElementById('content-list')||document.querySelector('#s-content')) loadContent();
+try{loadNotes();}catch(e){}
 
 // ── WEEKLY SCORECARD ──────────────────────────────────────
 let scorecards = JSON.parse(localStorage.getItem('m2-scorecards')||'[]');
@@ -2962,7 +2897,7 @@ function renderPostList(){
       <div style="font-size:11px">${statusDot[p.status]||''} ${p.status}</div>
     </div>`).join('');
 }
-renderCalendar();
+if(document.getElementById('cal-grid')) renderCalendar();
 
 // ── CAMPAIGN PLANNER ──────────────────────────────────────
 let campaigns=JSON.parse(localStorage.getItem('m2-campaigns')||'null');
@@ -3008,7 +2943,7 @@ function renderCampaigns(){
       ${c.notes?`<div style="margin-top:8px;font-size:11px;color:var(--m);border-top:1px solid rgba(0,0,0,.05);padding-top:8px">${c.notes}</div>`:''}
     </div>`).join('');
 }
-renderCampaigns();
+if(document.getElementById('camp-list')) renderCampaigns();
 
 // ── PT PIPELINE ───────────────────────────────────────────
 let ptLeads=JSON.parse(localStorage.getItem('m2-pt-leads')||'[]');
@@ -3098,7 +3033,7 @@ loadSEO();
 
 // ── GYMMASTER LIVE DATA ────────────────────────────────────
 // API key stored in localStorage  never in the public code
-const GM_BASE = 'https://m2-gymmaster.taylor-3e5.workers.dev';
+const GM_BASE = window.M2_ON_WORKER ? '/api/gm' : 'https://m2-gymmaster.taylor-3e5.workers.dev';
 
 // API key is held server-side in the Cloudflare Worker, not in this file.
 
@@ -4634,7 +4569,7 @@ async function _renderMemberSplit(dataset) {
 <script>
 /* ===== PT LEADS: live from the M2 PT Leads sheet (same Apps Script as M2_PT.html) ===== */
 (function(){
-  const PT_URL = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec?action=list";
+  const PT_URL = window.M2_ON_WORKER ? "/api/pt" : "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec?action=list";
   const STAGES = ["New","Contacted","Trial Booked","Won","Lost"];
   const COL = {"New":"var(--blue)","Contacted":"var(--y)","Trial Booked":"#A56A00","Won":"var(--g)","Lost":"var(--m)"};
   const $ = id => document.getElementById(id);
@@ -4656,8 +4591,12 @@ async function _renderMemberSplit(dataset) {
       const won = cnt("Won"), lost = cnt("Lost");
       $("ptl-month").textContent = thisM;
       $("ptl-month-sub").textContent = lastM + " last month";
-      $("ptl-unassigned").textContent = leads.filter(l => !l.trainer && l.status !== "Lost" && l.status !== "Won").length;
-      $("ptl-stale").textContent = leads.filter(l => l.status === "New" && Date.now() - rt(l) > 48*36e5).length;
+      const unassigned = leads.filter(l => !l.trainer && l.status !== "Lost" && l.status !== "Won").length;
+      const stale = leads.filter(l => l.status === "New" && Date.now() - rt(l) > 48*36e5).length;
+      $("ptl-unassigned").textContent = unassigned;
+      $("ptl-stale").textContent = stale;
+      window.M2_PT_STATS = {unassigned, stale, month: thisM, won};
+      document.dispatchEvent(new Event("m2-pt"));
       $("ptl-trial").textContent = cnt("Trial Booked");
       const wonM = leads.filter(l => l.status === "Won" && ut(l) >= mStart).length;
       $("ptl-won").textContent = wonM; $("ptl-won-sub").textContent = won + " won all time";
@@ -4678,6 +4617,91 @@ async function _renderMemberSplit(dataset) {
     }
   }
   load(); setInterval(load, 5*60*1000);
+})();
+</script>
+
+<script>
+/* ===== TODAY + LIVE XERO / GA4 / SNAPSHOTS ===== */
+(function(){
+  const $ = id => document.getElementById(id);
+  const ON = window.M2_ON_WORKER;
+  const GM = ON ? "/api/gm" : "https://m2-gymmaster.taylor-3e5.workers.dev";
+  const k = n => n>=1e6 ? "$"+(n/1e6).toFixed(2)+"M" : Math.abs(n)>=1000 ? (n<0?"-":"")+"$"+(Math.abs(n)/1000).toFixed(1)+"K" : "$"+Math.round(n);
+  const signed = n => (n>=0?"+":"")+k(n);
+  const live = id => { const d=$(id); if(d) d.classList.remove("off"); };
+  const now = new Date();
+  const h = now.getHours();
+  $("today-hello").textContent = (h<12?"Morning":h<17?"Afternoon":"Evening")+", Taylor";
+  $("today-date").textContent = now.toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"long"});
+
+  const gm = ep => fetch(`${GM}/?endpoint=${ep}`).then(r=>r.json()).then(d=>d.error?null:d.result).catch(()=>null);
+  const attn = [];
+  function drawAttn(){
+    const rows = attn.filter(a=>a.n>0).sort((a,b)=>b.w-a.w);
+    $("td-attn").innerHTML = rows.length ? rows.map(a=>`<div class="attn-row" onclick="showSection('${a.go}')"><span class="attn-t">${a.t}</span><span class="attn-n" style="color:${a.c||'var(--r)'}">${a.n}</span></div>`).join("") : '<div class="attn-row"><span class="attn-t" style="color:var(--m)">Nothing urgent right now.</span></div>';
+  }
+  attn.push({t:"Fitness Passport members with no visit this month (28 Sep export)", n:586, w:1, go:"passport"});
+  drawAttn();
+
+  async function loadGM(){
+    const [mem, vis, tri, up, bill] = await Promise.all(["kpi.member_today","kpi.visit_today","kpi.prospects_month","kpi.upcoming_cancellations","kpi.failed_member_billing_count"].map(gm));
+    if(mem){ $("td-mem").textContent = Number(mem.primary).toLocaleString(); $("td-mem-s").textContent = `${Number(mem.subset||0).toLocaleString()} visiting · ${mem.primary>=mem.previous?"+":""}${mem.primary-mem.previous} vs last month`; live("td-dot-mem"); }
+    if(vis){ $("td-vis").textContent = Number(vis.primary).toLocaleString(); $("td-vis-s").textContent = "check-ins so far today"; live("td-dot-vis"); }
+    if(tri){ $("td-tri").textContent = Number(tri.primary).toLocaleString(); $("td-tri-s").textContent = tri.previous!=null ? `${tri.previous} same point last month` : "this month"; live("td-dot-tri"); }
+    if(up) attn.push({t:"Upcoming cancellations this month", n:Number(up.primary)||0, w:3, go:"retention"});
+    if(bill) attn.push({t:"Members with failed billing", n:Number(bill.primary)||0, w:2, go:"members"});
+    drawAttn();
+  }
+  loadGM(); setInterval(loadGM, 5*60*1000);
+
+  function ptTile(){
+    const p = window.M2_PT_STATS; if(!p) return;
+    $("td-pt").textContent = p.stale + p.unassigned;
+    $("td-pt-s").textContent = `${p.unassigned} unassigned · ${p.stale} new over 48h`;
+    live("td-dot-pt");
+    const i = attn.findIndex(a=>a.go==="pt"); if(i>-1) attn.splice(i,1);
+    attn.push({t:"PT leads not contacted after 48 hours", n:p.stale, w:4, go:"pt"});
+    drawAttn();
+  }
+  document.addEventListener("m2-pt", ptTile); ptTile();
+
+  if(!ON) return; // Xero, GA4 and snapshots only run on the locked worker
+
+  fetch("/api/xero").then(r=>r.json()).then(x=>{
+    if(!x || x.error) return;
+    const m = x.month, lm = x.lastMonthToDate;
+    $("td-cash").textContent = k(x.cash); $("td-cash-s").textContent = "Xero, live"; live("td-dot-cash");
+    $("td-np").textContent = signed(m.net); $("td-np").className = "tile-v "+(m.net>=0?"g":"r");
+    $("td-np-s").textContent = lm ? `${signed(lm.net)} same point last month` : "month to date"; live("td-dot-np");
+    const card = $("xero-live"); card.style.display = "block";
+    $("xero-live-when").textContent = "updated " + new Date(x.at).toLocaleString("en-NZ",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+    const kpi = (l,v,sub,cls) => `<div class="kpi"><div class="kl">${l}</div><div class="kv ${cls||""}">${v}</div><div class="ks">${sub||""}</div></div>`;
+    $("xero-live-kpis").innerHTML =
+      kpi("Income, month to date", k(m.income), lm?`${k(lm.income)} same point last month`:"") +
+      kpi("Expenses, month to date", k(m.expenses), lm?`${k(lm.expenses)} same point last month`:"") +
+      kpi("Net profit, month to date", signed(m.net), m.income?`${(m.net/m.income*100).toFixed(1)}% margin`:"", m.net>=0?"g":"r") +
+      kpi("Cash in bank", k(x.cash), "all bank accounts") +
+      (x.lastMonth ? kpi(`Last month (${x.lastMonth.label})`, signed(x.lastMonth.net), `on ${k(x.lastMonth.income)} income`, x.lastMonth.net>=0?"g":"r") : "");
+  }).catch(()=>{});
+
+  fetch("/api/ga4").then(r=>r.json()).then(g=>{
+    if(!g || g.error || !g.channels) return;
+    const tot = g.channels.reduce((a,c)=>a+c.sessions,0);
+    const ev = g.channels.reduce((a,c)=>a+(c.conversions||0),0);
+    const row = (l,v,cls) => `<div class="row"><span class="rl">${l}</span><span class="rv ${cls||""}">${v}</span></div>`;
+    $("ga4-when").textContent = "GA4 live, last 30 days";
+    $("ga4-rows").innerHTML = row("Total sessions, last 30 days", tot.toLocaleString()) +
+      g.channels.sort((a,b)=>b.sessions-a.sessions).slice(0,5).map(c=>row(c.channel, `${c.sessions.toLocaleString()} (${Math.round(c.sessions/tot*100)}%) · ${Math.round(c.engagement*100)}% engaged`)).join("") +
+      row("Key events", ev.toLocaleString()) +
+      (g.pages ? row("Top landing pages", g.pages.slice(0,5).map(p=>`${p.page.replace(/\.html$/,"")||"/"} ${p.sessions.toLocaleString()}`).join(" · ")) : "");
+  }).catch(()=>{});
+
+  fetch("/api/snapshots").then(r=>r.json()).then(list=>{
+    if(!Array.isArray(list) || !list.length) return;
+    $("snap-card").style.display = "block";
+    const f = v => v==null ? "–" : Number(v).toLocaleString();
+    $("snap-body").innerHTML = list.sort((a,b)=>b.month.localeCompare(a.month)).map(sn=>`<tr><td>${new Date(sn.month+"-01").toLocaleDateString("en-NZ",{month:"short",year:"2-digit"})}${sn.final?"":' <span style="color:var(--m);font-weight:400">(so far)</span>'}</td><td>${f(sn.members)}</td><td>${f(sn.visiting)}</td><td>${f(sn.newMembers)}</td><td>${f(sn.cancels)}</td><td>${f(sn.visits)}</td><td>${f(sn.ptLeads)}</td><td style="color:${sn.net>=0?"var(--g)":"var(--r)"}">${sn.net==null?"–":signed(sn.net)}</td><td>${sn.cash==null?"–":k(sn.cash)}</td></tr>`).join("");
+  }).catch(()=>{});
 })();
 </script>
 </body>

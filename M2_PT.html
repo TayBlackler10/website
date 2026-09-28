@@ -461,6 +461,11 @@
 <script>
 /* ======================= CONFIG ======================= */
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec";
+// The admin board lives behind the Command Centre login. There, the full lead list and
+// admin updates go through /api/pt, which adds the admin key server-side.
+const ON_WORKER = /workers\.dev$/.test(location.hostname);
+const ADMIN_URL = ON_WORKER ? "/api/pt" : APPS_SCRIPT_URL;
+const LOCKED_URL = ""; // set to the Command Centre URL once the lock is live
 
 // Every trainer who can be assigned a lead. Keep in sync with Code.gs TRAINER_EMAILS.
 const TRAINERS = ["Joe", "Bekka", "Dave", "Madi", "Te Ao", "Rodney", "Taylor", "Foxxy", "Eden"];
@@ -507,6 +512,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const TRAINER_NAME = urlParams.get("trainer") || "";
 const TRAINER_KEY = urlParams.get("key") || "";
 const TRAINER_MODE = !!(TRAINER_NAME && TRAINER_KEY);
+if(LOCKED_URL && !ON_WORKER && !TRAINER_MODE){ location.replace(LOCKED_URL + "/pt"); }
 
 let leads = [];
 let pollTimer = null;
@@ -722,7 +728,7 @@ async function fetchLeads(){
   try{
     const url = TRAINER_MODE
       ? APPS_SCRIPT_URL + "?action=listMine&trainer=" + encodeURIComponent(TRAINER_NAME) + "&key=" + encodeURIComponent(TRAINER_KEY)
-      : APPS_SCRIPT_URL + "?action=list";
+      : (ON_WORKER ? ADMIN_URL : APPS_SCRIPT_URL + "?action=list");
     const res = await fetch(url);
     const data = await res.json();
     if(data.error){
@@ -753,7 +759,7 @@ async function postAction(payload){
     return;
   }
   try{
-    await fetch(APPS_SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(payload)});
+    await fetch(ADMIN_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(payload)});
     await fetchLeads();
   }catch(err){
     console.error(err);
