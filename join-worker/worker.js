@@ -148,7 +148,9 @@ function stripScripts(html) {
 /* ---------------- signup ---------------- */
 
 async function signup(env, b) {
-  if (b.company) return { ok: true }; // honeypot filled in: quietly drop bots
+  // Bot checks. Hidden field filled in, or the whole form done in under 8 seconds.
+  // (Not called "company": Chrome autofills that with the person's employer.)
+  if (b.m2_check || (typeof b.elapsed === "number" && b.elapsed < 8)) return { ok: true };
 
   const f = {
     firstname: clean(b.firstname),

@@ -225,7 +225,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
         <div class="stepcount" id="stepcount">Step 1 of 3</div>
 
         <form id="joinForm" novalidate autocomplete="on">
-          <div class="hp" aria-hidden="true"><label>Company <input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
+          <div class="hp" aria-hidden="true"><input type="text" name="m2_check" tabindex="-1" autocomplete="new-password" aria-label="Leave this empty"></div>
 
           <!-- STEP 1: MEMBERSHIP -->
           <section class="step active" data-step="1">
@@ -404,6 +404,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
 <script>
 (function(){
   // m2-join Cloudflare Worker. Holds the GymMaster key and does the signup.
+  var STARTED = Date.now();
   var qs = new URLSearchParams(location.search);
   var API = qs.get('api') || 'https://m2-join.taylor-3e5.workers.dev';
   var PORTAL = 'https://m2trainingclub.gymmasteronline.com/portal/';
@@ -746,7 +747,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   function submit(){
     var src = [qs.get('utm_source') || qs.get('src'), val('heard')].filter(Boolean).join(', ');
     var payload = {
-      company: form.elements.company.value,
+      m2_check: form.elements.m2_check.value,
+      elapsed: Math.round((Date.now() - STARTED) / 1000),
       membershipId: chosen.id,
       firstname: val('firstname'), surname: val('surname'),
       email: val('email'), phone: formatPhone(val('phone')),
