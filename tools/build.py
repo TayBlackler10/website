@@ -23,7 +23,7 @@ SITE = 'https://m2club.co.nz'
 TRIAL_SWITCH = '2026-09-30T11:00:00Z'
 OPEN_WEEK_FROM = '2026-09-27T11:00:00Z'
 OPEN_WEEK_UNTIL = '2026-10-18T11:00:00Z'
-TRIAL_HREF = 'https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46'
+TRIAL_HREF = 'https://m2club.co.nz/join.html?m=trial'
 VERSION = datetime.date.today().strftime('%Y%m%d')
 
 CHEV = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
