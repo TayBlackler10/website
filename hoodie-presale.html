@@ -1,360 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-NZ">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-1PW3XYQ1F8');
-</script>
-
-<!-- M2 Conversion Event Tracking -->
-<script>
-document.addEventListener('click', function(e) {
-  var el = e.target.closest('a');
-  if (!el) return;
-  var href = el.getAttribute('href') || '';
-  var label = '';
-  if (href.indexOf('gymmasteronline.com') !== -1) {
-    var t = (el.textContent || '').toLowerCase();
-    label = (href.indexOf('trial') !== -1 || t.indexOf('trial') !== -1) ? 'trial_signup_click' : 'membership_signup_click';
-  } else if (href.indexOf('tel:') === 0) {
-    label = 'phone_click';
-  } else if (href.indexOf('mailto:') === 0) {
-    label = 'email_click';
-  }
-  if (label && typeof gtag === 'function') {
-    gtag('event', label, {
-      'event_category': 'conversion',
-      'event_label': href,
-      'page_location': window.location.href
-    });
-  }
-}, true);
-</script>
-
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1173983798207057');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="/assets/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
-<title>M2 Hoodie Pre-Sale | Limited Run | M2 Training Club</title>
-<meta name="description" content="The first official M2 Training Club hoodie. Pre-sale open for 14 days only. AS Colour Box Hood, screen printed to order. $79.50.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>M2 Hoodie Pre-Sale | Limited Run Gym Hoodie | M2 Training Club</title>
+<meta name="description" content="The first official M2 Training Club hoodie. AS Colour Box Hood in black, screen printed to order in one limited run. $79.50, pick up at the club in Grafton.">
+<meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://m2club.co.nz/hoodie-presale.html">
-<meta property="og:title" content="M2 Hoodie Pre-Sale | Limited Run | M2 Training Club">
-<meta property="og:description" content="The first official M2 Training Club hoodie. Pre-sale open for 14 days only. $79.50.">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="geo.region" content="NZ-AUK">
+<meta name="geo.placename" content="Grafton, Auckland">
+<meta property="og:site_name" content="M2 Training Club">
+<meta property="og:locale" content="en_NZ">
+<meta property="og:type" content="website">
+<meta property="og:title" content="M2 Hoodie Pre-Sale | Limited Run Gym Hoodie | M2 Training Club">
+<meta property="og:description" content="The first official M2 Training Club hoodie. AS Colour Box Hood in black, screen printed to order in one limited run. $79.50, pick up at the club in Grafton.">
 <meta property="og:url" content="https://m2club.co.nz/hoodie-presale.html">
 <meta property="og:image" content="https://m2club.co.nz/assets/hoodie/hoodie-front.jpg">
-<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="M2 Hoodie Pre-Sale | Limited Run Gym Hoodie | M2 Training Club">
+<meta name="twitter:description" content="The first official M2 Training Club hoodie. AS Colour Box Hood in black, screen printed to order in one limited run. $79.50, pick up at the club in Grafton.">
+<meta name="twitter:image" content="https://m2club.co.nz/assets/hoodie/hoodie-front.jpg">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/m2-style.css?v=6">
-<style>
-  /* Page-specific styles for hoodie pre-sale */
-  .hp-hero{padding:calc(var(--header-h) + 50px) 0 70px;border-bottom:1px solid var(--line);}
-  .hp-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(200,240,0,.08);border:1px solid rgba(200,240,0,.3);color:var(--yellow);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:26px;}
-  .hp-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);animation:pulseDot 1.6s ease-in-out infinite;}
-  @keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.3;}}
-
-  .hp-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:70px;align-items:flex-start;}
-  @media(max-width:960px){.hp-grid{grid-template-columns:1fr;gap:40px;}}
-
-  .hp-gallery-main{position:relative;background:var(--panel);border:1px solid var(--line);overflow:hidden;aspect-ratio:1/1;}
-  .hp-gallery-main img{width:100%;height:100%;object-fit:cover;}
-  .hp-thumbs{display:flex;gap:12px;margin-top:14px;}
-  .hp-thumb{flex:1;aspect-ratio:1/1;border:1px solid var(--line);cursor:pointer;overflow:hidden;opacity:.55;transition:opacity .3s,border-color .3s;background:var(--panel);}
-  .hp-thumb.active{opacity:1;border-color:var(--yellow);}
-  .hp-thumb img{width:100%;height:100%;object-fit:cover;}
-
-  .hp-title{font-family:var(--display);font-size:clamp(2.6rem,5vw,3.6rem);text-transform:uppercase;line-height:1;margin-bottom:14px;}
-  .hp-price{font-family:var(--display);font-size:2.1rem;color:var(--yellow);margin-bottom:24px;}
-  .hp-desc{color:var(--dim);max-width:480px;margin-bottom:32px;}
-
-  .hp-countdown{display:flex;gap:14px;margin-bottom:32px;}
-  .hp-cd-cell{background:var(--panel);border:1px solid var(--line);padding:16px 0;text-align:center;flex:1;max-width:90px;}
-  .hp-cd-num{font-family:var(--display);font-size:2.1rem;line-height:1;color:var(--white);}
-  .hp-cd-lbl{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim-2);margin-top:6px;}
-
-  .hp-sizes{margin-bottom:30px;}
-  .hp-sizes-lbl{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim-2);margin-bottom:12px;}
-  .hp-size-row{display:flex;gap:10px;flex-wrap:wrap;}
-  .hp-size-chip{border:1px solid var(--line-strong);padding:10px 18px;font-size:.85rem;letter-spacing:.04em;color:var(--dim);}
-
-  .hp-specs{list-style:none;margin-bottom:34px;}
-  .hp-specs li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:.92rem;color:var(--dim);}
-  .hp-specs li strong{color:var(--white);min-width:130px;font-weight:600;}
-
-  .hp-buy-note{font-size:.82rem;color:var(--dim-2);margin-top:16px;max-width:440px;}
-  .hp-limit{margin-top:40px;padding:20px 24px;border:1px solid rgba(200,240,0,.25);background:rgba(200,240,0,.04);font-size:.88rem;color:var(--dim);}
-  .hp-limit strong{color:var(--yellow);}
-
-  .hp-strip{background:var(--yellow);padding:16px 0;overflow:hidden;}
-  .hp-strip-track{display:flex;white-space:nowrap;animation:marquee 26s linear infinite;width:max-content;}
-  .hp-strip-track span{font-family:var(--display);font-size:.95rem;letter-spacing:.18em;text-transform:uppercase;color:#0a0a0a;padding:0 1.6rem;}
-
-  .hp-how{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);}
-  @media(max-width:900px){.hp-how{grid-template-columns:1fr;}}
-  .hp-how-cell{background:var(--black);padding:44px 36px;}
-  .hp-how-num{font-family:var(--display);font-size:1.6rem;color:var(--yellow);margin-bottom:14px;display:block;}
-  .hp-how-cell h3{font-family:var(--display);font-size:1.5rem;text-transform:uppercase;margin-bottom:10px;}
-  .hp-how-cell p{color:var(--dim);font-size:.92rem;}
-</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="stylesheet" href="/assets/css/m2.css?v=20260928">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"M2 Training Club Hoodie","description":"The first official M2 Training Club hoodie. AS Colour Box Hood (5171), relaxed fit, 350 GSM cotton and recycled poly fleece in black, with an M2 back print and M2 Training Club left chest print. Screen printed to order.","image":["https://m2club.co.nz/assets/hoodie/hoodie-front.jpg","https://m2club.co.nz/assets/hoodie/hoodie-back.jpg"],"brand":{"@type":"Brand","name":"M2 Training Club"},"color":"Black","size":["S","M","L","XL","2XL","3XL"],"offers":{"@type":"Offer","price":"79.50","priceCurrency":"NZD","availability":"https://schema.org/PreOrder","url":"https://m2club.co.nz/hoodie-presale.html","seller":{"@id":"https://m2club.co.nz/#gym"}}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"When will I get my hoodie?","acceptedAnswer":{"@type":"Answer","text":"Once the 14 day pre-sale window closes, we send the confirmed order to our printer. We'll email you with an expected collection date as soon as we have one."}},{"@type":"Question","name":"Can I change my size after ordering?","acceptedAnswer":{"@type":"Answer","text":"Reach out to reception before the pre-sale closes and we'll sort it. Once the order goes to print we can't make changes."}},{"@type":"Question","name":"Will there be a restock?","acceptedAnswer":{"@type":"Answer","text":"No. This is a one-off run based on pre-sale numbers only. What sells in the 14 days is what gets printed."}},{"@type":"Question","name":"Where do I pick it up?","acceptedAnswer":{"@type":"Answer","text":"At M2 Training Club, 8 Nugent Street, Grafton, Auckland. We'll email you when it's ready."}},{"@type":"Question","name":"What if I need a refund?","acceptedAnswer":{"@type":"Answer","text":"Get in touch with reception directly and we'll look after you."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://m2club.co.nz/"},{"@type":"ListItem","position":2,"name":"M2 Hoodie","item":"https://m2club.co.nz/hoodie-presale.html"}]}</script>
+<!-- Google tag (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
 </head>
 <body>
-
-<header id="siteHeader">
-  <div class="utility-bar" id="utilityBar">
-    <div class="wrap utility-inner">
-      <ul class="utility-links">
-        <li><a href="our-story.html">Our Story</a></li>
-        <li><a href="trainers.html">Trainers</a></li>
-        <li><a href="gallery.html">Gallery</a></li>
-        <li><a href="become-a-pt.html">Become a PT</a></li>
-        <li><a href="reviews.html">Reviews</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-      <div class="utility-right">
-        <a href="tel:095581408">09 558 1408</a>
-        <a href="https://www.instagram.com/m2trainingclub/">Instagram</a>
-      </div>
-    </div>
-  </div>
-  <nav id="mainNav">
-    <a href="index.html" class="nav-brand"><img src="/assets/m2-nav-logo.png" alt="M2 Training Club"></a>
-    <ul class="nav-links">
-      <li><a href="memberships.html">Memberships</a></li>
-      <li><a href="annual-memberships.html">Annual</a></li>
-      <li><a href="classes.html">Classes</a></li>
-      <li><a href="recovery.html">Recovery</a></li>
-      <li><a href="hoodie-presale.html" class="active">Hoodie</a></li>
-    </ul>
-    <a href="https://buy.stripe.com/aFa4gz9BtaQFctf5lJaIM00" class="nav-cta">Pre-Order $79.50</a>
-    <button class="nav-burger" aria-label="Open menu"><span></span><span></span><span></span></button>
-  </nav>
-</header>
-
-<div class="mobile-menu">
-  <button class="mobile-menu-close" aria-label="Close menu"></button>
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="memberships.html">Memberships</a></li>
-    <li><a href="annual-memberships.html">Annual</a></li>
-    <li><a href="classes.html">Classes</a></li>
-    <li><a href="recovery.html">Recovery</a></li>
-    <li><a href="hoodie-presale.html">Hoodie</a></li>
-  </ul>
-  <div class="mm-divider"></div>
-  <ul class="mm-secondary">
-    <li><a href="our-story.html">Our Story</a></li>
-    <li><a href="trainers.html">Trainers</a></li>
-    <li><a href="gallery.html">Gallery</a></li>
-    <li><a href="become-a-pt.html">Become a PT</a></li>
-    <li><a href="reviews.html">Reviews</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="promo-bar" data-from="2026-10-04T11:00:00Z" data-until="2026-10-18T11:00:00Z" hidden>It’s our 3rd birthday. Anyone can train at M2 free from 12 to 18 October. Just come in.</div>
+<header class="site-header" data-section="header">
+<div class="wrap header-inner">
+<a class="logo" href="/" aria-label="M2 Training Club home"><img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="264" height="28"></a>
+<nav class="main-nav" aria-label="Main"><div class="nav-item"><a class="nav-link" href="/memberships.html">Memberships<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></div><div class="nav-item"><a class="nav-link" href="/classes.html">Train<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></div><div class="nav-item"><a class="nav-link" href="/hyrox-auckland.html">HYROX<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></div><div class="nav-item"><a class="nav-link" href="/our-story.html" aria-current="page">The Club<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a></div><div class="nav-item nav-plain"><a class="nav-link" href="/contact.html">Contact</a></div></nav>
+<div class="header-actions">
+<a class="nav-link" href="/free-pt.html">Free PT session</a>
+<a class="btn btn-lime" href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" data-trial data-trial-label data-loc="header">Get your free 3 days</a>
 </div>
-
-<section class="hp-hero">
+<button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" data-menu-open>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+</button>
+</div>
+<div class="mega" aria-hidden="true"><div class="mega-panel"><div class="mega-col"><span class="eyebrow">Memberships</span><a class="mega-link" href="/memberships.html"><strong>All memberships</strong><span>Daily, Classes, Perform, Recovery</span></a><a class="mega-link" href="/annual-memberships.html"><strong>Annual memberships</strong><span>Pay upfront and save</span></a><a class="mega-link" href="/fitness-passport.html"><strong>Fitness Passport</strong><span>Train at M2 through your work</span></a><a class="mega-link" href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46"><strong>Free trial</strong><span>Try the whole club first</span></a></div><div class="mega-col"><span class="eyebrow">Train</span><a class="mega-link" href="/classes.html"><strong>Classes</strong><span>Timetable, HYROX, strength and yoga</span></a><a class="mega-link" href="/recovery.html"><strong>Recovery</strong><span>Pool, sauna, spa and ice bath</span></a><a class="mega-link" href="/trainers.html"><strong>Trainers</strong><span>Meet our coaches</span></a><a class="mega-link" href="/free-pt.html"><strong>Free PT session</strong><span>Included for new members</span></a></div><div class="mega-col"><span class="eyebrow">HYROX</span><a class="mega-link" href="/hyrox-auckland.html"><strong>HYROX Auckland</strong><span>Race ticket offer, $35 a week</span></a><a class="mega-link" href="/hyrox-summer-prep.html"><strong>HYROX Summer Prep</strong><span>Get race ready for February</span></a><a class="mega-link" href="/hyrox-auckland-2week-plan.html"><strong>Free 2 week plan</strong><span>Download the training plan</span></a></div><div class="mega-col"><span class="eyebrow">The Club</span><a class="mega-link" href="/our-story.html"><strong>Our story</strong><span>How M2 started</span></a><a class="mega-link" href="/gallery.html"><strong>Gallery</strong><span>Take a look inside</span></a><a class="mega-link" href="/reviews.html"><strong>Reviews</strong><span>What members say</span></a><a class="mega-link" href="/become-a-pt.html"><strong>Become a PT</strong><span>Train clients at M2</span></a><a class="mega-link" href="/hoodie-presale.html"><strong>M2 Hoodie</strong><span>Merch pre-sale</span></a></div></div></div>
+</header>
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" data-section="mobile-menu">
+<div class="mm-top">
+<img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="188" height="20">
+<button class="burger" type="button" aria-label="Close menu" data-menu-close style="display:inline-flex">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+</button>
+</div>
+<div class="mm-body"><details class="mm-group"><summary>Memberships<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="mm-links"><a href="/memberships.html">All memberships</a><a href="/annual-memberships.html">Annual memberships</a><a href="/fitness-passport.html">Fitness Passport</a><a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46">Free trial</a></div></details><details class="mm-group"><summary>Train<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="mm-links"><a href="/classes.html">Classes</a><a href="/recovery.html">Recovery</a><a href="/trainers.html">Trainers</a><a href="/free-pt.html">Free PT session</a></div></details><details class="mm-group"><summary>HYROX<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="mm-links"><a href="/hyrox-auckland.html">HYROX Auckland</a><a href="/hyrox-summer-prep.html">HYROX Summer Prep</a><a href="/hyrox-auckland-2week-plan.html">Free 2 week plan</a></div></details><details class="mm-group"><summary>The Club<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="mm-links"><a href="/our-story.html">Our story</a><a href="/gallery.html">Gallery</a><a href="/reviews.html">Reviews</a><a href="/become-a-pt.html">Become a PT</a><a href="/hoodie-presale.html">M2 Hoodie</a></div></details><a class="mm-single" href="/contact.html">Contact</a></div>
+<div class="mm-foot">
+<a class="btn btn-lime btn-lg" href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" data-trial data-trial-label data-loc="mobile-menu">Get your free 3 days</a>
+<a class="btn btn-ghost" href="/free-pt.html">Book your free PT session</a>
+<small><a href="tel:095581408">09 558 1408</a> · 8 Nugent St, Grafton</small>
+</div>
+</div>
+<main id="main">
+<style>
+.hp-imgs{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.hp-info{position:sticky;top:24px}
+@media (max-width:960px){.hp-imgs{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.hp-info{position:static}}
+</style>
+<section class="section" data-section="product" style="padding-top:48px">
   <div class="wrap">
-    <div class="hp-badge reveal"><span class="dot"></span> Pre-Sale Live &middot; 14 Days Only</div>
-    <div class="hp-grid">
-
-      <div class="reveal">
-        <div class="hp-gallery-main">
-          <img src="assets/hoodie/hoodie-front.jpg" alt="M2 Training Club hoodie, front view" id="hpMainImg">
-        </div>
-        <div class="hp-thumbs">
-          <div class="hp-thumb active" data-img="assets/hoodie/hoodie-front.jpg"><img src="assets/hoodie/hoodie-front.jpg" alt="Front"></div>
-          <div class="hp-thumb" data-img="assets/hoodie/hoodie-back.jpg"><img src="assets/hoodie/hoodie-back.jpg" alt="Back"></div>
-        </div>
+    <nav class="crumbs" aria-label="Breadcrumb" style="color:var(--muted);margin-bottom:28px"><a href="/">Home</a><span>/</span><span>M2 Hoodie</span></nav>
+    <div class="grid-2" style="gap:48px;align-items:start">
+      <div class="hp-imgs in-1">
+        <div class="card" style="padding:0;overflow:hidden;background:#fff"><img src="/assets/hoodie/hoodie-front.jpg" alt="The black M2 Training Club hoodie, front view with the M2 Training Club left chest print" width="1500" height="1500" style="width:100%;height:auto" fetchpriority="high"></div>
+        <div class="card" style="padding:0;overflow:hidden;background:#fff"><img src="/assets/hoodie/hoodie-back.jpg" alt="The black M2 Training Club hoodie, back view with the large M2 back print" width="1500" height="1500" style="width:100%;height:auto" loading="lazy"></div>
       </div>
 
-      <div class="reveal d1">
-        <h1 class="hp-title">The M2 Hoodie</h1>
-        <div class="hp-price">$79.50 NZD</div>
-        <p class="hp-desc">The first official M2 Training Club hoodie. Mindset. Movement. Printed once, in one run, then gone. Order now and we'll have yours screen printed and ready for pickup at the club once the pre-sale window closes.</p>
+      <div class="stack in-2 hp-info" style="gap:24px">
+        <span class="eyebrow">Pre-sale · 14 days only</span>
+        <h1 class="h-lg">The M2 Hoodie<span class="dot" style="color:var(--olive)">.</span></h1>
+        <div class="price" style="padding:0;border:0;background:none;gap:0"><div class="amt"><b>$79.50</b><span>NZD</span></div></div>
+        <p class="lead">The first official M2 Training Club hoodie. Mindset. Movement. Printed once, in one run, then gone. Order now and we'll have yours screen printed and ready to pick up at the club once the pre-sale closes.</p>
 
-        <div class="hp-countdown" id="hpCountdown">
-          <div class="hp-cd-cell"><div class="hp-cd-num" id="cdDays">--</div><div class="hp-cd-lbl">Days</div></div>
-          <div class="hp-cd-cell"><div class="hp-cd-num" id="cdHours">--</div><div class="hp-cd-lbl">Hours</div></div>
-          <div class="hp-cd-cell"><div class="hp-cd-num" id="cdMins">--</div><div class="hp-cd-lbl">Mins</div></div>
-          <div class="hp-cd-cell"><div class="hp-cd-num" id="cdSecs">--</div><div class="hp-cd-lbl">Secs</div></div>
-        </div>
-
-        <div class="hp-sizes">
-          <div class="hp-sizes-lbl">Available Sizes</div>
-          <div class="hp-size-row">
-            <span class="hp-size-chip">S</span>
-            <span class="hp-size-chip">M</span>
-            <span class="hp-size-chip">L</span>
-            <span class="hp-size-chip">XL</span>
-            <span class="hp-size-chip">2XL</span>
-            <span class="hp-size-chip">3XL</span>
+        <div class="stack" style="gap:10px">
+          <span class="eyebrow" style="color:var(--text)">Sizes</span>
+          <div class="btn-row" style="gap:8px">
+            <span class="badge" style="background:#fff;border:1.5px solid var(--line);font-size:14px;padding:8px 14px">S</span>
+            <span class="badge" style="background:#fff;border:1.5px solid var(--line);font-size:14px;padding:8px 14px">M</span>
+            <span class="badge" style="background:#fff;border:1.5px solid var(--line);font-size:14px;padding:8px 14px">L</span>
+            <span class="badge" style="background:#fff;border:1.5px solid var(--line);font-size:14px;padding:8px 14px">XL</span>
+            <span class="badge" style="background:#fff;border:1.5px solid var(--line);font-size:14px;padding:8px 14px">2XL</span>
+            <span class="badge" style="background:#fff;border:1.5px solid var(--line);font-size:14px;padding:8px 14px">3XL</span>
           </div>
         </div>
 
-        <ul class="hp-specs">
-          <li><strong>Base garment</strong> AS Colour Box Hood (5171), relaxed fit</li>
-          <li><strong>Fabric</strong> 350 GSM mid-heavyweight cotton / recycled poly fleece</li>
-          <li><strong>Print</strong> M2 back print, "M2 Training Club" left chest</li>
-          <li><strong>Colour</strong> Black</li>
-          <li><strong>Print run</strong> Screen printed to order, once pre-sale closes</li>
+        <div class="stack" style="gap:12px">
+          <a class="btn btn-lime btn-lg" href="https://buy.stripe.com/aFa4gz9BtaQFctf5lJaIM00" data-track="hoodie_preorder_click" data-loc="product">Pre-order now · $79.50</a>
+          <p class="form-note">Secure checkout with Stripe. Add your size in the notes field at checkout so we get it right. One size per order, so place a separate order if you need more than one.</p>
+          <p class="form-note" data-until="2026-09-14T00:00:00Z"><strong style="color:var(--text)">Pre-sale closes 14 September at 12pm.</strong></p>
+        </div>
+
+        <ul class="ticks card" style="font-size:15px;padding:24px 26px">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Base garment:</strong> AS Colour Box Hood (5171), relaxed fit</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Fabric:</strong> 350 GSM mid-heavyweight cotton and recycled poly fleece</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Print:</strong> M2 back print, "M2 Training Club" left chest</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Colour:</strong> Black</span></li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><strong>Print run:</strong> Screen printed to order once the pre-sale closes</span></li>
         </ul>
 
-        <a href="https://buy.stripe.com/aFa4gz9BtaQFctf5lJaIM00" class="btn btn-solid">Pre-Order Now &middot; $79.50 <span class="arrow">&#8594;</span></a>
-        <p class="hp-buy-note">Secure checkout via Stripe. Select your size in the notes field at checkout so we get it right. One size per order &mdash; place a separate order if you need more than one.</p>
-
-        <div class="hp-limit">
-          <strong>Pre-sale, not stock on the shelf.</strong> We're only printing what sells in this 14 day window. When the countdown hits zero, orders close and the run goes to print. No restock, no second batch.
-        </div>
+        <p class="muted" style="font-size:15px"><strong style="color:var(--text)">Pre-sale, not stock on the shelf.</strong> We're only printing what sells in this 14 day window. When it closes, orders stop and the run goes to print. No restock, no second batch.</p>
       </div>
-
     </div>
   </div>
 </section>
 
-<div class="hp-strip">
-  <div class="hp-strip-track">
-    <span>Mindset &middot; Movement</span><span>14 Days Only</span><span>Mindset &middot; Movement</span><span>14 Days Only</span><span>Mindset &middot; Movement</span><span>14 Days Only</span><span>Mindset &middot; Movement</span><span>14 Days Only</span>
+<section class="section section-top0" data-section="how-it-works">
+  <div class="wrap">
+    <div class="card card-lg reveal steps" style="align-items:stretch">
+      <div class="stack" style="gap:8px">
+        <span class="eyebrow">How it works</span>
+        <h2 class="h-md">Order, wait, collect</h2>
+      </div>
+      <div class="card-paper step">
+        <span class="step-num">1</span>
+        <span class="st"><strong>Order your size</strong><span>Pre-order through Stripe. Payment is taken up front to lock in the print run.</span></span>
+      </div>
+      <div class="card-paper step">
+        <span class="step-num">2</span>
+        <span class="st"><strong>Window closes</strong><span>After 14 days the pre-sale closes and the final order goes off to be screen printed.</span></span>
+      </div>
+      <div class="card-paper step">
+        <span class="step-num">3</span>
+        <span class="st"><strong>Collect at M2</strong><span>Once it's printed, we'll email you to arrange pickup at 8 Nugent Street, Grafton.</span></span>
+      </div>
+    </div>
   </div>
+</section>
+
+<section class="section section-top0" data-section="faq">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="stack"><span class="eyebrow">Good to know</span><h2 class="h-lg">Common questions</h2></div>
+    </div>
+    <div class="faq reveal">
+      <details open><summary>When will I get my hoodie?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Once the 14 day pre-sale window closes, we send the confirmed order to our printer. We'll email you with an expected collection date as soon as we have one.</div></details>
+      <details><summary>Can I change my size after ordering?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Reach out to reception before the pre-sale closes and we'll sort it. Once the order goes to print we can't make changes. <a href="/contact.html">Contact reception</a></div></details>
+      <details><summary>Will there be a restock?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">No. This is a one-off run based on pre-sale numbers only. What sells in the 14 days is what gets printed.</div></details>
+      <details><summary>Where do I pick it up?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">At M2 Training Club, 8 Nugent Street, Grafton, Auckland. We'll email you when it's ready.</div></details>
+      <details><summary>What if I need a refund?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Get in touch with reception directly and we'll look after you. <a href="tel:095581408">09 558 1408</a></div></details>
+    </div>
+    <div class="btn-row reveal" style="justify-content:center;margin-top:40px">
+      <a class="btn btn-dark btn-lg" href="https://buy.stripe.com/aFa4gz9BtaQFctf5lJaIM00" data-track="hoodie_preorder_click" data-loc="faq">Pre-order now · $79.50</a>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer" data-section="footer">
+<div class="wrap">
+<div class="footer-cta">
+<div><h2>Come and see<br>for yourself<span class="dot">.</span></h2><p><span data-until="2026-09-30T11:00:00Z">3 days, full access, completely free.</span><span data-from="2026-09-30T11:00:00Z" hidden>5 days, full access, just $5.</span> No lock-in.</p></div>
+<a class="btn btn-lime btn-lg" href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" data-trial data-trial-label data-loc="footer">Get your free 3 days</a>
 </div>
-
-<section class="section-pad">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <h2 class="section-h2">How the pre-sale works</h2>
-      <p class="section-note">Simple. Order, wait for the window to close, pick it up at the club.</p>
-    </div>
-  </div>
-  <div class="hp-how reveal">
-    <div class="hp-how-cell"><span class="hp-how-num">1</span><h3>Order Your Size</h3><p>Pick your size and pre-order through Stripe. Payment is taken up front to lock in the print run.</p></div>
-    <div class="hp-how-cell"><span class="hp-how-num">2</span><h3>Window Closes</h3><p>After 14 days the pre-sale closes and we send the final order off to be screen printed.</p></div>
-    <div class="hp-how-cell"><span class="hp-how-num">3</span><h3>Collect At M2</h3><p>Once printing is done, we'll email you to arrange pickup at 8 Nugent Street, Grafton.</p></div>
-  </div>
-</section>
-
-<section class="section-pad" style="padding-top:0;">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <h2 class="section-h2">Common questions</h2>
-    </div>
-    <div class="faq-list reveal">
-      <div class="faq-item open"><div class="faq-q"><span>When will I get my hoodie?</span><span class="plus"></span></div><div class="faq-a-wrap"><p class="faq-a">Once the 14 day pre-sale window closes, we send the confirmed order to our printer. We'll email you with an expected collection date as soon as we have one.</p></div></div>
-      <div class="faq-item"><div class="faq-q"><span>Can I change my size after ordering?</span><span class="plus"></span></div><div class="faq-a-wrap"><p class="faq-a">Reach out to reception before the pre-sale closes and we'll sort it. Once the order goes to print we can't make changes.</p></div></div>
-      <div class="faq-item"><div class="faq-q"><span>Will there be a restock?</span><span class="plus"></span></div><div class="faq-a-wrap"><p class="faq-a">No. This is a one-off run based on pre-sale numbers only. What sells in the 14 days is what gets printed.</p></div></div>
-      <div class="faq-item"><div class="faq-q"><span>Where do I pick it up?</span><span class="plus"></span></div><div class="faq-a-wrap"><p class="faq-a">At M2 Training Club, 8 Nugent Street, Grafton, Auckland. We'll email you when it's ready.</p></div></div>
-      <div class="faq-item"><div class="faq-q"><span>What if I need a refund?</span><span class="plus"></span></div><div class="faq-a-wrap"><p class="faq-a">Get in touch with reception directly and we'll look after you.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<section class="cta-final">
-  <div class="wrap">
-    <h2 class="reveal">Get Yours Before It's Gone</h2>
-    <p class="reveal d1">14 days. One print run. No restock.</p>
-    <div class="cta-actions reveal d2">
-      <a href="https://buy.stripe.com/aFa4gz9BtaQFctf5lJaIM00" class="btn btn-solid">Pre-Order Now &middot; $79.50 <span class="arrow">&#8594;</span></a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-col">
-        <div class="foot-brand">M2</div>
-        <p>8 Nugent Street<br>Grafton, Auckland 1023</p>
-        <p>Mon&ndash;Fri 5am&ndash;10pm<br>Sat&ndash;Sun 7am&ndash;7pm</p>
-      </div>
-      <div class="foot-col">
-        <h4>Club</h4>
-        <a href="our-story.html">Our Story</a>
-        <a href="memberships.html">Memberships</a>
-        <a href="classes.html">Classes</a>
-        <a href="trainers.html">Trainers</a>
-      </div>
-      <div class="foot-col">
-        <h4>Info</h4>
-        <a href="recovery.html">Recovery</a>
-        <a href="fitness-passport.html">Fitness Passport</a>
-        <a href="reviews.html">Reviews</a>
-        <a href="contact.html">Contact</a>
-      </div>
-      <div class="foot-col">
-        <h4>Connect</h4>
-        <a href="tel:095581408">09 558 1408</a>
-        <a href="mailto:reception@m2club.co.nz">reception@m2club.co.nz</a>
-        <a href="https://www.instagram.com/m2trainingclub/">Instagram</a>
-      </div>
-    </div>
-  </div>
-  <div class="foot-marquee">
-    <div class="foot-marquee-track">
-      <span>M2 Training Club</span><span>M2 Training Club</span><span>M2 Training Club</span><span>M2 Training Club</span>
-    </div>
-  </div>
-  <div class="wrap foot-bottom">
-    <span>&copy; 2026 M2 Training Club</span>
-    <span>Grafton, Auckland</span>
-  </div>
+<div class="footer-cols">
+<div class="footer-brand"><img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="226" height="24" loading="lazy"><p>8 Nugent Street, Grafton<br>Auckland 1023<br>Mon to Fri 5am to 10pm<br>Sat and Sun 7am to 7pm</p></div>
+<div><h3>Memberships</h3><ul><li><a href="/memberships.html">All memberships</a></li><li><a href="/annual-memberships.html">Annual memberships</a></li><li><a href="/fitness-passport.html">Fitness Passport</a></li><li><a href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46">Free trial</a></li></ul></div><div><h3>Train</h3><ul><li><a href="/classes.html">Classes</a></li><li><a href="/recovery.html">Recovery</a></li><li><a href="/trainers.html">Trainers</a></li><li><a href="/free-pt.html">Free PT session</a></li></ul></div><div><h3>HYROX</h3><ul><li><a href="/hyrox-auckland.html">HYROX Auckland</a></li><li><a href="/hyrox-summer-prep.html">HYROX Summer Prep</a></li><li><a href="/hyrox-auckland-2week-plan.html">Free 2 week plan</a></li></ul></div><div><h3>The Club</h3><ul><li><a href="/our-story.html">Our story</a></li><li><a href="/gallery.html">Gallery</a></li><li><a href="/reviews.html">Reviews</a></li><li><a href="/become-a-pt.html">Become a PT</a></li><li><a href="/hoodie-presale.html">M2 Hoodie</a></li></ul></div><div><h3>Contact</h3><ul><li><a href="tel:095581408">09 558 1408</a></li><li><a href="mailto:reception@m2club.co.nz">reception@m2club.co.nz</a></li><li><a href="/contact.html">Contact us</a></li><li><a href="https://www.instagram.com/m2trainingclub/" rel="noopener">Instagram</a></li><li><a href="https://www.facebook.com/m2trainingclub" rel="noopener">Facebook</a></li></ul></div>
+</div>
+<div class="footer-base"><span>&copy; 2026 M2 Training Club · Grafton, Auckland</span><a href="/privacy-policy.html">Privacy policy</a></div>
+</div>
 </footer>
-<script src="/assets/m2-main.js?v=6"></script>
-<script>
-  // Gallery thumbnail swap
-  document.querySelectorAll('.hp-thumb').forEach(function(thumb){
-    thumb.addEventListener('click', function(){
-      document.querySelectorAll('.hp-thumb').forEach(function(t){t.classList.remove('active');});
-      thumb.classList.add('active');
-      document.getElementById('hpMainImg').src = thumb.getAttribute('data-img');
-    });
-  });
-
-  // Countdown - EDIT THIS DATE to set when the pre-sale closes (14 days from launch)
-  var hpDeadline = new Date('2026-09-14T12:00:00+12:00').getTime();
-  function hpUpdateCountdown(){
-    var now = new Date().getTime();
-    var diff = hpDeadline - now;
-    if(diff <= 0){
-      document.getElementById('cdDays').textContent = '0';
-      document.getElementById('cdHours').textContent = '0';
-      document.getElementById('cdMins').textContent = '0';
-      document.getElementById('cdSecs').textContent = '0';
-      return;
-    }
-    var d = Math.floor(diff/(1000*60*60*24));
-    var h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-    var m = Math.floor((diff%(1000*60*60))/(1000*60));
-    var s = Math.floor((diff%(1000*60))/1000);
-    document.getElementById('cdDays').textContent = d;
-    document.getElementById('cdHours').textContent = h;
-    document.getElementById('cdMins').textContent = m;
-    document.getElementById('cdSecs').textContent = s;
-  }
-  hpUpdateCountdown();
-  setInterval(hpUpdateCountdown, 1000);
-</script>
+<div class="sticky-cta" data-section="sticky-mobile">
+<a class="btn btn-lime" href="https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46" data-trial data-trial-label data-loc="sticky-mobile">Get your free 3 days</a>
+<a class="call" href="tel:095581408" aria-label="Call M2 on 09 558 1408"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></a>
+</div>
+<script src="/assets/js/m2.js?v=20260928" defer></script>
 </body>
 </html>

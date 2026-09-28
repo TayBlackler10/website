@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+"""
+M2 Training Club site builder.
+
+Each page lives in _src/pages/<name>.html and starts with a JSON block:
+
+    <!--m2
+    {"out": "memberships.html", "title": "...", "description": "...", "nav": "memberships",
+     "og_image": "/assets/img/xyz-1600.jpg", "hero_over": true,
+     "breadcrumbs": [["Memberships", "/memberships.html"]], "schema": [ {...} ]}
+    -->
+    ...page body (everything between the header and the footer)...
+
+Run:  python3 tools/build.py
+It writes finished, static HTML files to the site root (what GitHub Pages serves).
+Folders starting with "_" are not published by GitHub Pages.
+"""
+import json, os, re, sys, html, datetime
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC = os.path.join(ROOT, '_src', 'pages')
+SITE = 'https://m2club.co.nz'
+TRIAL_SWITCH = '2026-09-30T11:00:00Z'
+OPEN_WEEK_FROM = '2026-10-04T11:00:00Z'
+OPEN_WEEK_UNTIL = '2026-10-18T11:00:00Z'
+TRIAL_HREF = 'https://m2trainingclub.gymmasteronline.com/portal/membership/2d31eec43f2156d03d3efa3c9852bd46'
+VERSION = datetime.date.today().strftime('%Y%m%d')
+
+CHEV = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
+CHEV_LG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
+PHONE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>'
+
+# Menu structure: (group label, main link, [(label, href, blurb)])
+MENU = [
+    ('Memberships', '/memberships.html', 'memberships', [
+        ('All memberships', '/memberships.html', 'Daily, Classes, Perform, Recovery'),
+        ('Annual memberships', '/annual-memberships.html', 'Pay upfront and save'),
+        ('Fitness Passport', '/fitness-passport.html', 'Train at M2 through your work'),
+        ('Free trial', TRIAL_HREF, 'Try the whole club first'),
+    ]),
+    ('Train', '/classes.html', 'train', [
+        ('Classes', '/classes.html', 'Timetable, HYROX, strength and yoga'),
+        ('Recovery', '/recovery.html', 'Pool, sauna, spa and ice bath'),
+        ('Trainers', '/trainers.html', 'Meet our coaches'),
+        ('Free PT session', '/free-pt.html', 'Included for new members'),
+    ]),
+    ('HYROX', '/hyrox-auckland.html', 'hyrox', [
+        ('HYROX Auckland', '/hyrox-auckland.html', 'Race ticket offer, $35 a week'),
+        ('HYROX Summer Prep', '/hyrox-summer-prep.html', 'Get race ready for February'),
+        ('Free 2 week plan', '/hyrox-auckland-2week-plan.html', 'Download the training plan'),
+    ]),
+    ('The Club', '/our-story.html', 'club', [
+        ('Our story', '/our-story.html', 'How M2 started'),
+        ('Gallery', '/gallery.html', 'Take a look inside'),
+        ('Reviews', '/reviews.html', 'What members say'),
+        ('Become a PT', '/become-a-pt.html', 'Train clients at M2'),
+        ('M2 Hoodie', '/hoodie-presale.html', 'Merch pre-sale'),
+    ]),
+]
+
+
+def trial_link(cls, loc, label_override=None):
+    label = label_override or 'Get your free 3 days'
+    lab_attr = '' if label_override else ' data-trial-label'
+    return f'<a class="{cls}" href="{TRIAL_HREF}" data-trial{lab_attr} data-loc="{loc}">{label}</a>'
+
+
+def head(meta):
+    title = meta['title']
+    desc = meta['description']
+    out = meta['out']
+    canonical = SITE + ('/' if out == 'index.html' else '/' + out)
+    og = SITE + meta.get('og_image', '/assets/img/og-default.jpg')
+    robots = meta.get('robots', 'index, follow, max-image-preview:large')
+    schema_blocks = list(meta.get('schema', []))
+    crumbs = meta.get('breadcrumbs')
+    if crumbs:
+        items = [{"@type": "ListItem", "position": 1, "name": "Home", "item": SITE + '/'}]
+        for i, (name, url) in enumerate(crumbs, start=2):
+            items.append({"@type": "ListItem", "position": i, "name": name, "item": SITE + url})
+        schema_blocks.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": items})
+    schema_html = ''.join(
+        '<script type="application/ld+json">' + json.dumps(s, ensure_ascii=False, separators=(',', ':')) + '</script>\n'
+        for s in schema_blocks)
+    preload = ''.join(f'<link rel="preload" as="image" href="{p}">\n' for p in meta.get('preload', []))
+    e = html.escape
+    return f'''<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>{e(title)}</title>
+<meta name="description" content="{e(desc)}">
+<meta name="robots" content="{robots}">
+<link rel="canonical" href="{canonical}">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="geo.region" content="NZ-AUK">
+<meta name="geo.placename" content="Grafton, Auckland">
+<meta property="og:site_name" content="M2 Training Club">
+<meta property="og:locale" content="en_NZ">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{e(meta.get('og_title', title))}">
+<meta property="og:description" content="{e(desc)}">
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="{og}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{e(meta.get('og_title', title))}">
+<meta name="twitter:description" content="{e(desc)}">
+<meta name="twitter:image" content="{og}">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="stylesheet" href="/assets/css/m2.css?v={VERSION}">
+{preload}{schema_html}<!-- Google tag (GA4) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-1PW3XYQ1F8');</script>
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1173983798207057');fbq('track','PageView');</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
+{meta.get('head_extra', '')}</head>
+'''
+
+
+def header(meta):
+    active = meta.get('nav', '')
+    over = ' over-hero' if meta.get('hero_over') else ''
+    items = []
+    for label, href, key, _ in MENU:
+        cur = ' aria-current="page"' if key == active else ''
+        items.append(f'<div class="nav-item"><a class="nav-link" href="{href}"{cur}>{label}{CHEV}</a></div>')
+    cur = ' aria-current="page"' if active == 'contact' else ''
+    items.append(f'<div class="nav-item nav-plain"><a class="nav-link" href="/contact.html"{cur}>Contact</a></div>')
+    cols = []
+    for label, href, key, links in MENU:
+        ls = ''.join(f'<a class="mega-link" href="{h}"><strong>{l}</strong><span>{b}</span></a>' for l, h, b in links)
+        cols.append(f'<div class="mega-col"><span class="eyebrow">{label}</span>{ls}</div>')
+    banner = (f'<div class="promo-bar" data-from="{OPEN_WEEK_FROM}" data-until="{OPEN_WEEK_UNTIL}" hidden>'
+              'It’s our 3rd birthday. Anyone can train at M2 free from 12 to 18 October. Just come in.</div>\n')
+    return f'''<body>
+<a class="skip-link" href="#main">Skip to content</a>
+{banner}<header class="site-header{over}" data-section="header">
+<div class="wrap header-inner">
+<a class="logo" href="/" aria-label="M2 Training Club home"><img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="264" height="28"></a>
+<nav class="main-nav" aria-label="Main">{''.join(items)}</nav>
+<div class="header-actions">
+<a class="nav-link" href="/free-pt.html">Free PT session</a>
+{trial_link('btn btn-lime', 'header')}
+</div>
+<button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" data-menu-open>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+</button>
+</div>
+<div class="mega" aria-hidden="true"><div class="mega-panel">{''.join(cols)}</div></div>
+</header>
+'''
+
+
+def mobile_menu():
+    groups = []
+    for i, (label, href, key, links) in enumerate(MENU):
+        ls = ''.join(f'<a href="{h}">{l}</a>' for l, h, b in links)
+        groups.append(f'<details class="mm-group"><summary>{label}{CHEV_LG}</summary><div class="mm-links">{ls}</div></details>')
+    return f'''<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" data-section="mobile-menu">
+<div class="mm-top">
+<img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="188" height="20">
+<button class="burger" type="button" aria-label="Close menu" data-menu-close style="display:inline-flex">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+</button>
+</div>
+<div class="mm-body">{''.join(groups)}<a class="mm-single" href="/contact.html">Contact</a></div>
+<div class="mm-foot">
+{trial_link('btn btn-lime btn-lg', 'mobile-menu')}
+<a class="btn btn-ghost" href="/free-pt.html">Book your free PT session</a>
+<small><a href="tel:095581408">09 558 1408</a> · 8 Nugent St, Grafton</small>
+</div>
+</div>
+'''
+
+
+def footer(meta):
+    cta_title = meta.get('footer_title', 'Come and see<br>for yourself<span class="dot">.</span>')
+    cols = []
+    for label, href, key, links in MENU:
+        ls = ''.join(f'<li><a href="{h}">{l}</a></li>' for l, h, b in links)
+        cols.append(f'<div><h3>{label}</h3><ul>{ls}</ul></div>')
+    contact = ('<div><h3>Contact</h3><ul><li><a href="tel:095581408">09 558 1408</a></li>'
+               '<li><a href="mailto:reception@m2club.co.nz">reception@m2club.co.nz</a></li>'
+               '<li><a href="/contact.html">Contact us</a></li>'
+               '<li><a href="https://www.instagram.com/m2trainingclub/" rel="noopener">Instagram</a></li>'
+               '<li><a href="https://www.facebook.com/m2trainingclub" rel="noopener">Facebook</a></li></ul></div>')
+    year = datetime.date.today().year
+    return f'''<footer class="site-footer" data-section="footer">
+<div class="wrap">
+<div class="footer-cta">
+<div><h2>{cta_title}</h2><p><span data-until="{TRIAL_SWITCH}">3 days, full access, completely free.</span><span data-from="{TRIAL_SWITCH}" hidden>5 days, full access, just $5.</span> No lock-in.</p></div>
+{trial_link('btn btn-lime btn-lg', 'footer')}
+</div>
+<div class="footer-cols">
+<div class="footer-brand"><img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="226" height="24" loading="lazy"><p>8 Nugent Street, Grafton<br>Auckland 1023<br>Mon to Fri 5am to 10pm<br>Sat and Sun 7am to 7pm</p></div>
+{''.join(cols)}{contact}
+</div>
+<div class="footer-base"><span>&copy; {year} M2 Training Club · Grafton, Auckland</span><a href="/privacy-policy.html">Privacy policy</a></div>
+</div>
+</footer>
+<div class="sticky-cta" data-section="sticky-mobile">
+{trial_link('btn btn-lime', 'sticky-mobile')}
+<a class="call" href="tel:095581408" aria-label="Call M2 on 09 558 1408">{PHONE}</a>
+</div>
+<script src="/assets/js/m2.js?v={VERSION}" defer></script>
+{meta.get('body_end', '')}</body>
+</html>
+'''
+
+
+def parse(path):
+    raw = open(path, encoding='utf-8').read()
+    m = re.match(r'\s*<!--m2\s*(\{.*?\})\s*-->\s*', raw, re.S)
+    if not m:
+        sys.exit(f'{path}: missing <!--m2 {{...}} --> header')
+    meta = json.loads(m.group(1))
+    body = raw[m.end():]
+    return meta, body
+
+
+def build():
+    count = 0
+    for name in sorted(os.listdir(SRC)):
+        if not name.endswith('.html'):
+            continue
+        meta, body = parse(os.path.join(SRC, name))
+        body = body.replace('{{TRIAL_HREF}}', TRIAL_HREF).replace('{{TRIAL_SWITCH}}', TRIAL_SWITCH)
+        page = head(meta) + header(meta) + mobile_menu() + '<main id="main">\n' + body.strip() + '\n</main>\n' + footer(meta)
+        with open(os.path.join(ROOT, meta['out']), 'w', encoding='utf-8') as f:
+            f.write(page)
+        count += 1
+        print('built', meta['out'])
+    print(count, 'pages')
+
+
+if __name__ == '__main__':
+    build()
