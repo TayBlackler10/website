@@ -108,6 +108,39 @@
       a.addEventListener('click', function () { body.classList.remove('menu-open'); });
     });
 
+    // Pinned header on mobile: once the header scrolls out of view it sticks to the top,
+    // so the menu is always one tap away.
+    var hdr = document.querySelector('.site-header');
+    if (hdr && window.matchMedia) {
+      var mq = window.matchMedia('(max-width: 960px)');
+      var spacer = document.createElement('div');
+      spacer.className = 'header-spacer';
+      var over = hdr.classList.contains('over-hero');
+      var pinAt = 0, pinned = false;
+      var measure = function () {
+        if (pinned) return;
+        var r = hdr.getBoundingClientRect();
+        pinAt = r.bottom + window.scrollY;
+      };
+      var setPinned = function (on) {
+        if (on === pinned) return;
+        pinned = on;
+        if (on) {
+          if (!over) { spacer.style.height = hdr.offsetHeight + 'px'; hdr.parentNode.insertBefore(spacer, hdr); }
+          hdr.classList.add('pinned');
+        } else {
+          hdr.classList.remove('pinned');
+          if (spacer.parentNode) spacer.parentNode.removeChild(spacer);
+          measure();
+        }
+      };
+      var check = function () { setPinned(mq.matches && window.scrollY > pinAt); };
+      measure();
+      window.addEventListener('scroll', check, { passive: true });
+      window.addEventListener('resize', function () { if (!mq.matches) setPinned(false); measure(); check(); });
+      check();
+    }
+
     // Coach row: loop forever (skipped for people who prefer less motion)
     if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
       document.querySelectorAll('[data-loop]').forEach(function (loop) {
