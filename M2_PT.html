@@ -465,7 +465,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvTo
 // admin updates go through /api/pt, which adds the admin key server-side.
 const ON_WORKER = /workers\.dev$/.test(location.hostname);
 const ADMIN_URL = ON_WORKER ? "/api/pt" : APPS_SCRIPT_URL;
-const LOCKED_URL = ""; // set to the Command Centre URL once the lock is live
+const LOCKED_URL = "https://m2-command.taylor-3e5.workers.dev"; // admin board lives behind the Command Centre login
 
 // Every trainer who can be assigned a lead. Keep in sync with Code.gs TRAINER_EMAILS.
 const TRAINERS = ["Joe", "Bekka", "Dave", "Madi", "Te Ao", "Rodney", "Taylor", "Foxxy", "Eden"];
