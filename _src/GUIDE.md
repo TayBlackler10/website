@@ -84,7 +84,7 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
 ## Facts (do not invent anything beyond these or what the old page says)
 - Address 8 Nugent Street, Grafton, Auckland 1023. Phone 09 558 1408. reception@m2club.co.nz.
 - Hours Mon to Fri 5am to 10pm, Sat and Sun 7am to 7pm. Parking on site, short walk from Grafton station.
-- 1,900+ members. 4.4 stars from 114 Google reviews. Opened October 2023, rebranded to M2 October 2024.
+- 1,900+ members. 4.4 stars from 125 Google reviews. Opened October 2023. NEVER mention "Fitness Portal" anywhere.
 - Official HYROX Training Club. HYROX Auckland is 4 to 7 February 2027.
 - Weekly memberships (Join links, weekly term / Flexi):
   - Daily $27.50/wk, 12 month term. Gym floor only (NO classes, NO recovery). Free PT session.
@@ -105,7 +105,7 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
   Daily Annual $1,215 https://m2trainingclub.gymmasteronline.com/portal/membership/6dde67601feeabfe92bdf5205221d718 . Use the savings/spot wording from the old annual page.
 - Every new member gets one free PT session (booked at /free-pt.html), except Recovery memberships.
 - Corporate memberships are NOT sold online (don't add join buttons for them).
-- Fitness Passport members are excluded from all deals and offers.
+- Fitness Passport members get full access to everything (gym, all classes incl. HYROX, recovery) but are excluded from all deals and offers.
 - HYROX Auckland offer: show your HYROX Auckland race entry at reception, get Perform Flexi for $35/wk instead of $54.50 (that's over 35% off, never say 40%). In person only.
 - Referral: until 1 Oct the offer is "sign up together, both get 2 weeks free". From 1 Oct it's
   "Bring a Mate": a current member refers a friend who joins on a membership (not a trial), both get
@@ -125,3 +125,7 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
   (e.g. "Sarah M.", "James K.") and anything not in the facts above or the old page.
 - Every page ends its body with its last content section; the footer CTA is added automatically.
 - Accessibility: real buttons/links, labels on inputs, alt text, sensible heading order (one H1).
+
+- PT course (Become a PT): $3,000, 25% off the normal $4,000, payment plans available.
+- HYROX Summer Prep page was removed and redirects to /hyrox-auckland.html. Do not link to it.
+- Hoodie is on sale ongoing (printed to order), no pre-sale deadline.

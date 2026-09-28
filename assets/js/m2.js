@@ -107,6 +107,24 @@
       a.addEventListener('click', function () { body.classList.remove('menu-open'); });
     });
 
+    // Coach row: loop forever (skipped for people who prefer less motion)
+    if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      document.querySelectorAll('[data-loop]').forEach(function (loop) {
+        var track = loop.querySelector('.loop-track');
+        if (!track || track.getAttribute('data-cloned')) return;
+        Array.prototype.slice.call(track.children).forEach(function (el) {
+          var c = el.cloneNode(true);
+          c.setAttribute('aria-hidden', 'true');
+          c.setAttribute('tabindex', '-1');
+          c.querySelectorAll('a,button').forEach(function (x) { x.setAttribute('tabindex', '-1'); });
+          track.appendChild(c);
+        });
+        track.setAttribute('data-cloned', '1');
+        loop.style.setProperty('--loop-dur', (track.children.length * 4.5) + 's');
+        loop.classList.add('running');
+      });
+    }
+
     // Reveal on scroll
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {

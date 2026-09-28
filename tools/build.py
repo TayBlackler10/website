@@ -46,7 +46,6 @@ MENU = [
     ]),
     ('HYROX', '/hyrox-auckland.html', 'hyrox', [
         ('HYROX Auckland', '/hyrox-auckland.html', 'Race ticket offer, $35 a week'),
-        ('HYROX Summer Prep', '/hyrox-summer-prep.html', 'Get race ready for February'),
         ('Free 2 week plan', '/hyrox-auckland-2week-plan.html', 'Download the training plan'),
     ]),
     ('The Club', '/our-story.html', 'club', [
@@ -54,7 +53,7 @@ MENU = [
         ('Gallery', '/gallery.html', 'Take a look inside'),
         ('Reviews', '/reviews.html', 'What members say'),
         ('Become a PT', '/become-a-pt.html', 'Train clients at M2'),
-        ('M2 Hoodie', '/hoodie-presale.html', 'Merch pre-sale'),
+        ('M2 Hoodie', '/hoodie-presale.html', 'Official M2 merch'),
     ]),
 ]
 
@@ -153,7 +152,7 @@ def header(meta):
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
 </button>
 </div>
-<div class="mega" aria-hidden="true"><div class="mega-panel">{''.join(cols)}</div></div>
+<div class="mega"><div class="mega-panel">{''.join(cols)}</div></div>
 </header>
 '''
 
