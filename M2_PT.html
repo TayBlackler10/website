@@ -251,6 +251,98 @@
     .mobile-nav button svg{width:20px; height:20px;}
     .mobile-nav button.new{color:var(--lime);}
   }
+
+  /* ---------- Compact cards ---------- */
+  .card{cursor:pointer; padding:12px 14px 12px;}
+  .card:hover{box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 18px rgba(0,0,0,.07);}
+  .card .c-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+  .card .name{margin-bottom:0;}
+  .card .c-age{font-size:12px; color:var(--muted); white-space:nowrap; padding-top:2px;}
+  .card .c-age.overdue{color:var(--red); font-weight:500;}
+  .card .chips{margin:8px 0 0;}
+  .card .quick-contacted-btn{margin:10px 0 0;}
+  .card .c-assigned{font-size:12px; color:var(--muted); margin-top:4px;}
+  .chip.src{background:#F1F1EE; color:var(--muted);}
+  .chip.src-email{background:#EEF0F7; color:#4A5A8A;}
+  .chip.src-meta{background:#E9F0FC; color:#2D5DB5;}
+  .chip.src-website{background:var(--olive-bg); color:var(--olive);}
+  .chip.src-gymmaster{background:#F1F1EE; color:var(--muted);}
+  .chip.src-manual{background:#F4EFE8; color:#8A6A3E;}
+
+  /* ---------- Slim empty columns ---------- */
+  .column.slim{min-width:52px; max-width:52px; flex:0 0 52px; cursor:default;}
+  .column.slim .column-head{flex-direction:column; gap:10px; padding:12px 0; border-bottom:0; height:100%;}
+  .column.slim .ch-left{flex-direction:column; gap:10px;}
+  .column.slim .slim-name{writing-mode:vertical-rl; transform:rotate(180deg); font-size:13px; font-weight:600; color:var(--muted); letter-spacing:.02em;}
+  .column.slim .count{display:none;}
+  .column.slim .column-body{position:absolute; inset:0; padding:0; border-radius:var(--r); background:transparent;}
+  .column.slim{position:relative; min-height:180px;}
+  .column.slim .column-body.drag-over{background:var(--olive-bg);}
+
+  /* ---------- Drawer ---------- */
+  .drawer-bg{position:fixed; inset:0; background:rgba(10,10,10,.35); z-index:60; opacity:0; pointer-events:none; transition:opacity .2s;}
+  .drawer-bg.open{opacity:1; pointer-events:auto;}
+  .drawer{
+    position:fixed; top:0; right:0; bottom:0; width:460px; max-width:100%; background:var(--card); z-index:61;
+    transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column;
+    box-shadow:-12px 0 40px rgba(0,0,0,.12);
+  }
+  .drawer.open{transform:none;}
+  .d-head{background:var(--black); padding:14px 20px; display:flex; align-items:center; justify-content:space-between;}
+  .d-head img{height:20px;}
+  .d-close{background:transparent; border:1px solid #2E2E2E; color:#D6D6D0; border-radius:999px; padding:6px 14px; font-size:13px;}
+  .d-close:hover{color:#fff; border-color:#55554F;}
+  .d-body{padding:22px 22px 32px; overflow-y:auto; flex:1;}
+  .d-label{color:var(--olive); font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px;}
+  .d-name{font-size:24px; font-weight:700; letter-spacing:-.02em; color:var(--ink); line-height:1.2;}
+  .d-sub{font-size:13px; color:var(--muted); margin-top:4px;}
+  .d-actions{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:18px 0 6px;}
+  .d-act{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 6px;
+    font-size:12.5px; font-weight:500; color:var(--ink); text-align:center;
+  }
+  .d-act svg{width:20px; height:20px;}
+  .d-act:hover{border-color:var(--line2); background:#F0F0EC;}
+  .d-act.wa{background:#EAF7EF; border-color:#CDEBD8; color:#157A43;}
+  .d-act.disabled{opacity:.4; pointer-events:none;}
+  .d-contact{font-size:13px; color:var(--body); margin-bottom:4px; word-break:break-word;}
+  .d-section{margin-top:24px;}
+  .d-section h3{font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 10px;}
+  .d-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .d-grid select{width:100%;}
+  .d-field-label{font-size:12px; color:var(--muted); margin-bottom:5px;}
+  .d-suggest{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:10px;
+    background:var(--olive-bg); border-radius:10px; padding:10px 12px; font-size:13px; color:var(--body);
+  }
+  .d-suggest b{color:var(--ink); font-weight:600;}
+  .d-suggest button{background:var(--black); color:var(--lime); border-color:var(--black); border-radius:999px; font-weight:600; padding:7px 14px; font-size:12.5px; white-space:nowrap;}
+  .d-answers{background:var(--panel); border-radius:12px; padding:4px 14px;}
+  .d-row{display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .d-row:last-child{border-bottom:0;}
+  .d-row .k{width:120px; flex-shrink:0; color:var(--muted);}
+  .d-row .v{color:var(--ink);}
+  .d-injury{margin-top:10px; background:var(--red-bg); color:var(--red); border-radius:10px; padding:11px 14px; font-size:13.5px;}
+  .d-injury b{font-weight:600;}
+  .d-notes{display:flex; flex-direction:column; gap:8px;}
+  .d-note{background:var(--panel); border-radius:10px; padding:10px 12px;}
+  .d-note .when{font-size:11.5px; color:var(--muted); margin-bottom:3px;}
+  .d-note .txt{font-size:13.5px; color:var(--ink); white-space:pre-wrap; word-break:break-word;}
+  .d-notes-empty{font-size:13px; color:var(--faint);}
+  .d-add{margin-top:10px;}
+  .d-add textarea{width:100%; min-height:70px; resize:vertical; font-size:14px;}
+  .d-add button{margin-top:8px; background:var(--black); color:var(--lime); border-color:var(--black); border-radius:999px; font-weight:600; padding:9px 18px;}
+  .d-contacted{width:100%; margin-top:14px; background:var(--black); color:var(--lime); border-color:var(--black); border-radius:999px; font-weight:600; padding:11px;}
+  body.drawer-open{overflow:hidden;}
+
+  .stat-card .stat-num small{font-size:16px; font-weight:600; color:var(--muted); margin-left:2px;}
+
+  @media (max-width:760px){
+    .drawer{width:100%;}
+    .column.slim{display:none;}
+    .d-row .k{width:100px;}
+  }
 </style>
 </head>
 <body>
@@ -298,7 +390,7 @@
 </div>
 <div id="board"></div>
 
-<div class="footer-note" id="footerNote">New bookings from m2club.co.nz/free-pt.html land in Unassigned automatically. Drag a card into a trainer's column, or use the dropdown, to assign it. The trainer gets emailed the lead's details straight away.</div>
+<div class="footer-note" id="footerNote">New bookings from m2club.co.nz/free-pt.html land in Unassigned automatically. Tap a lead to see everything, call or WhatsApp them, and add notes. Drag a card onto a trainer (or use the dropdown) to assign it, and they get emailed the details straight away.</div>
 </div>
 
 <nav class="mobile-nav" id="mobileNav">
@@ -360,10 +452,14 @@
   </div>
 </div>
 
+<div class="drawer-bg" id="drawerBg"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="d-head"><img src="/assets/M2_ICON_YELLOW%20(5).png" alt="M2"><button class="d-close" id="drawerClose">Close</button></div>
+  <div class="d-body" id="drawerBody"></div>
+</aside>
+
 <script>
 /* ======================= CONFIG ======================= */
-// Paste your deployed Google Apps Script Web App URL here (ends in /exec).
-// See the setup guide for how to create this.
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec";
 
 // Every trainer who can be assigned a lead. Keep in sync with Code.gs TRAINER_EMAILS.
@@ -373,16 +469,29 @@ const TRAINERS = ["Joe", "Bekka", "Dave", "Madi", "Te Ao", "Rodney", "Taylor", "
 // up in the assign dropdown, but their leads land in the "Other Trainers" column.
 const PINNED_TRAINERS = ["Joe", "Bekka", "Dave", "Te Ao", "Taylor", "Rodney", "Foxxy", "Eden"];
 
-// Board columns, left to right. "__unassigned__" and "__other__" are special keys
-// handled in columnForLead() below — everything else is a trainer name.
+// Used for the "Suggested trainer" hint. Only trainers listed here are ever
+// suggested (Taylor and Foxxy are left out on purpose). gender is matched
+// against the lead's male/female preference; styles are the training styles
+// that trainer is a strong fit for (optional, adds a small boost).
+const TRAINER_PROFILES = {
+  "Joe":    {gender:"m", styles:[]},
+  "Dave":   {gender:"m", styles:[]},
+  "Te Ao":  {gender:"m", styles:[]},
+  "Rodney": {gender:"m", styles:[]},
+  "Bekka":  {gender:"f", styles:[]},
+  "Madi":   {gender:"f", styles:[]},
+  "Eden":   {gender:"f", styles:[]}
+};
+
+// Pre-written WhatsApp intro. {first} = lead's first name, {trainer} = sender.
+const WHATSAPP_INTRO = "Hi {first}, it's {trainer} from M2 Training Club. Thanks for booking your free PT session! When suits you best to come in?";
+
 const COLUMNS = [
   {key: "__unassigned__", label: "Unassigned"},
   ...PINNED_TRAINERS.map(t => ({key: t, label: t})),
   {key: "__other__", label: "Other Trainers"}
 ];
 
-// Follow-up stage — now a dropdown on each card (colours its left border)
-// rather than a board column. New leads default to "New".
 const STATUSES = [
   {key: "New", cls: "st-new"},
   {key: "Contacted", cls: "st-contacted"},
@@ -393,13 +502,7 @@ const STATUSES = [
 const AUTO_REFRESH_MS = 60000;
 /* ======================================================= */
 
-// A trainer's private link looks like ?trainer=Bekka&key=<secret token>.
-// (Not "?t=&k=" — some hosting/CDN layers silently strip a bare "t="
-// param as if it were a cache-busting timestamp, which is exactly what was
-// happening on m2club.co.nz. Longer names avoid that entirely.) If both are
-// present we're in "trainer mode": one trainer's own filtered view, gated
-// server-side by the token (see listMine/updateMine in Code.gs) — never the
-// full admin board, regardless of what someone types into the URL.
+// Trainer private link: ?trainer=Name&key=<token>. Gated server-side.
 const urlParams = new URLSearchParams(window.location.search);
 const TRAINER_NAME = urlParams.get("trainer") || "";
 const TRAINER_KEY = urlParams.get("key") || "";
@@ -407,25 +510,16 @@ const TRAINER_MODE = !!(TRAINER_NAME && TRAINER_KEY);
 
 let leads = [];
 let pollTimer = null;
-let showArchived = false; // Contacted/Trial Booked/Won/Lost leads are hidden from the board until toggled on
+let showArchived = false;
+let trainerTab = "New";
+let openLeadId = null;
 
-// A lead counts as "archived" the moment it's no longer sitting untouched —
-// i.e. anything past "New". That's Contacted, Trial Booked, Won, or Lost.
-// Once a trainer's made contact, the lead has done its job cluttering the
-// board and drops off automatically; "Show archived" brings it all back.
-function isArchivedStatus(status){
-  return (status || "New") !== "New";
-}
-let trainerTab = "New"; // trainer-mode only: which status tab is currently selected
-
+function isArchivedStatus(status){ return (status || "New") !== "New"; }
 function $(id){ return document.getElementById(id); }
 
-// Deterministic avatar colour + initials so a given trainer/lead always
-// gets the same look across the attention row, workload chips and board.
 const AVATAR_COLORS = ["var(--av1)","var(--av2)","var(--av3)","var(--av4)","var(--av5)","var(--av6)","var(--av7)"];
 function avatarColor(name){
-  let h = 0;
-  const s = name || "";
+  let h = 0; const s = name || "";
   for(let i=0; i<s.length; i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
   return AVATAR_COLORS[h % AVATAR_COLORS.length];
 }
@@ -435,6 +529,7 @@ function initials(name){
   if(parts.length === 1) return parts[0].slice(0,2).toUpperCase();
   return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
 }
+function firstName(name){ return ((name||"").trim().split(/\s+/)[0]) || "there"; }
 
 function greetingText(name){
   const who = name || "Tim";
@@ -458,17 +553,104 @@ function columnForLead(l){
   if(PINNED_TRAINERS.includes(t)) return t;
   return "__other__";
 }
+function statusMeta(status){ return STATUSES.find(s => s.key === status) || STATUSES[0]; }
 
-function statusMeta(status){
-  return STATUSES.find(s => s.key === status) || STATUSES[0];
+/* ---------- Phone / contact helpers ---------- */
+// GymMaster drops the leading 0 on NZ mobiles, so add it back for display.
+function formatPhone(p){
+  let s = String(p || "").trim();
+  if(!s) return "";
+  if(s.charAt(0) !== "0" && s.charAt(0) !== "+") s = "0" + s;
+  return s;
+}
+function telHref(p){ return "tel:" + formatPhone(p).replace(/[^\d+]/g, ""); }
+function waNumber(p){
+  let d = String(p || "").replace(/[^\d+]/g, "");
+  if(!d) return "";
+  if(d.startsWith("+")) return d.slice(1);
+  if(d.startsWith("64")) return d;
+  if(d.startsWith("0")) d = d.slice(1);
+  return "64" + d;
+}
+function waHref(l){
+  const n = waNumber(l.phone);
+  if(!n) return "";
+  const sender = TRAINER_MODE ? TRAINER_NAME : (l.trainer && l.trainer !== "Foxxy" ? l.trainer : "Tim");
+  const msg = WHATSAPP_INTRO.replace("{first}", firstName(l.name)).replace("{trainer}", sender);
+  return "https://wa.me/" + n + "?text=" + encodeURIComponent(msg);
+}
+// GymMaster imports store GymMaster's own sender address, not the member's.
+function realEmail(e){
+  const s = String(e || "").trim();
+  if(!s || /gymmasteronline\.com$/i.test(s) || /^reception@m2club\.co\.nz$/i.test(s)) return "";
+  return s;
 }
 
+/* ---------- Source tag ---------- */
+function sourceTag(src){
+  const s = String(src || "Manual");
+  let label = s, cls = "src";
+  const m = s.match(/^Website\s*\(([^)]+)\)/i);
+  if(m){
+    const k = m[1].toLowerCase();
+    if(k === "email"){ label = "Email"; cls += " src-email"; }
+    else if(k === "meta" || k === "facebook" || k === "instagram"){ label = "Meta"; cls += " src-meta"; }
+    else { label = m[1].charAt(0).toUpperCase() + m[1].slice(1); cls += " src-website"; }
+  } else if(/^website/i.test(s)){ label = "Website"; cls += " src-website"; }
+  else if(/gymmaster/i.test(s)){ label = "GymMaster"; cls += " src-gymmaster"; }
+  else if(/manual/i.test(s)){ label = "Manual"; cls += " src-manual"; }
+  return {label, cls};
+}
+
+/* ---------- Notes history ---------- */
+// Notes are one text field in the sheet. New notes are saved as dated lines
+// "[28 Sep, 4:32 pm · Name] text" so the drawer can show them as a history.
+// Anything written before this format shows as an earlier note.
+function parseNotes(raw){
+  const s = String(raw || "").trim();
+  if(!s) return [];
+  const out = [];
+  const parts = s.split(/\n(?=\[)/);
+  parts.forEach(p => {
+    const m = p.match(/^\[([^\]]+)\]\s*([\s\S]*)$/);
+    if(m) out.push({when:m[1], text:m[2].trim()});
+    else out.push({when:"Earlier note", text:p.trim()});
+  });
+  return out;
+}
+function stampNote(text){
+  const d = new Date();
+  const when = d.toLocaleDateString("en-NZ", {day:"numeric", month:"short"}) + ", " +
+               d.toLocaleTimeString("en-NZ", {hour:"numeric", minute:"2-digit"}).toLowerCase();
+  const who = TRAINER_MODE ? TRAINER_NAME : "Admin";
+  return "[" + when + " · " + who + "] " + text.trim();
+}
+
+/* ---------- Suggested trainer ---------- */
+function activeCount(t){ return leads.filter(l => l.trainer === t && !isArchivedStatus(l.status)).length; }
+function suggestTrainer(l){
+  const pref = l.trainerPreference || "";
+  let want = "";
+  if(/female/i.test(pref)) want = "f";
+  else if(/male/i.test(pref)) want = "m";
+  let best = null, bestScore = -Infinity;
+  Object.keys(TRAINER_PROFILES).forEach(t => {
+    const p = TRAINER_PROFILES[t];
+    if(want && p.gender !== want) return;
+    let score = -activeCount(t) * 2;
+    if(l.trainingStyle && p.styles.includes(l.trainingStyle)) score += 3;
+    if(score > bestScore){ bestScore = score; best = t; }
+  });
+  return best;
+}
+
+/* ---------- Init / data ---------- */
 function init(){
   if(TRAINER_MODE){
     document.body.classList.add("trainer-mode");
     $("boardLabelText").textContent = "My leads";
     $("greetingLabel").textContent = "Your PT leads";
-    $("footerNote").textContent = "This is your private lead list, only you can see it. Update the status and add notes as you follow up. Tim and Taylor can see your notes on the main board.";
+    $("footerNote").textContent = "This is your private lead list, only you can see it. Tap a lead to call, WhatsApp, update the status or add notes. Tim and Taylor can see your notes on the main board.";
   }
   $("greetingText").textContent = greetingText(TRAINER_MODE ? TRAINER_NAME : "Tim");
 
@@ -485,50 +667,41 @@ function init(){
 
 function sampleData(){
   const now = Date.now();
+  const iso = h => new Date(now - h*3600*1000).toISOString();
   return [
     {id:"demo-1", name:"Sarah Thompson", phone:"021 555 0192", email:"sarah@example.com",
-     reasonForJoining:"General health & weight loss", trainerPreference:"I do not have a preference",
+     reasonForJoining:"General health & weight loss", trainerPreference:"a Female trainer",
      trainingStyle:"High Intensity Interval or Circuit Training", injuries:"", preferredTime:"Weekday - Early morning",
-     source:"GymMaster", status:"New", trainer:"", receivedAt: new Date(now - 3*3600*1000).toISOString(), notes:""},
+     source:"Website (email)", status:"New", trainer:"", receivedAt: iso(3), notes:""},
+    {id:"demo-7", name:"Tom Ruawai", phone:"221234567", email:"",
+     reasonForJoining:"Train for HYROX", trainerPreference:"I do not have a preference",
+     trainingStyle:"Cardio/Fitness Focus", injuries:"Tight lower back", preferredTime:"Weekday - Evenings",
+     source:"Website (meta)", status:"New", trainer:"", receivedAt: iso(1), notes:""},
     {id:"demo-2", name:"Mike Reddy", phone:"022 444 7710", email:"mike@example.com",
      reasonForJoining:"Training for a half marathon", trainerPreference:"a Male trainer",
      trainingStyle:"Sports Specific", injuries:"Old ACL reconstruction, right knee", preferredTime:"Weekday - Evenings",
-     source:"GymMaster", status:"Contacted", trainer:"Dave", receivedAt: new Date(now - 26*3600*1000).toISOString(), notes:"Left voicemail Tue."},
+     source:"GymMaster", status:"Contacted", trainer:"Dave", receivedAt: iso(26), lastUpdated: iso(20), notes:"[27 Sep, 9:10 am · Dave] Left voicemail."},
     {id:"demo-3", name:"Grace Foster", phone:"027 909 3623", email:"grace@example.com",
      reasonForJoining:"Wants a structured programme", trainerPreference:"a Female trainer",
      trainingStyle:"Strength Training - weights & machines", injuries:"", preferredTime:"Weekday - Midday",
-     source:"GymMaster", status:"Trial Booked", trainer:"Bekka", receivedAt: new Date(now - 40*3600*1000).toISOString(), notes:"Trial booked Thursday 6am."},
+     source:"GymMaster", status:"Trial Booked", trainer:"Bekka", receivedAt: iso(40), lastUpdated: iso(30), notes:"Trial booked Thursday 6am."},
     {id:"demo-4", name:"Jack Hayes", phone:"027 474 3257", email:"jack@example.com",
      reasonForJoining:"Post-injury rehab", trainerPreference:"I do not have a preference",
      trainingStyle:"Mobility/Movement", injuries:"Shoulder impingement, left side", preferredTime:"Any - I'm flexible",
-     source:"GymMaster", status:"New", trainer:"Madi", receivedAt: new Date(now - 5*3600*1000).toISOString(), notes:""},
+     source:"Manual", status:"New", trainer:"Eden", receivedAt: iso(5), notes:""},
     {id:"demo-5", name:"Piper Singh", phone:"021 941 7330", email:"piper@example.com",
      reasonForJoining:"General health & weight loss", trainerPreference:"a Male trainer",
      trainingStyle:"Not sure", injuries:"", preferredTime:"Weekday - Evenings",
-     source:"GymMaster", status:"Won", trainer:"Bekka", receivedAt: new Date(now - 60*24*3600*1000).toISOString(), notes:"Signed up for 10-session pack."},
-    {id:"demo-6", name:"Skye Hayes", phone:"027 825 7613", email:"skye@example.com",
-     reasonForJoining:"Improve fitness for rugby pre-season", trainerPreference:"a Female trainer",
-     trainingStyle:"Mobility/Movement", injuries:"", preferredTime:"Weekday - Midday",
-     source:"GymMaster", status:"Lost", trainer:"Bekka", receivedAt: new Date(now - 90*24*3600*1000).toISOString(), notes:"Went with a different gym."},
+     source:"GymMaster", status:"Won", trainer:"Bekka", receivedAt: iso(5*24), lastUpdated: iso(2*24), notes:"Signed up for 10-session pack."}
   ];
 }
 
-// GymMaster's import re-polls the same questionnaire completion more than
-// once, which was landing the same person in the sheet — and the Unassigned
-// column — as two or more separate cards. The sheet's "Email" column for
-// GymMaster leads is just GymMaster's generic notification address (not the
-// customer's), so it can't be used to tell people apart; instead we
-// fingerprint a lead by their name, phone and questionnaire answers, which
-// are identical across a duplicate import but would legitimately differ for
-// two different people. When a group of leads share a fingerprint, keep the
-// one that's already been worked (has a trainer assigned, or is otherwise
-// most recently updated) and drop the rest so only one copy ever shows up.
+// Collapse repeated GymMaster imports of the same questionnaire into one card.
 function dedupeLeads(rawLeads){
   const groups = new Map();
   for(const l of rawLeads){
     const key = [l.name, l.phone, l.reasonForJoining, l.trainerPreference, l.trainingStyle, l.preferredTime]
-      .map(v => (v || "").toString().trim().toLowerCase())
-      .join("|");
+      .map(v => (v || "").toString().trim().toLowerCase()).join("|");
     if(!groups.has(key)) groups.set(key, []);
     groups.get(key).push(l);
   }
@@ -536,11 +709,9 @@ function dedupeLeads(rawLeads){
   for(const group of groups.values()){
     if(group.length === 1){ out.push(group[0]); continue; }
     group.sort((a, b) => {
-      const aAssigned = a.trainer ? 1 : 0, bAssigned = b.trainer ? 1 : 0;
-      if(aAssigned !== bAssigned) return bAssigned - aAssigned; // keep the assigned copy first
-      const aTime = new Date(a.lastUpdated || a.receivedAt || 0).getTime();
-      const bTime = new Date(b.lastUpdated || b.receivedAt || 0).getTime();
-      return bTime - aTime; // otherwise keep the most recently touched copy
+      const aA = a.trainer ? 1 : 0, bA = b.trainer ? 1 : 0;
+      if(aA !== bA) return bA - aA;
+      return new Date(b.lastUpdated || b.receivedAt || 0) - new Date(a.lastUpdated || a.receivedAt || 0);
     });
     out.push(group[0]);
   }
@@ -569,17 +740,20 @@ async function fetchLeads(){
   }
 }
 
+// Optimistic local update so the UI responds instantly, then save + refetch.
+function patchLocal(id, patch){
+  const l = leads.find(x => x.id === id);
+  if(l) Object.assign(l, patch, {lastUpdated: new Date().toISOString()});
+  render();
+}
+
 async function postAction(payload){
   if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
-    alert("Demo mode: connect APPS_SCRIPT_URL to save changes for real.");
+    if(payload.id) patchLocal(payload.id, payload);
     return;
   }
   try{
-    await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      headers: {"Content-Type": "text/plain;charset=utf-8"}, // avoids CORS preflight
-      body: JSON.stringify(payload)
-    });
+    await fetch(APPS_SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(payload)});
     await fetchLeads();
   }catch(err){
     console.error(err);
@@ -587,66 +761,79 @@ async function postAction(payload){
   }
 }
 
-// Trainer-mode equivalent of postAction — always goes through updateMine,
-// always stamped with this trainer's own name + secret key so the backend
-// can enforce they're only ever touching their own leads.
 async function postMine(payload){
   if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf("PASTE_YOUR") === 0){
-    alert("Demo mode: connect APPS_SCRIPT_URL to save changes for real.");
+    if(payload.id) patchLocal(payload.id, payload);
     return;
   }
   const full = Object.assign({action:"updateMine", trainer: TRAINER_NAME, key: TRAINER_KEY}, payload);
   try{
-    await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      headers: {"Content-Type": "text/plain;charset=utf-8"},
-      body: JSON.stringify(full)
-    });
+    await fetch(APPS_SCRIPT_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(full)});
     await fetchLeads();
   }catch(err){
     console.error(err);
     setStatus("Save failed. Check your connection and try again.", true);
+  }
+}
+
+// One save path for both views.
+function saveLead(l, patch){
+  if(TRAINER_MODE){
+    const p = {id:l.id};
+    if("status" in patch) p.status = patch.status;
+    if("notes" in patch) p.notes = patch.notes;
+    patchLocal(l.id, p);
+    postMine(p);
+  } else {
+    const p = Object.assign({action:"updateLead", id:l.id, status: l.status || "New", trainer: l.trainer || ""}, patch);
+    const local = Object.assign({}, patch);
+    patchLocal(l.id, local);
+    postAction(p);
   }
 }
 
 function ageLabel(iso){
   const ms = Date.now() - new Date(iso).getTime();
   const hrs = ms / 3600000;
-  if(hrs < 1) return {text: Math.round(ms/60000) + "m ago", overdue:false};
+  if(hrs < 1) return {text: Math.max(1, Math.round(ms/60000)) + "m ago", overdue:false};
   if(hrs < 24) return {text: Math.round(hrs) + "h ago", overdue: hrs > 4};
   return {text: Math.round(hrs/24) + "d ago", overdue: true};
 }
 
-function matchesFilters(l){
-  // Leads are archived off the board as soon as they've been contacted —
-  // they're being worked, and leaving them in a trainer's column forever is
-  // exactly the clutter that makes a 50-lead column unreadable. Toggle
-  // "Show archived" to see them.
-  if(!showArchived && isArchivedStatus(l.status)) return false;
-
+function matchesSearch(l){
   const q = $("searchBox").value.trim().toLowerCase();
   if(!q) return true;
   return (l.name||"").toLowerCase().includes(q) ||
          (l.phone||"").toLowerCase().includes(q) ||
          (l.email||"").toLowerCase().includes(q);
 }
+function matchesFilters(l){
+  if(!showArchived && isArchivedStatus(l.status)) return false;
+  return matchesSearch(l);
+}
 
+/* ---------- Stats ---------- */
 function computeStats(){
   const activeLeads = leads.filter(l => !isArchivedStatus(l.status));
-  const unassigned = activeLeads.filter(l => !l.trainer);
-  const overdue = activeLeads.filter(l => ageLabel(l.receivedAt).overdue);
-  const weekAgo = Date.now() - 7*24*3600*1000;
-  const thisWeek = leads.filter(l => new Date(l.receivedAt).getTime() >= weekAgo);
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  const wonThisMonth = leads.filter(l => l.status === "Won" && new Date(l.lastUpdated || l.receivedAt).getTime() >= monthStart);
+  // Contact rate: of leads that came in over the last 30 days (and are at
+  // least a day old), how many have been moved past "New".
+  const since = Date.now() - 30*24*3600*1000, dayAgo = Date.now() - 24*3600*1000;
+  const pool = leads.filter(l => { const t = new Date(l.receivedAt).getTime(); return t >= since && t <= dayAgo; });
+  const worked = pool.filter(l => isArchivedStatus(l.status));
   return {
-    unassignedCount: unassigned.length,
-    overdueCount: overdue.length,
-    activeCount: activeLeads.length,
-    weekCount: thisWeek.length
+    unassignedCount: activeLeads.filter(l => !l.trainer).length,
+    overdueCount: activeLeads.filter(l => ageLabel(l.receivedAt).overdue).length,
+    wonCount: wonThisMonth.length,
+    contactRate: pool.length ? Math.round(worked.length / pool.length * 100) : null
   };
 }
 
 function renderSummary(){
   const s = computeStats();
+  const monthName = new Date().toLocaleDateString("en-NZ", {month:"long"});
   $("summaryBar").innerHTML = `
     <div class="stat-card ${s.unassignedCount>0?'urgent':''}">
       <div class="stat-num">${s.unassignedCount}</div>
@@ -656,78 +843,65 @@ function renderSummary(){
       <div class="stat-num">${s.overdueCount}</div>
       <div class="stat-label">Overdue follow-up</div>
     </div>
-    <div class="stat-card type-active">
-      <div class="stat-num">${s.activeCount}</div>
-      <div class="stat-label">Active in pipeline</div>
+    <div class="stat-card">
+      <div class="stat-num">${s.wonCount}</div>
+      <div class="stat-label">Won in ${monthName}</div>
     </div>
-    <div class="stat-card type-week">
-      <div class="stat-num">${s.weekCount}</div>
-      <div class="stat-label">New this week</div>
+    <div class="stat-card">
+      <div class="stat-num">${s.contactRate === null ? "–" : s.contactRate}<small>${s.contactRate === null ? "" : "%"}</small></div>
+      <div class="stat-label">Contacted, last 30 days</div>
     </div>
   `;
 }
 
-// Pulls out anything that needs Tim's attention right now — unassigned or
-// overdue — regardless of which trainer's column it happens to be sitting
-// in below, so he never has to hunt through the board to find it.
+/* ---------- Needs attention + workload ---------- */
+function trainerSelectFor(l, onChange){
+  const sel = document.createElement("select");
+  const suggested = !l.trainer ? suggestTrainer(l) : null;
+  const none = document.createElement("option");
+  none.value = ""; none.textContent = "Unassigned";
+  sel.appendChild(none);
+  TRAINERS.forEach(t => {
+    const o = document.createElement("option");
+    o.value = t; o.textContent = t + (t === suggested ? " (suggested)" : "");
+    if(l.trainer === t) o.selected = true;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("click", e => e.stopPropagation());
+  sel.addEventListener("change", () => onChange(sel.value));
+  return sel;
+}
+
 function renderAttention(){
   const row = $("attentionRow");
   row.innerHTML = "";
-  const candidates = leads.filter(l =>
-    matchesFilters(l) && !isArchivedStatus(l.status) &&
-    (!l.trainer || ageLabel(l.receivedAt).overdue)
-  );
+  const candidates = leads.filter(l => matchesFilters(l) && !isArchivedStatus(l.status) && (!l.trainer || ageLabel(l.receivedAt).overdue));
   candidates.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
   const top = candidates.slice(0, 12);
-
   if(top.length === 0){
-    const hint = document.createElement("div");
-    hint.className = "attention-empty";
-    hint.textContent = "Nothing urgent right now.";
-    row.appendChild(hint);
+    row.innerHTML = '<div class="attention-empty">Nothing urgent right now.</div>';
     return;
   }
-  top.forEach(l => row.appendChild(renderAttentionCard_(l)));
-}
-
-function renderAttentionCard_(l){
-  const card = document.createElement("div");
-  card.className = "attention-card";
-  const age = ageLabel(l.receivedAt);
-  const reason = !l.trainer ? "Unassigned" : "Overdue follow-up";
+  top.forEach(l => {
+    const card = document.createElement("div");
+    card.className = "attention-card";
+    card.style.cursor = "pointer";
+    const age = ageLabel(l.receivedAt);
     const name = l.name || "(no name)";
-
-  const trainerSelect = document.createElement("select");
-  const noneOpt = document.createElement("option");
-  noneOpt.value = ""; noneOpt.textContent = "Unassigned";
-  trainerSelect.appendChild(noneOpt);
-  TRAINERS.forEach(t => {
-    const o = document.createElement("option");
-    o.value = t; o.textContent = t;
-    if(l.trainer === t) o.selected = true;
-    trainerSelect.appendChild(o);
+    card.innerHTML = `
+      <div class="a-top">
+        <div class="avatar" style="background:${avatarColor(name)}">${initials(name)}</div>
+        <div>
+          <div class="a-name">${escapeHtml(name)}</div>
+          <div class="a-reason-badge">${!l.trainer ? "Unassigned" : "Overdue follow-up"} &middot; ${age.text}</div>
+        </div>
+      </div>`;
+    card.appendChild(trainerSelectFor(l, v => saveLead(l, {trainer: v})));
+    card.addEventListener("click", () => openDrawer(l.id));
+    row.appendChild(card);
   });
-  trainerSelect.addEventListener("change", () => {
-    postAction({action:"updateLead", id:l.id, trainer: trainerSelect.value, status: l.status||"New"});
-  });
-
-  card.innerHTML = `
-    <div class="a-top">
-      <div class="avatar" style="background:${avatarColor(name)}">${initials(name)}</div>
-      <div>
-        <div class="a-name">${escapeHtml(name)}</div>
-        <div class="a-reason-badge">${reason} &middot; ${age.text}</div>
-      </div>
-    </div>
-  `;
-  card.appendChild(trainerSelect);
-  return card;
 }
 
-// One chip per trainer — active lead count plus how long their oldest
-// unresolved lead has been sitting, so workload imbalance is visible
-// without counting cards column by column. Click a chip to jump to that
-// trainer's column below.
 function renderWorkload(){
   const row = $("workloadRow");
   row.innerHTML = "";
@@ -735,21 +909,18 @@ function renderWorkload(){
     const theirLeads = leads.filter(l => l.trainer === t && !isArchivedStatus(l.status));
     const chip = document.createElement("div");
     chip.className = "workload-chip";
-    let oldestText = "No active leads";
-    let oldestOverdue = false;
+    let oldestText = "No active leads", oldestOverdue = false;
     if(theirLeads.length > 0){
       const oldest = theirLeads.slice().sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt))[0];
       const age = ageLabel(oldest.receivedAt);
-      oldestText = "Oldest: " + age.text;
-      oldestOverdue = age.overdue;
+      oldestText = "Oldest: " + age.text; oldestOverdue = age.overdue;
     }
     chip.innerHTML = `
       <div class="w-avatar" style="background:${avatarColor(t)}">${initials(t)}<span class="w-badge">${theirLeads.length}</span></div>
       <div class="w-info">
         <div class="w-name">${escapeHtml(t)}</div>
         <div class="w-oldest ${oldestOverdue?'overdue':''}">${oldestText}</div>
-      </div>
-    `;
+      </div>`;
     chip.addEventListener("click", () => {
       const colKey = PINNED_TRAINERS.includes(t) ? t : "__other__";
       const el = document.getElementById("colwrap-" + colKey.replace(/\W/g,''));
@@ -759,11 +930,24 @@ function renderWorkload(){
   });
 }
 
+/* ---------- Board ---------- */
+function attachDrop(body, colKey){
+  body.addEventListener("dragover", e => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; body.classList.add("drag-over"); });
+  body.addEventListener("dragleave", () => body.classList.remove("drag-over"));
+  body.addEventListener("drop", e => {
+    e.preventDefault();
+    body.classList.remove("drag-over");
+    const id = e.dataTransfer.getData("text/plain");
+    const lead = leads.find(x => x.id === id);
+    if(!lead) return;
+    const newTrainer = colKey === "__unassigned__" ? "" : colKey;
+    if((lead.trainer || "") === newTrainer) return;
+    saveLead(lead, {trainer: newTrainer});
+  });
+}
+
 function render(){
-  if(TRAINER_MODE){
-    renderTrainerView();
-    return;
-  }
+  if(TRAINER_MODE){ renderTrainerView(); refreshDrawer(); return; }
   renderSummary();
   renderAttention();
   renderWorkload();
@@ -771,105 +955,131 @@ function render(){
   const board = $("board");
   board.innerHTML = "";
   COLUMNS.forEach(col => {
-    const colEl = document.createElement("div");
-    colEl.className = "column";
-    colEl.id = "colwrap-" + col.key.replace(/\W/g,'');
     const inCol = leads.filter(l => columnForLead(l) === col.key && matchesFilters(l));
-    const headCls = col.key === "__unassigned__" ? "unassigned" : "";
     const isTrainerCol = col.key !== "__unassigned__" && col.key !== "__other__";
+    const colEl = document.createElement("div");
+    colEl.id = "colwrap-" + col.key.replace(/\W/g,'');
+
+    // Empty columns shrink to a slim strip (still a drop target). "Other
+    // Trainers" disappears entirely when empty.
+    if(inCol.length === 0 && col.key !== "__unassigned__"){
+      if(col.key === "__other__") return;
+      colEl.className = "column slim";
+      colEl.title = col.label + ": no leads. Drop a card here to assign.";
+      colEl.innerHTML = `
+        <div class="column-head"><span class="ch-left">
+          <span class="mini-avatar" style="background:${avatarColor(col.key)}">${initials(col.key)}</span>
+          <span class="slim-name">${escapeHtml(col.label)}</span></span></div>
+        <div class="column-body"></div>`;
+      board.appendChild(colEl);
+      attachDrop(colEl.querySelector(".column-body"), col.key);
+      return;
+    }
+
+    colEl.className = "column";
+    const headCls = col.key === "__unassigned__" ? "unassigned" : "";
     const avatarHtml = isTrainerCol ? `<span class="mini-avatar" style="background:${avatarColor(col.key)}">${initials(col.key)}</span>` : "";
     colEl.innerHTML = `
       <div class="column-head ${headCls}"><span class="ch-left">${avatarHtml}<span>${col.label}</span></span><span class="count">${inCol.length}</span></div>
-      <div class="column-body" id="col-${col.key.replace(/\W/g,'')}"></div>
-    `;
+      <div class="column-body"></div>`;
     board.appendChild(colEl);
     const body = colEl.querySelector(".column-body");
-    if(inCol.length === 0){
-      const hint = document.createElement("div");
-      hint.className = "empty-hint";
-      hint.textContent = "No leads";
-      body.appendChild(hint);
-    }
-    // Oldest first — the longest-waiting lead is the one that most needs
-    // attention, so it should be the first thing you see, not buried under
-    // whatever came in most recently.
+    if(inCol.length === 0) body.innerHTML = '<div class="empty-hint">All clear</div>';
     inCol.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
     inCol.forEach(l => body.appendChild(renderCard(l, col.key === "__other__")));
-
-    // "Other Trainers" isn't a valid drop target — Madi/Rodney/Taylor still
-    // get assigned via the dropdown on the card, since a drop here can't say which of them.
-    if(col.key === "__other__") return;
-
-    body.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
-      body.classList.add("drag-over");
-    });
-    body.addEventListener("dragleave", () => body.classList.remove("drag-over"));
-    body.addEventListener("drop", (e) => {
-      e.preventDefault();
-      body.classList.remove("drag-over");
-      const id = e.dataTransfer.getData("text/plain");
-      const lead = leads.find(x => x.id === id);
-      if(!lead) return;
-      const newTrainer = col.key === "__unassigned__" ? "" : col.key;
-      if((lead.trainer || "") === newTrainer) return;
-      postAction({action:"updateLead", id, trainer: newTrainer, status: lead.status||"New"});
-    });
+    if(col.key !== "__other__") attachDrop(body, col.key);
   });
+  refreshDrawer();
 }
 
-// Search-only filter for trainer mode — unlike matchesFilters(), this does
-// NOT hide Won/Lost leads, since trainers now have dedicated tabs for those
-// statuses and need them to actually show up when that tab is selected.
-function matchesSearchOnly(l){
-  const q = $("searchBox").value.trim().toLowerCase();
-  if(!q) return true;
-  return (l.name||"").toLowerCase().includes(q) ||
-         (l.phone||"").toLowerCase().includes(q) ||
-         (l.email||"").toLowerCase().includes(q);
+function trainerPrefChip(pref){
+  if(!pref) return "";
+  if(/male/i.test(pref) && !/female/i.test(pref)) return `<span class="chip pref-m">Male trainer</span>`;
+  if(/female/i.test(pref)) return `<span class="chip pref-f">Female trainer</span>`;
+  return "";
 }
 
-// A trainer's own private view: their leads split into status tabs (New,
-// Contacted, Trial Booked, Won, Lost) so it's obvious at a glance who's
-// where, rather than one long mixed list. No board, no other trainers,
-// no reassignment.
+// Compact card: name, age, a few chips, one quick action. Tap for everything else.
+function renderCard(l, showTrainerLabel){
+  const card = document.createElement("div");
+  card.className = "card " + statusMeta(l.status || "New").cls;
+  const age = ageLabel(l.receivedAt);
+  const src = sourceTag(l.source);
+
+  let chips = `<span class="chip ${src.cls}">${escapeHtml(src.label)}</span>`;
+  chips += trainerPrefChip(l.trainerPreference);
+  if(l.preferredTime) chips += `<span class="chip time">${escapeHtml(l.preferredTime.replace(" - ", ", "))}</span>`;
+  if(l.injuries && !/^\s*(no|none|nil|n\/a|na|-)\s*\.?\s*$/i.test(l.injuries)) chips += `<span class="chip injury">Injury note</span>`;
+
+  const status = l.status || "New";
+  const assigned = showTrainerLabel && l.trainer ? `<div class="c-assigned">Assigned to ${escapeHtml(l.trainer)}</div>` : "";
+  const statusLine = status !== "New" ? `<div class="c-assigned">${escapeHtml(status)}</div>` : "";
+
+  card.innerHTML = `
+    <div class="c-top">
+      <div class="name">${escapeHtml(l.name || "(no name)")}</div>
+      <div class="c-age ${age.overdue && status === "New" ? 'overdue':''}">${age.text}</div>
+    </div>
+    ${assigned}${statusLine}
+    <div class="chips">${chips}</div>`;
+
+  if(status === "New" && (l.trainer || TRAINER_MODE)){
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "quick-contacted-btn";
+    btn.textContent = "Mark as contacted";
+    btn.addEventListener("click", e => { e.stopPropagation(); saveLead(l, {status:"Contacted"}); });
+    card.appendChild(btn);
+  }
+
+  card.addEventListener("click", () => openDrawer(l.id));
+
+  if(!TRAINER_MODE){
+    card.draggable = true;
+    card.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", l.id);
+      e.dataTransfer.effectAllowed = "move";
+      card.classList.add("dragging");
+    });
+    card.addEventListener("dragend", () => card.classList.remove("dragging"));
+  }
+  return card;
+}
+
+/* ---------- Trainer view ---------- */
 function renderTrainerView(){
-  const mine = leads.filter(matchesSearchOnly);
+  const mine = leads.filter(matchesSearch);
   const active = mine.filter(l => l.status !== "Won" && l.status !== "Lost");
-  const overdue = active.filter(l => ageLabel(l.receivedAt).overdue);
+  const overdue = active.filter(l => (l.status||"New") === "New" && ageLabel(l.receivedAt).overdue);
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime();
+  const won = mine.filter(l => l.status === "Won" && new Date(l.lastUpdated || l.receivedAt).getTime() >= monthStart);
 
   $("summaryBar").innerHTML = `
     <div class="stat-card ${overdue.length>0?'urgent':''}">
       <div class="stat-num">${overdue.length}</div>
-      <div class="stat-label">Need follow-up</div>
+      <div class="stat-label">Need a call</div>
     </div>
-    <div class="stat-card type-active">
-      <div class="stat-num">${active.length}</div>
-      <div class="stat-label">Active leads</div>
-    </div>
-  `;
+    <div class="stat-card">
+      <div class="stat-num">${won.length}</div>
+      <div class="stat-label">Won this month</div>
+    </div>`;
 
-  // Make sure the selected tab still exists as a status (defensive — STATUSES
-  // is a fixed list so this always passes, but cheap to guard).
   if(!STATUSES.find(s => s.key === trainerTab)) trainerTab = "New";
-
   const board = $("board");
   board.innerHTML = "";
   const colEl = document.createElement("div");
   colEl.className = "column";
   colEl.innerHTML = `
     <div class="column-head"><span class="ch-left"><span>My leads</span></span><span class="count">${mine.length}</span></div>
-    <div class="trainer-tabs" id="trainerTabsRow"></div>
-    <div class="column-body" id="myLeadsBody"></div>
-  `;
+    <div class="trainer-tabs"></div>
+    <div class="column-body"></div>`;
   board.appendChild(colEl);
 
-  const tabsRow = colEl.querySelector("#trainerTabsRow");
+  const tabsRow = colEl.querySelector(".trainer-tabs");
   STATUSES.forEach(s => {
     const count = mine.filter(l => (l.status||"New") === s.key).length;
     const btn = document.createElement("button");
-    btn.className = "trainer-tab " + s.cls + (trainerTab === s.key ? " active" : "");
+    btn.className = "trainer-tab" + (trainerTab === s.key ? " active" : "");
     btn.innerHTML = `${escapeHtml(s.key)} <span class="tab-count">${count}</span>`;
     btn.addEventListener("click", () => { trainerTab = s.key; renderTrainerView(); });
     tabsRow.appendChild(btn);
@@ -877,188 +1087,161 @@ function renderTrainerView(){
 
   const body = colEl.querySelector(".column-body");
   const inTab = mine.filter(l => (l.status||"New") === trainerTab);
-
   if(inTab.length === 0){
-    const hint = document.createElement("div");
-    hint.className = "empty-hint";
-    hint.textContent = mine.length === 0
-      ? "No leads assigned to you right now."
-      : "Nothing in " + trainerTab + " right now.";
-    body.appendChild(hint);
+    body.innerHTML = `<div class="empty-hint">${mine.length === 0 ? "No leads assigned to you right now." : "Nothing in " + escapeHtml(trainerTab) + " right now."}</div>`;
     return;
   }
-
   inTab.sort((a,b) => new Date(a.receivedAt) - new Date(b.receivedAt));
-  inTab.forEach(l => body.appendChild(renderTrainerCard_(l)));
+  inTab.forEach(l => body.appendChild(renderCard(l, false)));
 }
 
-function renderTrainerCard_(l){
-  const card = document.createElement("div");
-  const stMeta = statusMeta(l.status || "New");
-  card.className = "card " + stMeta.cls;
-  const age = ageLabel(l.receivedAt);
+/* ---------- Drawer ---------- */
+const ICONS = {
+  call:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4A8.5 8.5 0 1112 20.5a8.4 8.4 0 01-4.2-1.1z"/><path d="M9 9.5c.3 2 1.6 3.5 3.6 4.4l1.1-1.1 1.8.8-.3 1.4c-3.3.2-6.6-3-6.8-6.2l1.4-.4.8 1.7z"/></svg>',
+  mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/></svg>'
+};
 
-  const statusSelect = document.createElement("select");
-  STATUSES.forEach(s => {
-    const o = document.createElement("option");
-    o.value = s.key; o.textContent = s.key;
-    if((l.status||"New") === s.key) o.selected = true;
-    statusSelect.appendChild(o);
-  });
-  statusSelect.addEventListener("change", () => {
-    postMine({id:l.id, status: statusSelect.value});
-  });
+function openDrawer(id){
+  openLeadId = id;
+  renderDrawer();
+  $("drawer").classList.add("open");
+  $("drawerBg").classList.add("open");
+  $("drawer").setAttribute("aria-hidden", "false");
+  document.body.classList.add("drawer-open");
+}
+function closeDrawer(){
+  openLeadId = null;
+  $("drawer").classList.remove("open");
+  $("drawerBg").classList.remove("open");
+  $("drawer").setAttribute("aria-hidden", "true");
+  document.body.classList.remove("drawer-open");
+}
+// Keep the drawer in sync after a save/refetch, without wiping a half-typed note.
+function refreshDrawer(){
+  if(!openLeadId) return;
+  const ta = $("dNoteInput");
+  const draft = ta ? ta.value : "";
+  const focused = ta && document.activeElement === ta;
+  renderDrawer();
+  const ta2 = $("dNoteInput");
+  if(ta2 && draft){ ta2.value = draft; if(focused) ta2.focus(); }
+}
 
-  const notes = document.createElement("textarea");
-  notes.placeholder = "Follow-up notes...";
-  notes.value = l.notes || "";
-  notes.addEventListener("blur", () => {
-    if(notes.value !== (l.notes||"")){
-      postMine({id:l.id, notes: notes.value});
-    }
-  });
+function renderDrawer(){
+  const l = leads.find(x => x.id === openLeadId);
+  const body = $("drawerBody");
+  if(!l){ body.innerHTML = '<div class="empty-hint">This lead is no longer available.</div>'; return; }
 
-  let chips = "";
-  chips += trainerPrefChip(l.trainerPreference);
-  if(l.preferredTime) chips += `<span class="chip time">${escapeHtml(l.preferredTime)}</span>`;
-  if(l.injuries) chips += `<span class="chip injury">&#9888; Injury note</span>`;
+  const src = sourceTag(l.source);
+  const received = l.receivedAt ? new Date(l.receivedAt).toLocaleString("en-NZ", {day:"numeric", month:"short", hour:"numeric", minute:"2-digit"}) : "";
+  const phone = formatPhone(l.phone);
+  const email = realEmail(l.email);
+  const wa = waHref(l);
+  const status = l.status || "New";
 
-  let details = "";
-  if(l.reasonForJoining) details += `<div class="detail-line"><b>Why:</b> ${escapeHtml(l.reasonForJoining)}</div>`;
-  if(l.trainingStyle) details += `<div class="detail-line"><b>Style:</b> ${escapeHtml(l.trainingStyle)}</div>`;
-  if(l.injuries) details += `<div class="detail-line"><b>Injuries:</b> ${escapeHtml(l.injuries)}</div>`;
+  const answers = [
+    ["Reason for joining", l.reasonForJoining],
+    ["Training style", l.trainingStyle],
+    ["Trainer preference", l.trainerPreference && l.trainerPreference.replace(/^a /, "A ")],
+    ["Preferred time", l.preferredTime && l.preferredTime.replace(" - ", ", ")]
+  ].filter(r => r[1]).map(r => `<div class="d-row"><div class="k">${r[0]}</div><div class="v">${escapeHtml(r[1])}</div></div>`).join("");
 
-  card.innerHTML = `
-    <div class="name">${escapeHtml(l.name||"(no name)")}</div>
-    <div class="meta">
-      ${l.phone ? `<a href="tel:${escapeHtml(l.phone)}">${escapeHtml(l.phone)}</a>` : ""}
-      ${l.phone && l.email ? "&middot;" : ""}
-      ${l.email ? `<a href="mailto:${escapeHtml(l.email)}">${escapeHtml(l.email)}</a>` : ""}
+  const hasInjury = l.injuries && !/^\s*(no|none|nil|n\/a|na|-)\s*\.?\s*$/i.test(l.injuries);
+  const notes = parseNotes(l.notes).reverse();
+  const notesHtml = notes.length
+    ? notes.map(n => `<div class="d-note"><div class="when">${escapeHtml(n.when)}</div><div class="txt">${escapeHtml(n.text)}</div></div>`).join("")
+    : '<div class="d-notes-empty">No notes yet.</div>';
+
+  body.innerHTML = `
+    <div class="d-label">${escapeHtml(src.label)} booking${received ? " &middot; " + escapeHtml(received) : ""}</div>
+    <div class="d-name">${escapeHtml(l.name || "(no name)")}</div>
+    <div class="d-sub">${escapeHtml(status)}${l.trainer ? " &middot; " + escapeHtml(l.trainer) : " &middot; Unassigned"}</div>
+
+    <div class="d-actions">
+      <a class="d-act ${phone ? "" : "disabled"}" href="${phone ? telHref(l.phone) : "#"}">${ICONS.call}Call</a>
+      <a class="d-act wa ${wa ? "" : "disabled"}" href="${wa || "#"}" target="_blank" rel="noopener">${ICONS.wa}WhatsApp</a>
+      <a class="d-act ${email ? "" : "disabled"}" href="${email ? "mailto:" + encodeURIComponent(email) : "#"}">${ICONS.mail}Email</a>
     </div>
-    <div class="chips">${chips}</div>
-    ${details}
-    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " · follow up" : ""}</div>
-  `;
-  card.appendChild(statusSelect);
-  card.appendChild(notes);
-  return card;
-}
+    ${phone ? `<div class="d-contact">${escapeHtml(phone)}</div>` : ""}
+    ${email ? `<div class="d-contact">${escapeHtml(email)}</div>` : ""}
 
-function trainerPrefChip(pref){
-  if(!pref) return "";
-  let cls = "pref-any", label = pref;
-  if(/male/i.test(pref) && !/female/i.test(pref)){ cls = "pref-m"; label = "Prefers male trainer"; }
-  else if(/female/i.test(pref)){ cls = "pref-f"; label = "Prefers female trainer"; }
-  else { label = "No trainer preference"; }
-  return `<span class="chip ${cls}">${escapeHtml(label)}</span>`;
-}
+    <div class="d-section">
+      <h3>Lead</h3>
+      <div class="d-grid" id="dControls"></div>
+      <div id="dSuggest"></div>
+      <div id="dContactedWrap"></div>
+    </div>
 
-function renderCard(l, showTrainerLabel){
-  const card = document.createElement("div");
-  const stMeta = statusMeta(l.status || "New");
-  card.className = "card " + stMeta.cls;
-  const age = ageLabel(l.receivedAt);
+    <div class="d-section">
+      <h3>Their answers</h3>
+      <div class="d-answers">${answers || '<div class="d-row"><div class="v" style="color:var(--faint)">No answers recorded.</div></div>'}</div>
+      ${hasInjury ? `<div class="d-injury"><b>Injury / medical:</b> ${escapeHtml(l.injuries)}</div>` : ""}
+    </div>
 
-  const trainerSelect = document.createElement("select");
-  const noneOpt = document.createElement("option");
-  noneOpt.value = ""; noneOpt.textContent = "Unassigned";
-  trainerSelect.appendChild(noneOpt);
-  TRAINERS.forEach(t => {
-    const o = document.createElement("option");
-    o.value = t; o.textContent = t;
-    if(l.trainer === t) o.selected = true;
-    trainerSelect.appendChild(o);
-  });
-  trainerSelect.addEventListener("change", () => {
-    postAction({action:"updateLead", id:l.id, trainer: trainerSelect.value, status: l.status||"New"});
-  });
+    <div class="d-section">
+      <h3>Notes</h3>
+      <div class="d-notes">${notesHtml}</div>
+      <div class="d-add">
+        <textarea id="dNoteInput" placeholder="Add a note, e.g. called, booked Thursday 6am"></textarea>
+        <button type="button" id="dNoteSave">Add note</button>
+      </div>
+    </div>`;
 
-  const statusSelect = document.createElement("select");
+  // Status + trainer controls
+  const controls = $("dControls");
+  if(!TRAINER_MODE){
+    const w = document.createElement("div");
+    w.innerHTML = '<div class="d-field-label">Trainer</div>';
+    w.appendChild(trainerSelectFor(l, v => saveLead(l, {trainer: v})));
+    controls.appendChild(w);
+  }
+  const sw = document.createElement("div");
+  sw.innerHTML = '<div class="d-field-label">Status</div>';
+  const ss = document.createElement("select");
   STATUSES.forEach(s => {
     const o = document.createElement("option");
     o.value = s.key; o.textContent = s.key;
-    if((l.status||"New") === s.key) o.selected = true;
-    statusSelect.appendChild(o);
+    if(status === s.key) o.selected = true;
+    ss.appendChild(o);
   });
-  statusSelect.addEventListener("change", () => {
-    postAction({action:"updateLead", id:l.id, status: statusSelect.value, trainer: l.trainer||""});
-  });
+  ss.addEventListener("change", () => saveLead(l, {status: ss.value}));
+  sw.appendChild(ss);
+  controls.appendChild(sw);
+  if(TRAINER_MODE) controls.style.gridTemplateColumns = "1fr";
 
-  const notes = document.createElement("textarea");
-  notes.placeholder = "Follow-up notes...";
-  notes.value = l.notes || "";
-  notes.addEventListener("blur", () => {
-    if(notes.value !== (l.notes||"")){
-      postAction({action:"updateLead", id:l.id, notes: notes.value, status: l.status||"New", trainer: l.trainer||""});
+  // Suggested trainer (admin, unassigned only)
+  if(!TRAINER_MODE && !l.trainer){
+    const sug = suggestTrainer(l);
+    if(sug){
+      const why = /female/i.test(l.trainerPreference||"") ? "prefers a female trainer" : /male/i.test(l.trainerPreference||"") ? "prefers a male trainer" : "no preference";
+      $("dSuggest").innerHTML = `<div class="d-suggest"><span>Suggested: <b>${escapeHtml(sug)}</b><br><span style="color:var(--muted);font-size:12px">${why}, ${activeCount(sug)} active leads</span></span><button type="button" id="dAssignSug">Assign ${escapeHtml(sug)}</button></div>`;
+      $("dAssignSug").addEventListener("click", () => saveLead(l, {trainer: sug}));
     }
-  });
-
-  let chips = "";
-  chips += trainerPrefChip(l.trainerPreference);
-  if(l.preferredTime) chips += `<span class="chip time">${escapeHtml(l.preferredTime)}</span>`;
-  if(l.injuries) chips += `<span class="chip injury">&#9888; Injury note</span>`;
-
-  let details = "";
-  if(l.reasonForJoining) details += `<div class="detail-line"><b>Why:</b> ${escapeHtml(l.reasonForJoining)}</div>`;
-  if(l.trainingStyle) details += `<div class="detail-line"><b>Style:</b> ${escapeHtml(l.trainingStyle)}</div>`;
-  if(l.injuries) details += `<div class="detail-line"><b>Injuries:</b> ${escapeHtml(l.injuries)}</div>`;
-
-  const otherLabel = showTrainerLabel && l.trainer ? `<div class="other-trainer">Assigned: ${escapeHtml(l.trainer)}</div>` : "";
-
-  card.innerHTML = `
-    ${otherLabel}
-    <div class="name">${escapeHtml(l.name||"(no name)")}</div>
-    <div class="meta">${l.phone ? `<a href="tel:${escapeHtml(l.phone)}">${escapeHtml(l.phone)}</a>` : ""}</div>
-    ${l.email ? `<div class="meta"><a href="mailto:${escapeHtml(l.email)}">${escapeHtml(l.email)}</a></div>` : ""}
-    <div class="meta src">Source: ${escapeHtml(l.source||"Manual")}</div>
-    <div class="chips">${chips}</div>
-    ${details}
-    <div class="age ${age.overdue ? 'overdue':'ok'}">${age.text}${age.overdue ? " · follow up" : ""}</div>
-  `;
-  const row2 = document.createElement("div");
-  row2.className = "row2";
-  row2.appendChild(trainerSelect);
-  row2.appendChild(statusSelect);
-  card.appendChild(row2);
-
-  // One-tap shortcut for the most common action: a trainer just spoke to
-  // this lead. Only shown while the lead is still "New" — after that the
-  // status dropdown above already shows/handles Contacted, and the card
-  // is about to disappear off the board anyway.
-  if((l.status || "New") === "New"){
-    const contactedBtn = document.createElement("button");
-    contactedBtn.type = "button";
-    contactedBtn.className = "quick-contacted-btn";
-    contactedBtn.textContent = "Mark as contacted";
-    contactedBtn.addEventListener("click", () => {
-      postAction({action:"updateLead", id:l.id, status:"Contacted", trainer: l.trainer||""});
-    });
-    card.appendChild(contactedBtn);
   }
 
-  card.appendChild(notes);
+  if(status === "New"){
+    $("dContactedWrap").innerHTML = '<button type="button" class="d-contacted" id="dContacted">Mark as contacted</button>';
+    $("dContacted").addEventListener("click", () => saveLead(l, {status:"Contacted"}));
+  }
 
-  // Drag and drop: drag a card into a trainer's column (or Unassigned) to
-  // reassign it. Dropping fires the same postAction as picking from the
-  // dropdown, so the trainer still gets emailed automatically.
-  card.draggable = true;
-  card.dataset.leadId = l.id;
-  card.addEventListener("dragstart", (e) => {
-    e.dataTransfer.setData("text/plain", l.id);
-    e.dataTransfer.effectAllowed = "move";
-    card.classList.add("dragging");
+  $("dNoteSave").addEventListener("click", () => {
+    const txt = $("dNoteInput").value.trim();
+    if(!txt) return;
+    const existing = String(l.notes || "").trim();
+    const next = (existing ? existing + "\n" : "") + stampNote(txt);
+    $("dNoteInput").value = "";
+    saveLead(l, {notes: next});
   });
-  card.addEventListener("dragend", () => card.classList.remove("dragging"));
-
-  return card;
 }
 
 function escapeHtml(str){
   const d = document.createElement("div");
-  d.textContent = str;
+  d.textContent = str == null ? "" : String(str);
   return d.innerHTML;
 }
 
+/* ---------- Wiring ---------- */
 $("refreshBtn").addEventListener("click", fetchLeads);
 $("searchBox").addEventListener("input", render);
 $("archiveToggleBtn").addEventListener("click", () => {
@@ -1067,6 +1250,9 @@ $("archiveToggleBtn").addEventListener("click", () => {
   $("archiveToggleBtn").classList.toggle("active", showArchived);
   render();
 });
+$("drawerClose").addEventListener("click", closeDrawer);
+$("drawerBg").addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeDrawer(); });
 
 document.querySelectorAll("#mobileNav button[data-scroll]").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -1075,7 +1261,6 @@ document.querySelectorAll("#mobileNav button[data-scroll]").forEach(btn => {
   });
 });
 $("mobileNewBtn").addEventListener("click", () => $("modalBg").classList.add("open"));
-
 $("newLeadBtn").addEventListener("click", () => $("modalBg").classList.add("open"));
 $("mCancel").addEventListener("click", () => $("modalBg").classList.remove("open"));
 $("mSave").addEventListener("click", () => {
