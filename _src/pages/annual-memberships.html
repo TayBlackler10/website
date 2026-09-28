@@ -18,6 +18,26 @@
   ]}
  ]}
 -->
+<style>
+.save{background:var(--paper);border-radius:16px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:14px}
+.save-dark{background:#1c1c1c}
+.save-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.save-top span{font-size:14px;color:var(--muted)}
+.save-dark .save-top span{color:var(--muted-dark)}
+.save-top b{font-family:var(--font-display);font-weight:900;font-size:40px;line-height:1;letter-spacing:-.02em;color:var(--olive)}
+.save-dark .save-top b{color:var(--lime)}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar-row{display:grid;grid-template-columns:100px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:13px}
+.bar-row strong{text-align:right;font-size:14px}
+.bar{height:10px;border-radius:999px;background:#E2E2DC;overflow:hidden}
+.save-dark .bar{background:#333}
+.bar i{display:block;height:100%;border-radius:999px;background:#B5B5AD}
+.save-dark .bar i{background:#666}
+.bar i.hl{background:var(--olive)}
+.save-dark .bar i.hl{background:var(--lime)}
+.save-note{font-size:13px;color:var(--muted)}
+.save-dark .save-note{color:var(--muted-dark)}
+</style>
 <section class="page-hero" data-section="hero">
   <div class="ph-media"><img src="/assets/img/floor-wide-2-1600.jpg" srcset="/assets/img/floor-wide-2-800.jpg 800w, /assets/img/floor-wide-2-1600.jpg 1600w" sizes="100vw" alt="Racks and free weights on the M2 gym floor in Grafton, Auckland" fetchpriority="high"></div>
   <div class="ph-shade" aria-hidden="true"></div>
@@ -37,7 +57,7 @@
   <div class="wrap">
     <div class="section-head center reveal">
       <div class="stack">
-        <span class="eyebrow">Two annual rates</span>
+        <span class="eyebrow">Save up to $774</span>
         <h2 class="h-lg">Pay upfront, save all year</h2>
         <p class="lead" style="max-width:560px">One payment covers 12 months from the day you start. Both plans are limited to 9 spots.</p>
       </div>
@@ -45,11 +65,17 @@
     <div class="grid-2 reveal" style="max-width:900px;margin:0 auto;align-items:stretch">
       <div class="price featured lift" style="transform:none">
         <div class="price-head"><div><h3>Perform Annual</h3><p class="for">The whole club, for a year</p></div><span class="badge">Best value</span></div>
-        <div class="amt"><b>$1,800</b><span>/ year</span></div>
-        <p class="term">About $34.62 a week. $2,574 on weekly billing.</p>
+        <div class="amt"><b>$1,800</b><span>/ year, paid once</span></div>
+        <div class="save save-dark">
+          <div class="save-top"><span>You save</span><b>$774</b><span>a year</span></div>
+          <div class="bars">
+            <div class="bar-row"><span>Paying weekly</span><div class="bar"><i style="width:100%"></i></div><strong>$2,574</strong></div>
+            <div class="bar-row"><span>Annual</span><div class="bar"><i class="hl" style="width:70%"></i></div><strong>$1,800</strong></div>
+          </div>
+          <p class="save-note">Works out at about $34.62 a week.</p>
+        </div>
         <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><strong>You save $774</strong></li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Gym floor, 7 days</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Gym floor, 7 days</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Unlimited classes and HYROX</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>20m pool, spa, sauna and ice bath</li>
         </ul>
@@ -58,11 +84,17 @@
       </div>
       <div class="price lift">
         <div><h3>Daily Annual</h3><p class="for">Gym floor, for a year</p></div>
-        <div class="amt"><b>$1,215</b><span>/ year</span></div>
-        <p class="term">About $23.37 a week. $1,430 on weekly billing.</p>
+        <div class="amt"><b>$1,215</b><span>/ year, paid once</span></div>
+        <div class="save ">
+          <div class="save-top"><span>You save</span><b>$215</b><span>a year</span></div>
+          <div class="bars">
+            <div class="bar-row"><span>Paying weekly</span><div class="bar"><i style="width:100%"></i></div><strong>$1,430</strong></div>
+            <div class="bar-row"><span>Annual</span><div class="bar"><i class="hl" style="width:85%"></i></div><strong>$1,215</strong></div>
+          </div>
+          <p class="save-note">Works out at about $23.37 a week.</p>
+        </div>
         <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><strong>You save $215</strong></li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Gym floor, 7 days</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Gym floor, 7 days</li>
           <li class="no"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B5B5AD" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>No classes</li>
           <li class="no"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B5B5AD" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>No recovery area</li>
         </ul>
