@@ -468,11 +468,11 @@ const ADMIN_URL = ON_WORKER ? "/api/pt" : APPS_SCRIPT_URL;
 const LOCKED_URL = "https://m2-command.taylor-3e5.workers.dev"; // admin board lives behind the Command Centre login
 
 // Every trainer who can be assigned a lead. Keep in sync with Code.gs TRAINER_EMAILS.
-const TRAINERS = ["Joe", "Bekka", "Dave", "Madi", "Te Ao", "Rodney", "Taylor", "Foxxy", "Eden"];
+const TRAINERS = ["Eden", "Joe", "Te Ao", "Bekka", "Dave", "Madi", "Rodney", "Taylor", "Foxxy"];
 
 // Trainers who get their own board column. Anyone else in TRAINERS still shows
 // up in the assign dropdown, but their leads land in the "Other Trainers" column.
-const PINNED_TRAINERS = ["Joe", "Bekka", "Dave", "Te Ao", "Taylor", "Rodney", "Foxxy", "Eden"];
+const PINNED_TRAINERS = ["Eden", "Joe", "Te Ao", "Bekka", "Dave", "Taylor", "Rodney", "Foxxy"];
 
 // Used for the "Suggested trainer" hint. Only trainers listed here are ever
 // suggested (Taylor and Foxxy are left out on purpose). gender is matched
@@ -485,7 +485,7 @@ const TRAINER_PROFILES = {
   "Rodney": {gender:"m", styles:[]},
   "Bekka":  {gender:"f", styles:[]},
   "Madi":   {gender:"f", styles:[]},
-  "Eden":   {gender:"f", styles:[]}
+  "Eden":   {gender:"f", styles:["Strength Training - weights & machines"]}
 };
 
 // Pre-written WhatsApp intro. {first} = lead's first name, {trainer} = sender.

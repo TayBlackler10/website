@@ -114,7 +114,7 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
 - Classes: HYROX Threshold, HYROX Strength, HYROX Teams (there is NO HYROX Engine class), Strength Club, and new yoga with Coach Rhea
   (Hatha Mondays 6:30pm, Yin Wednesdays 6:30pm). Timetable and bookings run on Technogym/Mywellness:
   embed https://widgets.mywellness.com/facility/fitnessportalakl (keep the old page's iframe + "open it directly" fallback link).
-- Trainers: Te, Joe, Dave, Bekka, Taylor (owner), Tim (owner), Madeliene. Use the old trainers page for bios.
+- Trainers: Te, Joe, Dave, Bekka, Taylor (owner), Tim (owner), Madeliene, Eden Rapana (new Sep 2026: body recomposition, strength, sustainable weight loss, hormone-aware training and nutrition). Use the old trainers page for bios.
 
 ## Writing rules
 - NEVER use em dashes (—) or en dashes as punctuation. Use commas, full stops, or "to" for ranges.
