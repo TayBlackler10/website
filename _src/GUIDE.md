@@ -111,7 +111,7 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
   "Bring a Mate": a current member refers a friend who joins on a membership (not a trial), both get
   4 weeks free and the mate pays no joining fee or key tag fee (worth $79). Unlimited referrals. Mention it at reception, no codes.
   Show both with date switching: `<span data-until="{{TRIAL_SWITCH}}">old</span><span data-from="{{TRIAL_SWITCH}}" hidden>new</span>`
-- Classes: HYROX Threshold, HYROX Engine, HYROX Teams, Strength Club, and new yoga with Coach Rhea
+- Classes: HYROX Threshold, HYROX Strength, HYROX Teams (there is NO HYROX Engine class), Strength Club, and new yoga with Coach Rhea
   (Hatha Mondays 6:30pm, Yin Wednesdays 6:30pm). Timetable and bookings run on Technogym/Mywellness:
   embed https://widgets.mywellness.com/facility/fitnessportalakl (keep the old page's iframe + "open it directly" fallback link).
 - Trainers: Te, Joe, Dave, Bekka, Taylor (owner), Tim (owner), Madeliene. Use the old trainers page for bios.
