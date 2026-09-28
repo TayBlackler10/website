@@ -33,7 +33,7 @@ PHONE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="cur
 # Menu structure: (group label, main link, [(label, href, blurb)])
 MENU = [
     ('Memberships', '/memberships.html', 'memberships', [
-        ('All memberships', '/memberships.html', 'Daily, Classes, Perform, Recovery'),
+        ('All memberships', '/memberships.html', 'Perform, Classes, Daily, Recovery'),
         ('Annual memberships', '/annual-memberships.html', 'Pay upfront and save'),
         ('Fitness Passport', '/fitness-passport.html', 'Train at M2 through your work'),
         ('Free trial', TRIAL_HREF, 'Try the whole club first'),
