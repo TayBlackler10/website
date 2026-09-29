@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     entries.forEach(function (e) {
       if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0 });
   document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
 
   document.querySelectorAll('.faq-q').forEach(function (q) {

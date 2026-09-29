@@ -165,8 +165,14 @@
         entries.forEach(function (en) {
           if (en.isIntersecting) { en.target.classList.add('visible'); io.unobserve(en.target); }
         });
-      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
       document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+      // Safety net: never leave content hidden if the observer doesn't fire.
+      setTimeout(function () {
+        document.querySelectorAll('.reveal:not(.visible)').forEach(function (el) {
+          if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+        });
+      }, 2500);
     } else {
       document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('visible'); });
     }
