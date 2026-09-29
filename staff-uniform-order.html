@@ -415,7 +415,7 @@
   <div class="cart-bar-inner">
     <div class="info">
       <span class="count" id="cartCount">0</span>
-      <span class="subtotal"><span class="lbl">Cart total </span><strong id="cartSubtotalBar">$0</strong> AUD</span>
+      <span class="subtotal"><span class="lbl">Cart total </span><strong id="cartSubtotalBar">$0</strong> NZD</span>
     </div>
     <button type="button" id="openCartBtn">View cart</button>
   </div>
@@ -433,7 +433,7 @@
     <div class="cart-foot">
       <div class="cart-role-warning" id="cartRoleWarning">Fill in your full name, email, phone and role up top before checking out.</div>
       <div class="cart-total-row">
-        <span class="label">Total (AUD)</span>
+        <span class="label">Total (NZD)</span>
         <span class="value" id="cartTotal">$0</span>
       </div>
       <p class="refund-note">Staff prices are discounted, so there are no refunds or returns once an order is placed.</p>
@@ -613,7 +613,7 @@
 
       const priceEl = document.createElement('div');
       priceEl.className = 'price';
-      priceEl.innerHTML = fmt(p.price) + ' <span class="cur">AUD</span><small>' + (p.priceNote || 'Staff price') + '</small>';
+      priceEl.innerHTML = fmt(p.price) + ' <span class="cur">NZD</span><small>' + (p.priceNote || 'Staff price') + '</small>';
       body.appendChild(priceEl);
 
       if (p.lskdNote) {
