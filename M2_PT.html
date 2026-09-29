@@ -468,11 +468,11 @@ const ADMIN_URL = ON_WORKER ? "/api/pt" : APPS_SCRIPT_URL;
 const LOCKED_URL = "https://m2-command.taylor-3e5.workers.dev"; // admin board lives behind the Command Centre login
 
 // Every trainer who can be assigned a lead. Keep in sync with Code.gs TRAINER_EMAILS.
-const TRAINERS = ["Eden", "Joe", "Te Ao", "Bekka", "Dave", "Madi", "Rodney", "Taylor", "Foxxy"];
+const TRAINERS = ["Matthew", "Eden", "Joe", "Te Ao", "Bekka", "Dave", "Madi", "Rodney", "Taylor", "Foxxy"];
 
 // Trainers who get their own board column. Anyone else in TRAINERS still shows
 // up in the assign dropdown, but their leads land in the "Other Trainers" column.
-const PINNED_TRAINERS = ["Eden", "Joe", "Te Ao", "Bekka", "Dave", "Taylor", "Rodney", "Foxxy"];
+const PINNED_TRAINERS = ["Matthew", "Eden", "Joe", "Te Ao", "Bekka", "Dave", "Taylor", "Rodney", "Foxxy"];
 
 // Used for the "Suggested trainer" hint. Only trainers listed here are ever
 // suggested (Taylor and Foxxy are left out on purpose). gender is matched
@@ -485,6 +485,7 @@ const TRAINER_PROFILES = {
   "Rodney": {gender:"m", styles:[]},
   "Bekka":  {gender:"f", styles:[]},
   "Madi":   {gender:"f", styles:[]},
+  "Matthew": {gender:"m", styles:["Cardio/Fitness Focus","Strength Training - weights & machines"]},
   "Eden":   {gender:"f", styles:["Strength Training - weights & machines"]}
 };
 
