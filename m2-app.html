@@ -240,11 +240,11 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .empty{text-align:center;padding:40px 24px;background:var(--white);border-radius:22px}
 .empty .h3{margin:12px 0 6px}
 .empty svg.i{width:30px;height:30px;color:var(--muted);margin:0 auto}
-.co{width:136px}
+.co{width:136px;position:relative}
 .co img,.co .ph{width:136px;height:176px;border-radius:24px;object-fit:cover;object-position:50% 12%;background:var(--line)}
 .co .ph{display:grid;place-items:center;font:900 44px var(--h);color:var(--dis);background:var(--white)}
 .co b{display:block;margin-top:10px;font:800 16px var(--h)}
-.co span{font-size:13px;color:var(--muted)}
+.co span{display:block;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ---------- RECOVERY ---------- */
 .rhero{position:relative;height:400px;margin-top:calc(-1 * (var(--sat) + 52px));overflow:hidden;background:var(--ink);color:#fff}
@@ -434,6 +434,41 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .qrw .scan{position:absolute;left:14px;right:14px;height:2px;background:var(--olive);top:22px;animation:scan 2.6s var(--ease) infinite;opacity:.5}
 @keyframes scan{0%,100%{top:22px}50%{top:244px}}
 .pass .hrs{margin-top:20px;font-size:14px;color:var(--muted-d)}
+/* doors */
+.doors{margin-top:24px;display:flex;flex-direction:column;gap:10px;text-align:left}
+.door{display:flex;align-items:center;gap:14px;padding:12px 12px 12px 14px;border-radius:22px;background:var(--ink2);border:1px solid var(--ink3);transition:border-color .3s,background .3s}
+.door .ic{width:44px;height:44px;border-radius:50%;background:var(--ink3);display:grid;place-items:center;flex-shrink:0;color:var(--lime);transition:background .3s,color .3s}
+.door .ic svg.i{width:20px;height:20px}
+.door .tx{flex:1;min-width:0}
+.door .tx b{display:block;font-weight:600;font-size:16px}
+.door .tx small{display:block;color:var(--muted-d);font-size:13px;margin-top:2px;line-height:1.35}
+.door .go{min-height:44px;padding:10px 20px;font-size:15px;min-width:86px}
+.door.busy .go{pointer-events:none;background:var(--ink3);color:#fff}
+.door.open{border-color:var(--lime);background:rgba(223,255,0,.08)}
+.door.open .ic{background:var(--lime);color:var(--ink)}
+.door.open .tx small{color:var(--lime)}
+.door.locked .ic{color:var(--muted-d)}
+.door.locked .tx b{color:var(--muted-d)}
+.spin{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.25);border-top-color:var(--lime);animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dmsg{display:none;margin-top:12px;padding:14px 16px;border-radius:18px;background:var(--ink2);border:1px solid var(--ink3);font-size:14px;line-height:1.45;text-align:left}
+.dmsg.on{display:block;animation:rise .4s var(--ease) both;opacity:0;transform:translateY(8px)}
+.dmsg .btn{margin-top:12px;min-height:40px;padding:8px 18px;font-size:14px}
+.dsign .fsearch{margin-top:10px}
+.conew{position:absolute;top:10px;left:10px;z-index:2;font:700 11px var(--b);letter-spacing:.06em;text-transform:uppercase;background:var(--lime);color:var(--ink);padding:5px 9px;border-radius:999px;font-style:normal}
+.cotags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.cotags .pill{background:var(--white);border:1px solid var(--line);font-weight:600}
+.sgn{position:absolute;inset:0;z-index:260;background:var(--ink);color:#fff;display:none;overflow-y:auto}
+.sgn.on{display:block}
+.sgn-in{padding:84px 28px 40px;max-width:460px;margin:0 auto}
+.sgn .brandk{width:190px;height:20px;fill:var(--lime)}
+.sgn h1{font:900 52px/.92 var(--h);text-transform:uppercase;letter-spacing:-.03em;margin:44px 0 16px}
+.sgn p{color:var(--muted-d);font-size:15px;line-height:1.5;margin-bottom:10px}
+.sgn .fsearch{background:var(--ink2);border-color:var(--ink3);color:#fff;margin-top:12px}
+.sgn .btn.b-lg{margin-top:22px}
+.sgn .sg-link{color:var(--muted-d);margin-top:6px}
+.sgn .sg-foot{margin-top:28px;font-size:14px;text-align:center}
+.sgn .sg-foot a{color:var(--lime);text-decoration:none;font-weight:600}
 .inok{display:none;align-items:center;justify-content:center;gap:10px;margin-top:18px;padding:14px;border-radius:18px;background:var(--ink2);border:1px solid var(--ink3);font-weight:600}
 .inok.on{display:flex;animation:rise .6s var(--ease) both;opacity:0;transform:translateY(12px)}
 .inok i{width:24px;height:24px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
@@ -741,13 +776,24 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
     <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="6" rx="1"/><rect x="10" y="2.5" width="3" height="8.5" rx="1"/><rect x="15" y="0" width="3" height="11" rx="1"/></svg>
     <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><rect x="23" y="4" width="1.5" height="4" rx=".75" fill="currentColor" opacity=".4"/></svg></span></div>
   <div class="home-ind"></div>
+  <div class="sgn" id="sgn"><div class="sgn-in">
+    <svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg>
+    <h1>Welcome<br>to M2<span class="od">.</span></h1>
+    <p>Sign in with the email and password you use for your M2 membership (your GymMaster login).</p>
+    <input id="sgEm" class="fsearch" type="email" inputmode="email" autocomplete="username" placeholder="Email">
+    <input id="sgPw" class="fsearch" type="password" autocomplete="current-password" placeholder="Password">
+    <div class="dmsg" id="sgMsg"></div>
+    <button class="btn b-lime b-full b-lg" id="sgGo" onclick="appSignIn()">Sign in</button>
+    <button class="btn b-full sg-link" onclick="appReset()">Forgot your password?</button>
+    <p class="sg-foot">Not a member yet? <a href="https://m2club.co.nz/join.html">Join M2</a> or call <a href="tel:095581408">09 558 1408</a></p>
+  </div></div>
   <div class="onb" id="onb"><button class="sx" id="onbX" onclick="hideOnb()" aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button><div class="obody" id="onbBody"></div><div class="ofoot" id="onbFoot"></div></div>
   <div class="splash" id="splash"><svg aria-label="M2"><use href="#m2-mark"/></svg><span>Train hard. Recover harder.</span></div>
 
   <!-- HOME -->
   <main class="view on dark-top" id="v-home" data-hero="370">
     <div class="nav"><svg class="brand" aria-label="M2 Training Club"><use href="#m2-word"/></svg><span class="t">Home</span>
-      <div class="acts"><button class="round onphoto" onclick="go('messages')" aria-label="Messages"><svg class="i"><use href="#i-bell"/></svg><span class="badge-n msg-badge"></span></button><button class="round onphoto" onclick="openPass()" aria-label="Your pass"><svg class="i"><use href="#i-qr"/></svg></button></div></div>
+      <div class="acts"><button class="round onphoto" onclick="go('messages')" aria-label="Messages"><svg class="i"><use href="#i-bell"/></svg><span class="badge-n msg-badge"></span></button><button class="round onphoto" onclick="openPass()" aria-label="Doors and check in"><svg class="i"><use href="#i-door"/></svg></button></div></div>
     <section class="hero">
       <img class="poster" src="https://m2club.co.nz/assets/img/class-sled-800.jpg" alt="">
       <video id="heroVid" autoplay muted loop playsinline preload="metadata" poster="https://m2club.co.nz/assets/img/hero-mobile-poster-800.jpg"><source src="https://m2club.co.nz/assets/video/hero-mobile.mp4" type="video/mp4"></video>
@@ -755,7 +801,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
         <span class="eb lime" id="hDate"></span>
         <h1 id="hGreet"></h1>
         <div class="open"><span class="live" id="hDot"></span><span id="hOpen"></span></div>
-        <button class="btn b-lime b-lg" onclick="openPass()"><svg class="i"><use href="#i-qr"/></svg>Check in</button>
+        <button class="btn b-lime b-lg" onclick="openPass()"><svg class="i"><use href="#i-door"/></svg>Check in</button>
       </div>
     </section>
     <div class="pad">
@@ -845,12 +891,12 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 
   <!-- ME -->
   <main class="view" id="v-me">
-    <div class="nav"><span class="t">Taylor</span></div>
-    <div class="lt"><span class="eb" id="meSince">Member since October 2023</span><h1>Taylor<span class="od">.</span></h1></div>
+    <div class="nav"><span class="t" id="meNav">Taylor</span></div>
+    <div class="lt"><span class="eb" id="meSince">Member since October 2023</span><h1><span id="meH">Taylor</span><span class="od">.</span></h1></div>
     <div class="pad">
       <button class="mcard press" onclick="openPass()"><svg class="mk"><use href="#m2-mark"/></svg>
         <div class="row" style="position:relative"><svg class="brandk"><use href="#m2-word"/></svg><span class="pill p-lime" id="mcTier">Perform</span></div>
-        <div class="row" style="position:relative;align-items:flex-end"><div><div class="nm">Taylor Blackler</div><div class="no">M2 004471 · Tap to check in</div></div><div class="qm" id="qm"></div></div>
+        <div class="row" style="position:relative;align-items:flex-end"><div><div class="nm" id="mcName">Taylor Blackler</div><div class="no" id="mcNo">M2 004471 · Tap to check in</div></div><div class="qm" id="qm"></div></div>
       </button>
 
       <div class="sec" id="goalCard"></div>
@@ -905,7 +951,8 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
         </div>
       </div>
 
-      <div class="sec">
+      <div class="sec" id="signOutSec" style="display:none"><button class="btn b-out b-full" onclick="signOut()">Sign out</button></div>
+      <div class="sec" id="demoSec">
         <div class="card demo">
           <span class="eb">Demo only · not in the real app</span>
           <div class="h3" style="margin-top:8px">Preview as</div>
@@ -949,7 +996,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 <symbol id="i-right" viewBox="0 0 24 24"><path d="M9.5 5.5l6.5 6.5-6.5 6.5"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
-<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-door" viewBox="0 0 24 24"><path d="M6 21V4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21M3.5 21h17"/><path d="M14.5 12v.5"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
 <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 2M9.5 2.5h5M19 6l1.5-1.5"/></symbol>
 <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3.5v12M7.5 8L12 3.5 16.5 8M5 12.5v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6a2.5 2.5 0 0 0-2.5-2.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></symbol>
@@ -989,7 +1036,17 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
    Demo: member numbers, bookings, spots, board, WOTW, messages, referrals, busy chart, billing date.
    ========================================================= */
 const IMG='https://m2club.co.nz/assets/img/';
-const COACHES={dave:{n:'Dave',img:IMG+'coach-dave-800.jpg'},bekka:{n:'Bekka',img:IMG+'coach-bekka-800.jpg'},te:{n:'Te',img:IMG+'coach-te-800.jpg'},rhea:{n:'Rhea',img:null},joe:{n:'Joe',img:IMG+'coach-joe-800.jpg'},taylor:{n:'Taylor',img:IMG+'coach-taylor-800.jpg'},tim:{n:'Tim',img:IMG+'coach-tim-800.jpg'},madeliene:{n:'Madeliene',img:IMG+'coach-madeliene-800.jpg'}};
+const COACHES={
+ matthew:{n:'Matthew',nw:1,img:IMG+'coach-matthew-painter-800.jpg',r:'Personal Trainer',tel:'0224177116',ig:'matthewpainter_',tags:['Body recomposition','HYROX race prep','Strength and conditioning','Weight loss','Running and endurance'],bio:"A former sparky who fitted training around full-time work, Matthew knows you don't need a perfect schedule to make progress. Running and HYROX racing are his passion, and his coaching is built on consistency over perfection."},
+ eden:{n:'Eden',nw:1,img:IMG+'coach-eden-800.jpg',r:'Personal Trainer',tel:'0220181924',ig:'edenrapana',tags:['Body recomposition','Strength','Sustainable weight loss','Hormone-aware training and nutrition'],bio:"Kia ora, I'm Eden. Wherever you're starting from, you're welcome here. My coaching is grounded in hauora, the belief that your physical, mental and spiritual wellbeing are all connected. No judgement, no pressure, just steady progress you can keep."},
+ joe:{n:'Joe',img:IMG+'coach-joe-800.jpg',r:'Strength, Conditioning and Boxing',ig:'joe_spark1989',tags:['CIMSPA L3 PT','ASCA L1 S&C','England Boxing L2','Nutrition coaching'],bio:"Joe started on the football pitch at eight. In the British Army he took up boxing, competed as an amateur and coached it in his regiment. He loves working with beginners who aren't sure where to start."},
+ te:{n:'Te',img:IMG+'coach-te-800.jpg',r:'Coach and Personal Trainer',tags:['Strength','Muscle building','Fat loss','Mobility and recovery'],bio:"Te has represented Waikato in cricket, tennis, volleyball and touch rugby, and New Zealand in badminton. A serious spinal injury in 2025 showed him firsthand how much movement and structured recovery matter."},
+ dave:{n:'Dave',img:IMG+'coach-dave-800.jpg',r:'Coach and Personal Trainer',tags:['HYROX','Strength','Endurance','Conditioning'],bio:"Dave has been all shapes and sizes, got fit, fallen off the wagon and bounced back. A PT for eight years, he's found his passion in HYROX and hybrid racing, competing internationally and coaching athletes at every level."},
+ bekka:{n:'Bekka',img:IMG+'coach-bekka-800.jpg',r:'Coach and Personal Trainer',tags:['Race prep','Strength','HYROX','Sport performance'],bio:"Bekka helps people move better and train with purpose, whether that's race prep, stepping into competition or feeling stronger day to day. She brings energy and structure to every session."},
+ taylor:{n:'Taylor',img:IMG+'coach-taylor-800.jpg',r:'Owner and Coach',tags:['Body transformation','Strength','HYROX','Conditioning'],bio:"With close to a decade in health and fitness, Taylor coaches with a results-driven approach grounded in competitive sport and real client success. No quick fixes, just building something that lasts."},
+ tim:{n:'Tim',img:IMG+'coach-tim-800.jpg',r:'Owner and Coach',tags:['Bodybuilding','Fat loss','Muscle gain','Nutrition'],bio:"Tim has been into health and fitness for over 14 years, starting out training for motorsport. He's competed at national level in bodybuilding for the last five years, and it shows in how he coaches."},
+ madeliene:{n:'Madeliene',img:IMG+'coach-madeliene-800.jpg',r:'Strength and Transformation Coach',tags:['Powerlifting','Bodybuilding','Strength','Transformation'],bio:"A two-time Auckland Powerlifting Champion and bodybuilding athlete. Madeliene's own journey started with a 30kg weight loss, and every plan she builds is tailored to the person."},
+ rhea:{n:'Rhea',img:null,hide:1}};
 const TYPES={
  'hyrox-threshold':{n:'HYROX Threshold',cat:'HYROX',int:3,lvl:'All levels',img:IMG+'class-sled-800.jpg',d:'High intensity intervals built around the HYROX race format: rowing, ski erg, sled push and wall balls. Builds the power and muscular endurance you need on race day.'},
  'hyrox-strength':{n:'HYROX Strength',cat:'HYROX',int:2,lvl:'Endurance',img:IMG+'class-busy-800.jpg',d:'Strength work built for race day: sled push and pull, lunges, carries and wall balls, plus the lifts that make them feel easier.'},
@@ -1009,10 +1066,10 @@ const TIERS={
  fp:{n:'Fitness Passport',price:null,term:'Through your work',floor:1,classes:1,recovery:1,offers:0,for:'Full access through your work'}};
 const RACE=new Date(2027,1,4);
 const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],DL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],ML=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const MEMBER_NO='004471',REF_URL='m2club.co.nz/join.html?ref='+MEMBER_NO;
 
 /* ---------- helpers ---------- */
-const LS={get(k,d){try{const v=localStorage.getItem('m2v5.'+k);return v!=null?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('m2v5.'+k,JSON.stringify(v))}catch(e){}}};
+const DEMO=/[?&]demo\b/.test(location.search),LSP=DEMO?'m2demo.':'m2v5.';
+const LS={get(k,d){try{const v=localStorage.getItem(LSP+k);return v!=null?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(LSP+k,JSON.stringify(v))}catch(e){}}};
 const $=id=>document.getElementById(id);
 const now=new Date();
 const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);x.setHours(0,0,0,0);return x};
@@ -1032,15 +1089,19 @@ function haptic(p=8){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 let tT;function toast(m,err){const t=$('toast');$('toastTx').textContent=m;t.classList.toggle('err',!!err);$('toastPath').setAttribute('d',err?'M7 7l10 10M17 7L7 17':'M5 12.5l4.5 4.5L19 7.5');t.classList.add('on');haptic(10);clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2600)}
 
 /* ---------- state ---------- */
-const S={tier:LS.get('tier','perform'),away:LS.get('away',false),bookings:LS.get('bookings',null),wait:LS.get('wait',[]),checkins:LS.get('checkins',[]),rec:LS.get('rec',null),wotw:LS.get('wotw',null),pbs:LS.get('pbs',null),read:LS.get('read',[]),sw:LS.get('sw',{n1:1,n2:1,n4:1,c2:1}),refs:LS.get('refs',null),upReq:LS.get('upReq',false),pushed:LS.get('pushed',false),profile:LS.get('profile',null),plan:LS.get('plan',null),workouts:LS.get('workouts',[]),pt:LS.get('pt',false),club:LS.get('club',{joined:false,km:0,k:{},rsvp:{},partner:false}),nut:LS.get('nut',{t:null,log:{}}),conn:LS.get('conn',{}),ms:LS.get('ms',[]),wallet:LS.get('wallet',false),cal:LS.get('cal',false),race:LS.get('race',null)};if(S.sw.p2===undefined)S.sw.p2=1;
+const S={tier:LS.get('tier','perform'),away:LS.get('away',false),bookings:LS.get('bookings',null),wait:LS.get('wait',[]),checkins:LS.get('checkins',[]),rec:LS.get('rec',null),wotw:LS.get('wotw',null),pbs:LS.get('pbs',null),read:LS.get('read',[]),sw:LS.get('sw',{n1:1,n2:1,n4:1,c2:1}),refs:LS.get('refs',null),upReq:LS.get('upReq',false),pushed:LS.get('pushed',false),profile:LS.get('profile',null),plan:LS.get('plan',null),workouts:LS.get('workouts',[]),pt:LS.get('pt',false),club:LS.get('club',{joined:false,km:0,k:{},rsvp:{},partner:false}),nut:LS.get('nut',{t:null,log:{}}),conn:LS.get('conn',{}),ms:LS.get('ms',[]),wallet:LS.get('wallet',false),cal:LS.get('cal',false),race:LS.get('race',null),doorSess:LS.get('doorSess',null),gender:LS.get('gender','m')};if(S.sw.p2===undefined)S.sw.p2=1;
 const tier=()=>TIERS[S.tier];
 if(!S.bookings){S.bookings=[];for(let i=1;i<8;i++){const d=addDays(T0,i);const c=(TT[d.getDay()]||[]).find(x=>TYPES[x[1]].cat==='HYROX');if(c){S.bookings.push(cid(d,c));break}}LS.set('bookings',S.bookings)}
 if(!S.rec){S.rec=[];for(let i=1;i<40;i++){const d=addDays(T0,-i);if(hash('r'+dkey(d))%100<30){const v=hash('v'+dkey(d))%3;S.rec.push({k:dkey(d),it:v===0?{sauna:15,ice:3}:v===1?{sauna:30,ice:9}:{pool:20,spa:10}})}}LS.set('rec',S.rec)}
 if(!S.refs){S.refs={sent:3,mates:[{n:'Sam Reid',s:'joined',d:'12 Oct'},{n:'Hannah Wilson',s:'trial',d:'Started a trial'},{n:'Ben Clark',s:'opened',d:'Opened your link'}]};LS.set('refs',S.refs)}
 function save(k){LS.set(k,S[k])}
+/* The signed-in member. Demo data until M2_API is set, then filled from GymMaster (see liveSync) */
+const MEMBER=Object.assign({first:'Taylor',last:'Blackler',no:'004471',email:'',phone:'',since:'2023-10-01',totalvisits:0,demo:1},LS.get('me',null)||{});
+MEMBER.name=(MEMBER.first+' '+MEMBER.last).trim();
+const MEMBER_NO=String(MEMBER.no),REF_URL='m2club.co.nz/join.html?ref='+MEMBER_NO;
 function capOf(d,c){const cap=TYPES[c[1]].cat==='Yoga'?16:20;let t=6+hash(cid(d,c))%15;if(c[1]==='hyrox-teams'&&d.getDay()===6)t=cap;const mine=S.bookings.includes(cid(d,c));t=Math.min(cap,t+(mine?1:0));return{cap,taken:t,left:cap-t,mine}}
 function lastVisit(){return S.away?addDays(T0,-12):null}
-function trained(d){const k=dkey(d);if(S.checkins.includes(k)||S.workouts.some(w=>w.k===k))return true;if(d>=T0)return false;if(S.away&&d>addDays(T0,-12))return false;if(S.tier==='recovery')return S.rec.some(r=>r.k===k);return hash('t'+k)%100<52}
+function trained(d){const k=dkey(d);if(S.checkins.includes(k)||S.workouts.some(w=>w.k===k))return true;if(d>=T0)return false;if(!MEMBER.demo)return false;if(S.away&&d>addDays(T0,-12))return false;if(S.tier==='recovery')return S.rec.some(r=>r.k===k);return hash('t'+k)%100<52}
 function recOn(d){return S.rec.filter(r=>r.k===dkey(d))}
 
 /* ---------- navigation ---------- */
@@ -1074,11 +1135,11 @@ function nextClass(bookedOnly){for(let i=0;i<14;i++){const d=addDays(T0,i);for(c
    ========================================================= */
 function renderHome(){
  const h=now.getHours();$('hDate').textContent=DL[now.getDay()]+' '+now.getDate()+' '+ML[now.getMonth()];
- $('hGreet').innerHTML=(h<12?'Morning':h<17?'Afternoon':'Evening')+',<br>Taylor<span class="ld">.</span>';
+ $('hGreet').innerHTML=(h<12?'Morning':h<17?'Afternoon':'Evening')+',<br>'+esc(MEMBER.first)+'<span class="ld">.</span>';
  const st=openStatus();$('hOpen').textContent=st.txt;$('hDot').classList.toggle('off',!st.open);
  // nudge card
  const nx=nextClass(false);
- $('nudgeSlot').innerHTML=S.away?`<div class="sec rise" style="margin-top:22px"><div class="card nudge"><div class="row"><span class="ic">${ico('i-arrow')}</span><div style="flex:1"><span class="eb">Keep the momentum going</span><div class="h3" style="margin-top:6px">It's been 12 days, Taylor.</div><p class="muted small" style="margin-top:4px">${tier().classes&&nx?`${TYPES[nx.c[1]].n} with ${COACHES[nx.c[2]].n} is ${rel(nx.d).toLowerCase()} at ${fmtT(nx.c[0]).full}. Want a spot?`:'The floor is open until '+hr(HOURS[now.getDay()][1])+' today. Even 30 minutes counts.'}</p></div></div>${tier().classes&&nx?`<button class="btn b-dark b-full" style="margin-top:16px" onclick="openClass(${+nx.d},'${nx.c[0]}','${nx.c[1]}')">Book your spot</button>`:`<button class="btn b-dark b-full" style="margin-top:16px" onclick="openPass()">Check in when you're here</button>`}</div></div>`:'';
+ $('nudgeSlot').innerHTML=S.away?`<div class="sec rise" style="margin-top:22px"><div class="card nudge"><div class="row"><span class="ic">${ico('i-arrow')}</span><div style="flex:1"><span class="eb">Keep the momentum going</span><div class="h3" style="margin-top:6px">It's been 12 days, ${esc(MEMBER.first)}.</div><p class="muted small" style="margin-top:4px">${tier().classes&&nx?`${TYPES[nx.c[1]].n} with ${COACHES[nx.c[2]].n} is ${rel(nx.d).toLowerCase()} at ${fmtT(nx.c[0]).full}. Want a spot?`:'The floor is open until '+hr(HOURS[now.getDay()][1])+' today. Even 30 minutes counts.'}</p></div></div>${tier().classes&&nx?`<button class="btn b-dark b-full" style="margin-top:16px" onclick="openClass(${+nx.d},'${nx.c[0]}','${nx.c[1]}')">Book your spot</button>`:`<button class="btn b-dark b-full" style="margin-top:16px" onclick="openPass()">Check in when you're here</button>`}</div></div>`:'';
  // next up
  const bk=nextClass(true);const el=$('nextUp');
  if(!tier().classes){el.innerHTML=`<div class="card"><div class="next"><div class="when">${ico(S.tier==='recovery'?'i-drop':'i-pin','i','width:26px;height:26px')}</div><div class="what"><span class="eb">${S.tier==='recovery'?'Recovery area':'Gym floor'}</span><div class="h3">${st.open?st.txt.replace('Open now until','Open until'):st.txt}</div><div class="muted small">${HRS_LINE}</div></div></div></div>`}
@@ -1144,13 +1205,15 @@ function renderList(){const d=addDays(T0,selDay);$('cEb').textContent=rel(d)+', 
  if(l.every(c=>cDate(d,c)<now)){let n=null;for(let i=selDay+1;i<7&&!n;i++){const dd=addDays(T0,i);const c=(TT[dd.getDay()]||[]).find(x=>selCat==='All'||TYPES[x[1]].cat===selCat);if(c)n={i,dd,c}}
   if(n){$('clist').insertAdjacentHTML('beforeend',`<button class="card press" id="jn" style="width:100%;display:flex;align-items:center;gap:14px"><span style="flex:1"><span class="eb">That's it for ${selDay===0?'today':'this day'}</span><span class="h3" style="display:block;margin-top:6px">Next: ${TYPES[n.c[1]].n}</span><span class="muted small" style="display:block;margin-top:2px">${rel(n.dd)} at ${fmtT(n.c[0]).full} with ${COACHES[n.c[2]].n}</span></span>${ico('i-arrow')}</button>`);$('jn').onclick=()=>{selDay=n.i;renderDays();renderList()}}}}
 function renderCoaches(){const runs={};for(const k in TT)for(const c of TT[k])(runs[c[2]]=runs[c[2]]||new Set()).add(TYPES[c[1]].cat==='HYROX'?'HYROX':TYPES[c[1]].n);
- $('coaches').innerHTML=Object.entries(COACHES).map(([k,c])=>`<button class="co press" data-k="${k}">${c.img?`<img src="${c.img}" alt="Coach ${c.n}" loading="lazy">`:`<div class="ph">${c.n[0]}</div>`}<b>${c.n}</b><span>${runs[k]?[...runs[k]].join(', '):'Personal training'}</span></button>`).join('');
+ $('coaches').innerHTML=Object.entries(COACHES).filter(([k,c])=>!c.hide).map(([k,c])=>`<button class="co press" data-k="${k}">${c.img?`<img src="${c.img}" alt="Coach ${c.n}" loading="lazy">`:`<div class="ph">${c.n[0]}</div>`}${c.nw?'<i class="conew">New</i>':''}<b>${c.n}</b><span>${runs[k]?[...runs[k]].join(', '):c.r||'Personal training'}</span></button>`).join('');
  $('coaches').querySelectorAll('.co').forEach(e=>e.onclick=()=>openCoach(e.dataset.k,runs[e.dataset.k]))}
 function openCoach(k,runs){const c=COACHES[k];const up=[];for(let i=0;i<7;i++){const d=addDays(T0,i);for(const x of TT[d.getDay()]||[])if(x[2]===k&&cDate(d,x)>now)up.push([d,x])}
  openSheet(`<div class="shero" style="height:320px">${c.img?`<img src="${c.img}" alt="Coach ${c.n}" style="filter:none;object-position:50% 15%">`:''}<span class="eb lime">Coach</span><h2>${c.n}<span class="ld">.</span></h2></div>
- <p class="muted">${runs?'Runs '+[...runs].join(' and ')+' at M2.':'Personal training at M2.'} Every class is led by a coach who knows your name and where you're at.</p>
+ ${c.r?`<span class="eb">${c.nw?'New at M2 · ':''}${c.r}</span>`:''}<p class="muted" style="margin-top:8px">${c.bio||((runs?'Runs '+[...runs].join(' and ')+' at M2.':'Personal training at M2.')+" Every class is led by a coach who knows your name and where you're at.")}</p>
+ ${c.tags?`<div class="cotags">${c.tags.map(t=>`<span class="pill">${t}</span>`).join('')}</div>`:''}
+ ${c.bio&&runs?`<p class="muted small" style="margin-top:12px">Runs ${[...runs].join(' and ')} at M2.</p>`:''}
  ${up.length?`<div class="sec" style="margin-top:24px"><span class="eb">Coming up with ${c.n}</span><div class="group" style="margin-top:12px">${up.map((m,i)=>`<button class="li" data-i="${i}"><span class="tx"><b>${TYPES[m[1][1]].n}</b><small>${rel(m[0])} at ${fmtT(m[1][0]).full}</small></span>${ico('i-right','i chev')}</button>`).join('')}</div></div>`:''}`,
- `<a class="btn b-dark b-full" href="tel:095581408">Ask about PT with ${c.n}</a>`,{photo:1});
+ `${ptEligible()&&!S.pt?`<button class="btn b-lime b-full" onclick="after(bookPT)">Book your free PT session</button>`:''}<a class="btn b-dark b-full" href="tel:${c.tel||'095581408'}">${c.tel?'Call '+c.n:'Ask about PT with '+c.n}</a>${c.ig?`<a class="btn b-out b-full" href="https://instagram.com/${c.ig}" target="_blank" rel="noopener">@${c.ig}</a>`:''}`,{photo:1});
  sbody.querySelectorAll('.li').forEach(b=>b.onclick=()=>{const m=up[+b.dataset.i];after(()=>openClass(+m[0],m[1][0],m[1][1]))})}
 function openClass(ts,tm,ty){const d=new Date(ts);const c=(TT[d.getDay()]||[]).find(x=>x[0]===tm&&x[1]===ty);if(!c)return;const t=TYPES[ty],f=fmtT(tm),cp=capOf(d,c),id=cid(d,c),past=cDate(d,c)<now,wl=S.wait.includes(id),co=COACHES[c[2]];
  let foot;
@@ -1235,7 +1298,7 @@ let actx;function beep(f,d){try{actx=actx||new(window.AudioContext||window.webki
    MESSAGES
    ========================================================= */
 function messages(){const nx=nextClass(false);const L=[];
- if(S.away)L.push({id:'nudge',from:'m2',n:'M2',t:'Today',title:'Keep the momentum going',body:tier().classes&&nx?`Haven't seen you in 12 days, Taylor. ${TYPES[nx.c[1]].n} with ${COACHES[nx.c[2]].n} is ${rel(nx.d).toLowerCase()} at ${fmtT(nx.c[0]).full}. Want a spot?`:`Haven't seen you in 12 days, Taylor. The club's open until ${hr(HOURS[now.getDay()][1])} today. Even 30 minutes counts.`,act:tier().classes&&nx?['Book your spot',()=>openClass(+nx.d,nx.c[0],nx.c[1])]:['Get directions',()=>open('https://maps.apple.com/?q=M2+Training+Club','_blank')]});
+ if(S.away)L.push({id:'nudge',from:'m2',n:'M2',t:'Today',title:'Keep the momentum going',body:tier().classes&&nx?`Haven't seen you in 12 days, ${MEMBER.first}. ${TYPES[nx.c[1]].n} with ${COACHES[nx.c[2]].n} is ${rel(nx.d).toLowerCase()} at ${fmtT(nx.c[0]).full}. Want a spot?`:`Haven't seen you in 12 days, ${MEMBER.first}. The club's open until ${hr(HOURS[now.getDay()][1])} today. Even 30 minutes counts.`,act:tier().classes&&nx?['Book your spot',()=>openClass(+nx.d,nx.c[0],nx.c[1])]:['Get directions',()=>open('https://maps.apple.com/?q=M2+Training+Club','_blank')]});
  L.push({id:'bday',from:'m2',n:'M2',t:'Today',tag:'Club news',title:'M2 turns 3',body:'Birthday Open Week runs 12 to 18 October. Your mates can train free all week. Send them the link.',act:['Send the link',()=>shareOpenWeek()]});
  L.push({id:'dave1',from:'dave',n:'Coach Dave',t:'2h',body:'Big turnout for HYROX Threshold this morning. Sled times are coming down across the board. Keep turning up.'});
  if(tier().offers)L.push({id:'give',from:'m2',n:'M2',t:'Yesterday',tag:'Members only',title:'Win 12 months of Perform',body:"We're drawing one member each month in October, November and December. Ask at reception how to enter."});
@@ -1252,14 +1315,14 @@ function openMsg(id){const m=messages().find(x=>x.id===id);if(!m)return;if(!S.re
  openSheet(`<div style="display:flex;gap:12px;align-items:center" class="msg" style="padding:0">${whoHTML(m)}<div><b style="display:block">${m.n}</b><span class="muted small">${m.t}</span></div></div>${m.tag?`<span class="eb" style="margin-top:18px">${m.tag}</span>`:''}${m.title?`<h2 style="margin-top:10px">${m.title}<span class="od">.</span></h2>`:''}<p style="margin-top:14px;font-size:17px">${m.body}</p>`,m.act?`<button class="btn b-lime b-full" id="mAct">${m.act[0]}</button>`:'');
  if(m.act)$('mAct').onclick=()=>after(m.act[1])}
 function markAll(){S.read=messages().map(m=>m.id);save('read');renderMsgs();toast('All read')}
-function firePush(force){if(!force&&(!S.away||S.pushed||!S.sw.n4))return;const m=messages().find(x=>x.id==='nudge')||{title:'Keep the momentum going',body:"Haven't seen you in a while, Taylor. The club's open today. Even 30 minutes counts."};
+function firePush(force){if(!force&&(!S.away||S.pushed||!S.sw.n4))return;const m=messages().find(x=>x.id==='nudge')||{title:'Keep the momentum going',body:"Haven't seen you in a while, "+MEMBER.first+". The club's open today. Even 30 minutes counts."};
  $('pushT').textContent=m.title;$('pushB').textContent=m.body;const p=$('push');p.classList.add('on');haptic([15,60,15]);S.pushed=true;save('pushed');
  p.onclick=()=>{p.classList.remove('on');go('messages');if(messages().find(x=>x.id==='nudge'))setTimeout(()=>openMsg('nudge'),300)};setTimeout(()=>p.classList.remove('on'),6000)}
 
 /* =========================================================
    ME
    ========================================================= */
-function renderMe(){const t=tier();$('mcTier').textContent=t.n;$('qm').innerHTML=qr('mini');
+function renderMe(){const t=tier();$('meNav').textContent=MEMBER.first;$('meH').textContent=MEMBER.first;$('mcName').textContent=MEMBER.name;$('mcNo').textContent='M2 '+MEMBER_NO+' · Tap to check in';{const sd=new Date(MEMBER.since);if(!isNaN(sd))$('meSince').textContent='Member since '+ML[sd.getMonth()]+' '+sd.getFullYear()}$('mcTier').textContent=t.n;$('qm').innerHTML=qr('mini');
  // plan card
  const feats=[['Gym floor, 7 days','floor'],['Unlimited classes and HYROX','classes'],['20m pool, spa, sauna and ice bath','recovery']];
  const nb=addDays(T0,(3-now.getDay()+7)%7||7);
@@ -1273,7 +1336,7 @@ function renderMe(){const t=tier();$('mcTier').textContent=t.n;$('qm').innerHTML
  const W=16,st=addDays(T0,-((now.getDay()+6)%7)-(W-1)*7);let tot=0,mo=0;$('heat').innerHTML='';
  for(let i=0;i<W*7;i++){const d=addDays(st,i);let c='';if(d>T0)c='f';else if(trained(d)){tot++;if(d.getMonth()===now.getMonth())mo++;c='l'+(1+hash('i'+dkey(d))%3)}$('heat').insertAdjacentHTML('beforeend',`<i class="${c}"></i>`)}
  $('heatN').textContent=tot+' visits';$('heatFrom').textContent=st.getDate()+' '+MN[st.getMonth()]+' to today';
- count('sMonth',mo);count('sStreak',streak());window.ALLT=412+tot;count('sTotal',ALLT);
+ count('sMonth',mo);count('sStreak',streak());window.ALLT=MEMBER.demo?412+tot:Math.max(MEMBER.totalvisits||0,S.checkins.length);count('sTotal',ALLT);
  // bookings
  const bk=S.bookings.map(parseId).filter(x=>x.c&&cDate(x.d,x.c)>now).sort((a,b)=>cDate(a.d,a.c)-cDate(b.d,b.c));
  $('myBk').innerHTML=tier().classes?`<div class="sh"><span class="eb">Your bookings</span></div>${bk.length?`<div class="group">${bk.map(x=>`<button class="li" onclick="openClass(${+x.d},'${x.c[0]}','${x.c[1]}')"><span class="ic">${ico('i-cal-check')}</span><span class="tx"><b>${TYPES[x.c[1]].n}</b><small>${rel(x.d)} at ${fmtT(x.c[0]).full} with ${COACHES[x.c[2]].n}</small></span>${ico('i-right','i chev')}</button>`).join('')}</div>`:`<div class="empty"><div class="h3" style="margin-top:0">No classes booked yet.</div><button class="btn b-dark" style="margin-top:14px" onclick="goClasses()">Book your first class</button></div>`}`:'';
@@ -1303,13 +1366,92 @@ function qr(seed,dark='#0A0A0A',light='#fff'){const N=25;let r=hash(seed);const 
  const F=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="7" rx="1.6" fill="${dark}"/><rect x="${x+1}" y="${y+1}" width="5" height="5" rx="1" fill="${light}"/><rect x="${x+2}" y="${y+2}" width="3" height="3" rx=".6" fill="${dark}"/>`;
  for(let y=0;y<N;y++)for(let x=0;x<N;x++){if((x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9))continue;if(rnd()<.48)p+=`M${x} ${y}h1v1h-1z`}
  return `<svg viewBox="-1 -1 ${N+2} ${N+2}" shape-rendering="crispEdges"><rect x="-1" y="-1" width="${N+2}" height="${N+2}" fill="${light}"/><path d="${p}" fill="${dark}"/>${F(0,0)}${F(N-7,0)}${F(0,N-7)}</svg>`}
-function openPass(){const inT=S.checkins.includes(dkey(T0));const t=tier();
- openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">Taylor Blackler</div><div class="tier"><span class="pill p-lime">${t.n}</span></div>
+/* ---------- doors: open GymMaster doors from the app ----------
+   The app never talks to GymMaster directly. It calls the M2 door service (Google Apps Script,
+   m2-door-access.gs), which holds the API keys, checks the member session and location, then calls
+   GymMaster's member kiosk check-in for that door. GymMaster applies the normal access rules and fires the relay.
+   Leave DOOR_API empty to run in demo mode. */
+const M2_API=DEMO?'':'https://script.google.com/macros/s/AKfycbwjnvxCFtmmERRtMVV6lXZBuuaOJxjkAikKKawqTXYJLFsS00v1LNIPb86q3ROPtROn/exec'; // M2 App Service. Add ?demo to the page address to see the demo instead
+const DOOR_API=M2_API;
+const GYM={lat:-36.8658602,lng:174.7642444,r:150}; // 8 Nugent St, Grafton. Doors only open within this many metres
+const DOORS=[
+ {k:'front',n:'Front door',sub:'Building entry',ok:()=>true},
+ {k:'male',n:"Men's recovery",sub:'Recovery area',g:'m',ok:t=>!!t.recovery},
+ {k:'female',n:"Women's recovery",sub:'Recovery area',g:'f',ok:t=>!!t.recovery}];
+const D={busy:null,skipLoc:false};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function distM(a,b,c,d){const R=6371e3,r=x=>x*Math.PI/180,x=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
+function myDoors(){const t=tier();return DOORS.filter(d=>!d.g||d.g===S.gender).map(d=>({...d,can:d.ok(t)}))}
+function doorRow(d){const t=tier();return `<div class="door ${d.can?'':'locked'}" id="dr-${d.k}"><span class="ic">${ico(d.can?'i-door':'i-lock')}</span><span class="tx"><b>${d.n}</b><small id="ds-${d.k}">${d.can?d.sub:'Not on '+t.n}</small></span>${d.can?`<button class="btn b-lime go" onclick="openDoor('${d.k}')">Open</button>`:t.offers?`<button class="btn b-ghost go" onclick="after(()=>openUpgrade('recovery'))">Add</button>`:''}</div>`}
+function openPass(auto){const inT=S.checkins.includes(dkey(T0));
+ if(DOOR_API&&!S.doorSess)return openDoorSignIn(auto);
+ D.busy=null;
+ openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${tier().n}</span></div>
+ <div class="doors">${myDoors().map(doorRow).join('')}</div><div class="dmsg" id="dmsg"></div>
+ <div class="inok ${inT?'on':''}" id="inok"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><span id="inTx">${inT?"You're checked in today":''}</span></div>
+ <p class="small" style="color:var(--muted-d);margin-top:18px">Or scan the M2 sticker on any door with your phone camera.</p><p class="hrs">${HRS_LINE}</p></div>`,
+ `<button class="btn b-ghost b-full" onclick="after(openCard)">${ico('i-qr')}Member card</button>`,{dark:1,full:1});
+ if(auto)setTimeout(()=>openDoor(auto),500)}
+function openCard(){openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${tier().n}</span></div>
  <div class="qrw">${qr('M2-'+MEMBER_NO+'-'+Math.floor(Date.now()/3e4))}<span class="scan"></span></div>
- <p class="small" style="color:var(--muted-d);margin-top:16px">Hold this up to the scanner at the front door.</p><p class="hrs">${HRS_LINE}</p>
- <div class="inok ${inT?'on':''}" id="inok"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><span id="inTx">${inT?"You're checked in today":''}</span></div></div>`,
- `${inT?'':`<button class="btn b-lime b-full" id="simIn" onclick="checkIn()">Scanned at the door (demo)</button>`}<button class="btn b-ghost b-full" onclick="after(openWallet)">${ico('i-wallet')}Add to Wallet</button>`,{dark:1,full:1})}
-function checkIn(){const k=dkey(T0);if(!S.checkins.includes(k)){S.checkins.push(k);save('checkins')}if(S.away){S.away=false;save('away');$('awaySw').classList.remove('on')}$('inTx').textContent="You're in. Have a good session.";$('inok').classList.add('on');$('simIn')?.remove();haptic([10,50,20]);beep(990,.12);renderAll();checkMilestone(window.ALLT)}
+ <p class="small" style="color:var(--muted-d);margin-top:16px">Member ${MEMBER_NO}. Show this at reception if you need a hand.</p></div>`,
+ `<button class="btn b-lime b-full" onclick="after(openPass)">${ico('i-door')}Back to doors</button><button class="btn b-ghost b-full" onclick="after(openWallet)">${ico('i-wallet')}Add to Wallet</button>`,{dark:1,full:1})}
+function dMsg(h){const m=$('dmsg');if(!m)return;m.innerHTML=h;m.classList.toggle('on',!!h)}
+function whereAmI(){if(D.skipLoc)return Promise.resolve({ok:true,lat:GYM.lat,lng:GYM.lng,acc:0});
+ return new Promise(res=>{if(!navigator.geolocation)return res({ok:false,msg:"This phone can't share its location, so doors can't open from here. Reception can let you in."});
+  navigator.geolocation.getCurrentPosition(p=>{const c=p.coords,m=distM(c.latitude,c.longitude,GYM.lat,GYM.lng),slack=Math.min(c.accuracy||0,150);
+   if(m-slack<=GYM.r)res({ok:true,lat:c.latitude,lng:c.longitude,acc:Math.round(c.accuracy||0)});
+   else res({ok:false,msg:`You're about ${m>=1000?(m/1000).toFixed(1)+' km':Math.round(m/10)*10+' m'} from the club. Doors open once you're at 8 Nugent St.`})},
+  e=>res({ok:false,msg:e.code===1?"Turn on location for the M2 app so we know you're at the club. It's only used for opening doors.":"We couldn't find your location. Try again in a few seconds."}),{enableHighAccuracy:true,timeout:9000,maximumAge:5000})})}
+async function openDoor(k){const row=$('dr-'+k),d=DOORS.find(x=>x.k===k);
+ if(!row||row.classList.contains('locked')){dMsg(d?`${d.n} isn't on ${tier().n}. Tap Add to see options, or reception can help.`:"We don't know that door. Try the buttons above.");return}
+ if(D.busy)return;D.busy=k;dMsg('');row.classList.remove('open');row.classList.add('busy');
+ const st=$('ds-'+k),btn=row.querySelector('.go');btn.innerHTML='<span class="spin"></span>';st.textContent="Checking you're at the club";
+ const loc=await whereAmI();
+ if(!loc.ok)return doorFail(k,loc.msg,1);
+ st.textContent='Opening';let r;
+ if(DOOR_API){try{r=await(await fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'door',session:S.doorSess,door:k,lat:loc.lat,lng:loc.lng,acc:loc.acc})})).json()}catch(e){r={ok:false,message:"Couldn't reach the door. Check your signal and try again."}}
+  if(r&&r.signin){S.doorSess=null;save('doorSess');D.busy=null;return after(()=>openDoorSignIn(k))}}
+ else{await wait(800);r={ok:true}}
+ if(!r||!r.ok)return doorFail(k,(r&&r.message)||"That door didn't open. Try again, or reception can help.");
+ doorDone(k)}
+function doorReset(k){const d=DOORS.find(x=>x.k===k),row=$('dr-'+k);if(!row)return;row.classList.remove('busy','open');$('ds-'+k).textContent=d.sub;row.querySelector('.go').innerHTML='Open';D.busy=null}
+function doorFail(k,m,loc){doorReset(k);haptic([30,40,30]);beep(220,.18);dMsg(esc(m)+(loc&&!DOOR_API?`<br><button class="btn b-ghost" onclick="D.skipLoc=true;openDoor('${k}')">Demo: open it anyway</button>`:''))}
+function doorDone(k){const row=$('dr-'+k);if(!row)return;row.classList.remove('busy');row.classList.add('open');$('ds-'+k).textContent='Open. Push to enter.';row.querySelector('.go').innerHTML=ico('i-check');haptic([10,50,20]);beep(990,.12);
+ if(k==='front')checkIn();setTimeout(()=>{if($('dr-'+k)&&row.classList.contains('open'))doorReset(k)},7000);D.busy=null}
+function openDoorSignIn(auto){openSheet(`<div class="dsign"><span class="eb">Doors</span><h2 style="margin-top:8px">Sign in once<span class="od">.</span></h2><p class="muted" style="margin-top:8px">Use the same email and password as your GymMaster member login. You'll stay signed in on this phone.</p>
+ <input id="dsEm" class="fsearch" type="email" autocomplete="username" placeholder="Email"><input id="dsPw" class="fsearch" type="password" autocomplete="current-password" placeholder="Password"><div class="dmsg" id="dmsg"></div></div>`,
+ `<button class="btn b-lime b-full" id="dsGo" onclick="doorSignIn('${auto||''}')">Sign in</button>`,{dark:1})}
+async function doorSignIn(auto){const em=$('dsEm').value.trim(),pw=$('dsPw').value,b=$('dsGo');if(!em||!pw){dMsg('Pop in your email and password.');return}
+ b.disabled=true;b.textContent='Signing in';let r;
+ try{r=await(await fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',email:em,password:pw})})).json()}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal and try again."}}
+ if(!r.ok){b.disabled=false;b.textContent='Sign in';dMsg(esc(r.message||"That didn't work. Check your details, or reset your password at reception."));return}
+ S.doorSess=r.session;save('doorSess');if(r.gender){S.gender=r.gender;save('gender')}after(()=>openPass(auto||undefined))}
+/* ---------- live member data: GymMaster via the M2 App Service ---------- */
+function api(body){return fetch(M2_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(r=>r.json())}
+function showSignIn(){$('sgn').classList.add('on');$('device').classList.add('top-light')}
+function sgMsg(h){const m=$('sgMsg');m.innerHTML=h;m.classList.toggle('on',!!h)}
+async function appSignIn(){const em=$('sgEm').value.trim(),pw=$('sgPw').value,b=$('sgGo');if(!em||!pw)return sgMsg('Pop in your email and password.');
+ b.disabled=true;b.textContent='Signing in';sgMsg('');let r;
+ try{r=await api({action:'login',email:em,password:pw})}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal and try again."}}
+ if(!r||!r.ok){b.disabled=false;b.textContent='Sign in';return sgMsg(esc((r&&r.message)||"That didn't work. Check your details and try again."))}
+ S.doorSess=r.session;save('doorSess');if(r.gender){S.gender=r.gender;save('gender')}
+ b.textContent='Getting your details';const ok=await liveSync(true);if(!ok){b.disabled=false;b.textContent='Sign in';sgMsg("You're signed in, but we couldn't load your details. Try again in a minute.")}}
+async function appReset(){const em=$('sgEm').value.trim();if(!em)return sgMsg('Pop your email in above, then tap Forgot your password again.');
+ try{await api({action:'reset',email:em})}catch(e){}sgMsg("If that email's on an M2 membership, a reset link is on its way. Check your inbox.")}
+async function liveSync(first){if(!M2_API||!S.doorSess)return false;let r;try{r=await api({action:'me',session:S.doorSess})}catch(e){return false}
+ if(r&&r.signin){signOut();return false}
+ if(!r||!r.ok||!r.member)return false;const m=r.member;
+ const me={first:m.first||'Member',last:m.last||'',no:String(m.id),email:m.email||'',phone:m.phone||'',since:m.since||'',totalvisits:m.totalvisits||0,photo:m.photo||'',memberships:r.memberships||[],demo:0};
+ const before=JSON.stringify(LS.get('me',null));LS.set('me',me);
+ if(r.tier){S.tier=r.tier;save('tier')}if(m.gender){S.gender=m.gender;save('gender')}
+ const today=dkey(T0),ks=(r.days||[]).map(d=>d.d.split('-').map(Number).join('-'));
+ S.checkins=[...new Set([...ks,...S.checkins.filter(k=>k===today)])];save('checkins');LS.set('lastSync',Date.now());
+ if(first||before!==JSON.stringify(me))location.reload();else renderAll();return true}
+function signOut(){['doorSess','me','lastSync','checkins','tier','gender','profile','plan'].forEach(k=>{try{localStorage.removeItem(LSP+k)}catch(e){}});location.reload()}
+function handleDoorHash(){const m=location.hash.match(/door=(\w+)/);if(!m)return false;history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>openPass(m[1]),600);return true}
+addEventListener('hashchange',()=>{if(S.profile)handleDoorHash()});
+function checkIn(){const k=dkey(T0);if(!S.checkins.includes(k)){S.checkins.push(k);save('checkins')}if(S.away){S.away=false;save('away');$('awaySw').classList.remove('on')}const tx=$('inTx');if(tx)tx.textContent="You're in. Have a good session.";$('inok')?.classList.add('on');renderAll();checkMilestone(window.ALLT)}
 
 /* ---------- share / sheets ---------- */
 function doShare(text,url,ch){const full=text+' '+url;if(ch==='whatsapp'){open('https://wa.me/?text='+encodeURIComponent(full),'_blank');return true}if(ch==='sms'){location.href='sms:&body='+encodeURIComponent(full);return true}if(navigator.share){navigator.share({title:'M2 Training Club',text,url}).catch(()=>{});return true}try{navigator.clipboard.writeText(full)}catch(e){}toast('Link copied. Send it to a mate');return true}
@@ -1327,7 +1469,7 @@ function openRace(){openSheet(`<div class="shero"><img src="${IMG}race-dave-tayl
 /* ---------- demo panel ---------- */
 function renderDemo(){$('tierPick').innerHTML=Object.entries(TIERS).map(([k,t])=>`<button class="chip ${k===S.tier?'on':''}" data-k="${k}">${t.n}</button>`).join('');$('tierPick').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{S.tier=b.dataset.k;S.upReq=false;save('tier');save('upReq');haptic(6);renderAll();toast('Now viewing as '+tier().n)});$('awaySw').classList.toggle('on',S.away)}
 $('awaySw').onclick=()=>{S.away=!S.away;S.pushed=false;save('away');save('pushed');if(S.away){S.read=S.read.filter(x=>x!=='nudge');save('read')}renderAll();if(S.away)setTimeout(()=>firePush(),700)};
-function resetDemo(){try{Object.keys(localStorage).filter(k=>k.startsWith('m2v5.')).forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
+function resetDemo(){try{Object.keys(localStorage).filter(k=>k.startsWith(LSP)).forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
 document.querySelectorAll('.sw[data-k]').forEach(s=>{s.classList.toggle('on',!!S.sw[s.dataset.k]);s.onclick=()=>{S.sw[s.dataset.k]=S.sw[s.dataset.k]?0:1;s.classList.toggle('on');save('sw');haptic(6)}});
 
 /* =========================================================
@@ -1373,7 +1515,7 @@ function finishOnb(start){const since=S.profile&&S.profile.since||dkey(T0);S.pro
 /* ---------- Free PT questionnaire (same questions and payload as m2club.co.nz/free-pt.html) ---------- */
 const LEADS_URL='https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec';
 const SEND_LEADS=false; // DEMO SAFE. Set to true in the live app so leads land in the PT Lead System for Tim.
-const MEMBER={name:'Taylor Blackler',email:'',phone:''}; // live app: pulled from the member's GymMaster profile
+
 const STYLES=[['Strength training, weights and machines','Strength Training - weights & machines'],['HIIT or circuit training','High Intensity Interval or Circuit Training'],['Cardio / fitness focus','Cardio/Fitness Focus'],['Olympic lifting','Olympic Lifting'],['Powerlifting','Power Lifting'],['Mobility / movement','Mobility/Movement'],['Bodyweight','Bodyweight'],['Sports specific','Sports Specific'],['Not sure yet','Not sure']];
 const PREFS=[['A male trainer','a Male trainer'],['A female trainer','a Female trainer'],['No preference','I do not have a preference']];
 const TIMES=[['Weekday, early morning','Weekday - Early morning'],['Weekday, midday','Weekday - Midday'],['Weekday, evenings','Weekday - Evenings'],['Weekend, morning / midday','Weekend - Morning / Midday'],["Any time, I'm flexible","Any - I'm flexible"]];
@@ -1383,7 +1525,7 @@ function drawOnb(){const st=OB.step,b=$('onbBody'),f=$('onbFoot');b.className='o
  const bar=(n,of,lab)=>`<div class="obar" style="grid-template-columns:repeat(${of},1fr)">${Array.from({length:of},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div><span class="eb">${lab}</span>`;
  const mainOf=ptEligible()?4:3;
  const nav=(ok,next,label)=>`<div style="display:flex;gap:10px">${OB.ptOnly&&st===5?'':`<button class="btn b-ghost" onclick="obBack()">Back</button>`}<button class="btn b-lime" style="flex:1" ${ok?'':'disabled'} onclick="${next||'OB.step++;haptic(8);drawOnb()'}">${label||'Continue'}</button></div>`;
- if(st===0){b.innerHTML=`<div class="ob-hero"><img src="${IMG}hero-mobile-poster-800.jpg" alt="Members training at M2"><video id="obVid" autoplay muted loop playsinline preload="auto" poster="${IMG}hero-mobile-poster-800.jpg"><source src="https://m2club.co.nz/assets/video/hero-mobile.mp4" type="video/mp4"></video><div class="in"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><h1>Welcome to M2, Taylor<span class="ld">.</span></h1><p>Let's set the app up around you and your goals. It takes about a minute.</p></div></div>`;f.innerHTML=`<button class="btn b-lime b-full b-lg" onclick="OB.step=1;haptic(8);drawOnb()">Let's go</button>`;const ov=$('obVid');if(ov){ov.muted=true;ov.play().catch(()=>{});ov.addEventListener('error',()=>ov.remove(),true)}}
+ if(st===0){b.innerHTML=`<div class="ob-hero"><img src="${IMG}hero-mobile-poster-800.jpg" alt="Members training at M2"><video id="obVid" autoplay muted loop playsinline preload="auto" poster="${IMG}hero-mobile-poster-800.jpg"><source src="https://m2club.co.nz/assets/video/hero-mobile.mp4" type="video/mp4"></video><div class="in"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><h1>Welcome to M2, ${esc(MEMBER.first)}<span class="ld">.</span></h1><p>Let's set the app up around you and your goals. It takes about a minute.</p></div></div>`;f.innerHTML=`<button class="btn b-lime b-full b-lg" onclick="OB.step=1;haptic(8);drawOnb()">Let's go</button>`;const ov=$('obVid');if(ov){ov.muted=true;ov.play().catch(()=>{});ov.addEventListener('error',()=>ov.remove(),true)}}
  else if(st===1){b.innerHTML=`${bar(1,mainOf,'Step 1 of '+mainOf)}<h2>What's your main goal<span class="ld">?</span></h2><p class="muted">Pick one. You can change it any time.</p><div class="opts">${Object.entries(GOALS).map(([k,g])=>obOpt('goal',k,g[0],g[1])).join('')}</div>`;f.innerHTML=nav(!!OB.goal)}
  else if(st===2){b.innerHTML=`${bar(2,mainOf,'Step 2 of '+mainOf)}<h2>How many days a week can you train<span class="ld">?</span></h2><p class="muted">Be honest. It's better to hit a smaller target every week.</p><div class="opts">${DAYS.map(([d,s])=>obOpt('days',d,d===5?'5 or more days':d+' days',s)).join('')}</div>`;f.innerHTML=nav(!!OB.days)}
  else if(st===3){b.innerHTML=`${bar(3,mainOf,'Step 3 of '+mainOf)}<h2>How much gym experience do you have<span class="ld">?</span></h2><p class="muted">So we can pitch things at the right level.</p><div class="opts">${Object.entries(EXPS).map(([k,e])=>obOpt('exp',k,e[0],e[1])).join('')}</div>`;f.innerHTML=nav(!!OB.exp,ptEligible()&&!S.pt?'OB.step=4;haptic(8);drawOnb()':'OB.step=7;haptic(8);drawOnb()')}
@@ -1579,7 +1721,7 @@ const PRANA={owner:'21039281',phone:'0800 477 262',
   {n:'Exercise-based rehab',d:'45 minutes, private',p:'Get back to training properly with a plan built around your injury.',cat:'Exercise-Based Rehabilitation - Grafton'},
   {n:'Massage therapy',d:'45 or 60 minutes',p:'Loosen up after a big block of training.',cat:'Massage Therapy'},
   {n:'Online consultation',d:'30 minutes',p:"Can't get in? Talk to a physio from home.",cat:'Telehealth Consultation'}]};
-function pranaURL(cat){const q=new URLSearchParams({owner:PRANA.owner,appointmentType:'category:'+cat,firstName:'Taylor',lastName:'Blackler'});/* live app: add email and phone from GymMaster */return 'https://app.acuityscheduling.com/schedule.php?'+q.toString()}
+function pranaURL(cat){const q=new URLSearchParams({owner:PRANA.owner,appointmentType:'category:'+cat,firstName:MEMBER.first,lastName:MEMBER.last});/* live app: add email and phone from GymMaster */return 'https://app.acuityscheduling.com/schedule.php?'+q.toString()}
 function openPhysio(){openSheet(`<span class="eb">In house at M2</span><h2 style="margin-top:8px">Prana Physio<span class="od">.</span></h2><p class="muted" style="margin-top:8px">Treatment and rehab upstairs at M2. Pick what you need and choose a time. Your details are filled in for you.</p>
  <div class="group" style="margin-top:20px">${PRANA.types.map((t,i)=>`<button class="li" style="align-items:flex-start" onclick="pranaBook(${i})"><span class="tx" style="padding:14px 0"><b>${t.n}</b><small>${t.d}</small><small style="margin-top:4px;color:var(--text)">${t.p}</small></span><span style="margin-top:18px">${ico('i-right','i chev')}</span></button>`).join('')}</div>
  <p class="muted small" style="margin-top:14px">Prana Physio is a separate business. Bookings, payments and ACC claims are handled by Prana.</p>`,`<a class="btn b-out b-full" href="tel:0800477262">Call Prana on ${PRANA.phone}</a>`)}
@@ -1603,7 +1745,7 @@ function openPTPacks(){openSheet(`<span class="eb">Personal training</span><h2 s
 
 /* ---------- milestones and Google reviews ----------
    Everyone who hits a milestone gets the same ask. No filtering by happiness first (Google's review policy). */
-const GOOGLE_REVIEW_URL='https://share.google/x6xcEyhxj53PIcEMh'; // M2 Google Business Profile. Swap for the 'Ask for reviews' link when you have it
+const GOOGLE_REVIEW_URL='https://g.page/r/CdqB5KSimOf3EBM/review'; // M2 Google Business Profile, opens the review box
 const MILESTONES=[10,25,50,100,150,200,250,300,400,500,750,1000];
 function allTimeVisits(){return +($('sTotal').textContent)||0}
 function checkMilestone(n){if(!MILESTONES.includes(n)||S.ms.includes(n))return;S.ms.push(n);save('ms');/* live app: POST to GymMaster member notes/tag "milestone_n" so GymMaster emails can follow up */setTimeout(()=>showMilestone(n),700)}
@@ -1732,9 +1874,9 @@ function renderNutHome(){const el=$('nutSlot');if(!el)return;
 function renderShopMe(){const el=$('shopMe');if(!el)return;el.innerHTML=`<div class="sh"><span class="eb">Shop</span></div><button class="prod wide press" onclick="openHoodie()"><div class="pimg"><svg class="mk"><use href="#m2-mark"/></svg><span>M2 HOODIE</span></div><div class="pin"><div><b>M2 Hoodie</b><small>AS Colour Box Hood, black, S to 3XL</small></div><span class="pr">$79.50</span></div></button>`}
 
 /* ---------- Wallet and Apple Watch ---------- */
-function openWallet(){openSheet(`<span class="eb">Your pass</span><h2 style="margin-top:8px">Check in without the app<span class="od">.</span></h2><p class="muted" style="margin-top:8px">Add your pass to Wallet. It pops up on your lock screen when you get to the club, and works from your Apple Watch too.</p>
- <div class="wpass"><div class="wtop"><svg class="brandk"><use href="#m2-word"/></svg><span>${tier().n.toUpperCase()}</span></div><div class="wmid"><div><small>MEMBER</small><b>Taylor Blackler</b></div><div><small>NUMBER</small><b>${MEMBER_NO}</b></div></div><div class="wqr">${qr('wallet')}</div><div class="wbot">8 Nugent Street, Grafton</div></div>
- <div class="watch"><div class="wface"><svg><use href="#m2-mark"/></svg><div class="wq">${qr('watch')}</div></div><p class="muted small">On your Apple Watch: double-click the side button and hold it to the scanner.</p></div>`,
+function openWallet(){openSheet(`<span class="eb">Member card</span><h2 style="margin-top:8px">Your card in Wallet<span class="od">.</span></h2><p class="muted" style="margin-top:8px">Add your member card to Wallet. It pops up on your lock screen when you get to the club, and works from your Apple Watch too. Doors open from the app.</p>
+ <div class="wpass"><div class="wtop"><svg class="brandk"><use href="#m2-word"/></svg><span>${tier().n.toUpperCase()}</span></div><div class="wmid"><div><small>MEMBER</small><b>${esc(MEMBER.name)}</b></div><div><small>NUMBER</small><b>${MEMBER_NO}</b></div></div><div class="wqr">${qr('wallet')}</div><div class="wbot">8 Nugent Street, Grafton</div></div>
+ <div class="watch"><div class="wface"><svg><use href="#m2-mark"/></svg><div class="wq">${qr('watch')}</div></div><p class="muted small">On your Apple Watch: double-click the side button to show your card at reception.</p></div>`,
  `${S.wallet?`<button class="btn b-out b-full" disabled>${ico('i-check')}In your Wallet</button>`:`<button class="btn b-dark b-full b-lg" onclick="addWallet('Apple Wallet')">${ico('i-wallet')}Add to Apple Wallet</button><button class="btn b-out b-full" onclick="addWallet('Google Wallet')">${ico('i-wallet')}Add to Google Wallet</button>`}`)}
 function addWallet(w){S.wallet=w;save('wallet');/* live app: backend signs a .pkpass (Apple) or a Google Wallet object; pass updates when membership changes */after(()=>{renderAll();toast('Added to '+w)})}
 
@@ -1756,7 +1898,7 @@ CONN.garmin.reads=['Runs, rides and swims','Body Battery and training readiness'
 const CONN_GROUPS=[['Health',['health','hc']],['Wearables',['garmin','whoop','oura','amazfit','polar','coros']],['Training',['strava','c2','tp']]];
 function renderConn(){const el=$('connGroup');if(!el)return;const row=(k,c,on,sub,fn)=>`<button class="li" onclick="${fn||`openConn('${k}')`}"><span class="ic">${ico(c.ic)}</span><span class="tx"><b>${c.n}</b><small>${sub}</small></span>${on?'<span class="pill p-ink">On</span>':'<span class="small muted">Connect</span>'}</button>`;
  el.outerHTML=`<div id="connGroup">${CONN_GROUPS.map(([g,ks])=>`<div class="lhg">${g}</div><div class="group">${ks.map(k=>row(k,CONN[k],!!S.conn[k],S.conn[k]?'Connected · synced just now':CONN[k].sub)).join('')}</div>`).join('')}
-  <div class="lhg">Calendar and Wallet</div><div class="group">${row('cal',{n:'Calendar',ic:'i-cal'},!!S.cal,S.cal?'Bookings added automatically':'Add your bookings automatically','openCal()')}${row('wallet',{n:'Wallet and Apple Watch',ic:'i-wallet'},!!S.wallet,S.wallet?'In your '+S.wallet:'Check in from your lock screen or watch','openWallet()')}</div></div>`}
+  <div class="lhg">Calendar and Wallet</div><div class="group">${row('cal',{n:'Calendar',ic:'i-cal'},!!S.cal,S.cal?'Bookings added automatically':'Add your bookings automatically','openCal()')}${row('wallet',{n:'Wallet and Apple Watch',ic:'i-wallet'},!!S.wallet,S.wallet?'In your '+S.wallet:'Your member card on your lock screen or watch','openWallet()')}</div></div>`}
 const REC_SRC=[['whoop','WHOOP recovery','72%',72],['oura','Oura readiness','81',81],['garmin','Garmin Body Battery','64',64],['polar','Polar Nightly Recharge','OK',60],['coros','COROS recovery','78%',78],['amazfit','Amazfit readiness','70',70]];
 function recoveryCard(){const s=REC_SRC.find(r=>S.conn[r[0]]);if(!s)return `<div class="sec"><button class="card press" style="width:100%;display:flex;align-items:center;gap:14px" onclick="go('me');setTimeout(()=>$('connGroup').scrollIntoView({behavior:'smooth',block:'start'}),350)"><span style="flex:1"><span class="eb">Your recovery today</span><span class="h3" style="display:block;margin-top:6px">Connect your wearable</span><span class="muted small" style="display:block;margin-top:2px">WHOOP, Garmin, Oura and more. See your score here each morning.</span></span>${ico('i-right','i chev')}</button></div>`;
  const hi=s[3]>=67,mid=s[3]>=34;return `<div class="sec"><div class="card dk"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div><span class="eb">${s[1]}</span><div class="h2" style="color:#fff;margin-top:8px">${hi?'Good to go hard':mid?'Take it steady':'Recovery day'}<span class="ld">.</span></div></div><b class="rscore">${s[2]}</b></div>
@@ -1843,7 +1985,7 @@ function restEnd(){if(W){W.rest=null;wDraw()}}
 function finishWorkout(){const sets=W.ex.reduce((a,e)=>a+e.sets.filter(x=>x.done).length,0);if(!sets){toast('Tick off at least one set first',1);return}
  const dur=Math.round((Date.now()-W.t0)/1e3);let vol=0;const ex={};W.ex.forEach(e=>{if(e.k!=='w')return;const d=e.sets.filter(x=>x.done).map(x=>[parseFloat(x.kg)||0,parseInt(x.r)||0]);if(d.length){ex[e.n]=d;d.forEach(x=>vol+=x[0]*x[1])}});
  vol=Math.round(vol);S.workouts.push({k:dkey(T0),name:W.name,pi:W.pi,dur,sets,vol,ex});save('workouts');S.plan.done++;save('plan');const p=PROGS[W.pi],pos=planPos();W=null;clearInterval(wTick);
- openSheet(`<div class="confirm"><div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><span class="eb">Nice work, Taylor</span><h2 style="margin-top:10px">Workout<br>done<span class="ld">.</span></h2>
+ openSheet(`<div class="confirm"><div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><span class="eb">Nice work, ${esc(MEMBER.first)}</span><h2 style="margin-top:10px">Workout<br>done<span class="ld">.</span></h2>
  <div class="det"><div><span>Time</span><b>${Math.max(1,Math.round(dur/60))} min</b></div><div><span>Sets</span><b>${sets}</b></div>${vol?`<div><span>Lifted</span><b>${vol.toLocaleString()} kg</b></div>`:''}<div><span>Programme</span><b>${S.plan.done} of ${pos.total} sessions</b></div></div>
  ${S.conn.strava?'<p class="small" style="color:var(--lime);margin-top:18px">Posted to Strava</p>':''}<p class="muted small" style="margin-top:18px">${S.plan.done>=pos.total?"That's the whole programme done. Time to pick your next one.":'Next time: '+p.s[pos.si].n+'. Your weights will be waiting for you.'}</p></div>`,
  `<button class="btn b-lime b-full" onclick="closeSheet()">Done</button>`,{dark:1,full:1,close:()=>renderAll()});beep(990,.12);haptic([10,50,20])}
@@ -1876,7 +2018,10 @@ function renderAll(){renderConn();renderShopMe();renderClub();renderNutHome();re
 function boot(){renderAll();renderCats();renderCoaches();setTop();
  const tick=()=>{const d=new Date();$('sbTime').textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0')};tick();setInterval(tick,15e3);
  const v=$('heroVid');v.addEventListener('error',()=>v.remove(),true);
- if(!S.profile)showOnb(0);else handleImportHash();setTimeout(()=>$('splash').classList.add('gone'),1300);if(S.away)setTimeout(()=>firePush(),2200)}
+ const live=!!M2_API;$('signOutSec').style.display=live&&S.doorSess?'':'none';$('demoSec').style.display=live?'none':'';
+ if(live&&!S.doorSess){showSignIn();setTimeout(()=>$('splash').classList.add('gone'),600);return}
+ if(live&&Date.now()-(LS.get('lastSync',0))>6e5)liveSync();
+ if(!S.profile)showOnb(0);else if(!handleDoorHash())handleImportHash();setTimeout(()=>$('splash').classList.add('gone'),1300);if(S.away)setTimeout(()=>firePush(),2200)}
 document.readyState==='loading'?addEventListener('DOMContentLoaded',boot):boot();
 </script>
 </body>
