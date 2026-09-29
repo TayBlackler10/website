@@ -34,7 +34,7 @@ export default {
       }
 
       if (path === "/" || path === "/index.html") return page(env, "page:command");
-      if (path === "/pt") return page(env, "page:pt");
+      if (path === "/pt") return livePage(env, "https://m2club.co.nz/M2_PT.html", "page:pt");
       if (path === "/billing") return page(env, "page:billing");
       if (path === "/api/gm" || path === "/api/gm/") return gmProxy(url, env);
       if (path === "/api/pt") return ptProxy(req, env);
@@ -91,6 +91,21 @@ async function page(env, key) {
   const html = await env.M2CC.get(key);
   if (!html) return new Response("Page not uploaded yet", { status: 503 });
   return new Response(html, { headers: { "Content-Type": "text/html;charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin" } });
+}
+
+// Serve a page straight from the website so edits made there show up here too.
+// Falls back to the stored copy if the site can't be reached.
+async function livePage(env, src, fallbackKey) {
+  try {
+    const r = await fetch(src + "?v=" + Math.floor(Date.now() / 60000), { cf: { cacheTtl: 0 } });
+    if (r.ok) {
+      const html = await r.text();
+      if (html.length > 5000) {
+        return new Response(html, { headers: { "Content-Type": "text/html;charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin" } });
+      }
+    }
+  } catch {}
+  return page(env, fallbackKey);
 }
 
 /* ---------------- login ---------------- */
