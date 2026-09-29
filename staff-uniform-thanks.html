@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-NZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Order Confirmed | M2 Staff Uniform</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="preload" href="/assets/fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+<!--
+  Staff uniform order confirmation. Stripe sends paid orders to
+  m2club.co.nz/?uniform_order=paid&order=<id> (set in the uniform order Apps
+  Script), and the homepage forwards that straight here. Shows the order the
+  person just paid for (from the cart saved on their device) and clears it.
+-->
+<style>
+  @font-face { font-family: 'Archivo'; font-display: swap; font-weight: 100 900; src: url(/assets/fonts/archivo.woff2) format('woff2'); }
+  @font-face { font-family: 'DM Sans'; font-display: swap; font-weight: 100 1000; src: url(/assets/fonts/dm-sans.woff2) format('woff2'); }
+  :root {
+    --lime:#DFFF00; --ink:#0A0A0A; --ink-3:#262626;
+    --text:#1A1A1A; --muted:#5B5B55; --muted-dark:#BDBDB5; --olive:#5E6B00;
+    --paper:#F3F3F0; --white:#FFFFFF; --line:#E2E2DC;
+    --display:'Archivo','Helvetica Neue',Arial,sans-serif; --body:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--paper); color:var(--text); font-family:var(--body); font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  h1,h2 { margin:0; }
+  .wrap { max-width:760px; margin:0 auto; padding:0 24px; }
+  .top { background:var(--ink); color:var(--white); }
+  .top-bar { display:flex; align-items:center; justify-content:space-between; height:72px; border-bottom:1px solid var(--ink-3); }
+  .top-bar img { height:24px; width:auto; }
+  .staff-tag { font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink); background:var(--lime); border-radius:999px; padding:6px 12px; }
+  .hero { padding:56px 0 64px; }
+  .tick { width:56px; height:56px; border-radius:999px; background:var(--lime); color:var(--ink); display:flex; align-items:center; justify-content:center; }
+  .hero h1 { font-family:var(--display); font-weight:900; font-size:clamp(44px,7vw,72px); line-height:.95; letter-spacing:-.035em; text-transform:uppercase; margin:24px 0 16px; }
+  .dot { color:var(--lime); }
+  .hero p { font-size:18px; color:#E4E4DE; margin:0; max-width:560px; }
+  .ref { display:inline-block; margin-top:18px; font-size:14px; color:var(--muted-dark); }
+  .ref strong { color:var(--white); font-weight:600; }
+  main { padding:40px 0 72px; }
+  .card { background:var(--white); border-radius:22px; padding:26px 26px 22px; margin-bottom:20px; }
+  .eyebrow { font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--olive); }
+  .card h2 { font-family:var(--display); font-weight:800; font-size:24px; letter-spacing:-.02em; margin:6px 0 14px; }
+  .line { display:flex; gap:14px; align-items:center; padding:12px 0; border-top:1px solid var(--line); }
+  .line:first-of-type { border-top:0; }
+  .line img { width:52px; height:52px; border-radius:12px; object-fit:cover; background:var(--paper); flex-shrink:0; }
+  .line .meta { flex:1; min-width:0; }
+  .line .name { font-weight:600; font-size:15px; line-height:1.3; }
+  .line .sub { color:var(--muted); font-size:13px; }
+  .line .amt { font-weight:700; }
+  .total { display:flex; justify-content:space-between; align-items:baseline; border-top:1px solid var(--line); padding-top:14px; margin-top:4px; }
+  .total span { color:var(--muted); font-size:14px; }
+  .total strong { font-family:var(--display); font-weight:800; font-size:26px; }
+  .steps { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:16px; }
+  .steps li { display:flex; gap:14px; }
+  .steps .n { flex-shrink:0; width:30px; height:30px; border-radius:999px; background:var(--ink); color:var(--lime); font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; }
+  .steps strong { display:block; }
+  .steps span { color:var(--muted); font-size:15px; }
+  .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:50px; padding:12px 24px; border-radius:999px; background:var(--ink); color:var(--lime); font-weight:700; font-size:15px; }
+  .btn.ghost { background:var(--white); color:var(--text); border:1px solid var(--line); }
+  .fine { color:var(--muted); font-size:14px; margin:20px 0 0; }
+  #orderCard { display:none; }
+  footer { background:var(--ink); color:var(--muted-dark); padding:36px 0 44px; font-size:14px; }
+  footer .wrap { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+  footer img { height:22px; width:auto; }
+  @media (max-width:560px) { .wrap { padding:0 16px; } .card { padding:22px 18px 18px; } .actions .btn { flex:1; } }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="top-bar">
+      <img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="264" height="28">
+      <span class="staff-tag">Staff only</span>
+    </div>
+    <div class="hero">
+      <div class="tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h1>Order in<span class="dot">.</span></h1>
+      <p id="thanksLine">Thanks, your payment went through and your uniform order is locked in.</p>
+      <span class="ref" id="refLine" hidden>Order ref <strong id="orderRef"></strong></span>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+    <section class="card" id="orderCard">
+      <span class="eyebrow">Your order</span>
+      <h2>What you ordered</h2>
+      <div id="lines"></div>
+      <div class="total"><span>Total paid (NZD)</span><strong id="total"></strong></div>
+    </section>
+
+    <section class="card">
+      <span class="eyebrow">What happens now</span>
+      <h2>Next steps</h2>
+      <ol class="steps">
+        <li><span class="n">1</span><div><strong>Email confirmation</strong><span>A copy of your order lands in your inbox within about 10 minutes.</span></div></li>
+        <li><span class="n">2</span><div><strong>We place the order</strong><span>Plain pieces come through as normal LSKD orders. Branded pieces go to print in batches.</span></div></li>
+        <li><span class="n">3</span><div><strong>Collect at reception</strong><span>We'll message you when it's ready at 8 Nugent Street, Grafton.</span></div></li>
+      </ol>
+      <p class="fine">Wrong size or something not right? Tell reception straight away, before anything goes to print. Staff prices mean no refunds or returns once it's ordered.</p>
+    </section>
+
+    <div class="actions">
+      <a class="btn" href="/staff-uniform-order.html">Back to uniform page</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="208" height="22" loading="lazy">
+    <span>Staff ordering page, not for public access</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    function load(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+    function fmt(n) { return '$' + (Math.round(n * 100) / 100).toFixed(n % 1 ? 2 : 0); }
+    function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+    var m = location.search.match(/[?&]order=([^&]+)/);
+    if (m) {
+      document.getElementById('orderRef').textContent = decodeURIComponent(m[1]);
+      document.getElementById('refLine').hidden = false;
+    }
+
+    var d = load('m2UniformDetails');
+    if (d && d.name) {
+      document.getElementById('thanksLine').textContent = 'Thanks ' + d.name.split(' ')[0] + ', your payment went through and your uniform order is locked in.';
+    }
+
+    var c = load('m2UniformCart');
+    if (c && c.items && c.items.length) {
+      var html = '', total = 0;
+      c.items.forEach(function (l) {
+        total += l.price * l.qty;
+        html += '<div class="line">' + (l.img ? '<img src="' + esc(l.img) + '" alt="">' : '') +
+          '<div class="meta"><div class="name">' + esc(l.name) + '</div><div class="sub">' + esc(l.variant) + ', qty ' + l.qty + '</div></div>' +
+          '<div class="amt">' + fmt(l.price * l.qty) + '</div></div>';
+      });
+      document.getElementById('lines').innerHTML = html;
+      document.getElementById('total').textContent = fmt(total);
+      document.getElementById('orderCard').style.display = 'block';
+    }
+    // order is paid, so clear the saved cart
+    try { localStorage.removeItem('m2UniformCart'); } catch (e) {}
+  })();
+</script>
+</body>
+</html>

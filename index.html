@@ -39,7 +39,7 @@
 (function(){var done=0;function go(){if(done)return;done=1;['https://www.googletagmanager.com/gtag/js?id=G-1PW3XYQ1F8','https://connect.facebook.net/en_US/fbevents.js'].forEach(function(u){var s=document.createElement('script');s.async=true;s.src=u;document.head.appendChild(s);});}
 if(/[?&](fbclid|gclid|utm_)/.test(location.search)){go();}else{addEventListener('load',function(){setTimeout(go,1200);});}['pointerdown','keydown','touchstart','scroll'].forEach(function(e){addEventListener(e,go,{once:true,passive:true});});})();</script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"></noscript>
-</head>
+<script>(function(){var q=location.search;if(q.indexOf('uniform_order=paid')>-1){location.replace('/staff-uniform-thanks.html'+q);}else if(q.indexOf('uniform_order=cancelled')>-1){location.replace('/staff-uniform-order.html?payment=cancelled');}})();</script></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="promo-bar" data-from="2026-09-27T11:00:00Z" data-until="2026-10-18T11:00:00Z" hidden>M2 turns 3. Train free for a week, 12 to 18 October.<a href="/birthday-open-week.html" data-track="open_week_banner_click">Register now →</a></div>
