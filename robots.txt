@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /chat-proxy/
+Disallow: /email-preview/
 Disallow: /rinaldos-financial-supermind/
 
 Sitemap: https://m2club.co.nz/sitemap.xml
