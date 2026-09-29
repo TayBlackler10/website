@@ -152,15 +152,30 @@ async function gmKpi(env, ep) {
 
 /* ---------------- PT leads (Apps Script, admin key added here) ---------------- */
 async function ptProxy(req, env) {
+  const H = { "Content-Type": "application/json", "Cache-Control": "no-store" };
   if (req.method === "POST") {
     let body = {};
     try { body = JSON.parse(await req.text()); } catch {}
     body.key = env.PT_ADMIN_KEY;
     const r = await fetch(env.PT_SCRIPT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body), redirect: "follow" });
-    return new Response(await r.text(), { headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+    return new Response(await r.text(), { headers: H });
   }
-  const r = await fetch(`${env.PT_SCRIPT}?action=list&key=${encodeURIComponent(env.PT_ADMIN_KEY)}`, { redirect: "follow" });
-  return new Response(await r.text(), { headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  // Apps Script sometimes returns an HTML error page or times out under load.
+  // Retry once, and if it still fails hand back the last good copy so the board never goes blank.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const r = await fetch(`${env.PT_SCRIPT}?action=list&key=${encodeURIComponent(env.PT_ADMIN_KEY)}`, { redirect: "follow" });
+      const text = await r.text();
+      const d = JSON.parse(text);
+      if (Array.isArray(d.leads)) {
+        await env.M2CC.put("pt:last", text);
+        return new Response(text, { headers: H });
+      }
+    } catch {}
+  }
+  const last = await env.M2CC.get("pt:last");
+  if (last) { const d = JSON.parse(last); d.stale = true; return new Response(JSON.stringify(d), { headers: H }); }
+  return new Response(JSON.stringify({ error: "Couldn't reach the lead sheet" }), { status: 502, headers: H });
 }
 function dedupeLeads(raw) {
   const g = new Map();
