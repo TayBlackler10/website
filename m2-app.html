@@ -304,7 +304,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .mcard .brandk{width:152px;height:16px;fill:var(--lime)}
 .mcard .nm{font:900 26px/1 var(--h);letter-spacing:-.03em;text-transform:uppercase}
 .mcard .no{font:600 13px var(--b);letter-spacing:.1em;color:var(--muted-d);margin-top:8px}
-.mcard .qm{width:60px;height:60px;border-radius:12px;background:#fff;padding:5px;flex-shrink:0}
+.mcard .qm{width:60px;height:60px;border-radius:12px;background:#fff;padding:5px;flex-shrink:0}.mcard .qm.qdoor{background:var(--lime);display:flex;align-items:center;justify-content:center;border-radius:50%}
 .mcard .qm svg{width:100%;height:100%}
 .mcard .mk{position:absolute;right:-30px;bottom:-40px;width:230px;height:154px;fill:#141414}
 .plan{border:1px solid var(--line)}
@@ -773,6 +773,10 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .st .rs{display:flex;flex-direction:column;align-items:flex-end;min-width:52px;margin-left:12px;font:700 14px var(--b);color:var(--muted);font-variant-numeric:tabular-nums}
 .st .rs small{font:600 10px var(--b);letter-spacing:.1em;text-transform:uppercase;color:var(--olive)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.rise{opacity:1;transform:none}}
+
+/* small phones (iPhone SE 1st gen, 320px) */
+.qa{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.qa button{min-width:0}
+@media (max-width:345px){.qa button{padding:10px;gap:8px;font-size:13px}.qa .ic{flex-shrink:0}.btn{padding-left:16px;padding-right:16px}.kv b,.goalbox b{overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
@@ -1220,7 +1224,7 @@ function missing(){const t=tier();const m=[];if(!t.classes)m.push('classes');if(
 function upgLine(){const m=missing();if(S.tier==='daily')return 'Add classes and recovery';if(S.tier==='classes')return 'Add the pool, sauna and ice bath';if(S.tier==='recovery')return 'Add the gym floor and classes';return ''}
 function upgCard(where){if(!tier().offers||S.tier==='perform')return '';const diff=(49.5-parseFloat(tier().price)).toFixed(2).replace(/\.00$/,'');
  return `<div class="card upg-c"><div class="upg"><span class="ic">${ico('i-arrow')}</span><div style="flex:1"><span class="eb">You're on ${tier().n}</span><div class="h3" style="margin-top:6px">${upgLine()} with Perform<span class="od">.</span></div><p class="muted small" style="margin-top:4px">$${diff} more a week for the whole club.</p></div></div><button class="btn b-dark b-full" style="margin-top:16px" onclick="openUpgrade('${where}')">${S.upReq?'Upgrade requested':'See Perform'}</button></div>`}
-function openUpgrade(src){const t=tier();const diff=(49.5-parseFloat(t.price)).toFixed(2).replace(/\.00$/,'');
+function openUpgrade(src){const t=tier();if(!t.price){const tr=S.tier==='trial';openSheet(`<span class="eb">${tr?'Keep going':'Upgrade'}</span><h2 style="margin-top:8px">${tr?'Make it a membership':'Get the whole club'}<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${tr?"You've got full access on your trial. Join and keep your classes, recovery and programme going.":"Want more than your current access? Reception can talk you through the options."}</p>`,tr?`<a class="btn b-lime b-full" href="${joinURL()}">See memberships</a><a class="btn b-out b-full" href="tel:095581408">Call reception</a>`:`<a class="btn b-out b-full" href="tel:095581408">Call reception</a>`);return}const diff=(49.5-parseFloat(t.price)).toFixed(2).replace(/\.00$/,'');
  openSheet(`<span class="eb">Upgrade</span><h2 style="margin-top:8px">${upgLine()}<span class="od">.</span></h2><p class="muted" style="margin-top:10px">You're on ${t.n}, $${t.price} a week. Perform is $${diff} more and gets you the whole club.</p>
  <div class="card dk" style="margin-top:20px"><div style="display:flex;justify-content:space-between;align-items:center"><div class="h2" style="color:#fff">Perform</div><span class="pill p-lime">Most popular</span></div><p class="muted small" style="margin-top:4px">The whole club</p><div class="price"><b>$49.50</b><span>/ week</span></div><p class="muted small" style="margin-top:4px">6 month term</p>
  <ul class="ticks">${[['Gym floor, 7 days','floor'],['Unlimited classes and HYROX','classes'],['20m pool, spa, sauna and ice bath','recovery']].map(([l,k])=>`<li>${ico('i-check')}<span>${l}${t[k]?'':' <b style="color:var(--lime);font-weight:600">· new</b>'}</span></li>`).join('')}</ul></div>
@@ -1368,7 +1372,7 @@ function firePush(force){if(!force&&(!S.away||S.pushed||!S.sw.n4))return;const m
 /* =========================================================
    ME
    ========================================================= */
-function renderMe(){const t=tier();$('meNav').textContent=MEMBER.first;$('meH').textContent=MEMBER.first;$('mcName').textContent=MEMBER.name;$('mcNo').textContent='M2 '+MEMBER_NO+' · Tap to check in';{const sd=new Date(MEMBER.since);if(!isNaN(sd))$('meSince').textContent='Member since '+ML[sd.getMonth()]+' '+sd.getFullYear()}$('mcTier').textContent=t.n;$('qm').innerHTML=LIVE?'':qr('mini');
+function renderMe(){const t=tier();$('meNav').textContent=MEMBER.first;$('meH').textContent=MEMBER.first;$('mcName').textContent=MEMBER.name;$('mcNo').textContent='M2 '+MEMBER_NO+(LIVE?' · Tap to open doors':' · Tap to check in');{const sd=new Date(MEMBER.since);if(!isNaN(sd))$('meSince').textContent='Member since '+ML[sd.getMonth()]+' '+sd.getFullYear()}$('mcTier').textContent=t.n;$('qm').innerHTML=LIVE?ico('i-door','i','width:26px;height:26px;color:#0A0A0A'):qr('mini');$('qm').classList.toggle('qdoor',LIVE);
  // plan card
  const feats=[['Gym floor, 7 days','floor'],['Unlimited classes and HYROX','classes'],['20m pool, spa, sauna and ice bath','recovery']];
  const nb=addDays(T0,(3-now.getDay()+7)%7||7);
@@ -2083,7 +2087,16 @@ function applyClasses(r){if(!r||!r.ok||!Array.isArray(r.classes)||!r.classes.len
 async function loadClasses(){if(!LIVE||!S.doorSess)return null;try{const r=await api({action:'classes',session:S.doorSess});if(r&&r.ok){LS.set('gmc',{t:Date.now(),r});applyClasses(r);renderAll();renderDays();renderList();renderCoaches()}return r}catch(e){return null}}
 if(LIVE){const c=LS.get('gmc',null);if(c&&Date.now()-c.t<18e5)applyClasses(c.r)}
 /* ---------- live app: switch off prototype features that aren't connected yet ---------- */
-function mailReception(subject,body){location.href='mailto:reception@m2club.co.nz?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body+'\n\n'+MEMBER.name+' (member '+MEMBER_NO+')')}
+function mailTo(subject,body){location.href='mailto:reception@m2club.co.nz?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body+'\n\n'+MEMBER.name+' (member '+MEMBER_NO+')')}
+/* send a request straight to reception through the M2 service; fall back to the phone's mail app */
+let REQ_BUSY=false;
+async function mailReception(subject,body){if(REQ_BUSY)return;const kind=/delete/i.test(subject)?'delete':/upgrade/i.test(subject)?'upgrade':'feedback';
+ if(!M2_API||!S.doorSess)return mailTo(subject,body);REQ_BUSY=true;toast('Sending');let r=null;
+ try{r=await api({action:'request',session:S.doorSess,kind,text:body})}catch(e){}REQ_BUSY=false;
+ if(r&&r.signin)return signOut();
+ if(!r||!r.ok){if(r&&r.message){after(()=>toast(r.message));return}return mailTo(subject,body)}
+ if(kind==='delete'){after(()=>openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Request sent<span class="od">.</span></h2><p class="muted" style="margin-top:10px">Reception will delete your app account and data and confirm by email, usually within 2 working days. If you have a membership, they'll check with you about cancelling it first.</p>`,`<button class="btn b-dark b-full" onclick="signOut()">Sign out of this phone</button>`));return}
+ after(()=>toast(kind==='upgrade'?"Sent. Tay or Tim will be in touch":"Sent to Tay and Tim. Thanks"))}
 function reqDelete(){openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Delete my account<span class="od">.</span></h2><p class="muted" style="margin-top:10px">We'll remove your app data and close your M2 account. If you still have a membership, we'll talk you through cancelling it first. This goes to reception.</p>`,`<button class="btn b-dark b-full" onclick="mailReception('Please delete my M2 account','Hi team, please delete my M2 app data and account.')">Send the request</button>`)}
 function soon(what,txt){openSheet(`<span class="eb">Coming soon</span><h2 style="margin-top:8px">${what}<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${txt||"We're still connecting this part of the app. It'll switch on here as soon as it's ready."}</p>`,`<button class="btn b-dark b-full" onclick="closeSheet()">Got it</button>`)}
 if(LIVE){
@@ -2125,6 +2138,13 @@ if(LIVE){
  const _msgs=messages;messages=function(){return _msgs().filter(m=>m.from!=='dave'&&m.from!=='bekka')};
  openCard=function(){openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${esc(tier().n)}</span></div><div class="qrw" style="padding:28px"><div style="font:900 44px/1 var(--h);color:var(--ink);letter-spacing:.02em">${esc(MEMBER_NO)}</div><div class="small" style="color:#555;margin-top:8px">Member number</div></div><p class="small" style="color:var(--muted-d);margin-top:16px">Show this at reception if you need a hand.</p></div>`,`<button class="btn b-lime b-full" onclick="after(openPass)">${ico('i-door')}Back to doors</button>`,{dark:1,full:1})};
 }
+/* hero video: iPhones sometimes skip autoplay (app opening behind the splash, Low Power Mode),
+   so nudge it to play whenever Home is showing */
+function playHero(){const v=$('heroVid');if(!v||!v.paused||cur!=='home'||document.hidden)return;try{v.muted=true;v.playsInline=true;const p=v.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+{const _go=go;go=function(t){const r=_go.apply(this,arguments);if(t==='home')setTimeout(playHero,50);return r}}
+document.addEventListener('visibilitychange',()=>setTimeout(playHero,100));
+['touchstart','click'].forEach(ev=>document.addEventListener(ev,()=>playHero(),{passive:true}));
+setTimeout(playHero,1500);setTimeout(playHero,3500);
 /* =========================================================
    DOOR SPEED. As soon as the doors screen opens (or the app opens), start finding
    the member's location and wake the M2 door service, so tapping Open only has to
