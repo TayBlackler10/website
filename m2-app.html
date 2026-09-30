@@ -2139,6 +2139,13 @@ if(LIVE){
  const _msgs=messages;messages=function(){return _msgs().filter(m=>m.from!=='dave'&&m.from!=='bekka')};
  openCard=function(){openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${esc(tier().n)}</span></div><div class="qrw" style="padding:28px"><div style="font:900 44px/1 var(--h);color:var(--ink);letter-spacing:.02em">${esc(MEMBER_NO)}</div><div class="small" style="color:#555;margin-top:8px">Member number</div></div><p class="small" style="color:var(--muted-d);margin-top:16px">Show this at reception if you need a hand.</p></div>`,`<button class="btn b-lime b-full" onclick="after(openPass)">${ico('i-door')}Back to doors</button>`,{dark:1,full:1})};
 }
+/* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
+   On open and on return to the app, check for a newer version and reload straight away. */
+const APP_VER='2026-10-01b';
+async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
+ if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
+setTimeout(checkUpdate,1200);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 /* hero video: iPhones sometimes skip autoplay (app opening behind the splash, Low Power Mode),
    so nudge it to play whenever Home is showing */
 function playHero(){const v=$('heroVid');if(!v||!v.paused||cur!=='home'||document.hidden)return;try{v.muted=true;v.playsInline=true;const p=v.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
