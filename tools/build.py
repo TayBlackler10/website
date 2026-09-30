@@ -37,7 +37,7 @@ MENU = [
         ('All memberships', '/memberships.html', 'Perform, Classes, Daily, Recovery'),
         ('Annual memberships', '/annual-memberships.html', 'Pay upfront and save'),
         ('Fitness Passport', '/fitness-passport.html', 'Train at M2 through your work'),
-        ('Free trial', TRIAL_HREF, 'Try the whole club first'),
+        ('5 days for $5', TRIAL_HREF, 'Try the whole club for five bucks'),
         ('Bring a Mate', '/bring-a-mate.html', 'You both get 4 weeks free'),
         ('Corporate', '/corporate-memberships.html', 'For teams of 10 or more'),
     ]),
