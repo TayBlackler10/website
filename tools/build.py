@@ -24,7 +24,7 @@ TRIAL_SWITCH = '2026-09-30T01:45:00Z'  # 5 Days for $5 went live early, 30 Sep 2
 MATE_SWITCH = '2026-09-30T11:00:00Z'  # Bring a Mate: 1 Oct 2026 00:00 NZ
 OPEN_WEEK_FROM = '2026-09-27T11:00:00Z'
 OPEN_WEEK_UNTIL = '2026-10-18T11:00:00Z'
-TRIAL_HREF = 'https://m2trainingclub.gymmasteronline.com/portal/membership/065f4de9d82bbfa64defc7f658dd2f03'
+TRIAL_HREF = 'https://m2club.co.nz/join.html?m=844624'  # 5 Days for $5, preselected on our own join page (never the GymMaster checkout)
 VERSION = datetime.date.today().strftime('%Y%m%d')
 
 CHEV = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'

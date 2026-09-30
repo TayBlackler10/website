@@ -130,3 +130,10 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
 - HYROX Summer Prep page was removed and redirects to /hyrox-auckland.html. Do not link to it.
 - Hoodie is on sale ongoing (printed to order), no pre-sale deadline.
 - On site: in-house physio by Prana Physio (https://www.pranaphysio.co.nz/) and a cafe. The pool is 20m. There is NO steam room.
+
+
+## Sign-up links (rule from Taylor, 30 Sep 2026)
+- Never link to the GymMaster checkout (gymmasteronline.com/portal/membership/...). All trials and memberships go through our own join page: https://m2club.co.nz/join.html?m=<id>.
+- 5 Days for $5: join.html?m=844624. Perform Weekly: join.html?m=844762. Other ids come from the join page's membership list.
+- The free 3 day trial is gone; the join page filters it out even if GymMaster still lists it.
+- Exception for now: annual memberships aren't on the join page yet, so annual-memberships.html still uses GymMaster links.

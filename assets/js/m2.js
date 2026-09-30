@@ -12,8 +12,8 @@
     openWeekBannerUntil: '2026-10-18T11:00:00Z' // hide after 18 Oct (end of Open Week)
   };
   var TRIAL = {
-    before: { href: 'https://m2club.co.nz/join.html?m=trial', label: 'Get your free 3 days' },
-    after:  { href: 'https://m2trainingclub.gymmasteronline.com/portal/membership/065f4de9d82bbfa64defc7f658dd2f03', label: 'Try 5 days for $5' }
+    before: { href: 'https://m2club.co.nz/join.html?m=844624', label: 'Try 5 days for $5' },
+    after:  { href: 'https://m2club.co.nz/join.html?m=844624', label: 'Try 5 days for $5' }
   };
 
   // Allow testing a date: add ?m2date=2026-10-12 to any URL
@@ -48,7 +48,7 @@
     if (explicit) return explicit;
     var href = a.getAttribute('href') || '';
     if (a.hasAttribute('data-trial')) return 'trial_click';
-    if (href.indexOf('join.html') !== -1) return /[?&]m=trial/.test(href) ? 'trial_click' : 'join_click';
+    if (href.indexOf('join.html') !== -1) return /[?&]m=(trial|844624)\b/.test(href) ? 'trial_click' : 'join_click';
     if (href.indexOf('gymmasteronline.com/portal/membership/') !== -1) {
       if (href.indexOf(TRIAL.before.href.split('/').pop()) !== -1 || href.indexOf(TRIAL.after.href.split('/').pop()) !== -1) return 'trial_click';
       return 'join_click';

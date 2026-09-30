@@ -499,6 +499,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     update();
   }
   function ingest(list){
+    // The free 3 day trial is no longer offered, even if GymMaster still lists it online.
+    list = list.filter(function(m){ return !(/free/i.test(m.name) && /trial|3 day/i.test(m.name)); });
     all = list; trials = []; tiers = {};
     all.forEach(function(m){
       var p = parse(m);
@@ -520,11 +522,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     nextBtn.disabled = false;
 
     // Preselect from link: ?m=<membership id>, ?m=trial, ?tier=perform
-    // The free trial is replaced by 5 Days for $5: old ?m=trial / free links go there instead.
-    if (/^(trial|free)/i.test(qs.get('m') || '') || qs.get('type') === 'trial') { location.replace('/5-days-5-bucks.html' + location.search); return; }
     var want = (qs.get('m') || '').toLowerCase();
     var pick = all.filter(function(m){ return String(m.id) === want; })[0];
-    if (!pick && /trial|free/.test(want)) pick = trials.filter(function(m){ return /free/i.test(m.name); })[0] || trials[0];
+    // Old ?m=trial / free links: the free trial is gone, so open on 5 Days for $5.
+    if (!pick && /trial|free/.test(want)) pick = trials.filter(function(m){ return String(m.id) === '844624' || /5 days/i.test(m.name); })[0] || trials[0];
     if (pick && !pick._p) { setMode('trials'); check('trial', pick.id); }
     else {
       setMode(qs.get('type') === 'trial' ? 'trials' : 'members');
@@ -536,7 +537,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     var linkCode = (qs.get('code') || qs.get('promo') || '').trim();
     if (linkCode) { $('promoInput').value = linkCode; applyCode(linkCode, true); }
   }).catch(function(){
-    $('pickLoading').innerHTML = 'We couldn\'t load memberships just now. Please refresh, or <a href="' + PORTAL + '" style="font-weight:600;color:#111">sign up here instead</a>.';
+    $('pickLoading').innerHTML = 'We couldn\'t load memberships just now. Please refresh, or call us on <a href="tel:+6495581408" style="font-weight:600;color:#111">09 558 1408</a> and we\'ll sign you up.';
   });
 
   function applyCode(code, fromLink){
