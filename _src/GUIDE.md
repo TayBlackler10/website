@@ -101,8 +101,8 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
     Flexi https://m2club.co.nz/join.html?m=844774
   - Flexi = +$5/wk on any of the above, no fixed term, cancel anytime with 30 days' notice.
   - Joining fee $49, key tag $25.
-- Annual (pay upfront): Perform Annual $1,800 (limited spots) https://m2trainingclub.gymmasteronline.com/portal/membership/d5cce31cefa08dd12719c9186314c6c9 ;
-  Daily Annual $1,215 https://m2trainingclub.gymmasteronline.com/portal/membership/6dde67601feeabfe92bdf5205221d718 . Use the savings/spot wording from the old annual page.
+- Annual (pay upfront): Perform Annual $1,800 (limited spots) https://m2club.co.nz/join.html?m=844786 ;
+  Daily Annual $1,215 https://m2club.co.nz/join.html?m=844785 . Use the savings/spot wording from the old annual page.
 - Every new member gets one free PT session (booked at /free-pt.html), except Recovery memberships.
 - Corporate memberships are NOT sold online (don't add join buttons for them).
 - Fitness Passport members get full access to everything (gym, all classes incl. HYROX, recovery) but are excluded from all deals and offers.
@@ -136,4 +136,4 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
 - Never link to the GymMaster checkout (gymmasteronline.com/portal/membership/...). All trials and memberships go through our own join page: https://m2club.co.nz/join.html?m=<id>.
 - 5 Days for $5: join.html?m=844624. Perform Weekly: join.html?m=844762. Other ids come from the join page's membership list.
 - The free 3 day trial is gone; the join page filters it out even if GymMaster still lists it.
-- Exception for now: annual memberships aren't on the join page yet, so annual-memberships.html still uses GymMaster links.
+- Annual: Perform Annual join.html?m=844786, Daily Annual join.html?m=844785 (term 'annual' on the join page).

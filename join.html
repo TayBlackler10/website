@@ -31,10 +31,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Join M2 Training Club | Sign Up Online</title>
-<meta name="description" content="Join M2 Training Club in Grafton, Auckland online in a couple of minutes. Pick a membership or free trial and you're in.">
+<meta name="description" content="Join M2 Training Club in Grafton, Auckland online in a couple of minutes. Pick a membership or try us for 5 days for $5.">
 <link rel="canonical" href="https://m2club.co.nz/join.html">
 <meta property="og:title" content="Join M2 Training Club">
-<meta property="og:description" content="Pick a membership or free trial and sign up online in a couple of minutes.">
+<meta property="og:description" content="Pick a membership or try 5 days for $5, and sign up online in a couple of minutes.">
 <meta property="og:image" content="https://m2club.co.nz/assets/email-welcome.jpg">
 <meta property="og:url" content="https://m2club.co.nz/join.html">
 <link rel="icon" href="/assets/favicon.ico" sizes="any">
@@ -460,6 +460,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
 
   /* ---------- membership data ---------- */
   function parse(m){
+    // Annual, paid upfront: "Perform - 12 months paid in full", "Daily - Paid in full"
+    var a = /^(?:M2\s+)?(Daily|Perform|Classes|Recovery)\b.*(paid in full|12 months|annual)/i.exec(m.name);
+    if (a && /1 year|12 month/i.test((m.length || '') + ' ' + m.name)) {
+      var at = a[1].charAt(0).toUpperCase() + a[1].slice(1).toLowerCase();
+      return {tier: at, flexi: false, annual: true, freq: 'Annual'};
+    }
     var r = /^M2\s+(.+?)(\s+Flexi)?\s*-\s*(\w+)\s*$/i.exec(m.name);
     if (!r) return null;
     var tier = r[1].replace(/\s*membership\s*/i,'').trim();
@@ -501,6 +507,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   function ingest(list){
     // The free 3 day trial is no longer offered, even if GymMaster still lists it online.
     list = list.filter(function(m){ return !(/free/i.test(m.name) && /trial|3 day/i.test(m.name)); });
+    // Benefits for passes that have none set in GymMaster, so every trial shows what's included.
+    list.forEach(function(m){
+      if ((!m.description || !m.description.length) && /5 days/i.test(m.name)) {
+        m.description = ['5 days of full access to everything', 'Full gym floor access', 'Unlimited group fitness classes', 'Swimming pool, spa pool, sauna and ice bath', 'No lock-in'];
+      }
+    });
     all = list; trials = []; tiers = {};
     all.forEach(function(m){
       var p = parse(m);
@@ -531,7 +543,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       setMode(qs.get('type') === 'trial' ? 'trials' : 'members');
       var t = pick ? pick._p.tier : TIER_ORDER.filter(function(t){ return t.toLowerCase() === (qs.get('tier') || '').toLowerCase(); })[0];
       if (t && tiers[t]) { check('tier', t); onTier(); }
-      if (pick) { check('term', pick._p.flexi ? 'flexi' : 'fixed'); onTerm(); check('freq', pick._p.freq); }
+      if (pick) { check('term', termOf(pick)); onTerm(); check('freq', pick._p.freq); }
     }
     update();
     var linkCode = (qs.get('code') || qs.get('promo') || '').trim();
@@ -591,7 +603,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     });
     $('tierOpts').innerHTML = names.map(function(t){
       var list = tiers[t];
-      var base = list.filter(function(m){ return !m._p.flexi; })[0] || list[0];
+      var base = list.filter(function(m){ return !m._p.flexi && !m._p.annual && m.description.length; })[0] || list[0];
       var wk = list.filter(function(m){ return m._p.freq === 'Weekly'; });
       var from = Math.min.apply(null, (wk.length ? wk : list).map(weekly));
       var bullets = base.description.filter(function(l){ return !/minimum term|notice/i.test(l); });
@@ -616,22 +628,25 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   function onTier(){
     var t = val('tier'); if (!t) return;
     var list = tiers[t];
-    var fixed = list.filter(function(m){ return !m._p.flexi; });
+    var fixed = list.filter(function(m){ return !m._p.flexi && !m._p.annual; });
     var flexi = list.filter(function(m){ return m._p.flexi; });
+    var annual = list.filter(function(m){ return m._p.annual; });
     var html = '';
-    if (fixed.length) html += '<label class="opt stack"><input type="radio" name="term" value="fixed"><span>' + (termText(fixed[0]) || 'Fixed') + ' commitment<small>Lowest price</small></span></label>';
+    if (fixed.length) html += '<label class="opt stack"><input type="radio" name="term" value="fixed"><span>' + (termText(fixed[0]) || 'Fixed') + ' commitment<small>Pay weekly, fortnightly or monthly</small></span></label>';
     if (flexi.length) html += '<label class="opt stack"><input type="radio" name="term" value="flexi"><span>Flexi, no lock-in<small>30 days notice to cancel</small></span></label>';
+    if (annual.length) html += '<label class="opt stack"><input type="radio" name="term" value="annual"><span>12 months, paid upfront<small>Best value, ' + esc(annual[0].price) + ' for the year</small></span></label>';
     var prev = val('term');
     $('termOpts').innerHTML = html;
     $('termField').hidden = false;
     if (prev) check('term', prev);
-    if (!fixed.length || !flexi.length) check('term', fixed.length ? 'fixed' : 'flexi');
+    var terms = (fixed.length ? ['fixed'] : []).concat(flexi.length ? ['flexi'] : [], annual.length ? ['annual'] : []);
+    if (terms.length === 1) check('term', terms[0]);
     onTerm();
   }
   function onTerm(){
     var t = val('tier'), term = val('term');
     if (!t || !term) { $('freqField').hidden = true; return; }
-    var list = tiers[t].filter(function(m){ return m._p.flexi === (term === 'flexi'); });
+    var list = tiers[t].filter(function(m){ return termOf(m) === term; });
     list.sort(function(a,b){ return FREQ_ORDER.indexOf(a._p.freq) - FREQ_ORDER.indexOf(b._p.freq); });
     var prev = val('freq');
     $('freqOpts').className = 'opts ' + (list.length >= 4 ? 'four' : list.length === 3 ? 'three' : 'two');
@@ -640,8 +655,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     }).join('');
     $('freqField').hidden = false;
     if (prev) check('freq', prev);
+    if (list.length === 1) check('freq', list[0]._p.freq);
   }
 
+  function termOf(m){ return m._p.annual ? 'annual' : m._p.flexi ? 'flexi' : 'fixed'; }
   function resolve(){
     if (mode === 'trials') {
       var id = val('trial');
@@ -649,14 +666,14 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     }
     var t = val('tier'), term = val('term'), f = val('freq');
     if (!t || !term || !f) return null;
-    return tiers[t].filter(function(m){ return m._p.flexi === (term === 'flexi') && m._p.freq === f; })[0] || null;
+    return tiers[t].filter(function(m){ return termOf(m) === term && m._p.freq === f; })[0] || null;
   }
 
   function update(){
     chosen = resolve();
     var s = $('summary');
     if (!chosen) { s.classList.remove('show'); return; }
-    var name = chosen._p ? 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') + ', ' + chosen._p.freq.toLowerCase() : titleCase(chosen.name);
+    var name = chosen._p ? (chosen._p.annual ? 'M2 ' + chosen._p.tier + ', 12 months paid upfront' : 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') + ', ' + chosen._p.freq.toLowerCase()) : titleCase(chosen.name);
     var h = '<div class="sname">' + esc(name) + '</div>';
     h += '<div class="sline"><span>' + (chosen._p ? 'Membership' : 'Price') + '</span><span>' + (chosen.fullPrice ? '<s class="was">' + esc(chosen.fullPrice) + '</s>' : '') + (chosen.priceValue ? esc(per(chosen)) : 'Free') + '</span></div>';
     if (chosen.signupFee) h += '<div class="sline"><span>Joining fee</span><span>' + (chosen.fullSignupFee ? '<s class="was">' + esc(chosen.fullSignupFee) + '</s>' : '') + esc(chosen.signupFee) + '</span></div>';
