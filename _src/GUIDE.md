@@ -101,8 +101,8 @@ Testimonials: `<video data-testimonial="member-1" src="..." poster="..." control
     Flexi https://m2club.co.nz/join.html?m=844774
   - Flexi = +$5/wk on any of the above, no fixed term, cancel anytime with 30 days' notice.
   - Joining fee $49, key tag $25.
-- Annual (pay upfront): Perform Annual $1,800 (limited spots) https://m2club.co.nz/join.html?m=844786 ;
-  Daily Annual $1,215 https://m2club.co.nz/join.html?m=844785 . Use the savings/spot wording from the old annual page.
+- Annual (pay upfront): Perform Annual $1,801.80 (limited spots) https://m2club.co.nz/join.html?m=844786 ;
+  Daily Annual $1,215.50 https://m2club.co.nz/join.html?m=844785 . Use the savings/spot wording from the old annual page.
 - Every new member gets one free PT session (booked at /free-pt.html), except Recovery memberships.
 - Corporate memberships are NOT sold online (don't add join buttons for them).
 - Fitness Passport members get full access to everything (gym, all classes incl. HYROX, recovery) but are excluded from all deals and offers.
