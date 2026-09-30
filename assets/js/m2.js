@@ -7,7 +7,7 @@
      The site switches offers automatically, so nobody has to remember on the day.
      Times are in UTC. NZDT is UTC+13, so 00:00 on 1 Oct NZ = 11:00 30 Sep UTC. */
   var CAMPAIGNS = {
-    trialSwitch: '2026-09-30T11:00:00Z',        // 1 Oct 2026 00:00 NZ: Free 3 Days -> 5 Days for $5
+    trialSwitch: '2026-09-30T01:45:00Z',        // 5 Days for $5 live from 30 Sep 2026 (went early)
     openWeekBannerFrom: '2026-10-04T11:00:00Z', // show Birthday Open Week banner from 5 Oct
     openWeekBannerUntil: '2026-10-18T11:00:00Z' // hide after 18 Oct (end of Open Week)
   };

@@ -20,10 +20,11 @@ import json, os, re, sys, html, datetime
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, '_src', 'pages')
 SITE = 'https://m2club.co.nz'
-TRIAL_SWITCH = '2026-09-30T11:00:00Z'
+TRIAL_SWITCH = '2026-09-30T01:45:00Z'  # 5 Days for $5 went live early, 30 Sep 2026 afternoon
+MATE_SWITCH = '2026-09-30T11:00:00Z'  # Bring a Mate: 1 Oct 2026 00:00 NZ
 OPEN_WEEK_FROM = '2026-09-27T11:00:00Z'
 OPEN_WEEK_UNTIL = '2026-10-18T11:00:00Z'
-TRIAL_HREF = 'https://m2club.co.nz/join.html?m=trial'
+TRIAL_HREF = 'https://m2trainingclub.gymmasteronline.com/portal/membership/065f4de9d82bbfa64defc7f658dd2f03'
 VERSION = datetime.date.today().strftime('%Y%m%d')
 
 CHEV = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'
@@ -91,7 +92,7 @@ def webpify(html):
 
 
 def trial_link(cls, loc, label_override=None):
-    label = label_override or 'Get your free 3 days'
+    label = label_override or 'Try 5 days for $5'
     lab_attr = '' if label_override else ' data-trial-label'
     return f'<a class="{cls}" href="{TRIAL_HREF}" data-trial{lab_attr} data-loc="{loc}">{label}</a>'
 
@@ -229,7 +230,7 @@ def mobile_menu():
 '''
 
 
-FOOTER_TEXT = f'<span data-until="{TRIAL_SWITCH}">3 days, full access, completely free.</span><span data-from="{TRIAL_SWITCH}" hidden>5 days, full access, just $5.</span> No lock-in.'
+FOOTER_TEXT = '5 days, full access, just $5. No lock-in.'
 
 
 def footer(meta):
@@ -285,7 +286,7 @@ def build():
         if not name.endswith('.html'):
             continue
         meta, body = parse(os.path.join(SRC, name))
-        body = body.replace('{{TRIAL_HREF}}', TRIAL_HREF).replace('{{TRIAL_SWITCH}}', TRIAL_SWITCH)
+        body = body.replace('{{TRIAL_HREF}}', TRIAL_HREF).replace('{{TRIAL_SWITCH}}', TRIAL_SWITCH).replace('{{MATE_SWITCH}}', MATE_SWITCH)
         page = head(meta) + header(meta) + mobile_menu() + '<main id="main">\n' + body.strip() + '\n</main>\n' + footer(meta)
         # Open Week links in the menus disappear by themselves after the week
         page = page.replace('href="/birthday-open-week.html"><strong>', f'href="/birthday-open-week.html" data-until="{OPEN_WEEK_UNTIL}"><strong>')

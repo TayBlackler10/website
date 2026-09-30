@@ -10,7 +10,7 @@
 (function(){
   var q = location.search || '', d = new Date(), m = q.match(/[?&]m2date=(\d{4}-\d{2}-\d{2})/);
   if (m) d = new Date(m[1] + 'T12:00:00+13:00');
-  var after = d >= new Date('2026-09-30T11:00:00Z');
+  var after = d >= new Date('2026-09-30T01:45:00Z');
   var dest = after ? '/5-days-5-bucks.html' + q : 'https://m2club.co.nz/join.html' + (q ? q + '&' : '?') + 'm=trial';
   location.replace(dest + location.hash);
 })();

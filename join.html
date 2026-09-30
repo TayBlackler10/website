@@ -520,6 +520,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     nextBtn.disabled = false;
 
     // Preselect from link: ?m=<membership id>, ?m=trial, ?tier=perform
+    // The free trial is replaced by 5 Days for $5: old ?m=trial / free links go there instead.
+    if (/^(trial|free)/i.test(qs.get('m') || '') || qs.get('type') === 'trial') { location.replace('/5-days-5-bucks.html' + location.search); return; }
     var want = (qs.get('m') || '').toLowerCase();
     var pick = all.filter(function(m){ return String(m.id) === want; })[0];
     if (!pick && /trial|free/.test(want)) pick = trials.filter(function(m){ return /free/i.test(m.name); })[0] || trials[0];
