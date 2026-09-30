@@ -1453,7 +1453,7 @@ async function openDoor(k){const row=$('dr-'+k),d=DOORS.find(x=>x.k===k);
  if(!row||row.classList.contains('locked')){dMsg(d?`${d.n} isn't on ${tier().n}. Tap Add to see options, or reception can help.`:"We don't know that door. Try the buttons above.");return}
  if(D.busy)return;D.busy=k;dMsg('');row.classList.remove('open');row.classList.add('busy');
  const st=$('ds-'+k),btn=row.querySelector('.go');btn.innerHTML='<span class="spin"></span>';st.textContent="Checking you're at the club";
- const loc=await whereAmI();
+ const loc=await doorLoc();
  if(!loc.ok)return doorFail(k,loc.msg,1);
  st.textContent='Opening';let r;
  if(DOOR_API){try{r=await(await fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'door',session:S.doorSess,door:k,lat:loc.lat,lng:loc.lng,acc:loc.acc})})).json()}catch(e){r={ok:false,message:"Couldn't reach the door. Check your signal and try again."}}
@@ -2125,6 +2125,19 @@ if(LIVE){
  const _msgs=messages;messages=function(){return _msgs().filter(m=>m.from!=='dave'&&m.from!=='bekka')};
  openCard=function(){openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${esc(tier().n)}</span></div><div class="qrw" style="padding:28px"><div style="font:900 44px/1 var(--h);color:var(--ink);letter-spacing:.02em">${esc(MEMBER_NO)}</div><div class="small" style="color:#555;margin-top:8px">Member number</div></div><p class="small" style="color:var(--muted-d);margin-top:16px">Show this at reception if you need a hand.</p></div>`,`<button class="btn b-lime b-full" onclick="after(openPass)">${ico('i-door')}Back to doors</button>`,{dark:1,full:1})};
 }
+/* =========================================================
+   DOOR SPEED. As soon as the doors screen opens (or the app opens), start finding
+   the member's location and wake the M2 door service, so tapping Open only has to
+   wait for GymMaster.
+   ========================================================= */
+let PRELOC=null,WARMED=0;
+function warmDoors(){if(!DOOR_API||!S.doorSess||Date.now()-WARMED<9e4)return;WARMED=Date.now();
+ try{fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'warm',session:S.doorSess})}).catch(()=>{})}catch(e){}}
+function prewarmDoors(){if(!DOOR_API||!S.doorSess)return;warmDoors();if(!PRELOC||Date.now()-PRELOC.t>6e4)PRELOC={t:Date.now(),p:whereAmI()}}
+async function doorLoc(){if(PRELOC&&Date.now()-PRELOC.t<6e4){const r=await PRELOC.p;if(r&&r.ok)return r;PRELOC=null}return whereAmI()}
+{const _op=openPass;openPass=function(){const r=_op.apply(this,arguments);try{prewarmDoors()}catch(e){}return r}}
+if(LIVE)setTimeout(()=>{try{warmDoors()}catch(e){}},2500);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')try{warmDoors()}catch(e){}});
 /* =========================================================
    NATIVE (App Store build). Only runs inside the iPhone/Android app shell (Capacitor).
    On the website none of this runs, so the web app behaves exactly as before.
