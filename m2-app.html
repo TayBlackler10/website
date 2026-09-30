@@ -469,6 +469,13 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .sgn .sg-link{color:var(--muted-d);margin-top:6px}
 .sgn .sg-foot{margin-top:28px;font-size:14px;text-align:center}
 .sgn .sg-foot a{color:var(--lime);text-decoration:none;font-weight:600}
+.hpass{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--lime);color:var(--ink);font:700 13px var(--b);padding:7px 14px;border-radius:999px}
+.hpass.last{animation:pulse 2s infinite}
+.trialc{margin-top:22px}
+#hPass:not(:empty){margin-bottom:16px}
+#ended h1{font-size:40px}
+.trialc .row{display:flex;gap:14px;align-items:flex-start}
+.trialc .btns{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .inok{display:none;align-items:center;justify-content:center;gap:10px;margin-top:18px;padding:14px;border-radius:18px;background:var(--ink2);border:1px solid var(--ink3);font-weight:600}
 .inok.on{display:flex;animation:rise .6s var(--ease) both;opacity:0;transform:translateY(12px)}
 .inok i{width:24px;height:24px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
@@ -784,8 +791,16 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
     <input id="sgPw" class="fsearch" type="password" autocomplete="current-password" placeholder="Password">
     <div class="dmsg" id="sgMsg"></div>
     <button class="btn b-lime b-full b-lg" id="sgGo" onclick="appSignIn()">Sign in</button>
-    <button class="btn b-full sg-link" onclick="appReset()">Forgot your password?</button>
+    <button class="btn b-full sg-link" onclick="appReset()">First time, or forgot your password?</button>
     <p class="sg-foot">Not a member yet? <a href="https://m2club.co.nz/join.html">Join M2</a> or call <a href="tel:095581408">09 558 1408</a></p>
+  </div></div>
+  <div class="sgn" id="ended"><div class="sgn-in">
+    <svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg>
+    <h1>Your membership<br>has ended<span class="od">.</span></h1>
+    <p id="endedTx">We'd love to have you back. Pick a membership online, or give us a call and we'll sort it.</p>
+    <a class="btn b-lime b-full b-lg" id="endedJoin" href="https://m2club.co.nz/join.html">Rejoin M2</a>
+    <a class="btn b-ghost b-full" style="margin-top:12px" href="tel:095581408">Call reception</a>
+    <button class="btn b-full sg-link" onclick="signOut()">Sign out</button>
   </div></div>
   <div class="onb" id="onb"><button class="sx" id="onbX" onclick="hideOnb()" aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button><div class="obody" id="onbBody"></div><div class="ofoot" id="onbFoot"></div></div>
   <div class="splash" id="splash"><svg aria-label="M2"><use href="#m2-mark"/></svg><span>Train hard. Recover harder.</span></div>
@@ -800,12 +815,12 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
       <div class="in">
         <span class="eb lime" id="hDate"></span>
         <h1 id="hGreet"></h1>
-        <div class="open"><span class="live" id="hDot"></span><span id="hOpen"></span></div>
+        <div class="open"><span class="live" id="hDot"></span><span id="hOpen"></span></div><div id="hPass"></div>
         <button class="btn b-lime b-lg" onclick="openPass()"><svg class="i"><use href="#i-door"/></svg>Check in</button>
       </div>
     </section>
     <div class="pad">
-      <div id="nudgeSlot"></div><div id="planSlot"></div><div id="goalSlot"></div><div id="nutSlot"></div>
+      <div id="trialSlot"></div><div id="nudgeSlot"></div><div id="planSlot"></div><div id="goalSlot"></div><div id="nutSlot"></div>
       <div class="sec rise" style="animation-delay:.1s">
         <div class="sh"><span class="eb">Next up</span><button class="tl" onclick="goClasses()">Timetable →</button></div>
         <div id="nextUp"></div>
@@ -951,7 +966,14 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
         </div>
       </div>
 
-      <div class="sec" id="signOutSec" style="display:none"><button class="btn b-out b-full" onclick="signOut()">Sign out</button></div>
+      <div class="sec" id="signOutSec" style="display:none">
+        <div class="sh"><span class="eb">Your account</span></div>
+        <div class="group">
+          <a class="li" href="https://m2club.co.nz/privacy-policy.html" target="_blank" rel="noopener"><span class="tx"><b>Privacy policy</b><small>How we look after your information</small></span><svg class="i chev"><use href="#i-right"/></svg></a>
+          <button class="li" onclick="reqDelete()"><span class="tx"><b>Delete my account</b><small>Ask us to remove your app data and account</small></span><svg class="i chev"><use href="#i-right"/></svg></button>
+        </div>
+        <button class="btn b-out b-full" style="margin-top:14px" onclick="signOut()">Sign out</button>
+      </div>
       <div class="sec" id="demoSec">
         <div class="card demo">
           <span class="eb">Demo only · not in the real app</span>
@@ -1063,12 +1085,14 @@ const TIERS={
  classes:{n:'M2 Classes',price:'35',term:'6 month term',floor:1,classes:1,recovery:0,offers:1,for:'Gym plus unlimited classes'},
  daily:{n:'Daily',price:'27.50',term:'12 month term',floor:1,classes:0,recovery:0,offers:1,for:'Gym floor only'},
  recovery:{n:'Recovery',price:'35',term:'6 month term',floor:0,classes:0,recovery:1,offers:1,for:'Recovery area only'},
- fp:{n:'Fitness Passport',price:null,term:'Through your work',floor:1,classes:1,recovery:1,offers:0,for:'Full access through your work'}};
+ fp:{n:'Fitness Passport',price:null,term:'Through your work',floor:1,classes:1,recovery:1,offers:0,for:'Full access through your work'},
+ trial:{n:'Trial',price:null,term:'',floor:1,classes:1,recovery:1,offers:0,for:'Full access, same as Perform'},
+ none:{n:'No membership',price:null,term:'',floor:0,classes:0,recovery:0,offers:0,for:''}};
 const RACE=new Date(2027,1,4);
 const DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],DL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],ML=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 /* ---------- helpers ---------- */
-const DEMO=/[?&]demo\b/.test(location.search),LSP=DEMO?'m2demo.':'m2v5.';
+const DEMO=/[?&]demo\b/.test(location.search),LIVE=!DEMO,LSP=DEMO?'m2demo.':'m2v5.';
 const LS={get(k,d){try{const v=localStorage.getItem(LSP+k);return v!=null?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(LSP+k,JSON.stringify(v))}catch(e){}}};
 const $=id=>document.getElementById(id);
 const now=new Date();
@@ -1089,14 +1113,36 @@ function haptic(p=8){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 let tT;function toast(m,err){const t=$('toast');$('toastTx').textContent=m;t.classList.toggle('err',!!err);$('toastPath').setAttribute('d',err?'M7 7l10 10M17 7L7 17':'M5 12.5l4.5 4.5L19 7.5');t.classList.add('on');haptic(10);clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2600)}
 
 /* ---------- state ---------- */
-const S={tier:LS.get('tier','perform'),away:LS.get('away',false),bookings:LS.get('bookings',null),wait:LS.get('wait',[]),checkins:LS.get('checkins',[]),rec:LS.get('rec',null),wotw:LS.get('wotw',null),pbs:LS.get('pbs',null),read:LS.get('read',[]),sw:LS.get('sw',{n1:1,n2:1,n4:1,c2:1}),refs:LS.get('refs',null),upReq:LS.get('upReq',false),pushed:LS.get('pushed',false),profile:LS.get('profile',null),plan:LS.get('plan',null),workouts:LS.get('workouts',[]),pt:LS.get('pt',false),club:LS.get('club',{joined:false,km:0,k:{},rsvp:{},partner:false}),nut:LS.get('nut',{t:null,log:{}}),conn:LS.get('conn',{}),ms:LS.get('ms',[]),wallet:LS.get('wallet',false),cal:LS.get('cal',false),race:LS.get('race',null),doorSess:LS.get('doorSess',null),gender:LS.get('gender','m')};if(S.sw.p2===undefined)S.sw.p2=1;
-const tier=()=>TIERS[S.tier];
-if(!S.bookings){S.bookings=[];for(let i=1;i<8;i++){const d=addDays(T0,i);const c=(TT[d.getDay()]||[]).find(x=>TYPES[x[1]].cat==='HYROX');if(c){S.bookings.push(cid(d,c));break}}LS.set('bookings',S.bookings)}
-if(!S.rec){S.rec=[];for(let i=1;i<40;i++){const d=addDays(T0,-i);if(hash('r'+dkey(d))%100<30){const v=hash('v'+dkey(d))%3;S.rec.push({k:dkey(d),it:v===0?{sauna:15,ice:3}:v===1?{sauna:30,ice:9}:{pool:20,spa:10}})}}LS.set('rec',S.rec)}
-if(!S.refs){S.refs={sent:3,mates:[{n:'Sam Reid',s:'joined',d:'12 Oct'},{n:'Hannah Wilson',s:'trial',d:'Started a trial'},{n:'Ben Clark',s:'opened',d:'Opened your link'}]};LS.set('refs',S.refs)}
+const S={tier:LS.get('tier',LIVE?'none':'perform'),away:LS.get('away',false),bookings:LS.get('bookings',null),wait:LS.get('wait',[]),checkins:LS.get('checkins',[]),rec:LS.get('rec',null),wotw:LS.get('wotw',null),pbs:LS.get('pbs',null),read:LS.get('read',[]),sw:LS.get('sw',{n1:1,n2:1,n4:1,c2:1}),refs:LS.get('refs',null),upReq:LS.get('upReq',false),pushed:LS.get('pushed',false),profile:LS.get('profile',null),plan:LS.get('plan',null),workouts:LS.get('workouts',[]),pt:LS.get('pt',false),club:LS.get('club',{joined:false,km:0,k:{},rsvp:{},partner:false}),nut:LS.get('nut',{t:null,log:{}}),conn:LS.get('conn',{}),ms:LS.get('ms',[]),wallet:LS.get('wallet',false),cal:LS.get('cal',false),race:LS.get('race',null),doorSess:LS.get('doorSess',null),doors:LS.get('doors',null),pass:LS.get('pass',null),gender:LS.get('gender',LIVE?null:'m')};if(S.sw.p2===undefined)S.sw.p2=1;
+const tier=()=>TIERS[S.tier]||TIERS.perform;
+/* Trials and limited passes: Perform access for as long as they run. Set TRIAL_OFFER to show a join offer on the last day */
+const TRIAL_OFFER='';
+const titleCase=x=>String(x).toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase());
+function passNow(){if(S.tier!=='trial')return null;return S.pass||(M2_API?null:{kind:'trial',name:'Free 3 Day Trial',left:2,demo:1})}
+function passLeft(p){if(!p)return '';if(p.visitsLeft!=null)return p.visitsLeft+(p.visitsLeft===1?' visit':' visits')+' left';if(p.left!=null)return p.left<=1?'Last day':p.left+' days left';return ''}
+function passLast(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=1)||(p.left!=null&&p.left<=1))}
+function passSoon(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=3)||(p.left!=null&&p.left<=3))}
+function joinURL(){return 'https://m2club.co.nz/join.html?'+new URLSearchParams({first:MEMBER.first,last:MEMBER.last,email:MEMBER.email||'',phone:MEMBER.phone||'',utm_source:'app'}).toString()}
+function passLabel(p){return p.kind==='trial'?'Trial':titleCase(p.name)}
+function renderPass(){const p=passNow(),el=$('hPass'),sl=$('trialSlot');if(!el)return;
+ if(S.tier==='trial')TIERS.trial.n=p?titleCase(p.name):'Trial';
+ el.innerHTML=p?`<span class="hpass ${passLast(p)?'last':''}">${esc(passLabel(p))}${passLeft(p)?' · '+passLeft(p):''}</span>`:'';
+ const show=p&&!p.other&&(p.kind==='trial'||passSoon(p));
+ if(!show){sl.innerHTML='';return}
+ const until=p.end&&/^\d{4}-/.test(p.end)?(d=>DL[d.getDay()])(new Date(p.end+'T12:00')):'';
+ if(passLast(p))sl.innerHTML=`<div class="card dk trialc rise"><span class="eb lime">${p.kind==='trial'?'Last day of your trial':'Your pass is nearly done'}</span><h2 style="margin-top:8px;color:#fff">Keep your momentum<span class="od">.</span></h2>
+  <p style="margin-top:8px;color:var(--muted-d)">You've trained ${visitsThisWeek()} ${visitsThisWeek()===1?'time':'times'} this week. Join today and keep the whole club: gym, classes, pool, sauna and ice bath.</p>${TRIAL_OFFER?`<p style="margin-top:10px;color:var(--lime);font-weight:600">${esc(TRIAL_OFFER)}</p>`:''}
+  <div class="btns"><a class="btn b-lime b-full" href="${joinURL()}">Join M2</a><a class="btn b-ghost b-full" href="tel:095581408">Talk to reception</a></div></div>`;
+ else sl.innerHTML=`<div class="card trialc rise"><span class="eb">${p.kind==='trial'?'Your trial':'Your pass'}</span><div class="h3" style="margin-top:6px">Loving it? Keep it going.</div>
+  <p class="muted small" style="margin-top:6px">You've got the whole club${until?' until '+until:''}${p.visitsLeft!=null?' for '+passLeft(p).replace(' left',''):''}. Join before it ends and pick up right where you left off.</p>
+  <div class="btns"><a class="btn b-dark b-full" href="${joinURL()}">See memberships</a></div></div>`}
+function visitsThisWeek(){let n=0;for(let i=0;i<7;i++)if(trained(addDays(T0,-i)))n++;return n}
+if(!S.bookings&&LIVE){S.bookings=[];LS.set('bookings',[])}if(!S.bookings){S.bookings=[];for(let i=1;i<8;i++){const d=addDays(T0,i);const c=(TT[d.getDay()]||[]).find(x=>TYPES[x[1]].cat==='HYROX');if(c){S.bookings.push(cid(d,c));break}}LS.set('bookings',S.bookings)}
+if(!S.rec&&LIVE){S.rec=[];LS.set('rec',[])}if(!S.rec){S.rec=[];for(let i=1;i<40;i++){const d=addDays(T0,-i);if(hash('r'+dkey(d))%100<30){const v=hash('v'+dkey(d))%3;S.rec.push({k:dkey(d),it:v===0?{sauna:15,ice:3}:v===1?{sauna:30,ice:9}:{pool:20,spa:10}})}}LS.set('rec',S.rec)}
+if(!S.refs&&LIVE){S.refs={sent:0,mates:[]};LS.set('refs',S.refs)}if(!S.refs){S.refs={sent:3,mates:[{n:'Sam Reid',s:'joined',d:'12 Oct'},{n:'Hannah Wilson',s:'trial',d:'Started a trial'},{n:'Ben Clark',s:'opened',d:'Opened your link'}]};LS.set('refs',S.refs)}
 function save(k){LS.set(k,S[k])}
 /* The signed-in member. Demo data until M2_API is set, then filled from GymMaster (see liveSync) */
-const MEMBER=Object.assign({first:'Taylor',last:'Blackler',no:'004471',email:'',phone:'',since:'2023-10-01',totalvisits:0,demo:1},LS.get('me',null)||{});
+const MEMBER=Object.assign(LIVE?{first:'',last:'',no:'',email:'',phone:'',since:'',totalvisits:0,demo:0}:{first:'Taylor',last:'Blackler',no:'004471',email:'',phone:'',since:'2023-10-01',totalvisits:0,demo:1},LS.get('me',null)||{});
 MEMBER.name=(MEMBER.first+' '+MEMBER.last).trim();
 const MEMBER_NO=String(MEMBER.no),REF_URL='m2club.co.nz/join.html?ref='+MEMBER_NO;
 function capOf(d,c){const cap=TYPES[c[1]].cat==='Yoga'?16:20;let t=6+hash(cid(d,c))%15;if(c[1]==='hyrox-teams'&&d.getDay()===6)t=cap;const mine=S.bookings.includes(cid(d,c));t=Math.min(cap,t+(mine?1:0));return{cap,taken:t,left:cap-t,mine}}
@@ -1133,7 +1179,7 @@ function nextClass(bookedOnly){for(let i=0;i<14;i++){const d=addDays(T0,i);for(c
 /* =========================================================
    HOME
    ========================================================= */
-function renderHome(){
+function renderHome(){renderPass();
  const h=now.getHours();$('hDate').textContent=DL[now.getDay()]+' '+now.getDate()+' '+ML[now.getMonth()];
  $('hGreet').innerHTML=(h<12?'Morning':h<17?'Afternoon':'Evening')+',<br>'+esc(MEMBER.first)+'<span class="ld">.</span>';
  const st=openStatus();$('hOpen').textContent=st.txt;$('hDot').classList.toggle('off',!st.open);
@@ -1147,7 +1193,7 @@ function renderHome(){
  else{el.innerHTML=`<div class="empty"><svg class="i"><use href="#i-cal"/></svg><div class="h3">No classes booked yet.</div><p class="muted small">There's something on most mornings.</p><button class="btn b-dark" style="margin-top:16px" onclick="goClasses()">Book your first class</button></div>`}
  // week summary
  const mon=addDays(T0,-((now.getDay()+6)%7));let v=0,cl=0,rc=0;$('wkDots').innerHTML='';
- for(let i=0;i<7;i++){const d=addDays(mon,i);const done=trained(d);if(done){v++;if(tier().classes&&hash('c'+dkey(d))%3!==0)cl++}rc+=recOn(d).length;const isT=dkey(d)===dkey(T0);$('wkDots').insertAdjacentHTML('beforeend',`<div class="wd ${done?'done':''} ${isT?'today':''}"><i>${done?ico('i-check'):''}</i>${DN[d.getDay()][0]}</div>`)}
+ for(let i=0;i<7;i++){const d=addDays(mon,i);const done=trained(d);if(done){v++;if(MEMBER.demo&&tier().classes&&hash('c'+dkey(d))%3!==0)cl++}rc+=recOn(d).length;const isT=dkey(d)===dkey(T0);$('wkDots').insertAdjacentHTML('beforeend',`<div class="wd ${done?'done':''} ${isT?'today':''}"><i>${done?ico('i-check'):''}</i>${DN[d.getDay()][0]}</div>`)}
  $('wkN').textContent=v;$('wkV').textContent=v;const wkW=S.workouts.filter(w=>fromKey(w.k)>=mon).length;$('wkC').textContent=tier().classes?cl:wkW;$('wkCl').textContent=tier().classes?'Classes':'Workouts';$('wkOf').textContent='of '+goalDays();$('wkR').textContent=tier().recovery?rc:'None';$('wkS').textContent=streak();
  setTimeout(()=>$('wkRing').style.strokeDashoffset=238.8*(1-Math.min(1,v/goalDays())),400);
  // upgrade
@@ -1200,7 +1246,7 @@ function renderList(){const d=addDays(T0,selDay);$('cEb').textContent=rel(d)+', 
   else if(wl)r=`<span class="pill p-line">Waitlisted</span>`;
   else if(cp.left<=0)r=`<span class="pill p-lime">Full</span>`;
   else r=`<span class="btn b-lime b-sm">Book</span>`;
-  return `<button class="cc press ${past?'past':''} rise" style="animation-delay:${i*.08}s" data-i="${i}"><div class="t"><b>${f.hm}</b><span>${f.ap}</span></div><div class="m"><span class="tag">${t.cat}</span><div class="h3">${t.n}</div><div class="meta">${av(c[2])}${COACHES[c[2]].n}<span>·</span><span>${cp.taken}/${cp.cap}</span></div></div><div class="r">${r}</div></button>`}).join('');
+  return `<button class="cc press ${past?'past':''} rise" style="animation-delay:${i*.08}s" data-i="${i}"><div class="t"><b>${f.hm}</b><span>${f.ap}</span></div><div class="m"><span class="tag">${t.cat}</span><div class="h3">${t.n}</div><div class="meta">${av(c[2])}${COACHES[c[2]].n}${LIVE?'':`<span>·</span><span>${cp.taken}/${cp.cap}</span>`}</div></div><div class="r">${r}</div></button>`}).join('');
  $('clist').querySelectorAll('.cc').forEach(b=>b.onclick=()=>{const c=l[+b.dataset.i];openClass(+d,c[0],c[1])});
  if(l.every(c=>cDate(d,c)<now)){let n=null;for(let i=selDay+1;i<7&&!n;i++){const dd=addDays(T0,i);const c=(TT[dd.getDay()]||[]).find(x=>selCat==='All'||TYPES[x[1]].cat===selCat);if(c)n={i,dd,c}}
   if(n){$('clist').insertAdjacentHTML('beforeend',`<button class="card press" id="jn" style="width:100%;display:flex;align-items:center;gap:14px"><span style="flex:1"><span class="eb">That's it for ${selDay===0?'today':'this day'}</span><span class="h3" style="display:block;margin-top:6px">Next: ${TYPES[n.c[1]].n}</span><span class="muted small" style="display:block;margin-top:2px">${rel(n.dd)} at ${fmtT(n.c[0]).full} with ${COACHES[n.c[2]].n}</span></span>${ico('i-arrow')}</button>`);$('jn').onclick=()=>{selDay=n.i;renderDays();renderList()}}}}
@@ -1221,9 +1267,9 @@ function openClass(ts,tm,ty){const d=new Date(ts);const c=(TT[d.getDay()]||[]).f
  else if(!tier().classes)foot=tier().offers?`<button class="btn b-lime b-full" onclick="after(()=>openUpgrade('class'))">Add classes to your membership</button>`:`<a class="btn b-out b-full" href="tel:095581408">Ask reception about classes</a>`;
  else if(cp.mine)foot=`<button class="btn b-dark b-full" onclick="addCal('${id}')">${ico('i-cal')}Add to calendar</button><button class="btn b-out b-full" onclick="cancelBk('${id}')">Cancel booking</button>`;
  else if(cp.left<=0)foot=wl?`<button class="btn b-out b-full" onclick="leaveWait('${id}')">Leave the waitlist</button>`:`<button class="btn b-out b-full" onclick="joinWait('${id}')">Join waitlist</button>`;
- else foot=`<button class="btn b-lime b-full b-lg" onclick="book('${id}')">Book your spot</button>`;
+ else foot=`<button class="btn b-lime b-full b-lg" onclick="book('${id}')">${LIVE?'How to book':'Book your spot'}</button>`;
  openSheet(`<div class="shero">${t.img?`<img src="${t.img}" alt="${t.n} class at M2">`:''}<span class="eb lime">${t.cat}${ty==='hatha'||ty==='yin'?' · New · Coach Rhea':''}</span><h2>${t.n}<span class="ld">.</span></h2><div class="dots">Intensity <em>${'●'.repeat(t.int)}${'○'.repeat(3-t.int)}</em> · ${t.lvl}</div></div>
- <div class="facts"><div><small>When</small><b>${rel(d)}<br>${f.full}</b></div><div><small>Spots</small><b>${past?'Done':cp.mine?"You're in":cp.left>0?cp.taken+'/'+cp.cap:'Full'}</b></div><div><small>Where</small><b>Gym floor</b></div></div>
+ <div class="facts"><div><small>When</small><b>${rel(d)}<br>${f.full}</b></div><div><small>${LIVE?'Length':'Spots'}</small><b>${LIVE?(past?'Done':'45 min'):past?'Done':cp.mine?"You're in":cp.left>0?cp.taken+'/'+cp.cap:'Full'}</b></div><div><small>Where</small><b>Gym floor</b></div></div>
  <div class="coachline">${av(c[2])}<div><b>Coach ${co.n}</b><small>Leads this class</small></div></div>
  <p>${t.d}</p>
  <div class="bring"><span class="eb">What to bring</span><ul style="margin-top:8px">${BRING[t.cat].map(x=>`<li>${ico('i-check')}${x}</li>`).join('')}</ul></div>
@@ -1322,20 +1368,20 @@ function firePush(force){if(!force&&(!S.away||S.pushed||!S.sw.n4))return;const m
 /* =========================================================
    ME
    ========================================================= */
-function renderMe(){const t=tier();$('meNav').textContent=MEMBER.first;$('meH').textContent=MEMBER.first;$('mcName').textContent=MEMBER.name;$('mcNo').textContent='M2 '+MEMBER_NO+' · Tap to check in';{const sd=new Date(MEMBER.since);if(!isNaN(sd))$('meSince').textContent='Member since '+ML[sd.getMonth()]+' '+sd.getFullYear()}$('mcTier').textContent=t.n;$('qm').innerHTML=qr('mini');
+function renderMe(){const t=tier();$('meNav').textContent=MEMBER.first;$('meH').textContent=MEMBER.first;$('mcName').textContent=MEMBER.name;$('mcNo').textContent='M2 '+MEMBER_NO+' · Tap to check in';{const sd=new Date(MEMBER.since);if(!isNaN(sd))$('meSince').textContent='Member since '+ML[sd.getMonth()]+' '+sd.getFullYear()}$('mcTier').textContent=t.n;$('qm').innerHTML=LIVE?'':qr('mini');
  // plan card
  const feats=[['Gym floor, 7 days','floor'],['Unlimited classes and HYROX','classes'],['20m pool, spa, sauna and ice bath','recovery']];
  const nb=addDays(T0,(3-now.getDay()+7)%7||7);
  $('planCard').innerHTML=`<div class="sh"><span class="eb">Membership</span></div><div class="card plan"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div class="h3" style="font-size:24px">${t.n}</div><p class="muted small" style="margin-top:2px">${t.for}</p></div><span class="pill p-ink">Active</span></div>
- ${t.price?`<div class="price"><b>$${t.price}</b><span>/ week</span></div>`:`<div class="price"><b style="font-size:30px">Covered</b><span>by your work</span></div>`}<p class="muted small" style="margin-top:4px">${t.term}</p>
+ ${LIVE&&S.tier!=='trial'&&S.tier!=='fp'?'':t.price?`<div class="price"><b>$${t.price}</b><span>/ week</span></div>`:S.tier==='trial'?`<div class="price"><b style="font-size:30px">${esc(passLeft(passNow())||'Active')}</b></div>`:`<div class="price"><b style="font-size:30px">Covered</b><span>by your work</span></div>`}<p class="muted small" style="margin-top:4px">${t.term}</p>
  <ul class="ticks">${feats.map(([l,k])=>`<li class="${t[k]?'':'no'}">${ico(t[k]?'i-check':'i-x')}${l}</li>`).join('')}</ul>
- ${t.price?`<div class="kv"><span>Next payment</span><b>${DN[nb.getDay()]} ${nb.getDate()} ${MN[nb.getMonth()]}, $${t.price}</b></div><div class="kv"><span>Notice</span><b>Fixed term. Flexi is +$5 a week</b></div>`:`<div class="kv"><span>Access</span><b>Show your card at reception</b></div>`}
+ ${LIVE&&S.tier!=='trial'?`<div class="kv"><span>Membership</span><b>${esc(((MEMBER.memberships||[])[0]||{}).name||t.n)}</b></div><div class="kv"><span>Billing and changes</span><b>Ask at reception</b></div>`:t.price?`<div class="kv"><span>Next payment</span><b>${DN[nb.getDay()]} ${nb.getDate()} ${MN[nb.getMonth()]}, $${t.price}</b></div><div class="kv"><span>Notice</span><b>Fixed term. Flexi is +$5 a week</b></div>`:(S.tier==='trial'?`<div class="kv"><span>Access</span><b>Full club, same as Perform</b></div><a class="btn b-dark b-full" style="margin-top:14px" href="${joinURL()}">Join M2</a>`:`<div class="kv"><span>Access</span><b>Show your card at reception</b></div>`)}
  ${t.offers&&S.tier!=='perform'?`<button class="btn b-dark b-full" style="margin-top:14px" onclick="openUpgrade('me')">${S.upReq?'Upgrade requested':upgLine()}</button>`:''}
- <button class="btn b-out b-full" style="margin-top:10px" onclick="openWallet()">${ico('i-wallet')}${S.wallet?'In your '+S.wallet:'Add to Wallet'}</button></div>`;
+ ${LIVE?'':`<button class="btn b-out b-full" style="margin-top:10px" onclick="openWallet()">${ico('i-wallet')}${S.wallet?'In your '+S.wallet:'Add to Wallet'}</button>`}</div>`;
  // heat
  const W=16,st=addDays(T0,-((now.getDay()+6)%7)-(W-1)*7);let tot=0,mo=0;$('heat').innerHTML='';
  for(let i=0;i<W*7;i++){const d=addDays(st,i);let c='';if(d>T0)c='f';else if(trained(d)){tot++;if(d.getMonth()===now.getMonth())mo++;c='l'+(1+hash('i'+dkey(d))%3)}$('heat').insertAdjacentHTML('beforeend',`<i class="${c}"></i>`)}
- $('heatN').textContent=tot+' visits';$('heatFrom').textContent=st.getDate()+' '+MN[st.getMonth()]+' to today';
+ $('heatN').textContent=tot+(tot===1?' visit':' visits');$('heatFrom').textContent=st.getDate()+' '+MN[st.getMonth()]+' to today';
  count('sMonth',mo);count('sStreak',streak());window.ALLT=MEMBER.demo?412+tot:Math.max(MEMBER.totalvisits||0,S.checkins.length);count('sTotal',ALLT);
  // bookings
  const bk=S.bookings.map(parseId).filter(x=>x.c&&cDate(x.d,x.c)>now).sort((a,b)=>cDate(a.d,a.c)-cDate(b.d,b.c));
@@ -1351,11 +1397,11 @@ function renderMe(){const t=tier();$('meNav').textContent=MEMBER.first;$('meH').
   ${R.mates.length?`<div style="margin-top:18px">${R.mates.map(m=>`<div class="mate"><span class="av">${m.n.split(' ').map(x=>x[0]).join('')}</span><div class="x"><b>${m.n}</b><small>${m.s==='joined'?'Joined '+m.d+'. You got 4 weeks free':m.d}</small></div><span class="pill ${lab[m.s][1]}">${lab[m.s][0]}</span></div>`).join('')}</div>`:''}</div>`}
  renderStations()}
 function count(id,to){const el=$(id);const f=+el.textContent||0,t0=performance.now();const s=t=>{const p=Math.min(1,(t-t0)/900);el.textContent=Math.round(f+(to-f)*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(s)};requestAnimationFrame(s)}
-function renderStationsBase(){if(!S.pbs){S.pbs=[{n:'SkiErg',d:'1000m',t:'3:49'},{n:'Sled push',d:'50m',t:'2:41'},{n:'Sled pull',d:'50m',t:'3:05'},{n:'Burpee broad jumps',d:'80m',t:'4:12'},{n:'Row',d:'1000m',t:'3:24'},{n:'Farmers carry',d:'200m',t:'1:38'},{n:'Sandbag lunges',d:'100m',t:'4:20'},{n:'Wall balls',d:'100 reps',t:'5:02'}];save('pbs')}
+function renderStationsBase(){if(!S.pbs&&LIVE){S.pbs=['SkiErg|1000m','Sled push|50m','Sled pull|50m','Burpee broad jumps|80m','Row|1000m','Farmers carry|200m','Sandbag lunges|100m','Wall balls|100 reps'].map(x=>{const[n,d]=x.split('|');return{n,d,t:''}});save('pbs')}if(!S.pbs){S.pbs=[{n:'SkiErg',d:'1000m',t:'3:49'},{n:'Sled push',d:'50m',t:'2:41'},{n:'Sled pull',d:'50m',t:'3:05'},{n:'Burpee broad jumps',d:'80m',t:'4:12'},{n:'Row',d:'1000m',t:'3:24'},{n:'Farmers carry',d:'200m',t:'1:38'},{n:'Sandbag lunges',d:'100m',t:'4:20'},{n:'Wall balls',d:'100 reps',t:'5:02'}];save('pbs')}
  $('stations').innerHTML=S.pbs.map((s,i)=>`<button class="st" onclick="openPB(${i})"><span class="n">${i+1}</span><span class="nm"><b>${s.n}</b><small>${s.d}</small></span><span class="tm">${s.t}</span></button>`).join('')}
 const toSec=s=>{const[m,x]=s.split(':').map(Number);return m*60+x};
 function timeSheet(eb,title,sub,val,btn,fn){const[m,x]=(val||':').split(':');openSheet(`<span class="eb">${eb}</span><h2 style="margin-top:8px">${title}<span class="od">.</span></h2><p class="muted" style="margin-top:8px">${sub}</p><div class="field"><input id="fm" inputmode="numeric" maxlength="2" placeholder="00" value="${m}" aria-label="Minutes"><span>:</span><input id="fs" inputmode="numeric" maxlength="2" placeholder="00" value="${x}" aria-label="Seconds"></div><p class="muted small" style="text-align:center">Minutes and seconds</p>`,`<button class="btn b-lime b-full" id="fOk">${btn}</button>`);$('fOk').onclick=()=>{const a=parseInt($('fm').value,10),b=parseInt($('fs').value,10);if(isNaN(a)||isNaN(b)||b>59||a>59){toast("That time doesn't look right",1);return}fn(a+':'+String(b).padStart(2,'0'))}}
-function openPB(i){const s=S.pbs[i];timeSheet(s.d,s.n,'Your best is '+s.t+'. Beat it? Put it in.',s.t,'Save',v=>{const old=toSec(s.t),nw=toSec(v);s.t=v;save('pbs');after(()=>{renderStations();toast(nw<old?'New PB, '+(old-nw)+' seconds faster':'Saved')})})}
+function openPB(i){const s=S.pbs[i];timeSheet(s.d,s.n,s.t?'Your best is '+s.t+'. Beat it? Put it in.':'No time logged yet. Put your best in.',s.t,'Save',v=>{const old=toSec(s.t),nw=toSec(v);s.t=v;save('pbs');after(()=>{renderStations();toast(old&&nw<old?'New PB, '+(old-nw)+' seconds faster':'Saved')})})}
 function openLog(){timeSheet('The Nugent 1K','Log your time','Honest reps only. Your time goes on the club board.',S.wotw,'Save my time',v=>{S.wotw=v;save('wotw');after(()=>{renderHome();toast(v+' is on the board')})})}
 const BOARD=[['Sam K','12:41'],['Mia T','13:02'],['Jordan P','13:15'],['Hannah W','13:38'],['Liam H','13:52'],['Grace L','14:07'],['Ben R','14:20'],['Chloe M','14:44']];
 function openBoard(){let r=[...BOARD];if(S.wotw)r.push(['You',S.wotw]);r.sort((a,b)=>toSec(a[1])-toSec(b[1]));
@@ -1381,15 +1427,15 @@ const DOORS=[
 const D={busy:null,skipLoc:false};
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 function distM(a,b,c,d){const R=6371e3,r=x=>x*Math.PI/180,x=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
-function myDoors(){const t=tier();return DOORS.filter(d=>!d.g||d.g===S.gender).map(d=>({...d,can:d.ok(t)}))}
+function myDoors(){const t=tier();return DOORS.filter(d=>(!d.g||!S.gender||d.g===S.gender)&&(!LIVE||!S.doors||S.doors[d.k])).map(d=>({...d,can:d.ok(t)}))}
 function doorRow(d){const t=tier();return `<div class="door ${d.can?'':'locked'}" id="dr-${d.k}"><span class="ic">${ico(d.can?'i-door':'i-lock')}</span><span class="tx"><b>${d.n}</b><small id="ds-${d.k}">${d.can?d.sub:'Not on '+t.n}</small></span>${d.can?`<button class="btn b-lime go" onclick="openDoor('${d.k}')">Open</button>`:t.offers?`<button class="btn b-ghost go" onclick="after(()=>openUpgrade('recovery'))">Add</button>`:''}</div>`}
 function openPass(auto){const inT=S.checkins.includes(dkey(T0));
  if(DOOR_API&&!S.doorSess)return openDoorSignIn(auto);
  D.busy=null;
  openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${tier().n}</span></div>
- <div class="doors">${myDoors().map(doorRow).join('')}</div><div class="dmsg" id="dmsg"></div>
+ <div class="doors">${myDoors().length?myDoors().map(doorRow).join(''):`<div class="dmsg on">Opening doors from the app is coming soon. Use your key tag for now.</div>`}</div><div class="dmsg" id="dmsg"></div>
  <div class="inok ${inT?'on':''}" id="inok"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><span id="inTx">${inT?"You're checked in today":''}</span></div>
- <p class="small" style="color:var(--muted-d);margin-top:18px">Or scan the M2 sticker on any door with your phone camera.</p><p class="hrs">${HRS_LINE}</p></div>`,
+ ${myDoors().length?'<p class="small" style="color:var(--muted-d);margin-top:18px">Or scan the M2 sticker on any door with your phone camera.</p>':''}<p class="hrs">${HRS_LINE}</p></div>`,
  `<button class="btn b-ghost b-full" onclick="after(openCard)">${ico('i-qr')}Member card</button>`,{dark:1,full:1});
  if(auto)setTimeout(()=>openDoor(auto),500)}
 function openCard(){openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${tier().n}</span></div>
@@ -1426,7 +1472,7 @@ async function doorSignIn(auto){const em=$('dsEm').value.trim(),pw=$('dsPw').val
  b.disabled=true;b.textContent='Signing in';let r;
  try{r=await(await fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',email:em,password:pw})})).json()}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal and try again."}}
  if(!r.ok){b.disabled=false;b.textContent='Sign in';dMsg(esc(r.message||"That didn't work. Check your details, or reset your password at reception."));return}
- S.doorSess=r.session;save('doorSess');if(r.gender){S.gender=r.gender;save('gender')}after(()=>openPass(auto||undefined))}
+ S.doorSess=r.session;save('doorSess');after(()=>openPass(auto||undefined))}
 /* ---------- live member data: GymMaster via the M2 App Service ---------- */
 function api(body){return fetch(M2_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(r=>r.json())}
 function showSignIn(){$('sgn').classList.add('on');$('device').classList.add('top-light')}
@@ -1435,23 +1481,23 @@ async function appSignIn(){const em=$('sgEm').value.trim(),pw=$('sgPw').value,b=
  b.disabled=true;b.textContent='Signing in';sgMsg('');let r;
  try{r=await api({action:'login',email:em,password:pw})}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal and try again."}}
  if(!r||!r.ok){b.disabled=false;b.textContent='Sign in';return sgMsg(esc((r&&r.message)||"That didn't work. Check your details and try again."))}
- S.doorSess=r.session;save('doorSess');if(r.gender){S.gender=r.gender;save('gender')}
+ S.doorSess=r.session;save('doorSess');
  b.textContent='Getting your details';const ok=await liveSync(true);if(!ok){b.disabled=false;b.textContent='Sign in';sgMsg("You're signed in, but we couldn't load your details. Try again in a minute.")}}
-async function appReset(){const em=$('sgEm').value.trim();if(!em)return sgMsg('Pop your email in above, then tap Forgot your password again.');
- try{await api({action:'reset',email:em})}catch(e){}sgMsg("If that email's on an M2 membership, a reset link is on its way. Check your inbox.")}
+async function appReset(){const em=$('sgEm').value.trim();if(!em)return sgMsg('Pop your email in above first, then tap that link again.');
+ try{await api({action:'reset',email:em})}catch(e){}sgMsg("If that email's on an M2 membership, we've sent you a link to set your password. Check your inbox, then come back and sign in.")}
 async function liveSync(first){if(!M2_API||!S.doorSess)return false;let r;try{r=await api({action:'me',session:S.doorSess})}catch(e){return false}
  if(r&&r.signin){signOut();return false}
  if(!r||!r.ok||!r.member)return false;const m=r.member;
  const me={first:m.first||'Member',last:m.last||'',no:String(m.id),email:m.email||'',phone:m.phone||'',since:m.since||'',totalvisits:m.totalvisits||0,photo:m.photo||'',memberships:r.memberships||[],demo:0};
- const before=JSON.stringify(LS.get('me',null));LS.set('me',me);
- if(r.tier){S.tier=r.tier;save('tier')}if(m.gender){S.gender=m.gender;save('gender')}
+ const idOf=m=>m&&[m.first,m.last,m.no,m.since];const before=JSON.stringify([idOf(LS.get('me',null)),S.tier,S.pass,S.doors]);LS.set('me',me);
+ S.tier=r.tier||'none';save('tier');S.pass=r.pass||null;save('pass');S.doors=r.doors||null;LS.set('doors',S.doors);S.gender=m.gender||null;save('gender');
  const today=dkey(T0),ks=(r.days||[]).map(d=>d.d.split('-').map(Number).join('-'));
  S.checkins=[...new Set([...ks,...S.checkins.filter(k=>k===today)])];save('checkins');LS.set('lastSync',Date.now());
- if(first||before!==JSON.stringify(me))location.reload();else renderAll();return true}
-function signOut(){['doorSess','me','lastSync','checkins','tier','gender','profile','plan'].forEach(k=>{try{localStorage.removeItem(LSP+k)}catch(e){}});location.reload()}
+ if(first||before!==JSON.stringify([idOf(me),S.tier,S.pass,S.doors]))location.reload();else renderAll();return true}
+function signOut(){try{Object.keys(localStorage).filter(k=>k.startsWith(LSP)).forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
 function handleDoorHash(){const m=location.hash.match(/door=(\w+)/);if(!m)return false;history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>openPass(m[1]),600);return true}
 addEventListener('hashchange',()=>{if(S.profile)handleDoorHash()});
-function checkIn(){const k=dkey(T0);if(!S.checkins.includes(k)){S.checkins.push(k);save('checkins')}if(S.away){S.away=false;save('away');$('awaySw').classList.remove('on')}const tx=$('inTx');if(tx)tx.textContent="You're in. Have a good session.";$('inok')?.classList.add('on');renderAll();checkMilestone(window.ALLT)}
+function checkIn(){const k=dkey(T0);if(!S.checkins.includes(k)){S.checkins.push(k);save('checkins');if(!MEMBER.demo)MEMBER.totalvisits++}if(S.away){S.away=false;save('away');$('awaySw').classList.remove('on')}const tx=$('inTx');if(tx)tx.textContent="You're in. Have a good session.";$('inok')?.classList.add('on');renderAll();checkMilestone(window.ALLT)}
 
 /* ---------- share / sheets ---------- */
 function doShare(text,url,ch){const full=text+' '+url;if(ch==='whatsapp'){open('https://wa.me/?text='+encodeURIComponent(full),'_blank');return true}if(ch==='sms'){location.href='sms:&body='+encodeURIComponent(full);return true}if(navigator.share){navigator.share({title:'M2 Training Club',text,url}).catch(()=>{});return true}try{navigator.clipboard.writeText(full)}catch(e){}toast('Link copied. Send it to a mate');return true}
@@ -1467,7 +1513,7 @@ function openRace(){openSheet(`<div class="shero"><img src="${IMG}race-dave-tayl
  `<button class="btn b-lime b-full" onclick="after(()=>{selCat='HYROX';renderCats();renderList();goClasses()})">See HYROX classes</button><a class="btn b-out b-full" href="https://m2club.co.nz/hyrox-auckland-2week-plan.html" target="_blank" rel="noopener">Get the free 2 week plan</a>`,{photo:1})}
 
 /* ---------- demo panel ---------- */
-function renderDemo(){$('tierPick').innerHTML=Object.entries(TIERS).map(([k,t])=>`<button class="chip ${k===S.tier?'on':''}" data-k="${k}">${t.n}</button>`).join('');$('tierPick').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{S.tier=b.dataset.k;S.upReq=false;save('tier');save('upReq');haptic(6);renderAll();toast('Now viewing as '+tier().n)});$('awaySw').classList.toggle('on',S.away)}
+function renderDemo(){$('tierPick').innerHTML=Object.entries(TIERS).filter(([k])=>k!=='none').map(([k,t])=>`<button class="chip ${k===S.tier?'on':''}" data-k="${k}">${t.n}</button>`).join('');$('tierPick').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{S.tier=b.dataset.k;S.upReq=false;save('tier');save('upReq');haptic(6);renderAll();toast('Now viewing as '+tier().n)});$('awaySw').classList.toggle('on',S.away)}
 $('awaySw').onclick=()=>{S.away=!S.away;S.pushed=false;save('away');save('pushed');if(S.away){S.read=S.read.filter(x=>x!=='nudge');save('read')}renderAll();if(S.away)setTimeout(()=>firePush(),700)};
 function resetDemo(){try{Object.keys(localStorage).filter(k=>k.startsWith(LSP)).forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}
 document.querySelectorAll('.sw[data-k]').forEach(s=>{s.classList.toggle('on',!!S.sw[s.dataset.k]);s.onclick=()=>{S.sw[s.dataset.k]=S.sw[s.dataset.k]?0:1;s.classList.toggle('on');save('sw');haptic(6)}});
@@ -1514,7 +1560,7 @@ function finishOnb(start){const since=S.profile&&S.profile.since||dkey(T0);S.pro
 
 /* ---------- Free PT questionnaire (same questions and payload as m2club.co.nz/free-pt.html) ---------- */
 const LEADS_URL='https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec';
-const SEND_LEADS=false; // DEMO SAFE. Set to true in the live app so leads land in the PT Lead System for Tim.
+const SEND_LEADS=LIVE; // Live app sends leads to the PT Lead System for Tim. Demo never does.
 
 const STYLES=[['Strength training, weights and machines','Strength Training - weights & machines'],['HIIT or circuit training','High Intensity Interval or Circuit Training'],['Cardio / fitness focus','Cardio/Fitness Focus'],['Olympic lifting','Olympic Lifting'],['Powerlifting','Power Lifting'],['Mobility / movement','Mobility/Movement'],['Bodyweight','Bodyweight'],['Sports specific','Sports Specific'],['Not sure yet','Not sure']];
 const PREFS=[['A male trainer','a Male trainer'],['A female trainer','a Female trainer'],['No preference','I do not have a preference']];
@@ -1545,7 +1591,8 @@ function drawOnb(){const st=OB.step,b=$('onbBody'),f=$('onbFoot');b.className='o
   <p class="muted small" style="margin-top:18px">${S.pt?"Your coach will be in touch within a day or two. ":''}${tier().classes?'Plus classes whenever you like. ':''}${tier().recovery?'Use the recovery area as often as you want.':''}</p>`;
   f.innerHTML=tier().floor?`<button class="btn b-lime b-full b-lg" onclick="finishOnb(true)">Start ${p.n}</button><button class="btn b-ghost b-full" style="margin-top:10px" onclick="finishOnb(false)">I'll pick one later</button>`:`<button class="btn b-lime b-full b-lg" onclick="finishOnb(false)">Go to my app</button>`}}
 function obBack(){const st=OB.step;OB.step=st===7?(S.pt?3:(OB.ptWant==='yes'?6:(ptEligible()?4:3))):st===5?4:st-1;drawOnb()}
-function esc(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function esc(t){return String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+const clean=t=>String(t??'').replace(/[<>"'`&\\]/g,'').trim().slice(0,90);
 function submitPT(){const payload={action:'addLead',name:MEMBER.name,phone:MEMBER.phone,email:MEMBER.email,reasonForJoining:(OB.reason||'').trim(),trainerPreference:PREFS[OB.pref][1],trainingStyle:STYLES[OB.style][1],injuries:(OB.inj||'').trim(),preferredTime:TIMES[OB.time][1],source:OB.src||'M2 App'};OB.src=null;
  const done=()=>{S.pt={at:dkey(T0),payload};save('pt');haptic([10,50,20]);if(OB.ptOnly){OB.step=8}else{OB.step=7;toast("Free PT session requested")}drawOnb()};
  if(!SEND_LEADS){console.log('[demo] PT lead not sent',payload);done();return}
@@ -1598,7 +1645,7 @@ function renderClub(){const el=$('clubBody');const days=Math.max(0,Math.ceil((CH
   h+=`<div class="chips" style="padding:0;margin:0 -20px 10px;padding-left:20px">${Object.entries(BOARDS2).map(([k,b])=>`<button class="chip ${k===boardSel?'on':''}" onclick="boardSel='${k}';renderClub()">${b.n}</button>`).join('')}</div>
   <div class="divs">${DIVS.map(([k,l])=>`<button class="${k===divSel?'on':''}" onclick="divSel='${k}';renderClub()">${l}</button>`).join('')}</div>
   <p class="muted small" style="margin:14px 0 12px">${B.sub}</p>
-  <div class="group">${rows.map((r,i)=>`<div class="li lbr ${r[0]==='You'?'me':''}"><span class="rk ${i<3?'top':''}">${i+1}</span><span class="av">${r[0]==='You'?'You':ini(r[0])}</span><span class="tx"><b>${r[0]==='You'?'Taylor (you)':r[0]}</b></span><b class="sc">${r[1]}${B.unit==='visits'?'<small> visits</small>':''}</b></div>`).join('')}</div>
+  <div class="group">${rows.map((r,i)=>`<div class="li lbr ${r[0]==='You'?'me':''}"><span class="rk ${i<3?'top':''}">${i+1}</span><span class="av">${r[0]==='You'?'You':ini(r[0])}</span><span class="tx"><b>${r[0]==='You'?esc(MEMBER.first)+' (you)':r[0]}</b></span><b class="sc">${r[1]}${B.unit==='visits'?'<small> visits</small>':''}</b></div>`).join('')}</div>
   <p class="muted small" style="margin-top:12px">Boards show first names and initials only. You can hide yourself in Me.</p>`}
  else{h+=CEVENTS.map(e=>{const go=!!S.club.rsvp[e.id];if(e.offer&&!tier().offers)return '';return `<div class="card evc rise"><div class="evt"><div class="d"><b>${e.d.getDate()}</b><span>${MN[e.d.getMonth()]}</span></div><div style="flex:1"><div class="h3">${e.n}</div><p class="muted small" style="margin-top:3px">${e.end?e.d.getDate()+' '+MN[e.d.getMonth()]+' to '+e.end+'. ':''}${e.p}</p></div></div>
    <div class="evb"><span class="small muted">${ico('i-users','i','width:16px;height:16px;vertical-align:-3px')} ${e.going+(go?1:0)} going</span><div style="display:flex;gap:8px">${e.act?`<button class="btn b-out b-sm" onclick="${e.fn}">${e.act}</button>`:''}<button class="btn ${go?'b-dark':'b-lime'} b-sm" onclick="rsvp('${e.id}')">${go?ico('i-check','i','width:15px;height:15px')+"I'm going":"I'm going"}</button></div></div>
@@ -1766,10 +1813,10 @@ function suggestHTML(){const L=dayLog(),empty=MEALS.every(([m])=>!(L[m]||[]).len
    Wallet and Watch, calendar sync, wearables
    ========================================================= */
 /* ---------- custom foods (from barcodes and planner imports) ---------- */
-(S.nut.custom||[]).forEach(f=>FOODS.push(f));
+(S.nut.custom||[]).forEach(f=>{f[0]=clean(f[0]);f[1]=clean(f[1]);FOODS.push(f)});
 const FOOD_ALIAS={'egg white pastuerised':'Egg white, pasteurised','cheese (greated tasty light)':'Cheese (grated, Tasty Light)','protein+ yogurt (passion fuit) (anchor)':'Anchor Protein+ Yoghurt (passionfruit)','vogel café-style musli':'Vogel Café-Style Muesli','sultana bran gluten free':'Sultana Bran, gluten free'};
 function findFoodIdx(name){const n=(FOOD_ALIAS[name.trim().toLowerCase()]||name).trim().toLowerCase();return FOODS.findIndex(f=>f[0].toLowerCase()===n)}
-function addCustomFood(f){const i=findFoodIdx(f[0]);if(i>=0)return i;S.nut.custom=S.nut.custom||[];S.nut.custom.push(f);FOODS.push(f);save('nut');return FOODS.length-1}
+function addCustomFood(f){f[0]=clean(f[0]);f[1]=clean(f[1]);const i=findFoodIdx(f[0]);if(i>=0)return i;S.nut.custom=S.nut.custom||[];S.nut.custom.push(f);FOODS.push(f);save('nut');return FOODS.length-1}
 
 /* ---------- coach-set targets ---------- */
 function tgt(){const src=S.nut.coach?S.nut.coach.t:S.nut.t;return src?(isTrainDay()?src.train:src.rest):null}
@@ -1804,7 +1851,7 @@ function saveMeal(k){const items=dayLog()[k];if(!items.length)return;const names
 function addMeal(i){const m=S.nut.meals[i];m.items.forEach(x=>dayLog()[N.addTo].push({...x}));save('nut');N.view='today';drawNut();toast(m.n+' added')}
 function importMeals(text){const m=String(text||'').match(/m2meals=([A-Za-z0-9_\-]+)/)||String(text||'').trim().match(/^([A-Za-z0-9_\-]{20,})$/);if(!m){toast("That link doesn't look right",1);return false}
  let data;try{const b=m[1].replace(/-/g,'+').replace(/_/g,'/');data=JSON.parse(decodeURIComponent(escape(atob(b))))}catch(e){toast("That link doesn't look right",1);return false}
- let n=0,skipped=0;S.nut.meals=S.nut.meals||[];(data.meals||[]).forEach(ml=>{const items=[];(ml.items||[]).forEach(it=>{let i=findFoodIdx(it.name);if(i<0&&it.m)i=addCustomFood([it.name,'Custom',it.m[0],it.m[1],it.m[2],it.m[3],it.m[4],it.m[5]]);if(i<0){skipped++;return}items.push({f:i,q:it.qty})});if(items.length){S.nut.meals.push({n:ml.name||'Planner meal',items});n++}});
+ let n=0,skipped=0;S.nut.meals=S.nut.meals||[];(data.meals||[]).forEach(ml=>{const items=[];(ml.items||[]).forEach(it=>{it.name=clean(it.name);let i=findFoodIdx(it.name);if(i<0&&it.m)i=addCustomFood([it.name,'Custom',it.m[0],it.m[1],it.m[2],it.m[3],it.m[4],it.m[5]]);if(i<0){skipped++;return}items.push({f:i,q:it.qty})});if(items.length){S.nut.meals.push({n:clean(ml.name)||'Planner meal',items});n++}});
  save('nut');toast(n+' meal'+(n===1?'':'s')+' imported'+(skipped?', '+skipped+' food'+(skipped===1?'':'s')+' skipped':''));return true}
 
 /* ---------- barcode scanning (camera + Open Food Facts) ---------- */
@@ -1819,7 +1866,7 @@ async function startScan(){const v=$('scanVid');if(!v)return;const msg=$('scanMs
 async function lookupBarcode(code){code=String(code||'').replace(/\D/g,'');if(code.length<8){toast('Check the barcode number',1);return}SCAN.busy=true;stopScan();const m=$('scanMsg');if(m)m.textContent='Looking it up...';
  try{const r=await fetch('https://world.openfoodfacts.org/api/v2/product/'+code+'.json?fields=product_name,brands,serving_quantity,serving_size,nutriments');const d=await r.json();SCAN.busy=false;
   if(d.status!==1||!d.product||!d.product.nutriments||d.product.nutriments['energy-kcal_100g']==null){N.view='scan';N.notFound=code;drawNut();return}
-  const p=d.product,n=p.nutriments;const sq=parseFloat(p.serving_quantity)||0;
+  const p=d.product,n=p.nutriments;p.product_name=clean(p.product_name);p.brands=clean(p.brands);const sq=parseFloat(p.serving_quantity)||0;
   SCAN.prod={code,name:(p.brands?p.brands.split(',')[0].trim()+' ':'')+p.product_name,serve:sq,serveLbl:p.serving_size||'',kcal:+n['energy-kcal_100g'],p:+(n.proteins_100g||0),c:+(n.carbohydrates_100g||0),f:+(n.fat_100g||0)};
   N.qty=sq?1:100;N.unitServe=!!sq;N.view='prod';drawNut()}
  catch(e){SCAN.busy=false;toast("Couldn't reach the food database. Check your connection",1);N.view='scan';drawNut()}}
@@ -1832,7 +1879,7 @@ function nutBody(){
  if(N.view==='scan'){return{body:`<button class="tl" onclick="N.notFound=null;N.view='add';drawNut()">← Back to foods</button><h2 style="margin-top:10px">Scan a barcode<span class="od">.</span></h2>
   ${N.notFound?`<div class="card" style="margin-top:16px"><div class="h3">We couldn't find ${N.notFound}</div><p class="muted small" style="margin-top:6px">It's not in the food database yet. Pick something similar from the M2 library, or add it in the full meal planner.</p></div>`:`<div class="scanbox"><video id="scanVid" playsinline muted></video><div class="scanframe"><i></i></div><p id="scanMsg">Opening the camera...</p></div>`}
   <label class="flab2">Or type the barcode number</label><div class="bcrow"><input id="bcIn" class="fsearch" style="margin-top:0" inputmode="numeric" placeholder="e.g. 9403110062707"><button class="btn b-dark" onclick="lookupBarcode($('bcIn').value)">Look up</button></div>
-  <button class="tl" style="margin-top:6px" onclick="lookupBarcode(DEMO_BARCODE)">Try a demo product →</button>
+  ${LIVE?'':'<button class="tl" style="margin-top:6px" onclick="lookupBarcode(DEMO_BARCODE)">Try a demo product →</button>'}
   <p class="muted small" style="margin-top:14px">Barcodes are looked up in Open Food Facts, a free food database with thousands of New Zealand products.</p>`,foot:''}}
  if(N.view==='prod'){const P=SCAN.prod,serve=P.serve&&N.unitServe;const mult=serve?N.qty*P.serve/100:N.qty/100;const m={kcal:P.kcal*mult,p:P.p*mult,c:P.c*mult,f:P.f*mult};const step=serve?1:10;
   return{body:`<button class="tl" onclick="N.view='scan';N.notFound=null;drawNut()">← Scan another</button><span class="eb" style="margin-top:14px">Scanned · ${P.code}</span><h2 style="margin-top:8px">${esc(P.name)}<span class="od">.</span></h2>
@@ -2015,12 +2062,32 @@ function renderGoalMe(){const el=$('goalCard');if(!S.profile){el.innerHTML=`<div
 
 /* ---------- boot ---------- */
 function renderAll(){renderConn();renderShopMe();renderClub();renderNutHome();renderNutMe();renderHome();renderHealth();renderPlanHome();renderTrain();renderGoalMe();renderDays();renderList();renderRec();renderMsgs();renderMe();renderDemo()}
+/* ---------- live app: switch off prototype features that aren't connected yet ---------- */
+function mailReception(subject,body){location.href='mailto:reception@m2club.co.nz?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body+'\n\n'+MEMBER.name+' (member '+MEMBER_NO+')')}
+function reqDelete(){openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Delete my account<span class="od">.</span></h2><p class="muted" style="margin-top:10px">We'll remove your app data and close your M2 account. If you still have a membership, we'll talk you through cancelling it first. This goes to reception.</p>`,`<button class="btn b-dark b-full" onclick="mailReception('Please delete my M2 account','Hi team, please delete my M2 app data and account.')">Send the request</button>`)}
+function soon(what,txt){openSheet(`<span class="eb">Coming soon</span><h2 style="margin-top:8px">${what}<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${txt||"We're still connecting this part of the app. It'll switch on here as soon as it's ready."}</p>`,`<button class="btn b-dark b-full" onclick="closeSheet()">Got it</button>`)}
+if(LIVE){
+ book=function(){soon('Class booking','Booking classes in the app is on its way. For now, book through the Mywellness app or at reception.')};
+ joinWait=book;
+ reqUpgrade=function(){mailReception('Membership upgrade','Hi team, I would like to change my membership.')};
+ openFeedback=function(){openSheet(`<span class="eb">Straight to the team</span><h2 style="margin-top:8px">How can we do better<span class="od">?</span></h2><p class="muted" style="margin-top:8px">Goes to Tay and Tim. Nothing is public.</p><textarea class="ta lt" id="fbTx" placeholder="Anything at all. Equipment, classes, cleanliness, the app."></textarea>`,`<button class="btn b-lime b-full" onclick="const t=($('fbTx').value||'').trim();if(!t){toast('Add a few words first',1);return}S.fb=t;save('fb');mailReception('App feedback for Tay and Tim',t)">Send</button>`)};
+ openHoodie=function(){window.open('https://m2club.co.nz/hoodie-presale.html','_blank','noopener')};
+ seedLogs=function(){};seedWeights=function(){};
+ renderHealth=function(){const el=$('healthStrip');if(el)el.innerHTML=''};
+ renderConn=function(){const el=$('connGroup');if(el){const sec=el.closest('.sec');if(sec)sec.style.display='none'}};
+ openConn=function(){soon('Connected apps')};openWallet=function(){soon('Wallet cards')};openCal=function(){soon('Calendar sync')};
+ openBoard=function(){soon('Club boards')};
+ renderClub=function(){$('clubBody').innerHTML=`<div class="pad"><div class="card dk rise" style="margin-top:8px"><span class="eb lime">Coming soon</span><div class="h2" style="color:#fff;margin-top:8px">The M2 community<span class="ld">.</span></div><p style="color:var(--muted-d);margin-top:10px">Club challenges, boards and the members feed are on the way. For now, follow along on Instagram.</p><a class="btn b-lime b-full" style="margin-top:18px" href="https://instagram.com/m2trainingclub" target="_blank" rel="noopener">@m2trainingclub</a></div></div>`};
+ const _msgs=messages;messages=function(){return _msgs().filter(m=>m.from!=='dave'&&m.from!=='bekka')};
+ openCard=function(){openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${esc(tier().n)}</span></div><div class="qrw" style="padding:28px"><div style="font:900 44px/1 var(--h);color:var(--ink);letter-spacing:.02em">${esc(MEMBER_NO)}</div><div class="small" style="color:#555;margin-top:8px">Member number</div></div><p class="small" style="color:var(--muted-d);margin-top:16px">Show this at reception if you need a hand.</p></div>`,`<button class="btn b-lime b-full" onclick="after(openPass)">${ico('i-door')}Back to doors</button>`,{dark:1,full:1})};
+}
 function boot(){renderAll();renderCats();renderCoaches();setTop();
  const tick=()=>{const d=new Date();$('sbTime').textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0')};tick();setInterval(tick,15e3);
  const v=$('heroVid');v.addEventListener('error',()=>v.remove(),true);
  const live=!!M2_API;$('signOutSec').style.display=live&&S.doorSess?'':'none';$('demoSec').style.display=live?'none':'';
- if(live&&!S.doorSess){showSignIn();setTimeout(()=>$('splash').classList.add('gone'),600);return}
+ if(live&&(!S.doorSess||!LS.get('me',null))){showSignIn();setTimeout(()=>$('splash').classList.add('gone'),600);return}
  if(live&&Date.now()-(LS.get('lastSync',0))>6e5)liveSync();
+ if(live&&S.tier==='none'){$('ended').classList.add('on');$('endedJoin').href=joinURL();$('endedTx').textContent=`We'd love to have you back, ${MEMBER.first}. Pick a membership online, or give us a call and we'll sort it.`;setTimeout(()=>$('splash').classList.add('gone'),600);return}
  if(!S.profile)showOnb(0);else if(!handleDoorHash())handleImportHash();setTimeout(()=>$('splash').classList.add('gone'),1300);if(S.away)setTimeout(()=>firePush(),2200)}
 document.readyState==='loading'?addEventListener('DOMContentLoaded',boot):boot();
 </script>
