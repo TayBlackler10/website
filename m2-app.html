@@ -2136,12 +2136,18 @@ if(NATIVE){document.documentElement.classList.add('native');
  if(HP)haptic=function(p=8){try{if(Array.isArray(p))HP.notification({type:'SUCCESS'});else HP.impact({style:p>=10?'MEDIUM':'LIGHT'})}catch(e){}};
  /* phone location through the app, so members get one clean permission prompt */
  if(GEO){const _where=whereAmI;whereAmI=async function(){if(D.skipLoc)return _where();
-  try{let pm=await GEO.checkPermissions();if(pm.location!=='granted')pm=await GEO.requestPermissions({permissions:['location']});
-   if(pm.location==='denied')return{ok:false,msg:"Turn on location for M2 in your phone's Settings so we know you're at the club. It's only used for opening doors."};
-   const p=await GEO.getCurrentPosition({enableHighAccuracy:true,timeout:9000,maximumAge:5000}),c=p.coords,m=distM(c.latitude,c.longitude,GYM.lat,GYM.lng),slack=Math.min(c.accuracy||0,150);
+  const judge=c=>{const m=distM(c.latitude,c.longitude,GYM.lat,GYM.lng),slack=Math.min(c.accuracy||0,150);
    if(m-slack<=GYM.r)return{ok:true,lat:c.latitude,lng:c.longitude,acc:Math.round(c.accuracy||0)};
-   return{ok:false,msg:`You're about ${m>=1000?(m/1000).toFixed(1)+' km':Math.round(m/10)*10+' m'} from the club. Doors open once you're at 8 Nugent St.`}}
-  catch(e){return{ok:false,msg:"We couldn't find your location. Try again in a few seconds."}}}}
+   return{ok:false,msg:`You're about ${m>=1000?(m/1000).toFixed(1)+' km':Math.round(m/10)*10+' m'} from the club. Doors open once you're at 8 Nugent St.`}};
+  /* reuse a fix from the last 2 minutes, so opening a second door straight after the first doesn't need a new reading */
+  if(window._m2fix&&Date.now()-window._m2fix.t<12e4){const r=judge(window._m2fix.c);if(r.ok)return r}
+  try{let pm=await GEO.checkPermissions();if(pm.location!=='granted')pm=await GEO.requestPermissions({permissions:['location']});
+   if(pm.location==='denied')return{ok:false,msg:"Turn on location for M2 in your phone's Settings so we know you're at the club. It's only used for opening doors."}}catch(e){}
+  const get=o=>Promise.race([GEO.getCurrentPosition(o),new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),(o.timeout||9000)+1500))]);
+  for(const o of [{enableHighAccuracy:true,timeout:9000,maximumAge:15000},{enableHighAccuracy:false,timeout:9000,maximumAge:60000}]){
+   try{const p=await get(o);if(p&&p.coords){window._m2fix={t:Date.now(),c:{latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy}};return judge(p.coords)}}catch(e){}}
+  /* last resort: the phone's web location, same as Safari */
+  const r=await _where();if(r&&r.ok)window._m2fix={t:Date.now(),c:{latitude:r.lat,longitude:r.lng,accuracy:r.acc||0}};return r}}
  /* local notifications: class reminders, waitlist spots, and a nudge if we haven't seen you */
  const NID=s=>{let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)%2000000000+1};
  const NUDGE_ID=99;let askedN=LS.get('askedN',false),prevWait=LS.get('prevWait',[]);
