@@ -46,6 +46,7 @@ MENU = [
         ('Recovery', '/recovery.html', 'Pool, sauna, spa and ice bath'),
         ('Trainers', '/trainers.html', 'Meet our coaches'),
         ('Ice bath and sauna', '/ice-bath-sauna-auckland.html', 'Contrast therapy in Grafton'),
+        ('Physio', '/physio-grafton.html', 'Prana Physiotherapy, in-house'),
         ('Free PT session', '/free-pt.html', 'Included for new members'),
     ]),
     ('HYROX', '/hyrox-auckland.html', 'hyrox', [
