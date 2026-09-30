@@ -1118,7 +1118,7 @@ const tier=()=>TIERS[S.tier]||TIERS.perform;
 /* Trials and limited passes: Perform access for as long as they run. Set TRIAL_OFFER to show a join offer on the last day */
 const TRIAL_OFFER='';
 const titleCase=x=>String(x).toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase());
-function passNow(){if(S.tier!=='trial')return null;return S.pass||(M2_API?null:{kind:'trial',name:'5 Days for $5',left:4,demo:1})}
+function passNow(){if(S.tier!=='trial')return null;return S.pass||(M2_API?null:{kind:'trial',name:'Free 3 Day Trial',left:2,demo:1})}
 function passLeft(p){if(!p)return '';if(p.visitsLeft!=null)return p.visitsLeft+(p.visitsLeft===1?' visit':' visits')+' left';if(p.left!=null)return p.left<=1?'Last day':p.left+' days left';return ''}
 function passLast(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=1)||(p.left!=null&&p.left<=1))}
 function passSoon(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=3)||(p.left!=null&&p.left<=3))}
@@ -1174,7 +1174,7 @@ function after(fn){closeSheet();setTimeout(fn,380)}
 function openStatus(d=new Date()){const[o,c]=HOURS[d.getDay()];const h=d.getHours()+d.getMinutes()/60;if(h>=o&&h<c)return{open:1,txt:'Open now until '+hr(c)};if(h<o)return{open:0,txt:'Closed. Opens '+hr(o)+' today'};return{open:0,txt:'Closed. Opens '+hr(HOURS[(d.getDay()+1)%7][0])+' tomorrow'}}
 
 /* ---------- next class for this member ---------- */
-function nextClass(bookedOnly){for(let i=0;i<14;i++){const d=addDays(T0,i);for(const c of TT[d.getDay()]||[]){if(cDate(d,c)<=now)continue;const b=S.bookings.includes(cid(d,c));if(bookedOnly?b:true)return{d,c,booked:b}}}return null}
+function nextClass(bookedOnly){for(let i=0;i<(GM_ON?7:14);i++){const d=addDays(T0,i);for(const c of TT[d.getDay()]||[]){if(cDate(d,c)<=now)continue;const b=S.bookings.includes(cid(d,c));if(bookedOnly?b:true)return{d,c,booked:b}}}return null}
 
 /* =========================================================
    HOME
@@ -1246,7 +1246,7 @@ function renderList(){const d=addDays(T0,selDay);$('cEb').textContent=rel(d)+', 
   else if(wl)r=`<span class="pill p-line">Waitlisted</span>`;
   else if(cp.left<=0)r=`<span class="pill p-lime">Full</span>`;
   else r=`<span class="btn b-lime b-sm">Book</span>`;
-  return `<button class="cc press ${past?'past':''} rise" style="animation-delay:${i*.08}s" data-i="${i}"><div class="t"><b>${f.hm}</b><span>${f.ap}</span></div><div class="m"><span class="tag">${t.cat}</span><div class="h3">${t.n}</div><div class="meta">${av(c[2])}${COACHES[c[2]].n}${LIVE?'':`<span>·</span><span>${cp.taken}/${cp.cap}</span>`}</div></div><div class="r">${r}</div></button>`}).join('');
+  return `<button class="cc press ${past?'past':''} rise" style="animation-delay:${i*.08}s" data-i="${i}"><div class="t"><b>${f.hm}</b><span>${f.ap}</span></div><div class="m"><span class="tag">${t.cat}</span><div class="h3">${t.n}</div><div class="meta">${av(c[2])}${COACHES[c[2]].n}${LIVE&&!GM_ON?'':`<span>·</span><span>${cp.taken}/${cp.cap}</span>`}</div></div><div class="r">${r}</div></button>`}).join('');
  $('clist').querySelectorAll('.cc').forEach(b=>b.onclick=()=>{const c=l[+b.dataset.i];openClass(+d,c[0],c[1])});
  if(l.every(c=>cDate(d,c)<now)){let n=null;for(let i=selDay+1;i<7&&!n;i++){const dd=addDays(T0,i);const c=(TT[dd.getDay()]||[]).find(x=>selCat==='All'||TYPES[x[1]].cat===selCat);if(c)n={i,dd,c}}
   if(n){$('clist').insertAdjacentHTML('beforeend',`<button class="card press" id="jn" style="width:100%;display:flex;align-items:center;gap:14px"><span style="flex:1"><span class="eb">That's it for ${selDay===0?'today':'this day'}</span><span class="h3" style="display:block;margin-top:6px">Next: ${TYPES[n.c[1]].n}</span><span class="muted small" style="display:block;margin-top:2px">${rel(n.dd)} at ${fmtT(n.c[0]).full} with ${COACHES[n.c[2]].n}</span></span>${ico('i-arrow')}</button>`);$('jn').onclick=()=>{selDay=n.i;renderDays();renderList()}}}}
@@ -1267,12 +1267,12 @@ function openClass(ts,tm,ty){const d=new Date(ts);const c=(TT[d.getDay()]||[]).f
  else if(!tier().classes)foot=tier().offers?`<button class="btn b-lime b-full" onclick="after(()=>openUpgrade('class'))">Add classes to your membership</button>`:`<a class="btn b-out b-full" href="tel:095581408">Ask reception about classes</a>`;
  else if(cp.mine)foot=`<button class="btn b-dark b-full" onclick="addCal('${id}')">${ico('i-cal')}Add to calendar</button><button class="btn b-out b-full" onclick="cancelBk('${id}')">Cancel booking</button>`;
  else if(cp.left<=0)foot=wl?`<button class="btn b-out b-full" onclick="leaveWait('${id}')">Leave the waitlist</button>`:`<button class="btn b-out b-full" onclick="joinWait('${id}')">Join waitlist</button>`;
- else foot=`<button class="btn b-lime b-full b-lg" onclick="book('${id}')">${LIVE?'How to book':'Book your spot'}</button>`;
+ else foot=`<button class="btn b-lime b-full b-lg" onclick="book('${id}')">${LIVE&&!GM_ON?'How to book':'Book your spot'}</button>`;
  openSheet(`<div class="shero">${t.img?`<img src="${t.img}" alt="${t.n} class at M2">`:''}<span class="eb lime">${t.cat}${ty==='hatha'||ty==='yin'?' · New · Coach Rhea':''}</span><h2>${t.n}<span class="ld">.</span></h2><div class="dots">Intensity <em>${'●'.repeat(t.int)}${'○'.repeat(3-t.int)}</em> · ${t.lvl}</div></div>
- <div class="facts"><div><small>When</small><b>${rel(d)}<br>${f.full}</b></div><div><small>${LIVE?'Length':'Spots'}</small><b>${LIVE?(past?'Done':'45 min'):past?'Done':cp.mine?"You're in":cp.left>0?cp.taken+'/'+cp.cap:'Full'}</b></div><div><small>Where</small><b>Gym floor</b></div></div>
+ <div class="facts"><div><small>When</small><b>${rel(d)}<br>${f.full}</b></div><div><small>${LIVE&&!GM_ON?'Length':'Spots'}</small><b>${LIVE&&!GM_ON?(past?'Done':'45 min'):past?'Done':cp.mine?"You're in":cp.left>0?cp.taken+'/'+cp.cap:'Full'}</b></div><div><small>Where</small><b>Gym floor</b></div></div>
  <div class="coachline">${av(c[2])}<div><b>Coach ${co.n}</b><small>Leads this class</small></div></div>
  <p>${t.d}</p>
- <div class="bring"><span class="eb">What to bring</span><ul style="margin-top:8px">${BRING[t.cat].map(x=>`<li>${ico('i-check')}${x}</li>`).join('')}</ul></div>
+ <div class="bring"><span class="eb">What to bring</span><ul style="margin-top:8px">${(BRING[t.cat]||BRING.Strength).map(x=>`<li>${ico('i-check')}${x}</li>`).join('')}</ul></div>
  ${cp.mine&&!past?`<p class="muted small" style="margin-top:16px">Can't make it? Cancel so someone on the waitlist gets your spot.</p>`:''}`,foot,{photo:1})}
 function book(id){S.bookings.push(id);save('bookings');const{d,c}=parseId(id);const t=TYPES[c[1]];haptic([10,40,10]);
  openSheet(`<div class="confirm"><div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><span class="eb">See you there</span><h2 style="margin-top:10px">You're<br>booked<span class="ld">.</span></h2>
@@ -2062,13 +2062,44 @@ function renderGoalMe(){const el=$('goalCard');if(!S.profile){el.innerHTML=`<div
 
 /* ---------- boot ---------- */
 function renderAll(){renderConn();renderShopMe();renderClub();renderNutHome();renderNutMe();renderHome();renderHealth();renderPlanHome();renderTrain();renderGoalMe();renderDays();renderList();renderRec();renderMsgs();renderMe();renderDemo()}
+/* ---------- live classes: timetable, bookings and waitlists from GymMaster ----------
+   If GymMaster has classes for the next 7 days, they replace the built-in timetable and booking is real.
+   If it has none yet, the built-in timetable shows and booking says "coming soon". */
+var GM_ON=false,GMC={};
+const isoDay=s=>{const[y,m,d]=String(s||'').split('-').map(Number);return y?new Date(y,m-1,d):null};
+function gmCat(n){n=n.toLowerCase();return /hyrox|sled|ski|row|engine|conditioning/.test(n)?'HYROX':/yoga|hatha|yin|mobility|stretch|pilates/.test(n)?'Yoga':'Strength'}
+function gmType(c){const n=clean(c.name)||'Class';for(const k in TYPES)if(TYPES[k].n.toLowerCase()===n.toLowerCase())return k;
+ const k='gm'+(c.classid||n.replace(/\W/g,'').toLowerCase());if(!TYPES[k])TYPES[k]={n,cat:gmCat(n),int:2,lvl:'All levels',img:null,d:clean(c.desc)||''};return k}
+const COACH_ALIAS={rebekka:'bekka',david:'dave',matty:'matthew',matt:'matthew',madeleine:'madeliene',madeline:'madeliene'};
+function gmCoach(c){const f=clean((c.coach||'').trim().split(/\s+/)[0])||'M2';let k=f.toLowerCase();k=COACH_ALIAS[k]||k;if(COACHES[k])return k;const g='gm_'+k.replace(/\W/g,'');if(!COACHES[g])COACHES[g]={n:f,img:/^https:/.test(c.coachPhoto||'')?c.coachPhoto:null,hide:1};return g}
+function applyClasses(r){if(!r||!r.ok||!Array.isArray(r.classes)||!r.classes.length){GM_ON=false;return}
+ GM_ON=true;GMC={};for(const k in TT)TT[k]=[];const bk=[],wl=[];
+ r.classes.forEach(c=>{const d=isoDay(c.day);if(!d||!/^\d\d:\d\d$/.test(c.start||''))return;const off=Math.round((d-T0)/864e5);if(off<0||off>6)return;
+  const e=[c.start,gmType(c),gmCoach(c)];TT[d.getDay()].push(e);const id=cid(d,e);
+  const w=(r.waits||[]).find(x=>x.day===c.day&&x.start===c.start&&String(x.name||'').toLowerCase()===String(c.name||'').toLowerCase());
+  GMC[id]=Object.assign({},c,{waitId:w?w.id:null});if(c.bookedId)bk.push(id);if(w)wl.push(id)});
+ for(const k in TT)TT[k].sort((a,b)=>a[0].localeCompare(b[0]));
+ S.bookings=bk;save('bookings');S.wait=wl;save('wait')}
+async function loadClasses(){if(!LIVE||!S.doorSess)return null;try{const r=await api({action:'classes',session:S.doorSess});if(r&&r.ok){LS.set('gmc',{t:Date.now(),r});applyClasses(r);renderAll();renderDays();renderList();renderCoaches()}return r}catch(e){return null}}
+if(LIVE){const c=LS.get('gmc',null);if(c&&Date.now()-c.t<18e5)applyClasses(c.r)}
 /* ---------- live app: switch off prototype features that aren't connected yet ---------- */
 function mailReception(subject,body){location.href='mailto:reception@m2club.co.nz?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body+'\n\n'+MEMBER.name+' (member '+MEMBER_NO+')')}
 function reqDelete(){openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Delete my account<span class="od">.</span></h2><p class="muted" style="margin-top:10px">We'll remove your app data and close your M2 account. If you still have a membership, we'll talk you through cancelling it first. This goes to reception.</p>`,`<button class="btn b-dark b-full" onclick="mailReception('Please delete my M2 account','Hi team, please delete my M2 app data and account.')">Send the request</button>`)}
 function soon(what,txt){openSheet(`<span class="eb">Coming soon</span><h2 style="margin-top:8px">${what}<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${txt||"We're still connecting this part of the app. It'll switch on here as soon as it's ready."}</p>`,`<button class="btn b-dark b-full" onclick="closeSheet()">Got it</button>`)}
 if(LIVE){
- book=function(){soon('Class booking','Booking classes in the app is on its way. For now, book through the Mywellness app or at reception.')};
- joinWait=book;
+ const _book=book,_cancel=cancelBk,_leave=leaveWait,_cap=capOf;
+ const noBook=()=>soon('Class booking','Booking classes in the app is on its way. For now, book through the Mywellness app or at reception.');
+ capOf=function(d,c){const g=GMC[cid(d,c)];if(!g)return _cap(d,c);const cap=g.max||20,taken=g.num||0,left=g.free!=null?g.free:Math.max(0,cap-taken);return{cap,taken,left,mine:!!g.bookedId}};
+ const gmFail=m=>openSheet(`<span class="eb">Booking</span><h2 style="margin-top:8px">That didn't go through<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${esc(m||'Try again in a minute, or book at reception.')}</p>`,`<button class="btn b-dark b-full" onclick="closeSheet()">OK</button>`);
+ book=async function(id,wait){const g=GMC[id];if(!GM_ON||!g)return noBook();toast(wait?'Joining the waitlist':'Booking you in');
+  let r;try{r=await api({action:'book',session:S.doorSess,id:g.id})}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal and try again."}}
+  if(r&&r.signin)return signOut();if(!r||!r.ok)return gmFail(r&&r.message);
+  await loadClasses();if(S.bookings.includes(id)){_book(id);S.bookings=[...new Set(S.bookings)];save('bookings')}else if(S.wait.includes(id)){after(()=>toast("You're on the waitlist"))}else{after(()=>toast('Done'))}};
+ joinWait=function(id){return book(id,true)};
+ cancelBk=async function(id){const g=GMC[id];if(!GM_ON||!g||!g.bookedId)return _cancel(id);let r;try{r=await api({action:'cancel',session:S.doorSess,id:g.bookedId})}catch(e){r={ok:false}}
+  if(!r||!r.ok)return gmFail(r&&r.message);await loadClasses();after(()=>toast('Booking cancelled'))};
+ leaveWait=async function(id){const g=GMC[id];if(!GM_ON||!g||!g.waitId)return _leave(id);let r;try{r=await api({action:'cancel',session:S.doorSess,id:g.waitId,waitlist:1})}catch(e){r={ok:false}}
+  if(!r||!r.ok)return gmFail(r&&r.message);await loadClasses();after(()=>toast('Off the waitlist'))};
  reqUpgrade=function(){mailReception('Membership upgrade','Hi team, I would like to change my membership.')};
  openFeedback=function(){openSheet(`<span class="eb">Straight to the team</span><h2 style="margin-top:8px">How can we do better<span class="od">?</span></h2><p class="muted" style="margin-top:8px">Goes to Tay and Tim. Nothing is public.</p><textarea class="ta lt" id="fbTx" placeholder="Anything at all. Equipment, classes, cleanliness, the app."></textarea>`,`<button class="btn b-lime b-full" onclick="const t=($('fbTx').value||'').trim();if(!t){toast('Add a few words first',1);return}S.fb=t;save('fb');mailReception('App feedback for Tay and Tim',t)">Send</button>`)};
  openHoodie=function(){window.open('https://m2club.co.nz/hoodie-presale.html','_blank','noopener')};
@@ -2087,6 +2118,7 @@ function boot(){renderAll();renderCats();renderCoaches();setTop();
  const live=!!M2_API;$('signOutSec').style.display=live&&S.doorSess?'':'none';$('demoSec').style.display=live?'none':'';
  if(live&&(!S.doorSess||!LS.get('me',null))){showSignIn();setTimeout(()=>$('splash').classList.add('gone'),600);return}
  if(live&&Date.now()-(LS.get('lastSync',0))>6e5)liveSync();
+ if(live)loadClasses();
  if(live&&S.tier==='none'){$('ended').classList.add('on');$('endedJoin').href=joinURL();$('endedTx').textContent=`We'd love to have you back, ${MEMBER.first}. Pick a membership online, or give us a call and we'll sort it.`;setTimeout(()=>$('splash').classList.add('gone'),600);return}
  if(!S.profile)showOnb(0);else if(!handleDoorHash())handleImportHash();setTimeout(()=>$('splash').classList.add('gone'),1300);if(S.away)setTimeout(()=>firePush(),2200)}
 document.readyState==='loading'?addEventListener('DOMContentLoaded',boot):boot();
