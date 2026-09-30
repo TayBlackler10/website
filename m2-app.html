@@ -2103,14 +2103,70 @@ if(LIVE){
  reqUpgrade=function(){mailReception('Membership upgrade','Hi team, I would like to change my membership.')};
  openFeedback=function(){openSheet(`<span class="eb">Straight to the team</span><h2 style="margin-top:8px">How can we do better<span class="od">?</span></h2><p class="muted" style="margin-top:8px">Goes to Tay and Tim. Nothing is public.</p><textarea class="ta lt" id="fbTx" placeholder="Anything at all. Equipment, classes, cleanliness, the app."></textarea>`,`<button class="btn b-lime b-full" onclick="const t=($('fbTx').value||'').trim();if(!t){toast('Add a few words first',1);return}S.fb=t;save('fb');mailReception('App feedback for Tay and Tim',t)">Send</button>`)};
  openHoodie=function(){window.open('https://m2club.co.nz/hoodie-presale.html','_blank','noopener')};
- seedLogs=function(){};seedWeights=function(){};
+ seedLogs=function(){};seedWeights=function(){};recoveryCard=function(){return ''};
  renderHealth=function(){const el=$('healthStrip');if(el)el.innerHTML=''};
  renderConn=function(){const el=$('connGroup');if(el){const sec=el.closest('.sec');if(sec)sec.style.display='none'}};
  openConn=function(){soon('Connected apps')};openWallet=function(){soon('Wallet cards')};openCal=function(){soon('Calendar sync')};
  openBoard=function(){soon('Club boards')};
- renderClub=function(){$('clubBody').innerHTML=`<div class="pad"><div class="card dk rise" style="margin-top:8px"><span class="eb lime">Coming soon</span><div class="h2" style="color:#fff;margin-top:8px">The M2 community<span class="ld">.</span></div><p style="color:var(--muted-d);margin-top:10px">Club challenges, boards and the members feed are on the way. For now, follow along on Instagram.</p><a class="btn b-lime b-full" style="margin-top:18px" href="https://instagram.com/m2trainingclub" target="_blank" rel="noopener">@m2trainingclub</a></div></div>`};
+ renderClub=function(){const el=$('clubBody');const t=tier(),vm=visitsThisMonth(),st=streak();
+  const EV=[
+   {s:new Date(2026,9,12),e:new Date(2026,9,18,23),n:'Birthday Open Week',p:'M2 turns 3. Anyone can train free, 12 to 18 October. Bring your mates.',act:['Invite a mate','shareOpenWeek()']},
+   {s:new Date(2026,9,1),e:new Date(2026,11,31,23),show:new Date(2026,9,1),n:'Win 12 months of Perform',p:'One member drawn each month in October, November and December. Ask at reception how to enter.',mem:1},
+   {s:new Date(2026,10,2),e:new Date(2026,10,1,23),show:new Date(2026,9,1),n:'Auckland Marathon entry',p:'We are giving away a free entry to the 2 November race. Ask at reception how to enter.',mem:1},
+   {s:new Date(2027,1,4),e:new Date(2027,1,7,23),n:'HYROX Auckland',p:'4 to 7 February. Three HYROX formats on the timetable every week to get you race ready.',act:['See HYROX classes',"selCat='HYROX';renderCats();renderList();goClasses()"]}];
+  const evs=EV.filter(e=>now<=e.e&&(!e.mem||t.offers)).map(e=>`<div class="card evc rise"><div class="evt"><div class="d"><b>${e.s.getDate()}</b><span>${MN[e.s.getMonth()]}</span></div><div style="flex:1"><div class="h3">${e.n}</div><p class="muted small" style="margin-top:3px">${e.p}</p></div></div>${e.act?`<div class="evb"><span></span><button class="btn b-dark b-sm" onclick="${e.act[1]}">${e.act[0]}</button></div>`:''}</div>`).join('');
+  const co=Object.entries(COACHES).filter(([k,c])=>!c.hide).map(([k,c])=>`<button class="co press" onclick="openCoach('${k}')">${c.img?`<img src="${c.img}" alt="Coach ${c.n}" loading="lazy">`:`<div class="ph">${c.n[0]}</div>`}${c.nw?'<i class="conew">New</i>':''}<b>${c.n}</b><span>${c.r||'Personal training'}</span></button>`).join('');
+  el.innerHTML=`<div class="pad"><div class="card dk rise" style="margin-top:8px"><span class="eb lime">Your month</span><div style="display:flex;gap:28px;margin-top:12px"><div><div style="font:800 40px/1 var(--h);letter-spacing:-.03em;color:#fff">${vm}</div><span class="small" style="color:var(--muted-d)">visit${vm===1?'':'s'} in ${MN[now.getMonth()]}</span></div><div><div style="font:800 40px/1 var(--h);letter-spacing:-.03em;color:#fff">${st}</div><span class="small" style="color:var(--muted-d)">week streak</span></div></div><p class="small" style="color:var(--muted-d);margin-top:12px">Two visits a week keeps your streak going.</p></div>
+  ${t.offers?`<div class="card rise" style="margin-top:14px"><span class="eb">Bring a Mate</span><div class="h3" style="margin-top:6px">You both get 4 weeks free<span class="od">.</span></div><p class="muted small" style="margin-top:4px">When a mate joins, they get no joining fee or key tag fee, and you both get 4 weeks free. Bring as many as you like. They just tell reception who sent them.</p><button class="btn b-lime b-full" style="margin-top:14px" onclick="doShare('Come train with me at M2 in Grafton. Join and tell reception I sent you. We both get 4 weeks free, and no joining or key tag fee for you.','https://m2club.co.nz/join.html','more')">Send a mate the link</button></div>`:''}</div>
+  <div class="sec" style="margin-top:26px"><div class="pad"><div class="sh"><span class="eb">What's on</span></div>${evs||'<p class="muted small">Nothing coming up right now.</p>'}</div></div>
+  <div class="pad sec"><div class="sh"><span class="eb">The coaches</span></div><div class="hsc">${co}</div></div>
+  <div class="pad" style="margin-top:22px"><div class="card rise"><div class="h3">Follow along<span class="od">.</span></div><p class="muted small" style="margin-top:4px">Club news, class highlights and member wins.</p><div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><a class="btn b-dark b-sm" href="https://instagram.com/m2trainingclub" target="_blank" rel="noopener">Instagram</a><a class="btn b-out b-sm" href="${GOOGLE_REVIEW_URL}" target="_blank" rel="noopener">Leave us a Google review</a></div></div>
+  <p class="muted small" style="text-align:center;margin:22px 0 8px">Member leaderboards and the club feed are on the way.</p></div>`};
  const _msgs=messages;messages=function(){return _msgs().filter(m=>m.from!=='dave'&&m.from!=='bekka')};
  openCard=function(){openSheet(`<div class="pass"><svg class="brandk" aria-label="M2 Training Club"><use href="#m2-word"/></svg><div class="nm">${esc(MEMBER.name)}</div><div class="tier"><span class="pill p-lime">${esc(tier().n)}</span></div><div class="qrw" style="padding:28px"><div style="font:900 44px/1 var(--h);color:var(--ink);letter-spacing:.02em">${esc(MEMBER_NO)}</div><div class="small" style="color:#555;margin-top:8px">Member number</div></div><p class="small" style="color:var(--muted-d);margin-top:16px">Show this at reception if you need a hand.</p></div>`,`<button class="btn b-lime b-full" onclick="after(openPass)">${ico('i-door')}Back to doors</button>`,{dark:1,full:1})};
+}
+/* =========================================================
+   NATIVE (App Store build). Only runs inside the iPhone/Android app shell (Capacitor).
+   On the website none of this runs, so the web app behaves exactly as before.
+   ========================================================= */
+const NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+if(NATIVE){document.documentElement.classList.add('native');
+ const P=Capacitor.Plugins,LN=P.LocalNotifications,HP=P.Haptics,GEO=P.Geolocation;
+ /* real phone haptics instead of web vibrate */
+ if(HP)haptic=function(p=8){try{if(Array.isArray(p))HP.notification({type:'SUCCESS'});else HP.impact({style:p>=10?'MEDIUM':'LIGHT'})}catch(e){}};
+ /* phone location through the app, so members get one clean permission prompt */
+ if(GEO){const _where=whereAmI;whereAmI=async function(){if(D.skipLoc)return _where();
+  try{let pm=await GEO.checkPermissions();if(pm.location!=='granted')pm=await GEO.requestPermissions({permissions:['location']});
+   if(pm.location==='denied')return{ok:false,msg:"Turn on location for M2 in your phone's Settings so we know you're at the club. It's only used for opening doors."};
+   const p=await GEO.getCurrentPosition({enableHighAccuracy:true,timeout:9000,maximumAge:5000}),c=p.coords,m=distM(c.latitude,c.longitude,GYM.lat,GYM.lng),slack=Math.min(c.accuracy||0,150);
+   if(m-slack<=GYM.r)return{ok:true,lat:c.latitude,lng:c.longitude,acc:Math.round(c.accuracy||0)};
+   return{ok:false,msg:`You're about ${m>=1000?(m/1000).toFixed(1)+' km':Math.round(m/10)*10+' m'} from the club. Doors open once you're at 8 Nugent St.`}}
+  catch(e){return{ok:false,msg:"We couldn't find your location. Try again in a few seconds."}}}}
+ /* local notifications: class reminders, waitlist spots, and a nudge if we haven't seen you */
+ const NID=s=>{let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)%2000000000+1};
+ const NUDGE_ID=99;let askedN=LS.get('askedN',false),prevWait=LS.get('prevWait',[]);
+ async function canNotify(ask){if(!LN)return false;try{let pm=await LN.checkPermissions();if(pm.display==='granted')return true;if(!ask||askedN)return false;askedN=true;LS.set('askedN',true);pm=await LN.requestPermissions();return pm.display==='granted'}catch(e){return false}}
+ function remindAt(start){const r=new Date(start);if(start.getHours()<9){r.setDate(r.getDate()-1);r.setHours(20,0,0,0)}else r.setTime(start-36e5);return r}
+ async function syncReminders(ask){if(!(await canNotify(ask)))return;
+  try{const pend=await LN.getPending();const mine=pend.notifications||[];if(mine.length)await LN.cancel({notifications:mine.map(n=>({id:n.id}))})}catch(e){}
+  const out=[],nowT=Date.now(),waitNow=[];
+  for(const id in GMC){const g=GMC[id];if(g.waitId)waitNow.push(id);if(!g.bookedId)continue;const{d,c}=parseId(id);if(!c)continue;const st=cDate(d,c),at=remindAt(st);
+   if(prevWait.includes(id)&&S.sw.n2)out.push({id:NID('w'+id),title:"You're in",body:`A spot opened up. You're booked into ${TYPES[c[1]].n} ${rel(d).toLowerCase()} at ${fmtT(c[0]).full}.`,schedule:{at:new Date(nowT+2000)},extra:{m2:1,go:'classes'}});
+   if(S.sw.n1&&at>nowT+6e4)out.push({id:NID(id),title:`${TYPES[c[1]].n} ${st.getHours()<9&&at.getDate()!==st.getDate()?'tomorrow':'soon'}`,body:`${fmtT(c[0]).full} with ${(COACHES[c[2]]||{n:'the M2 team'}).n}. See you there.`,schedule:{at},extra:{m2:1,go:'classes'}})}
+  prevWait=waitNow;LS.set('prevWait',waitNow);
+  if(S.sw.n4&&S.tier!=='none'){const last=[...S.checkins].sort().pop();const base=last?fromKey(last):new Date();const at=addDays(base,10);at.setHours(17,30,0,0);if(at<new Date())at.setTime(Date.now()+864e5);
+   out.push({id:NUDGE_ID,title:`Haven't seen you in a while${MEMBER.first?', '+MEMBER.first:''}`,body:"Even 30 minutes counts. The club's open, come say hi.",schedule:{at},extra:{m2:1,go:'home'}})}
+  if(out.length)try{await LN.schedule({notifications:out})}catch(e){}}
+ window.syncReminders=syncReminders;
+ if(LN)try{LN.addListener('localNotificationActionPerformed',a=>{const g=a.notification&&a.notification.extra&&a.notification.extra.go;if(g==='classes')goClasses();else go('home')})}catch(e){}
+ const _load=loadClasses;loadClasses=async function(){const r=await _load();syncReminders(false);return r};
+ const _bk=book;book=async function(id,w){const r=await _bk(id,w);syncReminders(true);return r};
+ const _cx=cancelBk;cancelBk=async function(id){const r=await _cx(id);syncReminders(false);return r};
+ const _lw=leaveWait;leaveWait=async function(id){const r=await _lw(id);syncReminders(false);return r};
+ /* refresh when the app comes back to the front */
+ if(P.App)try{P.App.addListener('resume',()=>{if(S.doorSess){if(Date.now()-(LS.get('lastSync',0))>6e5)liveSync();loadClasses()}})}catch(e){}
+ if(P.StatusBar)try{P.StatusBar.setStyle({style:'DARK'})}catch(e){}
+ if(P.SplashScreen)setTimeout(()=>{try{P.SplashScreen.hide()}catch(e){}},300);
 }
 function boot(){renderAll();renderCats();renderCoaches();setTop();
  const tick=()=>{const d=new Date();$('sbTime').textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0')};tick();setInterval(tick,15e3);
