@@ -3,20 +3,20 @@
  "title": "Physio in Grafton, Auckland | Prana Physiotherapy at M2",
  "description": "Prana Physiotherapy is in-house at M2 Training Club, 8 Nugent Street, Grafton. Injury treatment, rehab, ACC physio, pre and post-surgery care and strength-based recovery.",
  "nav": "train", "hero_over": true,
- "og_image": "/assets/img/coaching-1600.jpg",
- "preload": ["/assets/img/coaching-800.jpg"],
+ "og_image": "/assets/img/prana-physio-poster.jpg",
+ "preload": ["/assets/img/prana-physio-poster.jpg"],
  "cta_href": "https://www.pranaphysio.co.nz/booking/", "cta_label": "Book with Prana Physio", "cta_track": "physio_click",
  "footer_title": "Get back to training<span class=\"dot\">.</span>",
  "footer_text": "Book with Prana Physiotherapy, right here at M2 in Grafton.",
  "breadcrumbs": [["Recovery", "/recovery.html"], ["Physio", "/physio-grafton.html"]],
  "schema": [
-  {"@context":"https://schema.org","@type":"Physiotherapy","name":"Prana Physiotherapy at M2 Training Club","url":"https://m2club.co.nz/physio-grafton.html","sameAs":["https://www.pranaphysio.co.nz/"],"telephone":"+64800477262","email":"info@pranaphysio.co.nz","image":"https://m2club.co.nz/assets/img/coaching-1600.jpg","address":{"@type":"PostalAddress","streetAddress":"8 Nugent Street","addressLocality":"Grafton","addressRegion":"Auckland","postalCode":"1023","addressCountry":"NZ"},"containedInPlace":{"@id":"https://m2club.co.nz/#gym"},"availableService":[{"@type":"MedicalTherapy","name":"Physiotherapy assessment and treatment"},{"@type":"MedicalTherapy","name":"Exercise-based rehabilitation"},{"@type":"MedicalTherapy","name":"Pre and post-surgery rehabilitation"},{"@type":"MedicalTherapy","name":"Tendinopathy rehabilitation"}]}
+  {"@context":"https://schema.org","@type":"Physiotherapy","name":"Prana Physiotherapy at M2 Training Club","url":"https://m2club.co.nz/physio-grafton.html","sameAs":["https://www.pranaphysio.co.nz/"],"telephone":"+64800477262","email":"info@pranaphysio.co.nz","image":"https://m2club.co.nz/assets/img/prana-physio-poster.jpg","address":{"@type":"PostalAddress","streetAddress":"8 Nugent Street","addressLocality":"Grafton","addressRegion":"Auckland","postalCode":"1023","addressCountry":"NZ"},"containedInPlace":{"@id":"https://m2club.co.nz/#gym"},"availableService":[{"@type":"MedicalTherapy","name":"Physiotherapy assessment and treatment"},{"@type":"MedicalTherapy","name":"Exercise-based rehabilitation"},{"@type":"MedicalTherapy","name":"Pre and post-surgery rehabilitation"},{"@type":"MedicalTherapy","name":"Tendinopathy rehabilitation"}]}
  ]}
 -->
 <style>
   .tp-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: center; padding-top: calc(var(--header-h) + 48px); padding-bottom: 80px; }
   .tp-photo { border-radius: var(--radius-lg); overflow: hidden; background: var(--ink-3); aspect-ratio: 4 / 5; max-height: 640px; }
-  .tp-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+  .tp-photo video { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
   .tp-text { display: flex; flex-direction: column; gap: 22px; }
   .tp-role { display: block; font-family: var(--font-body); font-size: 20px; font-weight: 600; letter-spacing: 0; line-height: 1.3; text-transform: none; color: var(--lime); margin-top: 16px; }
   .tp-quick { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 15px; color: var(--muted-dark); }
@@ -30,7 +30,7 @@
   .info a.text-link { word-break: break-word; }
   @media (max-width: 960px) {
     .tp-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-top: calc(var(--header-h) + 20px); padding-bottom: 48px; }
-    .tp-photo { aspect-ratio: 1 / 1; max-height: none; }
+    .tp-photo { aspect-ratio: 4 / 5; max-height: none; }
     .tp-role { font-size: 17px; margin-top: 12px; }
     .svc { grid-template-columns: minmax(0, 1fr); }
   }
@@ -38,7 +38,7 @@
 
 <section class="page-hero" data-section="hero">
   <div class="wrap tp-grid">
-    <div class="tp-photo in-1"><img src="/assets/img/coaching-800.jpg" srcset="/assets/img/coaching-800.jpg 800w, /assets/img/coaching-1600.jpg 1600w" sizes="(max-width: 960px) 100vw, 40vw" alt="One-on-one training and rehab on the gym floor at M2 Training Club in Grafton" fetchpriority="high"></div>
+    <div class="tp-photo in-1"><video src="/assets/video/prana-physio.mp4" poster="/assets/img/prana-physio-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Prana Physiotherapy treating a client in their room at M2 Training Club in Grafton"></video></div>
     <div class="tp-text">
       <nav class="crumbs in-1" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/recovery.html">Recovery</a><span>/</span><span>Physio</span></nav>
       <span class="in-1"><span class="badge">In-house at M2</span></span>
