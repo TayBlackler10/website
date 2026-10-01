@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Connecting Strava | M2 Training Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a0a0a;--paper:#f3f3ef;--muted:#6b6b66;--lime:#d7ff00;--olive:#6b7a00;--strava:#fc4c02}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:Inter,'Helvetica Neue',Helvetica,Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:var(--ink);padding:18px 20px calc(18px + env(safe-area-inset-top)) ;padding-top:calc(18px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between}
+header img{width:36px;height:auto;display:block}
+header span{color:#8a8a85;font-size:12px}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.card{background:#fff;border-radius:20px;padding:32px 26px;max-width:420px;width:100%;text-align:left}
+.eb{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--olive);font-weight:600}
+h1{font-size:28px;line-height:1.15;font-weight:700;margin-top:10px;letter-spacing:-.5px}
+h1 i{color:var(--olive);font-style:normal}
+p{font-size:16px;line-height:1.6;color:#3a3a38;margin-top:12px}
+.btn{display:block;width:100%;text-align:center;padding:16px 20px;border-radius:999px;font-weight:600;font-size:16px;text-decoration:none;margin-top:24px;border:0;cursor:pointer;font-family:inherit}
+.b-dark{background:var(--ink);color:var(--lime)}
+.b-out{background:transparent;color:var(--ink);border:1px solid #d6d6d0;margin-top:10px}
+.spin{width:28px;height:28px;border-radius:50%;border:3px solid #e4e4de;border-top-color:var(--ink);animation:s 0.8s linear infinite;margin-top:22px}
+@keyframes s{to{transform:rotate(360deg)}}
+.pw{display:flex;align-items:center;gap:8px;margin-top:26px;color:var(--muted);font-size:12px}
+.pw b{color:var(--strava);font-weight:700;letter-spacing:.2px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header><img src="/assets/m2-nav-logo.png" alt="M2"><span>Grafton, Auckland</span></header>
+<main>
+ <div class="card">
+  <span class="eb">Connected apps</span>
+  <h1 id="t">Connecting Strava<i>.</i></h1>
+  <p id="m">Hang tight, this takes a second.</p>
+  <div class="spin" id="sp"></div>
+  <a class="btn b-dark hide" id="go" href="/m2-app.html">Back to the M2 app</a>
+  <a class="btn b-out hide" id="web" href="/m2-app.html">Open M2 in the browser instead</a>
+  <div class="pw">Powered by <b>STRAVA</b></div>
+ </div>
+</main>
+<script>
+(function(){
+ var API='https://script.google.com/macros/s/AKfycbwjnvxCFtmmERRtMVV6lXZBuuaOJxjkAikKKawqTXYJLFsS00v1LNIPb86q3ROPtROn/exec';
+ var q=new URLSearchParams(location.search), app=q.get('app')==='1';
+ var t=document.getElementById('t'), m=document.getElementById('m'), sp=document.getElementById('sp'), go=document.getElementById('go'), web=document.getElementById('web');
+ var back=app?'nz.co.m2club.app://strava':'/m2-app.html#strava';
+ go.href=back;
+ function done(title,msg,ok){t.innerHTML=title+'<i>.</i>';m.textContent=msg;sp.className='spin hide';go.className='btn b-dark';if(app)web.className='btn b-out';
+  if(ok&&!app)setTimeout(function(){location.replace(back)},1800);
+  if(ok&&app)setTimeout(function(){location.href=back},900)}
+ if(q.get('error')){done("Strava wasn't connected","No worries. You can connect it any time from Me, then Connected apps, in the M2 app.");return}
+ if(!q.get('code')||!q.get('state')){done('Something went missing','Go back to the M2 app and tap Connect Strava again.');return}
+ fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'strava_link',code:q.get('code'),state:q.get('state'),scope:q.get('scope')||''})})
+  .then(function(r){return r.json()}).then(function(r){
+   if(r&&r.ok){history.replaceState(null,'',location.pathname+(app?'?app=1':''));done("You're connected",(r.name?'Thanks '+r.name+'. ':'')+'Your Strava activities will show in the M2 app from now on.',true)}
+   else done("That didn't go through",(r&&r.message)||'Try connecting again from the M2 app.');
+  }).catch(function(){done("That didn't go through","We couldn't reach M2. Check your signal and try again from the M2 app.")});
+})();
+</script>
+</body>
+</html>
