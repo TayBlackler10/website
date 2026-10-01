@@ -706,6 +706,9 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 /* ---------- V8 ---------- */
 .hs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:16px;padding-top:16px;border-top:1px solid var(--ink3)}
 .hs b{display:block;font:800 17px var(--h);color:#fff}.hs span{font-size:11px;color:var(--muted-d)}
+.svlink{font-size:12px;font-weight:600;color:#fc4c02;white-space:nowrap;margin-left:10px;text-decoration:none}
+.btn-strava{background:#fc4c02;color:#fff}
+.pws{margin-top:22px;font-size:12px;color:var(--muted)}.pws b{color:#fc4c02;font-weight:800;letter-spacing:.3px;margin-left:4px}
 .hs-cta{display:flex;gap:8px;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--ink3);width:100%;font-size:13px;color:var(--muted-d);text-align:left}
 .frame{margin:16px -22px 0;height:calc(100% - 70px);min-height:560px;background:#fff}
 .frame iframe{width:100%;height:100%;min-height:560px;border:0;display:block}
@@ -2153,7 +2156,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-01f';
+const APP_VER='2026-10-01g';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2226,6 +2229,91 @@ if(NATIVE){document.documentElement.classList.add('native');
  if(P.App)try{P.App.addListener('resume',()=>{if(S.doorSess){if(Date.now()-(LS.get('lastSync',0))>6e5)liveSync();loadClasses()}})}catch(e){}
  if(P.StatusBar)try{P.StatusBar.setStyle({style:'DARK'})}catch(e){}
  if(P.SplashScreen)setTimeout(()=>{try{P.SplashScreen.hide()}catch(e){}},300);
+}
+/* ---------- live connected apps ----------
+   Apple Health (iPhone) and Health Connect (Android) are read on the phone through the native app; that data never leaves the phone.
+   Strava connects through the M2 service, which keeps the Strava login and fetches activities. */
+if(LIVE){
+ const PLAT=NATIVE&&Capacitor.getPlatform?Capacitor.getPlatform():'web';
+ const HK=NATIVE&&window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.Health;
+ const HKEY=PLAT==='android'?'hc':'health',HNAME=PLAT==='android'?'Health Connect':'Apple Health';
+ let SV=LS.get('sv',null),HD=LS.get('hd',null);
+ const fmtDur=s=>{s=Math.round((s||0)/60);const h=Math.floor(s/60),m=s%60;return h?`${h}h ${String(m).padStart(2,'0')}m`:`${m} min`};
+ const fmtKm=m=>m>=1000?(m/1000).toFixed(1)+' km':m>0?Math.round(m)+' m':'';
+ const whenTx=d=>{const a=new Date(d);a.setHours(0,0,0,0);const diff=Math.round((T0-a)/864e5);return diff===0?'Today':diff===1?'Yesterday':d.toLocaleDateString('en-NZ',{weekday:'short',day:'numeric',month:'short'})};
+ const SVT={Run:'Run',TrailRun:'Trail run',VirtualRun:'Treadmill run',Ride:'Ride',VirtualRide:'Indoor ride',MountainBikeRide:'MTB ride',GravelRide:'Gravel ride',Walk:'Walk',Hike:'Hike',Swim:'Swim',WeightTraining:'Weights',Workout:'Workout',Crossfit:'CrossFit',Yoga:'Yoga',Rowing:'Row',HighIntensityIntervalTraining:'HIIT',Pilates:'Pilates',Elliptical:'Elliptical',StairStepper:'Stair stepper'};
+ const HKT={running:'Run',runningTreadmill:'Treadmill run',cycling:'Ride',bikingStationary:'Indoor ride',walking:'Walk',hiking:'Hike',swimming:'Swim',swimmingPool:'Swim',swimmingOpenWater:'Open water swim',traditionalStrengthTraining:'Weights',functionalStrengthTraining:'Functional strength',strengthTraining:'Weights',weightlifting:'Weights',highIntensityIntervalTraining:'HIIT',crossTraining:'Cross training',rowing:'Row',rowingMachine:'Row',yoga:'Yoga',pilates:'Pilates',coreTraining:'Core',mixedCardio:'Cardio',elliptical:'Elliptical',stairClimbing:'Stairs',cooldown:'Cool down',flexibility:'Mobility',exerciseClass:'Class',bootCamp:'Bootcamp'};
+ /* every activity from the member's apps, newest first; Strava and Apple Health often hold the same workout, so drop near-duplicates */
+ function allActs(){const out=[];
+  for(const a of (SV&&SV.linked&&SV.acts)||[]){const d=new Date(String(a.start||'').replace(/Z$/,''));if(!isNaN(d))out.push({d,name:a.name||SVT[a.type]||a.type||'Activity',type:SVT[a.type]||a.type,secs:a.secs||0,m:a.m||0,src:'Strava',id:a.id})}
+  if(S.conn[HKEY])for(const w of (HD&&HD.wk)||[]){const d=new Date(w.start);if(isNaN(d))continue;if(out.some(x=>Math.abs(x.d-d)<6e5))continue;out.push({d,name:HKT[w.type]||'Workout',type:HKT[w.type]||'Workout',secs:w.secs||0,m:w.m||0,src:w.src||HNAME})}
+  return out.sort((a,b)=>b.d-a.d)}
+ function weekActs(){const mon=new Date(T0);mon.setDate(mon.getDate()-((mon.getDay()+6)%7));const l=allActs().filter(a=>a.d>=mon);return{n:l.length,secs:l.reduce((s,a)=>s+a.secs,0),m:l.reduce((s,a)=>s+a.m,0)}}
+ window.m2Acts=allActs;
+
+ /* ---- Strava ---- */
+ async function loadStrava(fresh){if(!S.doorSess)return;try{const r=await api({action:'strava_acts',session:S.doorSess,fresh:!!fresh});if(r&&r.ok){SV={linked:!!r.linked,name:r.name||'',acts:r.acts||[],t:Date.now()};LS.set('sv',SV);S.conn.strava=SV.linked;save('conn');renderConn();renderHealth()}}catch(e){}}
+ window.stravaGo=async function(){toast('Opening Strava');let r=null;try{r=await api({action:'strava_start',session:S.doorSess,mobile:/iPhone|iPad|Android/i.test(navigator.userAgent),app:NATIVE})}catch(e){}
+  if(r&&r.signin)return signOut();if(!r||!r.ok||!r.url)return toast((r&&r.message)||"Couldn't reach M2. Try again",1);
+  LS.set('svPending',Date.now());location.href=r.url};
+ window.stravaOff=async function(){let r=null;try{r=await api({action:'strava_off',session:S.doorSess})}catch(e){}if(!r||!r.ok)return toast("Couldn't disconnect. Try again",1);
+  SV={linked:false,acts:[],t:Date.now()};LS.set('sv',SV);S.conn.strava=false;save('conn');after(()=>{renderConn();renderHealth();toast('Strava disconnected')})};
+ function openStrava(){const on=!!(SV&&SV.linked),acts=on?(SV.acts||[]).slice(0,6):[];
+  openSheet(`<span class="eb">Connected apps</span><h2 style="margin-top:8px">Strava<span class="od">.</span></h2>
+  <p class="muted" style="margin-top:6px">${on?`Connected${SV.name?' as '+esc(SV.name):''}. Your runs, rides and workouts show in M2.`:'Bring your runs, rides and workouts into M2, next to your gym visits and classes.'}</p>
+  ${on?(acts.length?`<div class="sec" style="margin-top:20px"><span class="eb">Recent activity</span><div class="group" style="margin-top:10px">${acts.map(a=>{const d=new Date(String(a.start||'').replace(/Z$/,''));return `<div class="li"><span class="tx"><b>${esc(a.name||SVT[a.type]||'Activity')}</b><small>${whenTx(d)} · ${fmtDur(a.secs)}${a.m?' · '+fmtKm(a.m):''}</small></span><a class="svlink" href="https://www.strava.com/activities/${a.id}" target="_blank" rel="noopener">View on Strava</a></div>`}).join('')}</div></div>`:`<p class="muted small" style="margin-top:16px">Nothing in the last 5 weeks yet. Your next activity will show here.</p>`)
+   :`<div class="sec" style="margin-top:22px"><span class="eb">M2 reads</span><ul class="ticks" style="margin-top:6px"><li>${ico('i-check')}Your activities: type, date, time, distance and heart rate</li></ul></div><p class="muted small" style="margin-top:16px">M2 only reads your own activities. Nothing is posted to Strava, other members never see them, and you can disconnect any time.</p>`}
+  <div class="pws">Powered by <b>STRAVA</b></div>`,
+  on?`<button class="btn b-out b-full" onclick="stravaOff()">Disconnect Strava</button>`:`<button class="btn b-full b-lg btn-strava" onclick="stravaGo()">Connect with Strava</button>`)}
+
+ /* ---- Apple Health / Health Connect ---- */
+ const HK_READ=['steps','calories','restingHeartRate','heartRateVariability','sleep','workouts'];
+ async function healthAsk(){if(!HK)return false;try{const a=await HK.isAvailable();if(!a||!a.available){toast(PLAT==='android'?'Install Health Connect from the Play Store first':'Apple Health is not available on this phone',1);return false}
+  await HK.requestAuthorization({read:HK_READ,write:[]});S.conn[HKEY]=true;save('conn');await loadHealth();return true}catch(e){toast("That didn't connect. Try again",1);return false}}
+ window.healthGo=async function(){if(await healthAsk())after(()=>{renderConn();renderHealth();toast(HNAME+' connected')})};
+ window.healthOff=function(){S.conn[HKEY]=false;save('conn');HD=null;LS.set('hd',null);after(()=>{renderConn();renderHealth();renderRec();toast(HNAME+' disconnected')})};
+ function mergeMins(list){const iv=list.map(s=>[+new Date(s.startDate),+new Date(s.endDate)]).filter(x=>x[1]>x[0]).sort((a,b)=>a[0]-b[0]);let t=0,cs=null,ce=null;for(const[s,e]of iv){if(cs===null||s>ce){if(cs!==null)t+=ce-cs;cs=s;ce=e}else ce=Math.max(ce,e)}if(cs!==null)t+=ce-cs;return t/6e4}
+ async function loadHealth(){if(!HK||!S.conn[HKEY])return;const now=new Date(),sod=new Date(now);sod.setHours(0,0,0,0);const iso=d=>new Date(d).toISOString();const out={t:Date.now()};
+  const sum=async dt=>{try{const r=await HK.queryAggregated({dataType:dt,startDate:iso(sod),endDate:iso(now),bucket:'day',aggregation:'sum'});return (r.samples||[]).reduce((a,s)=>a+(s.value||0),0)}catch(e){return null}};
+  const last=async(dt,days)=>{try{const r=await HK.readSamples({dataType:dt,startDate:iso(now-days*864e5),endDate:iso(now),limit:300});const s=(r.samples||[]).sort((a,b)=>String(b.startDate).localeCompare(String(a.startDate)));return s[0]?s[0].value:null}catch(e){return null}};
+  out.steps=await sum('steps');out.kcal=await sum('calories');out.rhr=await last('restingHeartRate',4);out.hrv=await last('heartRateVariability',4);
+  try{const st=new Date(sod.getTime()-6*36e5),en=new Date(Math.min(+now,sod.getTime()+14*36e5));const r=await HK.readSamples({dataType:'sleep',startDate:iso(st),endDate:iso(en),limit:1000});
+   const asleep=(r.samples||[]).filter(s=>!(s.sleepState&&/awake|inbed|in_bed|outofbed/i.test(s.sleepState)));const mins=mergeMins(asleep);out.sleep=mins>30?Math.round(mins):null}catch(e){out.sleep=null}
+  try{const r=await HK.queryWorkouts({startDate:iso(now-35*864e5),endDate:iso(now),limit:60});out.wk=(r.workouts||[]).map(w=>({type:w.workoutType,start:w.startDate,secs:w.duration||0,m:w.totalDistance||0,kcal:w.totalEnergyBurned||null,src:w.sourceName||''}))}catch(e){out.wk=[]}
+  HD=out;LS.set('hd',HD);renderHealth();renderRec()}
+ window.loadHealth=loadHealth;window.loadStrava=loadStrava;
+
+ /* ---- screens ---- */
+ renderConn=function(){const el=$('connGroup');if(!el)return;const sec=el.closest('.sec');if(sec)sec.style.display='';el.className='';
+  const row=(n,ic,sub,state,fn)=>`<button class="li" onclick="${fn}"><span class="ic">${ico(ic)}</span><span class="tx"><b>${n}</b><small>${sub}</small></span>${state==='on'?'<span class="pill p-ink">On</span>':state==='soon'?'<span class="small muted">Soon</span>':'<span class="small muted">Connect</span>'}</button>`;
+  const hRow=HK?row(HNAME,PLAT==='android'?'i-pulse':'i-heart',S.conn[HKEY]?'Connected · steps, sleep, heart rate and workouts':(PLAT==='android'?'Samsung Health, Fitbit, Garmin and more':'iPhone, Apple Watch, WHOOP, Garmin and more'),S.conn[HKEY]?'on':'',`openConn('${HKEY}')`)
+   :row('Apple Health or Health Connect','i-heart','Connect from the M2 app on your phone','soon',`soon('Apple Health','Apple Health and Health Connect connect through the M2 app on your phone. Open the app and go to Me, then Connected apps.')`);
+  const svOn=!!(SV&&SV.linked);
+  const viaHealth=HK?`Coming soon. Works now through ${HNAME}`:'Coming soon';
+  el.innerHTML=`<div class="lhg">Health</div><div class="group">${hRow}</div>
+   <div class="lhg">Training</div><div class="group">${row('Strava','i-pulse',svOn?`Connected${SV.name?' as '+esc(SV.name):''} · ${(SV.acts||[]).length} recent activities`:'Runs, rides and workouts',svOn?'on':'','openConn(\'strava\')')}</div>
+   <div class="lhg">Wearables</div><div class="group">${['garmin','whoop','oura'].map(k=>row(CONN[k].n,CONN[k].ic,viaHealth,'soon',`openConn('${k}')`)).join('')}</div>`};
+ openConn=function(k){
+  if(k==='strava')return openStrava();
+  if(k==='health'||k==='hc'){if(!HK)return soon('Apple Health','Apple Health and Health Connect connect through the M2 app on your phone.');const on=!!S.conn[HKEY];
+   return openSheet(`<span class="eb">Connected apps</span><h2 style="margin-top:8px">${HNAME}<span class="od">.</span></h2><p class="muted" style="margin-top:6px">${PLAT==='android'?'Pulls in data from Samsung Health, Fitbit, Garmin and any app that syncs to Health Connect.':'Pulls in data from your iPhone, Apple Watch and any app that syncs to Apple Health, like WHOOP, Garmin, Oura and Strava.'}</p>
+    <div class="sec" style="margin-top:22px"><span class="eb">M2 reads</span><ul class="ticks" style="margin-top:6px">${['Steps and active energy','Resting heart rate and HRV','Sleep','Workouts from your watch and other apps'].map(r=>`<li>${ico('i-check')}${r}</li>`).join('')}</ul></div>
+    <p class="muted small" style="margin-top:16px">M2 only reads this data, to show it to you in the app. It stays on your phone and is never sent to M2. ${on?(PLAT==='android'?'To remove access completely, open Health Connect settings.':'To remove access completely, go to Settings, Health, Data Access and Devices, M2.'):'You choose exactly what to share on the next screen.'}</p>`,
+    on?`<button class="btn b-out b-full" onclick="healthOff()">Disconnect ${HNAME}</button>${PLAT==='android'?`<button class="btn b-out b-full" onclick="try{Capacitor.Plugins.Health.openHealthConnectSettings()}catch(e){}">Health Connect settings</button>`:''}`:`<button class="btn b-lime b-full b-lg" onclick="healthGo()">Connect ${HNAME}</button>`)}
+  const c=CONN[k]||{n:'This app'};soon(c.n,`We're working on connecting ${c.n} directly.${HK?` In the meantime, if ${c.n} syncs to ${HNAME}, connect ${HNAME} and your data shows up in M2 now.`:''}`)};
+ renderHealth=function(){const el=$('healthStrip');if(!el)return;const parts=[];
+  if(HK&&S.conn[HKEY]&&HD)parts.push(`<div class="hs">${[['Steps',HD.steps!=null?Math.round(HD.steps).toLocaleString():'-'],['Active kcal',HD.kcal!=null?Math.round(HD.kcal).toLocaleString():'-'],['Resting HR',HD.rhr!=null?Math.round(HD.rhr):'-'],['Sleep',HD.sleep?fmtDur(HD.sleep*60):'-']].map(x=>`<div><b>${x[1]}</b><span>${x[0]}</span></div>`).join('')}</div>`);
+  else if(HK)parts.push(`<button class="hs-cta" onclick="openConn('${HKEY}')">${ico('i-heart','i','width:16px;height:16px')}Connect ${HNAME} to see steps, heart rate and sleep here</button>`);
+  const w=weekActs();if(w.n)parts.push(`<button class="hs-cta" onclick="openConn('${SV&&SV.linked?'strava':HKEY}')">${ico('i-pulse','i','width:16px;height:16px')}This week from your apps: ${w.n} ${w.n===1?'activity':'activities'} · ${fmtDur(w.secs)}${w.m?' · '+fmtKm(w.m):''}</button>`);
+  el.innerHTML=parts.join('')};
+ recoveryCard=function(){if(!(HK&&S.conn[HKEY]&&HD&&(HD.sleep||HD.hrv||HD.rhr)))return '';
+  return `<div class="sec"><div class="card dk"><span class="eb">From ${HNAME}</span><div class="h2" style="color:#fff;margin-top:8px">Last night<span class="ld">.</span></div><div class="hs" style="grid-template-columns:repeat(3,1fr)">${[['Sleep',HD.sleep?fmtDur(HD.sleep*60):'-'],['HRV',HD.hrv?Math.round(HD.hrv)+' ms':'-'],['Resting HR',HD.rhr?Math.round(HD.rhr)+' bpm':'-']].map(x=>`<div><b>${x[1]}</b><span>${x[0]}</span></div>`).join('')}</div></div></div>`};
+
+ /* ---- keep it fresh ---- */
+ const refresh=fresh=>{if(!S.doorSess)return;loadStrava(fresh);loadHealth()};
+ setTimeout(()=>{const back=/strava/.test(location.hash);refresh(back);if(back){history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>{if(S.doorSess){go('me');openStrava()}},1200)}},1800);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){const p=LS.get('svPending',0);if(p&&Date.now()-p<9e5){LS.set('svPending',0);loadStrava(true).then(()=>{if(SV&&SV.linked){go('me');openStrava()}})}else if(Date.now()-((HD&&HD.t)||0)>3e5)loadHealth()}});
+ if(NATIVE&&Capacitor.Plugins.App)try{Capacitor.Plugins.App.addListener('appUrlOpen',e=>{if(/strava/.test((e&&e.url)||'')){LS.set('svPending',0);loadStrava(true).then(()=>{go('me');openStrava()})}})}catch(e){}
 }
 function boot(){renderAll();renderCats();renderCoaches();setTop();
  const tick=()=>{const d=new Date();$('sbTime').textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0')};tick();setInterval(tick,15e3);
