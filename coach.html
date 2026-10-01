@@ -33,6 +33,17 @@ h1 i{font-style:normal;color:var(--lime)}
 .seg{display:flex;background:var(--card);border-radius:999px;padding:4px;margin-top:18px}
 .seg button{flex:1;padding:10px 0;border-radius:999px;font-weight:600;font-size:15px;color:var(--muted)}
 .seg button.on{background:var(--text);color:var(--ink)}
+.days{display:flex;gap:6px;margin-top:18px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.days::-webkit-scrollbar{display:none}
+.days button{flex:1 0 46px;min-width:46px;background:var(--card);border-radius:14px;padding:10px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.days button span{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.days button b{font:800 19px/1 Archivo}
+.days button i{width:5px;height:5px;border-radius:50%;background:var(--lime)}
+.days button i.z{background:transparent}
+.days button.on{background:var(--text);color:var(--ink)}
+.days button.on span{color:#555}
+.days button.on i{background:var(--ink)}
+.days button.on i.z{background:transparent}
 .row2{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
 .sw{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
 .sw i{width:40px;height:24px;border-radius:999px;background:var(--card2);position:relative;transition:.2s}
@@ -138,7 +149,7 @@ const ICO={check:'<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-l
  x:'<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
  dots:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>'};
 let SESS=ls.get('m2v5.doorSess',null)||ls.get('m2coach.sess',null);
-let ST={day:'today',mine:ls.get('m2coach.mine',true),classes:null,cls:null,ro:null,timer:null,me:null};
+let ST={day:0,mine:ls.get('m2coach.mine',true),classes:null,cls:null,ro:null,timer:null,me:null};
 
 /* ---------- api ---------- */
 async function api(body){
@@ -185,19 +196,23 @@ async function loadClasses(quiet){
  ST.timer=setInterval(()=>{if(!ST.cls&&document.visibilityState==='visible')loadClasses(true)},60000);
 }
 function clsState(c,now){now=now||Date.now();if(c.closed)return['Done','chip'];if(now>=c.startMs-10*60000&&now<c.endMs)return['On now','chip lime'];if(now>=c.endMs)return['Finished','chip'];if(c.startMs-now<90*60000)return['Starts in '+Math.max(1,Math.round((c.startMs-now)/60000))+' min','chip ok'];return[t12(c.start)+' to '+t12(c.end),'chip']}
+function dayName(i){if(i===0)return'Today';if(i===1)return'Tomorrow';return new Intl.DateTimeFormat('en-NZ',{timeZone:'Pacific/Auckland',weekday:'long'}).format(new Date(Date.now()+i*864e5))}
 function drawClasses(){
  $('foot').classList.add('hide');
- const today=nzDay(0),tm=nzDay(1),want=ST.day==='today'?today:tm;
+ if(typeof ST.day!=='number')ST.day=0;
+ const want=nzDay(ST.day);
+ const days=[0,1,2,3,4,5,6].map(i=>{const k=nzDay(i),d=new Date(Date.now()+i*864e5),f=o=>new Intl.DateTimeFormat('en-NZ',Object.assign({timeZone:'Pacific/Auckland'},o)).format(d);
+  const n=(ST.classes||[]).filter(c=>c.day===k&&(!ST.mine||c.mine)).length;return{i,wd:i===0?'Today':f({weekday:'short'}),dn:f({day:'numeric'}),n}});
  let list=(ST.classes||[]).filter(c=>c.day===want);const mineCount=list.filter(c=>c.mine).length;
  if(ST.mine&&mineCount)list=list.filter(c=>c.mine);
  const first=(ST.me&&ST.me.first)||'';
- $('app').innerHTML=`<span class="eb">${first?'Hi '+esc(first):'Coach mode'}</span><h1>${ST.day==='today'?'Today':'Tomorrow'}<i>.</i></h1>
- <div class="seg"><button class="${ST.day==='today'?'on':''}" onclick="ST.day='today';drawClasses()">Today</button><button class="${ST.day==='tomorrow'?'on':''}" onclick="ST.day='tomorrow';drawClasses()">Tomorrow</button></div>
- <div class="row2"><span class="muted" style="font-size:14px">${list.length} class${list.length===1?'':'es'}</span>${mineCount?`<button class="sw ${ST.mine?'on':''}" onclick="ST.mine=!ST.mine;ls.set('m2coach.mine',ST.mine);drawClasses()">Just mine <i></i></button>`:''}</div>
+ $('app').innerHTML=`<span class="eb">${first?'Hi '+esc(first):'Coach mode'}</span><h1>${dayName(ST.day)}<i>.</i></h1>
+ <div class="days">${days.map(d=>`<button class="${d.i===ST.day?'on':''}" onclick="ST.day=${d.i};drawClasses()"><span>${d.wd}</span><b>${d.dn}</b><i class="${d.n?'':'z'}"></i></button>`).join('')}</div>
+ <div class="row2"><span class="muted" style="font-size:14px">${list.length} class${list.length===1?'':'es'}</span>${(ST.classes||[]).some(c=>c.mine)?`<button class="sw ${ST.mine?'on':''}" onclick="ST.mine=!ST.mine;ls.set('m2coach.mine',ST.mine);drawClasses()">Just mine <i></i></button>`:''}</div>
  ${list.length?list.map(c=>{const [st,cl]=clsState(c);const cap=c.cap||20,pct=Math.min(100,c.num/cap*100);
   return `<button class="cls ${cl.includes('lime')?'live':''}" onclick="openClass('${c.id}')"><div class="t"><div><div class="tm">${t12(c.start)}</div><div class="nm">${esc(c.name)}</div><div class="co">${esc(c.coach||'No coach set')}</div></div><span class="${cl}">${st}</span></div>
   <div class="bar"><span style="width:${pct}%;background:${c.num>=cap?'var(--err)':'var(--lime)'}"></span></div>
-  <div class="cnt"><span><b>${c.num}</b> / ${cap} booked</span>${c.wait?`<span><b>${c.wait}</b> waitlist</span>`:''}</div></button>`}).join(''):`<div class="empty">No classes ${ST.day==='today'?'today':'tomorrow'}.</div>`}`;
+  <div class="cnt"><span><b>${c.num}</b> / ${cap} booked</span>${c.wait?`<span><b>${c.wait}</b> waitlist</span>`:''}</div></button>`}).join(''):`<div class="empty">No ${ST.mine?'classes of yours':'classes'} ${ST.day===0?'today':ST.day===1?'tomorrow':'on '+dayName(ST.day)}.</div>`}`;
 }
 function nzDay(add){const d=new Date(Date.now()+add*864e5);return new Intl.DateTimeFormat('en-CA',{timeZone:'Pacific/Auckland',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
 function backToList(){history.replaceState(null,'',location.pathname+location.search);ST.cls=null;closeSheet();loadClasses(true);drawClasses()}
@@ -284,7 +299,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 /* ---------- demo data (?demo) ---------- */
 const DM=(()=>{const N=['Aroha Ngata','Ben Carter','Chloe Tan','Daniel Wu','Ella Brooks','Finn Hope','Grace Lee','Hemi Walker','Isla Morgan','Jack Turner','Kiri Mason','Liam Patel','Maya Singh','Noah Reid','Olivia King','Pita Afemata','Quinn Harris','Ruby Clark','Sam Fox','Tia Martin'];
  const now=Date.now(),hr=3600e3,mk=(off,d)=>{const s=now+off;return{startMs:s,endMs:s+hr,start:new Date(s).toTimeString().slice(0,5),end:new Date(s+hr).toTimeString().slice(0,5),day:nzDay(d)}};
- const cls=[Object.assign({id:'1',name:'HYROX Teams',coach:'David Blint',max:20,cap:20,num:19,wait:2,mine:true},mk(-5*60000,0)),Object.assign({id:'2',name:'HYROX Strength',coach:'Rebekka Schulze',max:20,cap:20,num:12,wait:0,mine:false},mk(5*hr,0)),Object.assign({id:'3',name:'HYROX Teams',coach:'David Blint',max:20,cap:20,num:20,wait:4,mine:true},mk(24*hr,1))];
+ const cls=[Object.assign({id:'1',name:'HYROX Teams',coach:'David Blint',max:20,cap:20,num:19,wait:2,mine:true},mk(-5*60000,0)),Object.assign({id:'2',name:'HYROX Strength',coach:'Rebekka Schulze',max:20,cap:20,num:12,wait:0,mine:false},mk(5*hr,0)),Object.assign({id:'3',name:'HYROX Teams',coach:'David Blint',max:20,cap:20,num:20,wait:4,mine:true},mk(24*hr,1)),Object.assign({id:'4',name:'HYROX Strength',coach:'David Blint',max:20,cap:20,num:8,wait:0,mine:true},mk(72*hr,3))];
  const ppl=N.slice(0,19).map((n,i)=>({bid:'b'+i,mid:'m'+i,name:n,photo:'',ms:['M2 Perform','M2 Daily','Flexi','Fitness Passport'][i%4],status:i<9?'in':'booked',gate:i<9?'5:'+(10+i)+'am':''}));
  return{cls,ppl,wait:[{name:'Hemi Walker',mid:'w1',pos:1},{name:'Tia Martin',mid:'w2',pos:2}],closed:false}})();
 function demoRo(){const c=Object.assign({},DM.cls[0],{closed:DM.closed});const taken=DM.ppl.filter(p=>p.status!=='noshow').length;return{ok:true,cls:c,people:DM.ppl.map(p=>Object.assign({},p)),wait:DM.wait,taken,canIn:true}}
