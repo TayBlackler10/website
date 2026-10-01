@@ -145,7 +145,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 
 /* ---------- HOME ---------- */
 .hero{position:relative;height:500px;margin-top:calc(-1 * (var(--sat) + 52px));background:var(--ink);overflow:hidden;color:#fff}
-.hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}
+.hero video,.hero .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,8,.6) 0%,rgba(8,8,8,0) 24%),linear-gradient(90deg,rgba(8,8,8,.9) 0%,rgba(8,8,8,.6) 50%,rgba(8,8,8,.25) 100%),linear-gradient(180deg,rgba(8,8,8,0) 50%,rgba(8,8,8,.9) 100%)}
 .hero .in{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 20px 30px}
 .hero h1{font:900 44px/.95 var(--h);letter-spacing:-.035em;text-transform:uppercase;margin:10px 0 12px}
@@ -612,7 +612,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .opt.on{border-color:var(--lime)}
 .opt.on i{background:var(--lime);border-color:var(--lime);color:var(--ink)}
 .ob-hero{position:absolute;inset:0;background:var(--ink)}
-.ob-hero img,.ob-hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}
+.ob-hero img,.ob-hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ob-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,8,.9),rgba(8,8,8,.6) 50%,rgba(8,8,8,.25)),linear-gradient(180deg,rgba(8,8,8,.1) 30%,rgba(8,8,8,.95) 100%)}
 .ob-hero .in{position:absolute;left:22px;right:22px;bottom:22px;z-index:2}
 .ob-hero .brandk{width:170px;height:18px;fill:var(--lime)}
@@ -628,6 +628,35 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .opts.two .opt b{font-size:15px;line-height:1.25}
 .opts.two .opt i{width:24px;height:24px}
 .onb .eb{color:var(--lime)}
+/* onboarding: light, calm look to match the website and member emails */
+.onb.lt{background:var(--paper);color:var(--text)}
+.onb.lt .sx{background:var(--white);border-color:var(--line);color:var(--ink)}
+.onb.lt .eb{color:var(--olive)}
+.onb.lt .muted,.onb.lt .obody .muted{color:var(--muted)}
+.onb.lt .ld{color:var(--olive)}
+.onb.lt .obody h2{font:700 28px/1.12 var(--h);letter-spacing:-.02em;margin:10px 0 8px}
+.onb.lt .obody h2[style*="margin-top:30px"]{font-size:21px!important}
+.onb.lt .tile .eb,.onb.lt .eb.lime{color:var(--lime)}
+.onb.lt .big1{font:700 32px/1.08 var(--h);letter-spacing:-.02em;text-transform:none;margin-top:10px}
+.onb.lt .obar i{background:var(--line)}.onb.lt .obar i.on{background:var(--ink)}
+.onb.lt .opts{gap:8px}
+.onb.lt .opt{background:var(--white);border:1px solid var(--line);border-radius:14px;min-height:62px;padding:14px 16px;box-shadow:0 1px 2px rgba(10,10,10,.03)}
+.onb.lt .opt b{font-weight:600;font-size:16px;color:var(--ink)}
+.onb.lt .opt small{color:var(--muted);font-size:14px;margin-top:2px}
+.onb.lt .opt i{width:24px;height:24px;border:1.5px solid #CFCFC8;background:var(--white)}
+.onb.lt .opt.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.onb.lt .opt.on i{background:var(--ink);border-color:var(--ink);color:var(--white)}
+.onb.lt .opts.two .opt b{font-size:15px}
+.onb.lt .flab{color:var(--ink);font-weight:600}.onb.lt .flab span{color:var(--muted)}
+.onb.lt .ta{background:var(--white);color:var(--text);border:1px solid var(--line)}
+.onb.lt .ta:focus{border-color:var(--ink)}.onb.lt .ta::placeholder{color:var(--dis)}
+.onb.lt .obsum{border-top-color:var(--line)}.onb.lt .obsum div{border-bottom-color:var(--line)}
+.onb.lt .obsum span{color:var(--muted)}.onb.lt .obsum b{color:var(--ink)}
+.onb.lt .ofoot{background:var(--paper);border-top:1px solid var(--line)}
+.onb.lt .btn.b-lime{background:var(--ink);color:var(--white);font-weight:600}
+.onb.lt .btn.b-lime[disabled]{opacity:1;background:#D6D6CF;color:var(--white)}
+.onb.lt .btn.b-ghost{border:1px solid #CFCFC8;background:var(--white);color:var(--ink);font-weight:600}
+.onb.lt .confirm .tick{background:var(--ink)}.onb.lt .confirm .tick svg{stroke:var(--lime)}
 .flab{display:block;font:600 14px var(--b);margin:26px 0 8px}
 .flab span{color:var(--muted-d);font-weight:400}
 .ta{width:100%;min-height:92px;border-radius:14px;border:1.5px solid var(--ink3);background:var(--ink2);color:#fff;padding:14px 16px;font:16px/1.5 var(--b);resize:vertical;outline:none}
@@ -818,7 +847,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
       <div class="acts"><button class="round onphoto" onclick="go('messages')" aria-label="Messages"><svg class="i"><use href="#i-bell"/></svg><span class="badge-n msg-badge"></span></button><button class="round onphoto" onclick="openPass()" aria-label="Doors and check in"><svg class="i"><use href="#i-door"/></svg></button></div></div>
     <section class="hero">
       <img class="poster" src="https://m2club.co.nz/assets/img/class-sled-800.jpg" alt="">
-      <video id="heroVid" autoplay muted loop playsinline preload="metadata" poster="https://m2club.co.nz/assets/img/hero-mobile-poster-800.jpg"><source src="https://m2club.co.nz/assets/video/hero-mobile.mp4" type="video/mp4"></video>
+      <video id="heroVid" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture preload="auto" poster="https://m2club.co.nz/assets/img/hero-mobile-poster-800.jpg"><source src="https://m2club.co.nz/assets/video/hero-mobile.mp4" type="video/mp4"></video>
       <div class="in">
         <span class="eb lime" id="hDate"></span>
         <h1 id="hGreet"></h1>
@@ -1574,7 +1603,7 @@ const PREFS=[['A male trainer','a Male trainer'],['A female trainer','a Female t
 const TIMES=[['Weekday, early morning','Weekday - Early morning'],['Weekday, midday','Weekday - Midday'],['Weekday, evenings','Weekday - Evenings'],['Weekend, morning / midday','Weekend - Morning / Midday'],["Any time, I'm flexible","Any - I'm flexible"]];
 const ptEligible=()=>S.tier!=='recovery';
 function bookPT(){Object.assign(OB,{ptWant:'yes',style:null,pref:null,time:null,reason:null,inj:''});OB.ptOnly=true;showOnb(5)}
-function drawOnb(){const st=OB.step,b=$('onbBody'),f=$('onbFoot');b.className='obody'+(st===0?' hero0':'');b.scrollTop=0;
+function drawOnb(){const st=OB.step,b=$('onbBody'),f=$('onbFoot');$('onb').classList.toggle('lt',st!==0);b.className='obody'+(st===0?' hero0':'');b.scrollTop=0;
  const bar=(n,of,lab)=>`<div class="obar" style="grid-template-columns:repeat(${of},1fr)">${Array.from({length:of},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</div><span class="eb">${lab}</span>`;
  const mainOf=ptEligible()?4:3;
  const nav=(ok,next,label)=>`<div style="display:flex;gap:10px">${OB.ptOnly&&st===5?'':`<button class="btn b-ghost" onclick="obBack()">Back</button>`}<button class="btn b-lime" style="flex:1" ${ok?'':'disabled'} onclick="${next||'OB.step++;haptic(8);drawOnb()'}">${label||'Continue'}</button></div>`;
@@ -1589,10 +1618,10 @@ function drawOnb(){const st=OB.step,b=$('onbBody'),f=$('onbFoot');b.className='o
   b.innerHTML=`${bar(2,2,'Free PT session · 2 of 2')}<h2>What time suits you best<span class="ld">?</span></h2><div class="opts">${TIMES.map((x,i)=>obOpt('time',i,x[0],'')).join('')}</div>
   <label class="flab">What's your reason for joining?</label><textarea class="ta" placeholder="e.g. Get stronger, lose a bit of weight, train for HYROX, get back into it after a break" oninput="OB.reason=this.value">${esc(OB.reason)}</textarea>
   <label class="flab">Any injuries or medical issues our trainers should know about? <span>(optional)</span></label><textarea class="ta" placeholder="e.g. Old knee injury, lower back gets tight. Leave blank if nothing." oninput="OB.inj=this.value">${esc(OB.inj||'')}</textarea>
-  <p class="small" style="color:var(--muted-d);margin-top:14px">We'll use the name, phone and email on your membership. Free for new members, no pressure.</p>`;f.innerHTML=nav(OB.time!=null,'submitPT()','Book my free session')}
+  <p class="small muted" style="margin-top:14px">We'll use the name, phone and email on your membership. Free for new members, no pressure.</p>`;f.innerHTML=nav(OB.time!=null,'submitPT()','Book my free session')}
  else if(st===8){b.innerHTML=`<div class="confirm"><div class="tick"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><span class="eb">Free PT session</span><h2 class="big1" style="margin-top:10px">You're booked in<span class="ld">.</span></h2><p class="muted" style="margin-top:14px;font-size:17px">We'll match you with the right coach and they'll be in touch within a day or two to lock in a time that suits.</p></div>`;f.innerHTML=`<button class="btn b-lime b-full b-lg" onclick="OB.ptOnly=false;hideOnb();renderAll()">Done</button>`}
  else{const rid=recommend(OB),p=PROGS[rid];
-  b.innerHTML=`<span class="eb">All set</span><h1 class="big1">Your plan<span class="ld">.</span></h1>
+  b.innerHTML=`<span class="eb">All set</span><h1 class="big1">Your plan<span class="ld">.</span></h1><p class="muted" style="margin-top:8px">Here's what we've set up for you. You can change any of it from Me.</p>
   <div class="obsum"><div><span>Goal</span><b>${GOALS[OB.goal][0]}</b></div><div><span>Weekly target</span><b>${OB.days} visits</b></div><div><span>Level</span><b>${EXPS[OB.exp][0]}</b></div>${ptEligible()?`<div><span>Free PT session</span><b>${S.pt?'Requested':'Book it from Home'}</b></div>`:''}</div>
   ${tier().floor?`<span class="eb" style="margin-top:26px">We'd start you on</span><div class="tile" style="height:190px;margin-top:12px"><img src="${p.img}" alt=""><div class="in"><span class="eb lime">${p.tag}</span><div class="h2">${p.n}</div><p>${p.weeks} weeks · ${p.days} days a week · ${p.lvl}</p></div></div>`:''}
   <p class="muted small" style="margin-top:18px">${S.pt?"Your coach will be in touch within a day or two. ":''}${tier().classes?'Plus classes whenever you like. ':''}${tier().recovery?'Use the recovery area as often as you want.':''}</p>`;
@@ -2156,7 +2185,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-01g';
+const APP_VER='2026-10-01h';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2177,7 +2206,7 @@ let PRELOC=null,WARMED=0;
 function warmDoors(){if(!DOOR_API||!S.doorSess||Date.now()-WARMED<9e4)return;WARMED=Date.now();
  try{fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'warm',session:S.doorSess})}).catch(()=>{})}catch(e){}}
 function prewarmDoors(){if(!DOOR_API||!S.doorSess)return;warmDoors();if(!PRELOC||Date.now()-PRELOC.t>6e4)PRELOC={t:Date.now(),p:whereAmI()}}
-async function doorLoc(){if(PRELOC&&Date.now()-PRELOC.t<6e4){const r=await PRELOC.p;if(r&&r.ok)return r;PRELOC=null}return whereAmI()}
+async function doorLoc(){if(PRELOC&&Date.now()-PRELOC.t<6e4){const r=await PRELOC.p;if(r&&r.ok)return r;PRELOC=null}let r=await whereAmI();if(r&&!r.ok&&/couldn't find/i.test(r.msg||''))r=await whereAmI();return r}
 {const _op=openPass;openPass=function(){const r=_op.apply(this,arguments);try{prewarmDoors()}catch(e){}return r}}
 if(LIVE)setTimeout(()=>{try{warmDoors()}catch(e){}},2500);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')try{warmDoors()}catch(e){}});
@@ -2317,7 +2346,7 @@ if(LIVE){
 }
 function boot(){renderAll();renderCats();renderCoaches();setTop();
  const tick=()=>{const d=new Date();$('sbTime').textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0')};tick();setInterval(tick,15e3);
- const v=$('heroVid');v.addEventListener('error',()=>v.remove(),true);
+ const v=$('heroVid');v.addEventListener('error',()=>v.remove(),true);['loadeddata','canplay','stalled','suspend'].forEach(ev=>v.addEventListener(ev,()=>{try{playHero()}catch(e){}}));setTimeout(()=>{if(v.isConnected&&v.readyState<2){try{v.load()}catch(e){}}},4000);
  const live=!!M2_API;$('signOutSec').style.display=live&&S.doorSess?'':'none';$('demoSec').style.display=live?'none':'';
  if(live&&(!S.doorSess||!LS.get('me',null))){showSignIn();setTimeout(()=>$('splash').classList.add('gone'),600);return}
  if(live&&Date.now()-(LS.get('lastSync',0))>6e5)liveSync();
