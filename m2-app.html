@@ -2110,7 +2110,10 @@ function soon(what,txt){openSheet(`<span class="eb">Coming soon</span><h2 style=
 if(LIVE){
  const _book=book,_cancel=cancelBk,_leave=leaveWait,_cap=capOf;
  const noBook=()=>{soon('Class booking','Booking classes in the app is on its way. For now, book through the Mywellness app or at reception.');setTimeout(()=>{const p=document.querySelector('.sheet .muted');if(p)p.insertAdjacentHTML('afterend',`<p class="small" style="margin-top:10px;color:#999">${esc(GMSTAT)}</p>`)},50);loadClasses()};
- capOf=function(d,c){const g=GMC[cid(d,c)];if(!g)return _cap(d,c);const cap=g.max||20,taken=g.num||0,left=g.free!=null?g.free:Math.max(0,cap-taken);return{cap,taken,left,mine:!!g.bookedId}};
+ capOf=function(d,c){const g=GMC[cid(d,c)];if(!g)return _cap(d,c);const cap=g.max||20,mine=!!g.bookedId;
+  // GymMaster's booked count can still include cancelled bookings; spaces-free is usually right. Use the lower of the two.
+  let taken=g.num||0;if(g.free!=null&&cap)taken=Math.min(taken,Math.max(0,cap-g.free));if(mine)taken=Math.max(taken,1);
+  const left=Math.max(0,cap-taken);return{cap,taken,left,mine:!!g.bookedId}};
  const gmFail=m=>openSheet(`<span class="eb">Booking</span><h2 style="margin-top:8px">That didn't go through<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${esc(m||'Try again in a minute, or book at reception.')}</p>`,`<button class="btn b-dark b-full" onclick="closeSheet()">OK</button>`);
  book=async function(id,wait){const g=GMC[id];if(!GM_ON||!g)return noBook();toast(wait?'Joining the waitlist':'Booking you in');
   let r;try{r=await api({action:'book',session:S.doorSess,id:g.id})}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal and try again."}}
@@ -2150,7 +2153,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-01e';
+const APP_VER='2026-10-01f';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
