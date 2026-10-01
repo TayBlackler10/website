@@ -69,8 +69,8 @@
      the browser supports it). To swap one, replace both files.
 
   6. ROLE TICK. Reception / Personal Training is required before checkout.
-     Personal Training prints white, Reception prints grey. Role and colour
-     both ride along in the sheet row, they don't talk to Stripe on their
+     All branded pieces print white for everyone (Reception and Personal
+     Training). Role and colour both ride along in the sheet row, they don't talk to Stripe on their
      own.
 
   7. CUSTOMER DETAILS. Full name, email and phone are required before
@@ -296,7 +296,7 @@
         <h1>Order your kit<span class="dot">.</span></h1>
         <p class="sub">Trainers and reception can top up their uniform here. LSKD jackets and layers with the M2 print, plus plain shorts, leggings and socks for training days.</p>
         <ol class="hero-steps">
-          <li><span class="n">1</span><div><strong>Add your details and role</strong><span>So we know who it's for and which colour to print.</span></div></li>
+          <li><span class="n">1</span><div><strong>Add your details and role</strong><span>So we know who it's for and which team you're on.</span></div></li>
           <li><span class="n">2</span><div><strong>Build your cart</strong><span>Pick a size and quantity for each item, then add it.</span></div></li>
           <li><span class="n">3</span><div><strong>Pay by card, then collect at M2</strong><span>Secure Stripe checkout. We'll message you when it's ready at reception.</span></div></li>
         </ol>
@@ -326,7 +326,7 @@
           <button type="button" class="role-btn" data-role="Personal Training">Personal training team</button>
         </div>
         <p class="role-note" id="roleNote">You're ordering as <strong id="roleNoteText"></strong>. Branded pieces will print in <strong id="roleColourText"></strong>.</p>
-        <p class="fine">Personal training prints white, reception prints grey.</p>
+        <p class="fine">All branded pieces print in white for both teams.</p>
       </div>
     </div>
   </div>
@@ -350,7 +350,7 @@
       <div><span class="eyebrow">M2 print</span><h2>Outerwear</h2></div>
       <span class="badge">Branded</span>
     </div>
-    <p class="section-sub">Puffer vests and jackets printed with the M2 Training Club mark. Personal training prints in white, reception prints in grey.</p>
+    <p class="section-sub">Puffer vests and jackets printed with the M2 Training Club mark. Every branded piece prints in white.</p>
     <div class="grid" id="grid-outerwear"></div>
   </div>
 </section>
@@ -408,7 +408,7 @@
     <div class="faq">
       <details open><summary>How do I pay?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Build your cart, then tap checkout. It takes you to a secure Stripe checkout for your whole order, and you pay by card. Once it's paid you'll see a confirmation page, and an email with your order lands within about 10 minutes.</div></details>
       <details><summary>Where do my sizes and role go?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">When you check out, your name, role and full order (sizes and colours included) are logged automatically. You don't need to add anything at Stripe, just pay.</div></details>
-      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests and jackets get the M2 mark, printed white for personal training and grey for reception. Long sleeves, shorts, leggings and socks are plain LSKD with no print.</div></details>
+      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests and jackets get the M2 mark, printed in white for everyone. Long sleeves, shorts, leggings and socks are plain LSKD with no print.</div></details>
       <details><summary>When do I get it?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Unbranded pieces come through as normal LSKD orders. Branded pieces go to print in batches. We'll message you when it's ready to collect at reception, 8 Nugent Street, Grafton.</div></details>
       <details><summary>How do I pick my size?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Tap Size guide under any product. Shorts and leggings open LSKD's fit guide, everything else opens the product page where the size chart sits. If you're between sizes, ask reception, some of the team have tried them on.</div></details>
       <details><summary>Wrong size or need to change something?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Let reception know as soon as you can, before anything goes to print.</div></details>
@@ -597,13 +597,8 @@
   function updatePrintChips() {
     document.querySelectorAll('.print-chip').forEach(chip => {
       chip.classList.remove('none', 'white', 'grey');
-      if (selectedColour) {
-        chip.classList.add(selectedColour);
-        chip.querySelector('.txt').textContent = (selectedColour === 'white' ? 'White' : 'Grey') + ' M2 print';
-      } else {
-        chip.classList.add('none');
-        chip.querySelector('.txt').textContent = 'Pick your role for print colour';
-      }
+      chip.classList.add('white');
+      chip.querySelector('.txt').textContent = 'White M2 print';
     });
   }
 
@@ -633,8 +628,8 @@
         photo.appendChild(pic);
         if (p.branded) {
           const chip = document.createElement('span');
-          chip.className = 'print-chip none';
-          chip.innerHTML = '<span class="mark"></span><span class="txt">Pick your role for print colour</span>';
+          chip.className = 'print-chip white';
+          chip.innerHTML = '<span class="mark"></span><span class="txt">White M2 print</span>';
           photo.appendChild(chip);
         }
       } else {
@@ -757,7 +752,7 @@
   let selectedColour = '';
   const ROLE_COLOURS = {
     'Personal Training': 'white',
-    'Reception': 'grey'
+    'Reception': 'white'
   };
 
   function addToCart(product, variant, qty) {
