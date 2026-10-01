@@ -141,7 +141,7 @@ h1 i{font-style:normal;color:var(--lime)}
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbwjnvxCFtmmERRtMVV6lXZBuuaOJxjkAikKKawqTXYJLFsS00v1LNIPb86q3ROPtROn/exec';
-const DEMO=/[?&]demo\b/.test(location.search);
+const DEMO=/[?&]demo\b/.test(location.search),EMBED=/[?&]embed\b/.test(location.search)&&window.parent!==window;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
@@ -173,11 +173,11 @@ async function login(){const em=$('em').value.trim(),pw=$('pw').value,b=$('lg');
  b.disabled=true;b.textContent='Signing in';let r;try{r=await api({action:'login',email:em,password:pw})}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal."}}
  if(!r||!r.ok){b.disabled=false;b.textContent='Sign in';$('lm').textContent=(r&&r.message)||"That didn't work.";return}
  SESS=r.session;ls.set('m2coach.sess',SESS);if(!ls.get('m2v5.doorSess',null))ls.set('m2v5.doorSess',SESS);start()}
-function notCoach(){$('foot').classList.add('hide');$('app').innerHTML=`<span class="eb">Coach mode</span><h1>Coaches only<i>.</i></h1><p class="muted" style="margin-top:12px">This part of the app is for M2 class coaches. If you coach classes and can't get in, ask Taylor to add your email.</p><a class="btn b-dark" style="margin-top:22px" href="/m2-app.html">Back to the M2 app</a>`}
+function notCoach(){$('foot').classList.add('hide');$('app').innerHTML=`<span class="eb">Coach mode</span><h1>Coaches only<i>.</i></h1><p class="muted" style="margin-top:12px">This part of the app is for M2 class coaches. If you coach classes and can't get in, ask Taylor to add your email.</p><a class="btn b-dark" style="margin-top:22px" href="/m2-app.html" onclick="if(EMBED){event.preventDefault();parent.postMessage('m2-coach-close',location.origin)}">Back to the M2 app</a>`}
 
 /* ---------- classes ---------- */
 function setTtl(main,sub){$('ttl').innerHTML=main?`<b>${esc(main)}</b><span>${esc(sub||'')}</span>`:'<img class="logo" src="/assets/m2-nav-logo.png" alt="M2">';
- const bb=$('backBtn');if(ST.cls){bb.removeAttribute('href');bb.onclick=e=>{e.preventDefault();backToList()}}else{bb.href='/m2-app.html';bb.onclick=null}}
+ const bb=$('backBtn');if(ST.cls){bb.removeAttribute('href');bb.onclick=e=>{e.preventDefault();backToList()}}else{if(EMBED){bb.removeAttribute('href');bb.onclick=e=>{e.preventDefault();parent.postMessage('m2-coach-close',location.origin)}}else{bb.href='/m2-app.html';bb.onclick=null}}}
 async function start(){
  if(!SESS&&!DEMO)return showLogin();
  let me;try{me=await api({action:'coach_me'})}catch(e){me=null}
