@@ -2081,11 +2081,14 @@ function applyClasses(r){if(!r||!r.ok||!Array.isArray(r.classes)||!r.classes.len
  r.classes.forEach(c=>{const d=isoDay(c.day);if(!d||!/^\d\d:\d\d$/.test(c.start||''))return;const off=Math.round((d-T0)/864e5);if(off<0||off>6)return;
   const e=[c.start,gmType(c),gmCoach(c)];TT[d.getDay()].push(e);const id=cid(d,e);
   const w=(r.waits||[]).find(x=>x.day===c.day&&x.start===c.start&&String(x.name||'').toLowerCase()===String(c.name||'').toLowerCase());
-  GMC[id]=Object.assign({},c,{waitId:w?w.id:null});if(c.bookedId)bk.push(id);if(w)wl.push(id)});
+  const lc=s=>String(s||'').toLowerCase().trim(),same=(r.classes||[]).filter(x=>x.day===c.day&&x.start===c.start).length;
+  const b=c.bookedId?null:(r.booked||[]).find(x=>x.day===c.day&&x.start===c.start&&(lc(x.name)===lc(c.name)||same===1||String(x.parent||'')===String(c.id)));
+  const bId=c.bookedId||(b?b.id:null);
+  GMC[id]=Object.assign({},c,{waitId:w?w.id:null,bookedId:bId,num:bId&&!(c.num>0)?1:c.num});if(bId)bk.push(id);if(w)wl.push(id)});
  for(const k in TT)TT[k].sort((a,b)=>a[0].localeCompare(b[0]));
  S.bookings=bk;save('bookings');S.wait=wl;save('wait')}
 let GMSTAT='not loaded yet';
-async function loadClasses(){if(!LIVE||!S.doorSess){GMSTAT='not signed in';return null}try{const r=await api({action:'classes',session:S.doorSess});if(r&&r.ok){LS.set('gmc',{t:Date.now(),r});applyClasses(r);GMSTAT=(r.classes||[]).length+' classes from GymMaster'+(GM_ON?'':' (none usable)');renderAll();renderDays();renderList();renderCoaches()}else GMSTAT='service said: '+((r&&r.message)||'no reply');return r}catch(e){GMSTAT='could not reach service: '+e.message;return null}}
+async function loadClasses(){if(!LIVE||!S.doorSess){GMSTAT='not signed in';return null}try{const r=await api({action:'classes',session:S.doorSess});if(r&&r.ok){LS.set('gmc',{t:Date.now(),r});applyClasses(r);GMSTAT=(r.classes||[]).length+' classes from GymMaster'+(GM_ON?'':' (none usable)')+(r.debug?' | '+r.debug:'');renderAll();renderDays();renderList();renderCoaches()}else GMSTAT='service said: '+((r&&r.message)||'no reply');return r}catch(e){GMSTAT='could not reach service: '+e.message;return null}}
 if(LIVE){const c=LS.get('gmc',null);if(c&&Date.now()-c.t<18e5)applyClasses(c.r)}
 /* ---------- live app: switch off prototype features that aren't connected yet ---------- */
 function mailTo(subject,body){location.href='mailto:reception@m2club.co.nz?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body+'\n\n'+MEMBER.name+' (member '+MEMBER_NO+')')}
@@ -2141,7 +2144,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-01b';
+const APP_VER='2026-10-01d';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
