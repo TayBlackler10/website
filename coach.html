@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A0A0A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>M2 Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--lime:#DFFF00;--ink:#0A0A0A;--card:#161616;--card2:#1F1F1F;--line:#2A2A2A;--text:#F3F3F0;--muted:#9A9A92;--olive:#5E6B00;--warn:#F2B544;--err:#FF6B5B;--ok:#DFFF00}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--ink);color:var(--text);font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:16px;min-height:100%}
+body{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit}
+.top{position:sticky;top:0;z-index:5;background:rgba(10,10,10,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #151515}
+.top .back{color:var(--text);width:38px;height:38px;border-radius:50%;background:var(--card2);display:grid;place-items:center;flex:none}
+.top .back svg{width:18px;height:18px}
+.top .ttl{flex:1;min-width:0}
+.top .ttl b{display:block;font:800 17px/1.2 Archivo;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .ttl span{font-size:13px;color:var(--muted)}
+.logo{height:20px;display:block}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:999px;background:var(--lime);color:var(--ink)}
+.wrap{padding:16px;max-width:640px;margin:0 auto}
+.eb{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--lime)}
+h1{font:900 34px/1 Archivo;letter-spacing:-.03em;text-transform:uppercase;margin-top:8px}
+h1 i{font-style:normal;color:var(--lime)}
+.muted{color:var(--muted)}
+.seg{display:flex;background:var(--card);border-radius:999px;padding:4px;margin-top:18px}
+.seg button{flex:1;padding:10px 0;border-radius:999px;font-weight:600;font-size:15px;color:var(--muted)}
+.seg button.on{background:var(--text);color:var(--ink)}
+.row2{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.sw{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.sw i{width:40px;height:24px;border-radius:999px;background:var(--card2);position:relative;transition:.2s}
+.sw i:after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:.2s}
+.sw.on i{background:var(--lime)}.sw.on i:after{left:19px;background:var(--ink)}
+.cls{display:block;width:100%;text-align:left;background:var(--card);border-radius:18px;padding:16px;margin-top:12px;border:1px solid transparent}
+.cls.live{border-color:var(--lime)}
+.cls .t{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.cls .tm{font:800 22px/1 Archivo;letter-spacing:-.02em}
+.cls .nm{font-weight:700;font-size:17px;margin-top:6px}
+.cls .co{font-size:14px;color:var(--muted);margin-top:2px}
+.chip{font-size:12px;font-weight:700;padding:5px 9px;border-radius:999px;background:var(--card2);color:var(--muted);white-space:nowrap}
+.chip.lime{background:var(--lime);color:var(--ink)}
+.chip.ok{background:rgba(223,255,0,.14);color:var(--lime)}
+.chip.warn{background:rgba(242,181,68,.15);color:var(--warn)}
+.chip.err{background:rgba(255,107,91,.15);color:var(--err)}
+.bar{height:6px;border-radius:99px;background:var(--card2);margin-top:14px;overflow:hidden;display:flex}
+.bar span{display:block;height:100%}
+.cnt{display:flex;gap:16px;margin-top:10px;font-size:13px;color:var(--muted)}
+.cnt b{color:var(--text);font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:50px 20px}
+/* roster */
+.big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.big div{background:var(--card);border-radius:16px;padding:14px 12px}
+.big b{display:block;font:900 30px/1 Archivo;letter-spacing:-.02em}
+.big span{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.big .in b{color:var(--lime)}
+.capline{margin-top:12px;font-size:14px;color:var(--muted);display:flex;justify-content:space-between}
+.capline b{color:var(--text)}
+.capline.full b{color:var(--err)}
+.sh{display:flex;justify-content:space-between;align-items:center;margin:26px 0 4px}
+.sh .eb{color:var(--muted)}
+.p{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #1a1a1a}
+.av{width:46px;height:46px;border-radius:50%;flex:none;background:var(--card2);display:grid;place-items:center;font-weight:700;font-size:15px;color:var(--muted);overflow:hidden;position:relative}
+.av img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.p .x{flex:1;min-width:0}
+.p .x b{display:block;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p .x small{display:block;font-size:13px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p .x small.g{color:var(--lime)}
+.tick{width:52px;height:52px;border-radius:50%;border:2px solid #333;display:grid;place-items:center;flex:none;transition:.15s}
+.tick svg{width:24px;height:24px;stroke:var(--ink);opacity:0}
+.tick.on{background:var(--lime);border-color:var(--lime)}
+.tick.on svg{opacity:1}
+.tick.ns{border-color:var(--err);background:rgba(255,107,91,.12)}
+.tick.ns svg{stroke:var(--err);opacity:1}
+.tick:active{transform:scale(.92)}
+.tick.busy{opacity:.4;pointer-events:none}
+.more{width:34px;height:52px;display:grid;place-items:center;color:var(--muted);flex:none}
+.more svg{width:20px;height:20px}
+.p.noshow .x b{color:var(--muted);text-decoration:line-through;text-decoration-color:#444}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:999px;font-weight:700;font-size:16px}
+.b-lime{background:var(--lime);color:var(--ink)}
+.b-dark{background:var(--card2);color:var(--text)}
+.b-out{border:1px solid #333;color:var(--text)}
+.b-err{background:rgba(255,107,91,.14);color:var(--err)}
+.btn[disabled]{opacity:.45}
+.foot{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(10,10,10,0),rgba(10,10,10,.96) 30%);display:flex;gap:10px;max-width:640px;margin:0 auto}
+.foot .btn{flex:1}
+.note{background:var(--card);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--muted);margin-top:14px;line-height:1.5}
+.note b{color:var(--text)}
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;opacity:0;pointer-events:none;transition:.2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:#111;border-radius:24px 24px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .25s ease;max-height:88vh;overflow:auto;max-width:640px;margin:0 auto}
+.sheet.on{transform:none}
+.sheet .grab{width:40px;height:5px;border-radius:9px;background:#333;margin:0 auto 14px}
+.sheet h2{font:800 22px/1.15 Archivo;letter-spacing:-.01em;margin-top:6px}
+.sheet .btn{margin-top:10px}
+.fsearch{width:100%;padding:15px 16px;border-radius:14px;background:var(--card2);border:1px solid #2c2c2c;color:var(--text);font-size:16px;margin-top:14px;outline:none}
+.fsearch:focus{border-color:var(--lime)}
+.add{padding:10px 16px;border-radius:999px;background:var(--lime);color:var(--ink);font-weight:700;font-size:14px;flex:none}
+.add[disabled]{background:var(--card2);color:var(--muted)}
+.toast{pointer-events:none;position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--text);color:var(--ink);padding:12px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.2s;z-index:30;max-width:92vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.err{background:var(--err);color:#fff}
+.load{display:flex;justify-content:center;padding:60px 0}
+.spin{width:26px;height:26px;border-radius:50%;border:3px solid #2a2a2a;border-top-color:var(--lime);animation:s .8s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.hide{display:none!important}
+.demo{background:var(--warn);color:var(--ink);font-size:13px;font-weight:600;text-align:center;padding:8px}
+</style>
+</head>
+<body>
+<div id="demoBar" class="demo hide">Demo mode with made-up members. Nothing here touches GymMaster.</div>
+<header class="top">
+ <a class="back" id="backBtn" href="/m2-app.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+ <div class="ttl" id="ttl"><img class="logo" src="/assets/m2-nav-logo.png" alt="M2"></div>
+ <span class="pill">Coach</span>
+</header>
+<main class="wrap" id="app"><div class="load"><div class="spin"></div></div></main>
+<div class="foot hide" id="foot"></div>
+<div class="scrim" id="scrim" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbwjnvxCFtmmERRtMVV6lXZBuuaOJxjkAikKKawqTXYJLFsS00v1LNIPb86q3ROPtROn/exec';
+const DEMO=/[?&]demo\b/.test(location.search);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const ICO={check:'<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+ x:'<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+ dots:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>'};
+let SESS=ls.get('m2v5.doorSess',null)||ls.get('m2coach.sess',null);
+let ST={day:'today',mine:ls.get('m2coach.mine',true),classes:null,cls:null,ro:null,timer:null,me:null};
+
+/* ---------- api ---------- */
+async function api(body){
+ if(DEMO)return demoApi(body);
+ const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({session:SESS},body))});
+ return r.json();
+}
+function toast(t,err){const el=$('toast');el.textContent=t;el.className='toast on'+(err?' err':'');clearTimeout(el._t);el._t=setTimeout(()=>el.className='toast',2600)}
+function haptic(){try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
+function initials(n){return String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()}
+function av(p){return `<div class="av">${esc(initials(p.name))}${p.photo?`<img src="${esc(p.photo)}" alt="" loading="lazy" onerror="this.remove()">`:''}</div>`}
+function t12(h){const m=String(h||'').match(/(\d+):(\d+)/);if(!m)return h||'';const H=+m[1];return (H%12||12)+(m[2]==='00'?'':':'+m[2])+(H<12?'am':'pm')}
+function fail(r){if(r&&r.signin){SESS=null;return showLogin()}if(r&&r.notcoach)return notCoach();toast((r&&r.message)||"That didn't go through. Try again.",1)}
+
+/* ---------- sign in (only if they're not already signed in to the M2 app on this phone) ---------- */
+function showLogin(msg){$('foot').classList.add('hide');setTtl();
+ $('app').innerHTML=`<span class="eb">M2 coaches</span><h1>Sign in<i>.</i></h1><p class="muted" style="margin-top:12px">Use the same email and password as the M2 app.</p>
+ <input id="em" class="fsearch" type="email" autocomplete="username" placeholder="Email"><input id="pw" class="fsearch" type="password" autocomplete="current-password" placeholder="Password">
+ <p id="lm" class="muted" style="margin-top:12px;min-height:20px;color:var(--err)">${esc(msg||'')}</p><button class="btn b-lime" id="lg" style="margin-top:8px" onclick="login()">Sign in</button>`}
+async function login(){const em=$('em').value.trim(),pw=$('pw').value,b=$('lg');if(!em||!pw){$('lm').textContent='Pop in your email and password.';return}
+ b.disabled=true;b.textContent='Signing in';let r;try{r=await api({action:'login',email:em,password:pw})}catch(e){r={ok:false,message:"Couldn't reach M2. Check your signal."}}
+ if(!r||!r.ok){b.disabled=false;b.textContent='Sign in';$('lm').textContent=(r&&r.message)||"That didn't work.";return}
+ SESS=r.session;ls.set('m2coach.sess',SESS);if(!ls.get('m2v5.doorSess',null))ls.set('m2v5.doorSess',SESS);start()}
+function notCoach(){$('foot').classList.add('hide');$('app').innerHTML=`<span class="eb">Coach mode</span><h1>Coaches only<i>.</i></h1><p class="muted" style="margin-top:12px">This part of the app is for M2 class coaches. If you coach classes and can't get in, ask Taylor to add your email.</p><a class="btn b-dark" style="margin-top:22px" href="/m2-app.html">Back to the M2 app</a>`}
+
+/* ---------- classes ---------- */
+function setTtl(main,sub){$('ttl').innerHTML=main?`<b>${esc(main)}</b><span>${esc(sub||'')}</span>`:'<img class="logo" src="/assets/m2-nav-logo.png" alt="M2">';
+ const bb=$('backBtn');if(ST.cls){bb.removeAttribute('href');bb.onclick=e=>{e.preventDefault();backToList()}}else{bb.href='/m2-app.html';bb.onclick=null}}
+async function start(){
+ if(!SESS&&!DEMO)return showLogin();
+ let me;try{me=await api({action:'coach_me'})}catch(e){me=null}
+ if(!me||!me.ok)return me?fail(me):($('app').innerHTML='<div class="empty">Couldn\'t reach M2. Check your signal and pull down to try again.</div>');
+ ST.me=me;
+ if(me.ready===false){$('app').innerHTML=`<span class="eb">Coach mode</span><h1>Nearly ready<i>.</i></h1><p class="muted" style="margin-top:12px">Coach mode still needs its GymMaster connection switched on. Taylor's on it.</p><a class="btn b-dark" style="margin-top:22px" href="?demo">Have a look at the demo</a>`;return}
+ const hash=location.hash.match(/^#c(\d+)/);if(hash)return openClass(hash[1]);
+ loadClasses();
+}
+async function loadClasses(quiet){
+ ST.cls=null;ST.ro=null;clearInterval(ST.timer);setTtl();
+ if(!quiet||!ST.classes)$('app').innerHTML='<div class="load"><div class="spin"></div></div>';
+ let r;try{r=await api({action:'coach_classes'})}catch(e){r=null}
+ if(!r||!r.ok){if(r)return fail(r);$('app').innerHTML='<div class="empty">Couldn\'t reach M2. Check your signal and try again.</div>';return}
+ ST.classes=r.classes;ST.now=r.now;drawClasses();
+ ST.timer=setInterval(()=>{if(!ST.cls&&document.visibilityState==='visible')loadClasses(true)},60000);
+}
+function clsState(c,now){now=now||Date.now();if(c.closed)return['Done','chip'];if(now>=c.startMs-10*60000&&now<c.endMs)return['On now','chip lime'];if(now>=c.endMs)return['Finished','chip'];if(c.startMs-now<90*60000)return['Starts in '+Math.max(1,Math.round((c.startMs-now)/60000))+' min','chip ok'];return[t12(c.start)+' to '+t12(c.end),'chip']}
+function drawClasses(){
+ $('foot').classList.add('hide');
+ const today=nzDay(0),tm=nzDay(1),want=ST.day==='today'?today:tm;
+ let list=(ST.classes||[]).filter(c=>c.day===want);const mineCount=list.filter(c=>c.mine).length;
+ if(ST.mine&&mineCount)list=list.filter(c=>c.mine);
+ const first=(ST.me&&ST.me.first)||'';
+ $('app').innerHTML=`<span class="eb">${first?'Hi '+esc(first):'Coach mode'}</span><h1>${ST.day==='today'?'Today':'Tomorrow'}<i>.</i></h1>
+ <div class="seg"><button class="${ST.day==='today'?'on':''}" onclick="ST.day='today';drawClasses()">Today</button><button class="${ST.day==='tomorrow'?'on':''}" onclick="ST.day='tomorrow';drawClasses()">Tomorrow</button></div>
+ <div class="row2"><span class="muted" style="font-size:14px">${list.length} class${list.length===1?'':'es'}</span>${mineCount?`<button class="sw ${ST.mine?'on':''}" onclick="ST.mine=!ST.mine;ls.set('m2coach.mine',ST.mine);drawClasses()">Just mine <i></i></button>`:''}</div>
+ ${list.length?list.map(c=>{const [st,cl]=clsState(c);const cap=c.cap||20,pct=Math.min(100,c.num/cap*100);
+  return `<button class="cls ${cl.includes('lime')?'live':''}" onclick="openClass('${c.id}')"><div class="t"><div><div class="tm">${t12(c.start)}</div><div class="nm">${esc(c.name)}</div><div class="co">${esc(c.coach||'No coach set')}</div></div><span class="${cl}">${st}</span></div>
+  <div class="bar"><span style="width:${pct}%;background:${c.num>=cap?'var(--err)':'var(--lime)'}"></span></div>
+  <div class="cnt"><span><b>${c.num}</b> / ${cap} booked</span>${c.wait?`<span><b>${c.wait}</b> waitlist</span>`:''}</div></button>`}).join(''):`<div class="empty">No classes ${ST.day==='today'?'today':'tomorrow'}.</div>`}`;
+}
+function nzDay(add){const d=new Date(Date.now()+add*864e5);return new Intl.DateTimeFormat('en-CA',{timeZone:'Pacific/Auckland',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
+function backToList(){history.replaceState(null,'',location.pathname+location.search);ST.cls=null;closeSheet();loadClasses(true);drawClasses()}
+
+/* ---------- one class ---------- */
+async function openClass(id,quiet){
+ ST.cls=id;clearInterval(ST.timer);history.replaceState(null,'',location.pathname+location.search+'#c'+id);
+ const c=(ST.classes||[]).find(x=>String(x.id)===String(id));setTtl(c?c.name:'Class',c?t12(c.start)+' · '+(c.coach||''):'');
+ if(!quiet){$('app').innerHTML='<div class="load"><div class="spin"></div></div>';$('foot').classList.add('hide')}
+ let r;try{r=await api({action:'coach_roster',id})}catch(e){r=null}
+ if(ST.cls!==id)return;
+ if(!r||!r.ok){if(r)return fail(r);if(!quiet)$('app').innerHTML='<div class="empty">Couldn\'t load the class. Check your signal.</div>';return}
+ ST.ro=r;drawRoster();
+ ST.timer=setInterval(()=>{if(ST.cls===id&&document.visibilityState==='visible'&&!$('sheet').classList.contains('on'))openClass(id,true)},20000);
+}
+function drawRoster(){
+ const r=ST.ro,c=r.cls,P=r.people;setTtl(c.name,t12(c.start)+' · '+(c.coach||''));
+ const inn=P.filter(p=>p.status==='in'),bk=P.filter(p=>p.status==='booked'),ns=P.filter(p=>p.status==='noshow');
+ const cap=c.cap||20,full=r.taken>=cap,now=Date.now(),started=now>=c.startMs;
+ const row=p=>{const st=p.status;const sub=p.gate?`<small class="g">Through the gate ${esc(p.gate)}${p.auto?' · auto':''}</small>`:st==='noshow'?'<small>No-show</small>':`<small>${esc(p.ms||'')}${p.walkin?' · walk-in':''}</small>`;
+  return `<div class="p ${st}" id="p${p.bid}">${av(p)}<div class="x"><b>${esc(p.name)}</b>${sub}</div>
+  <button class="more" onclick="personMenu('${p.bid}')" aria-label="More">${ICO.dots}</button>
+  <button class="tick ${st==='in'?'on':st==='noshow'?'ns':''}" onclick="tapTick('${p.bid}')" aria-label="${st==='in'?'Undo check in':'Check in'}">${st==='noshow'?ICO.x:ICO.check}</button></div>`};
+ $('app').innerHTML=`<span class="eb">${esc(c.day===nzDay(0)?'Today':c.day===nzDay(1)?'Tomorrow':c.day)} · ${t12(c.start)} to ${t12(c.end)}</span><h1>${esc(c.name)}<i>.</i></h1>
+ <div class="big"><div class="in"><b>${inn.length}</b><span>In</span></div><div><b>${bk.length}</b><span>Not here</span></div><div><b>${ns.length}</b><span>No-show</span></div></div>
+ <div class="capline ${full?'full':''}"><span>Spots taken</span><b>${r.taken} / ${cap}${full?' · full':''}</b></div>
+ ${!r.canIn?`<div class="note">Check-ins open an hour before the start. Anyone who comes through the front gate gets ticked off automatically.</div>`:''}
+ ${c.closed?`<div class="note"><b>Class closed.</b> Anyone still booked was marked a no-show. Tap a name to fix a mistake.</div>`:''}
+ ${bk.length?`<div class="sh"><span class="eb">Not here yet · ${bk.length}</span></div>${bk.map(row).join('')}`:''}
+ ${inn.length?`<div class="sh"><span class="eb">In · ${inn.length}</span></div>${inn.map(row).join('')}`:''}
+ ${ns.length?`<div class="sh"><span class="eb">No-shows · ${ns.length}</span></div>${ns.map(row).join('')}`:''}
+ ${!P.length?'<div class="empty">Nobody booked yet.</div>':''}
+ ${r.wait&&r.wait.length?`<div class="sh"><span class="eb">Waitlist · ${r.wait.length}</span></div>${r.wait.map(w=>`<div class="p">${av(w)}<div class="x"><b>${esc(w.name)}</b><small>Number ${w.pos} on the waitlist</small></div></div>`).join('')}`:''}
+ <p class="muted" style="font-size:13px;margin-top:22px;line-height:1.5">Ticks go straight into GymMaster. Anyone still booked ${10} minutes after the start becomes a no-show automatically.</p>`;
+ const f=$('foot');f.classList.remove('hide');
+ f.innerHTML=`<button class="btn ${full?'b-dark':'b-lime'}" onclick="openWalkin()" ${full?'disabled':''}>${full?'Class full':'Add walk-in'}</button>${!c.closed&&started&&bk.length?`<button class="btn b-err" onclick="confirmClose()">Close class</button>`:''}`;
+}
+function findP(bid){return (ST.ro.people||[]).find(p=>String(p.bid)===String(bid))}
+async function act(action,p,extra){
+ const el=document.querySelector('#p'+p.bid+' .tick');if(el)el.classList.add('busy');haptic();
+ let r;try{r=await api(Object.assign({action,id:ST.cls,bid:p.bid,mid:p.mid,name:p.name},extra||{}))}catch(e){r=null}
+ if(!r||!r.ok){if(el)el.classList.remove('busy');return fail(r)}
+ ST.ro=r;drawRoster();
+}
+function tapTick(bid){const p=findP(bid);if(!p)return;
+ if(p.status==='in')return act('coach_checkin',p,{undo:1});
+ if(!ST.ro.canIn)return toast('Check-ins open an hour before the start',1);
+ act('coach_checkin',p,{was:p.status})}
+function personMenu(bid){const p=findP(bid);if(!p)return;
+ openSheet(`${av(p)}<h2 style="margin-top:12px">${esc(p.name)}</h2><p class="muted" style="margin-top:4px">${esc(p.ms||'')}${p.gate?' · through the gate '+esc(p.gate):''}</p>
+ ${p.status!=='in'?`<button class="btn b-lime" onclick="closeSheet();tapTick('${p.bid}')">Check in</button>`:`<button class="btn b-dark" onclick="closeSheet();act('coach_checkin',findP('${p.bid}'),{undo:1})">Undo check-in</button>`}
+ ${p.status==='booked'?`<button class="btn b-err" onclick="closeSheet();act('coach_noshow',findP('${p.bid}'))">Mark as no-show</button>`:''}
+ ${p.status==='noshow'?`<button class="btn b-dark" onclick="closeSheet();act('coach_noshow',findP('${p.bid}'),{undo:1})">Clear no-show</button>`:''}
+ <button class="btn b-out" onclick="closeSheet()">Done</button>`)}
+function confirmClose(){const n=ST.ro.people.filter(p=>p.status==='booked').length;
+ openSheet(`<span class="eb">Close class</span><h2>Mark ${n} as no-show${n===1?'':'s'}?</h2><p class="muted" style="margin-top:10px">Everyone not ticked in becomes a no-show in GymMaster. You can still fix a mistake after.</p>
+ <button class="btn b-err" onclick="closeClass()">Yes, close the class</button><button class="btn b-out" onclick="closeSheet()">Not yet</button>`)}
+async function closeClass(){closeSheet();toast('Closing the class');let r;try{r=await api({action:'coach_close',id:ST.cls})}catch(e){r=null}
+ if(!r||!r.ok)return fail(r);ST.ro=r;drawRoster();toast(r.marked?r.marked+' marked as no-show':'Class closed')}
+
+/* ---------- walk-ins ---------- */
+let findT=null;
+function openWalkin(){const r=ST.ro,cap=r.cls.cap||20,left=cap-r.taken;
+ openSheet(`<span class="eb">Walk-in · ${left} spot${left===1?'':'s'} left</span><h2>Add someone to this class</h2><p class="muted" style="margin-top:6px;font-size:14px">Your call while there's room. Classes cap at ${cap}.</p>
+ <input id="fq" class="fsearch" placeholder="Search name or member number" autocomplete="off" oninput="clearTimeout(findT);findT=setTimeout(doFind,350)"><div id="fr" style="margin-top:6px"></div>`);
+ setTimeout(()=>{try{$('fq').focus()}catch(e){}},250)}
+async function doFind(){const q=$('fq').value.trim(),fr=$('fr');if(q.length<2){fr.innerHTML='';return}
+ fr.innerHTML='<div class="load" style="padding:20px 0"><div class="spin"></div></div>';
+ let r;try{r=await api({action:'coach_find',id:ST.cls,q})}catch(e){r=null}
+ if(!$('fq')||$('fq').value.trim()!==q)return;
+ if(!r||!r.ok){fr.innerHTML='';return fail(r)}
+ const inClass=new Set(ST.ro.people.filter(p=>p.status!=='noshow').map(p=>String(p.mid)));
+ fr.innerHTML=r.members.length?r.members.map(m=>`<div class="p">${av(m)}<div class="x"><b>${esc(m.name)}</b><small>${esc(m.ms||'')}</small></div>${inClass.has(String(m.mid))?'<span class="chip ok">In class</span>':`<button class="add" onclick="addWalkin('${m.mid}',this)" data-n="${esc(m.name)}">Add</button>`}</div>`).join(''):'<p class="muted" style="padding:18px 0">No one found.</p>'}
+async function addWalkin(mid,btn){btn.disabled=true;btn.textContent='Adding';haptic();
+ let r;try{r=await api({action:'coach_add',id:ST.cls,mid,name:btn.dataset.n})}catch(e){r=null}
+ if(!r||!r.ok){btn.disabled=false;btn.textContent='Add';return fail(r)}
+ ST.ro=r;closeSheet();drawRoster();toast(btn.dataset.n+' added and checked in')}
+
+/* ---------- sheet ---------- */
+function openSheet(h){$('sheet').innerHTML='<div class="grab"></div>'+h;$('sheet').classList.add('on');$('scrim').classList.add('on')}
+function closeSheet(){$('sheet').classList.remove('on');$('scrim').classList.remove('on')}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(ST.cls)openClass(ST.cls,true);else if(ST.classes)loadClasses(true)}});
+
+/* ---------- demo data (?demo) ---------- */
+const DM=(()=>{const N=['Aroha Ngata','Ben Carter','Chloe Tan','Daniel Wu','Ella Brooks','Finn Hope','Grace Lee','Hemi Walker','Isla Morgan','Jack Turner','Kiri Mason','Liam Patel','Maya Singh','Noah Reid','Olivia King','Pita Afemata','Quinn Harris','Ruby Clark','Sam Fox','Tia Martin'];
+ const now=Date.now(),hr=3600e3,mk=(off,d)=>{const s=now+off;return{startMs:s,endMs:s+hr,start:new Date(s).toTimeString().slice(0,5),end:new Date(s+hr).toTimeString().slice(0,5),day:nzDay(d)}};
+ const cls=[Object.assign({id:'1',name:'HYROX Teams',coach:'David Blint',max:20,cap:20,num:19,wait:2,mine:true},mk(-5*60000,0)),Object.assign({id:'2',name:'HYROX Strength',coach:'Rebekka Schulze',max:20,cap:20,num:12,wait:0,mine:false},mk(5*hr,0)),Object.assign({id:'3',name:'HYROX Teams',coach:'David Blint',max:20,cap:20,num:20,wait:4,mine:true},mk(24*hr,1))];
+ const ppl=N.slice(0,19).map((n,i)=>({bid:'b'+i,mid:'m'+i,name:n,photo:'',ms:['M2 Perform','M2 Daily','Flexi','Fitness Passport'][i%4],status:i<9?'in':'booked',gate:i<9?'5:'+(10+i)+'am':''}));
+ return{cls,ppl,wait:[{name:'Hemi Walker',mid:'w1',pos:1},{name:'Tia Martin',mid:'w2',pos:2}],closed:false}})();
+function demoRo(){const c=Object.assign({},DM.cls[0],{closed:DM.closed});const taken=DM.ppl.filter(p=>p.status!=='noshow').length;return{ok:true,cls:c,people:DM.ppl.map(p=>Object.assign({},p)),wait:DM.wait,taken,canIn:true}}
+async function demoApi(b){await new Promise(r=>setTimeout(r,250));const p=DM.ppl.find(x=>x.bid===b.bid);
+ switch(b.action){
+  case 'coach_me':return{ok:true,name:'David Blint',first:'David',ready:true};
+  case 'coach_classes':return{ok:true,classes:DM.cls,now:Date.now()};
+  case 'coach_roster':return demoRo();
+  case 'coach_checkin':if(p){p.status=b.undo?'booked':'in';if(b.undo)p.gate=''}return demoRo();
+  case 'coach_noshow':if(p)p.status=b.undo?'booked':'noshow';return demoRo();
+  case 'coach_close':let n=0;DM.ppl.forEach(x=>{if(x.status==='booked'){x.status='noshow';n++}});DM.closed=true;return Object.assign(demoRo(),{marked:n});
+  case 'coach_find':return{ok:true,members:[{mid:'x1',name:'Zara Edwards',ms:'M2 Daily'},{mid:'x2',name:'Zac Morgan',ms:'Flexi'},{mid:'m3',name:'Daniel Wu',ms:'M2 Perform'}].filter(m=>m.name.toLowerCase().includes(b.q.toLowerCase()))};
+  case 'coach_add':if(DM.ppl.filter(x=>x.status!=='noshow').length>=20)return{ok:false,message:'Class is full at 20. They can join the waitlist or book the next class.'};DM.ppl.push({bid:'b'+Date.now(),mid:b.mid,name:b.name,ms:'Walk-in',status:'in',walkin:true,gate:''});return demoRo();
+ }return{ok:false,message:'Unknown'}}
+
+if(DEMO){$('demoBar').classList.remove('hide')}
+start();
+</script>
+</body>
+</html>
