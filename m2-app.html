@@ -1384,7 +1384,7 @@ function messages(){const nx=nextClass(false);const L=[];
  if(S.away)L.push({id:'nudge',from:'m2',n:'M2',t:'Today',title:'Keep the momentum going',body:tier().classes&&nx?`Haven't seen you in 12 days, ${MEMBER.first}. ${TYPES[nx.c[1]].n} with ${COACHES[nx.c[2]].n} is ${rel(nx.d).toLowerCase()} at ${fmtT(nx.c[0]).full}. Want a spot?`:`Haven't seen you in 12 days, ${MEMBER.first}. The club's open until ${hr(HOURS[now.getDay()][1])} today. Even 30 minutes counts.`,act:tier().classes&&nx?['Book your spot',()=>openClass(+nx.d,nx.c[0],nx.c[1])]:['Get directions',()=>open('https://maps.apple.com/?q=M2+Training+Club','_blank')]});
  L.push({id:'bday',from:'m2',n:'M2',t:'Today',tag:'Club news',title:'M2 turns 3',body:'Birthday Open Week runs 12 to 18 October. Your mates can train free all week. Send them the link.',act:['Send the link',()=>shareOpenWeek()]});
  L.push({id:'dave1',from:'dave',n:'Coach Dave',t:'2h',body:'Big turnout for HYROX Threshold this morning. Sled times are coming down across the board. Keep turning up.'});
- if(tier().offers)L.push({id:'give',from:'m2',n:'M2',t:'Yesterday',tag:'Members only',title:'Win 12 months of Perform',body:"We're drawing one member each month in October, November and December. Ask at reception how to enter."});
+ if(tier().offers)L.push({id:'give',from:'m2',n:'M2',t:'Yesterday',tag:'Members only',title:'Win 6 months of Perform',body:"We're drawing one member each month in October, November and December. Ask at reception how to enter."});
  L.push({id:'bekka1',from:'bekka',n:'Coach Bekka',t:'Mon',body:'Saturday HYROX Teams is full again. Get on the waitlist early, spots do open up.'});
  L.push({id:'hyrox',from:'m2',n:'M2',t:'Sun',tag:'HYROX Auckland',title:Math.ceil((RACE-T0)/864e5)+' days to go',body:'HYROX Auckland is 4 to 7 February. Three HYROX formats are on the timetable to get you ready.',act:['See HYROX classes',()=>{selCat='HYROX';renderCats();renderList();goClasses()}]});
  L.push({id:'rec1',from:'rec',n:'Reception',t:'Fri',body:"Welcome to the new M2 app. Check in, book classes and track your recovery in one place. Any questions, just ask at the front desk."});
@@ -1660,7 +1660,8 @@ const BOARDS2={
 const DIVS=[['all','Everyone'],['f','Women'],['m','Men'],['40','40 and over']];
 const CEVENTS=[
  {id:'bday',d:new Date(2026,9,12),end:'18 Oct',n:'Birthday Open Week',p:'M2 turns 3. Your mates train free all week.',going:86,act:'Invite a mate',fn:"shareOpenWeek()"},
- {id:'mara',d:new Date(2026,10,2),n:'Auckland Marathon',p:'Members can win a free entry. Ask at reception how to enter.',going:31,offer:1},
+ {id:'mara',d:new Date(2026,10,2),n:'Auckland Marathon',p:'Racing? Good luck from the whole club.',going:31},
+ {id:'dd',d:new Date(2026,10,7),n:'Deadly Dozen',p:'Twelve 400m runs and twelve strength stations. Solo, pairs or relay.',going:12},
  {id:'hyrox',d:new Date(2027,1,4),end:'7 Feb',n:'HYROX Auckland',p:'Racing? Let the club know and find a Doubles partner.',going:57,partner:1}];
 function person(n){return PEOPLE.find(p=>p[0]===n)}
 function ini(n){return n.split(' ').map(x=>x[0]).join('').slice(0,2)}
@@ -2173,8 +2174,9 @@ if(LIVE){
  renderClub=function(){const el=$('clubBody');const t=tier(),vm=visitsThisMonth(),st=streak();
   const EV=[
    {s:new Date(2026,9,12),e:new Date(2026,9,18,23),n:'Birthday Open Week',p:'M2 turns 3. Anyone can train free, 12 to 18 October. Bring your mates.',act:['Invite a mate','shareOpenWeek()']},
-   {s:new Date(2026,9,1),e:new Date(2026,11,31,23),show:new Date(2026,9,1),n:'Win 12 months of Perform',p:'One member drawn each month in October, November and December. Ask at reception how to enter.',mem:1},
-   {s:new Date(2026,10,2),e:new Date(2026,10,1,23),show:new Date(2026,9,1),n:'Auckland Marathon entry',p:'We are giving away a free entry to the 2 November race. Ask at reception how to enter.',mem:1},
+   {s:new Date(2026,9,1),e:new Date(2026,11,31,23),show:new Date(2026,9,1),n:'Win 6 months of Perform',p:'One member drawn each month in October, November and December. Ask at reception how to enter.',mem:1},
+   {s:new Date(2026,10,2),e:new Date(2026,10,2,23),n:'Auckland Marathon',p:'Sunday 2 November. Racing? Good luck from the whole club. Come in after and recover in the spa, sauna and ice bath.'},
+   {s:new Date(2026,10,7),e:new Date(2026,10,7,23),n:'Deadly Dozen',p:'Saturday 7 November. Twelve 400m runs and twelve strength stations. Race solo, in pairs or as a relay team.',act:['Find out more',"window.open('https://www.deadlydozen.com/','_blank')"]},
    {s:new Date(2027,1,4),e:new Date(2027,1,7,23),n:'HYROX Auckland',p:'4 to 7 February. Three HYROX formats on the timetable every week to get you race ready.',act:['See HYROX classes',"selCat='HYROX';renderCats();renderList();goClasses()"]}];
   const evs=EV.filter(e=>now<=e.e&&(!e.mem||t.offers)).map(e=>`<div class="card evc rise"><div class="evt"><div class="d"><b>${e.s.getDate()}</b><span>${MN[e.s.getMonth()]}</span></div><div style="flex:1"><div class="h3">${e.n}</div><p class="muted small" style="margin-top:3px">${e.p}</p></div></div>${e.act?`<div class="evb"><span></span><button class="btn b-dark b-sm" onclick="${e.act[1]}">${e.act[0]}</button></div>`:''}</div>`).join('');
   const co=Object.entries(COACHES).filter(([k,c])=>!c.hide).map(([k,c])=>`<button class="co press" onclick="openCoach('${k}')">${c.img?`<img src="${c.img}" alt="Coach ${c.n}" loading="lazy">`:`<div class="ph">${c.n[0]}</div>`}${c.nw?'<i class="conew">New</i>':''}<b>${c.n}</b><span>${c.r||'Personal training'}</span></button>`).join('');
@@ -2189,7 +2191,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-02a';
+const APP_VER='2026-10-02b';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2350,9 +2352,10 @@ if(LIVE){
 }
 /* HYROX stations on Me only for members training for HYROX (or who have already logged a station time) */
 {const _rs=renderStations;renderStations=function(){_rs();const el=$('stations'),sec=el&&el.closest('.sec');if(sec)sec.style.display=((S.profile&&S.profile.goal==='hyrox')||(S.pbs||[]).some(p=>p&&p.t))?'':'none'}}
-{const _rm=renderMe;renderMe=function(){_rm();const el=$('coachCard');if(!el)return;const on=LIVE&&!!LS.get('coach',false)&&!!S.doorSess;el.style.display=on?'':'none';
-  if(on)el.innerHTML=`<button class="card dk press timer-cta" onclick="openCoach()" style="width:100%;border:0;font:inherit"><span class="ic">${ico('i-users')}</span><span style="flex:1;text-align:left"><span class="eb">For coaches</span><span class="h3" style="display:block;margin-top:6px;color:#fff">Coach mode</span><span class="small" style="display:block;color:var(--muted-d);margin-top:2px">Your classes, check-ins and no-shows</span></span>${ico('i-right','i chev')}</button>`}}
-function openCoach(){let o=document.getElementById('coachFrame');if(!o){o=document.createElement('div');o.id='coachFrame';o.style.cssText='position:fixed;inset:0;z-index:9999;background:#0A0A0A;box-sizing:border-box;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)';o.innerHTML='<iframe src="/coach.html?embed=1" style="border:0;width:100%;height:100%;display:block" allow="geolocation"></iframe>';document.body.appendChild(o)}else{o.style.display='';const f=o.querySelector('iframe');try{f.contentWindow.location.reload()}catch(e){}}try{haptic&&haptic(8)}catch(e){}}
+{const _rm=renderMe;renderMe=function(){_rm();const el=$('coachCard');if(!el)return;const on=LIVE&&!!LS.get('coach',false)&&!!S.doorSess;el.style.display=on?'':'none';if(on)setTimeout(()=>coachFrame(),1500);
+  if(on)el.innerHTML=`<button class="card dk press timer-cta" onclick="openCoachMode()" style="width:100%;border:0;font:inherit"><span class="ic">${ico('i-users')}</span><span style="flex:1;text-align:left"><span class="eb">For coaches</span><span class="h3" style="display:block;margin-top:6px;color:#fff">Coach mode</span><span class="small" style="display:block;color:var(--muted-d);margin-top:2px">Your classes, check-ins and no-shows</span></span>${ico('i-right','i chev')}</button>`}}
+function coachFrame(show){let o=document.getElementById('coachFrame');if(!o){o=document.createElement('div');o.id='coachFrame';o.style.cssText='position:fixed;inset:0;z-index:9999;background:#F3F3F0;box-sizing:border-box;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);display:none';o.innerHTML='<iframe src="/coach.html?embed=1" style="border:0;width:100%;height:100%;display:block"></iframe>';document.body.appendChild(o)}return o}
+function openCoachMode(){const o=coachFrame();o.style.display='';try{o.querySelector('iframe').contentWindow.postMessage('m2-coach-refresh',location.origin)}catch(e){}try{haptic(8)}catch(e){}}
 function closeCoach(){const o=document.getElementById('coachFrame');if(o)o.style.display='none'}
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data==='m2-coach-close')closeCoach()});
 function boot(){renderAll();renderCats();renderCoaches();setTop();
