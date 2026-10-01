@@ -950,6 +950,7 @@ svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke
         <div class="row" style="position:relative;align-items:flex-end"><div><div class="nm" id="mcName">Taylor Blackler</div><div class="no" id="mcNo">M2 004471 · Tap to check in</div></div><div class="qm" id="qm"></div></div>
       </button>
 
+      <div class="sec" id="coachCard" style="display:none"></div>
       <div class="sec" id="goalCard"></div>
       <div class="sec" id="planCard"></div>
 
@@ -1526,7 +1527,7 @@ async function liveSync(first){if(!M2_API||!S.doorSess)return false;let r;try{r=
  if(!r||!r.ok||!r.member)return false;const m=r.member;
  const me={first:m.first||'Member',last:m.last||'',no:String(m.id),email:m.email||'',phone:m.phone||'',since:m.since||'',totalvisits:m.totalvisits||0,photo:m.photo||'',memberships:r.memberships||[],demo:0};
  const idOf=m=>m&&[m.first,m.last,m.no,m.since];const before=JSON.stringify([idOf(LS.get('me',null)),S.tier,S.pass,S.doors]);LS.set('me',me);
- S.tier=r.tier||'none';save('tier');S.pass=r.pass||null;save('pass');S.doors=r.doors||null;LS.set('doors',S.doors);S.gender=m.gender||null;save('gender');
+ LS.set('coach',!!m.coach);S.tier=r.tier||'none';save('tier');S.pass=r.pass||null;save('pass');S.doors=r.doors||null;LS.set('doors',S.doors);S.gender=m.gender||null;save('gender');
  const today=dkey(T0),ks=(r.days||[]).map(d=>d.d.split('-').map(Number).join('-'));
  S.checkins=[...new Set([...ks,...S.checkins.filter(k=>k===today)])];save('checkins');LS.set('lastSync',Date.now());
  if(first||before!==JSON.stringify([idOf(me),S.tier,S.pass,S.doors]))location.reload();else renderAll();return true}
@@ -2152,7 +2153,10 @@ if(LIVE){
   if(r&&r.signin)return signOut();if(!r||!r.ok)return gmFail(r&&r.message);
   await loadClasses();if(S.bookings.includes(id)){_book(id);S.bookings=[...new Set(S.bookings)];save('bookings')}else if(S.wait.includes(id)){after(()=>toast("You're on the waitlist"))}else{after(()=>toast('Done'))}};
  joinWait=function(id){return book(id,true)};
- cancelBk=async function(id){const g=GMC[id];if(!GM_ON||!g||!g.bookedId)return _cancel(id);let r;try{r=await api({action:'cancel',session:S.doorSess,id:g.bookedId})}catch(e){r={ok:false}}
+ cancelBk=async function(id,sure){const g=GMC[id];if(!GM_ON||!g||!g.bookedId)return _cancel(id);
+  const at=new Date(g.day+'T'+(g.start||'00:00')+':00').getTime(),late=at>Date.now()&&at-Date.now()<12*3600e3;
+  if(late&&!sure){openSheet(`<span class="eb">Late cancel</span><h2 style="margin-top:8px">Less than 12 hours to go<span class="od">.</span></h2><p class="muted" style="margin-top:10px">Classes need 12 hours notice. You can still cancel so someone on the waitlist gets your spot, but it counts as a late cancel.</p>`,`<button class="btn b-dark b-full" onclick="closeSheet();cancelBk('${id}',1)">Cancel anyway</button><button class="btn b-out b-full" onclick="closeSheet()">Keep my spot</button>`);return}
+  let r;try{r=await api({action:'cancel',session:S.doorSess,id:g.bookedId,day:g.day,start:g.start,name:g.name})}catch(e){r={ok:false}}
   if(!r||!r.ok)return gmFail(r&&r.message);
   forgetBooking(g.bookedId);g.bookedId=null;g.num=Math.max(0,(g.num||1)-1);S.bookings=S.bookings.filter(x=>x!==id);save('bookings');
   after(()=>{toast('Booking cancelled');renderAll();renderDays();renderList()});loadClasses()};
@@ -2185,7 +2189,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-01i';
+const APP_VER='2026-10-01j';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2346,6 +2350,8 @@ if(LIVE){
 }
 /* HYROX stations on Me only for members training for HYROX (or who have already logged a station time) */
 {const _rs=renderStations;renderStations=function(){_rs();const el=$('stations'),sec=el&&el.closest('.sec');if(sec)sec.style.display=((S.profile&&S.profile.goal==='hyrox')||(S.pbs||[]).some(p=>p&&p.t))?'':'none'}}
+{const _rm=renderMe;renderMe=function(){_rm();const el=$('coachCard');if(!el)return;const on=LIVE&&!!LS.get('coach',false)&&!!S.doorSess;el.style.display=on?'':'none';
+  if(on)el.innerHTML=`<a class="card dk press timer-cta" href="/coach.html" style="text-decoration:none"><span class="ic">${ico('i-users')}</span><span style="flex:1;text-align:left"><span class="eb">For coaches</span><span class="h3" style="display:block;margin-top:6px;color:#fff">Coach mode</span><span class="small" style="display:block;color:var(--muted-d);margin-top:2px">Your classes, check-ins and no-shows</span></span>${ico('i-right','i chev')}</a>`}}
 function boot(){renderAll();renderCats();renderCoaches();setTop();
  const tick=()=>{const d=new Date();$('sbTime').textContent=(d.getHours()%12||12)+':'+String(d.getMinutes()).padStart(2,'0')};tick();setInterval(tick,15e3);
  const v=$('heroVid');v.addEventListener('error',()=>v.remove(),true);['loadeddata','canplay','stalled','suspend'].forEach(ev=>v.addEventListener(ev,()=>{try{playHero()}catch(e){}}));setTimeout(()=>{if(v.isConnected&&v.readyState<2){try{v.load()}catch(e){}}},4000);
