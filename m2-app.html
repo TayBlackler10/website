@@ -2076,14 +2076,18 @@ function gmType(c){const n=clean(c.name)||'Class';for(const k in TYPES)if(TYPES[
  const k='gm'+(c.classid||n.replace(/\W/g,'').toLowerCase());if(!TYPES[k])TYPES[k]={n,cat:gmCat(n),int:2,lvl:'All levels',img:null,d:clean(c.desc)||''};return k}
 const COACH_ALIAS={rebekka:'bekka',david:'dave',matty:'matthew',matt:'matthew',madeleine:'madeliene',madeline:'madeliene'};
 function gmCoach(c){const f=clean((c.coach||'').trim().split(/\s+/)[0])||'M2';let k=f.toLowerCase();k=COACH_ALIAS[k]||k;if(COACHES[k])return k;const g='gm_'+k.replace(/\W/g,'');if(!COACHES[g])COACHES[g]={n:f,img:/^https:/.test(c.coachPhoto||'')?c.coachPhoto:null,hide:1};return g}
+/* bookings cancelled from this phone: GymMaster can keep listing them for a while, so never show them as booked again */
+let CXL=new Set((LS.get('cxl',[])||[]).map(String));
+function forgetBooking(bid){if(bid==null)return;CXL.add(String(bid));LS.set('cxl',[...CXL].slice(-60))}
 function applyClasses(r){if(!r||!r.ok||!Array.isArray(r.classes)||!r.classes.length){GM_ON=false;return}
  GM_ON=true;GMC={};for(const k in TT)TT[k]=[];const bk=[],wl=[];
  r.classes.forEach(c=>{const d=isoDay(c.day);if(!d||!/^\d\d:\d\d$/.test(c.start||''))return;const off=Math.round((d-T0)/864e5);if(off<0||off>6)return;
   const e=[c.start,gmType(c),gmCoach(c)];TT[d.getDay()].push(e);const id=cid(d,e);
   const w=(r.waits||[]).find(x=>x.day===c.day&&x.start===c.start&&String(x.name||'').toLowerCase()===String(c.name||'').toLowerCase());
   const lc=s=>String(s||'').toLowerCase().trim(),same=(r.classes||[]).filter(x=>x.day===c.day&&x.start===c.start).length;
-  const b=c.bookedId?null:(r.booked||[]).find(x=>x.day===c.day&&x.start===c.start&&(lc(x.name)===lc(c.name)||same===1||String(x.parent||'')===String(c.id)));
-  const bId=c.bookedId||(b?b.id:null);
+  const gone=x=>x!=null&&CXL.has(String(x));
+  const b=(c.bookedId&&!gone(c.bookedId))?null:(r.booked||[]).find(x=>!gone(x.id)&&!x.cancelled&&x.day===c.day&&x.start===c.start&&(lc(x.name)===lc(c.name)||same===1||String(x.parent||'')===String(c.id)));
+  const bId=(c.bookedId&&!gone(c.bookedId))?c.bookedId:(b?b.id:null);
   GMC[id]=Object.assign({},c,{waitId:w?w.id:null,bookedId:bId,num:bId&&!(c.num>0)?1:c.num});if(bId)bk.push(id);if(w)wl.push(id)});
  for(const k in TT)TT[k].sort((a,b)=>a[0].localeCompare(b[0]));
  S.bookings=bk;save('bookings');S.wait=wl;save('wait')}
@@ -2114,7 +2118,9 @@ if(LIVE){
   await loadClasses();if(S.bookings.includes(id)){_book(id);S.bookings=[...new Set(S.bookings)];save('bookings')}else if(S.wait.includes(id)){after(()=>toast("You're on the waitlist"))}else{after(()=>toast('Done'))}};
  joinWait=function(id){return book(id,true)};
  cancelBk=async function(id){const g=GMC[id];if(!GM_ON||!g||!g.bookedId)return _cancel(id);let r;try{r=await api({action:'cancel',session:S.doorSess,id:g.bookedId})}catch(e){r={ok:false}}
-  if(!r||!r.ok)return gmFail(r&&r.message);await loadClasses();after(()=>toast('Booking cancelled'))};
+  if(!r||!r.ok)return gmFail(r&&r.message);
+  forgetBooking(g.bookedId);g.bookedId=null;g.num=Math.max(0,(g.num||1)-1);S.bookings=S.bookings.filter(x=>x!==id);save('bookings');
+  after(()=>{toast('Booking cancelled');renderAll();renderDays();renderList()});loadClasses()};
  leaveWait=async function(id){const g=GMC[id];if(!GM_ON||!g||!g.waitId)return _leave(id);let r;try{r=await api({action:'cancel',session:S.doorSess,id:g.waitId,waitlist:1})}catch(e){r={ok:false}}
   if(!r||!r.ok)return gmFail(r&&r.message);await loadClasses();after(()=>toast('Off the waitlist'))};
  reqUpgrade=function(){mailReception('Membership upgrade','Hi team, I would like to change my membership.')};
@@ -2144,7 +2150,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-01d';
+const APP_VER='2026-10-01e';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
