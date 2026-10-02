@@ -3,6 +3,10 @@ main = "src/worker.js"
 compatibility_date = "2026-09-01"
 workers_dev = true
 
+# Keep logs so failed nightly copies and balance checks can be seen in the Cloudflare dashboard.
+[observability]
+enabled = true
+
 # Nightly copy from GymMaster at 2:15am NZ daylight time (1:15am in winter).
 [triggers]
 crons = ["15 13 * * *", "*/15 * * * *"]
