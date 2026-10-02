@@ -74,6 +74,7 @@ export default {
       if (m) return json(await memberDetail(env, who, can, +m[1]));
       if (url.pathname === "/api/staff-admin") return json(req.method === "POST" ? await saveStaff(env, who, can, await req.json()) : await staffAdmin(env, can));
       if (url.pathname === "/api/report") return await report(env, can, url.searchParams);
+      if (url.pathname === "/api/gm-probe") return json(await gmProbe(env, can, url.searchParams));
       if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
@@ -979,6 +980,56 @@ async function saveStaff(env, who, can, b) {
     await env.DB.prepare("INSERT INTO staff(name, email, role, active, list_order) VALUES (?, ?, ?, ?, ?)").bind(name, email, role, active, order).run();
   }
   return { ok: true, outsideDomain: !email.endsWith("@m2club.co.nz") };
+}
+
+/* ---------------- GymMaster live access ---------------- */
+// Portal API calls. "low" = GM_API_KEY, "high" = GM_STAFF_KEY, "token" = act as a member
+// (high key + member id -> short-lived member token, like the join worker's chase).
+const GM_ROOT = "https://m2trainingclub.gymmasteronline.com/portal/api";
+async function gmCall(env, version, path, { auth = "low", member = null, params = {}, method = "GET", body = null } = {}) {
+  const u = new URL(GM_ROOT + "/" + version + path);
+  const key = auth === "low" ? env.GM_API_KEY : env.GM_STAFF_KEY;
+  if (!key) throw new Error(auth === "low" ? "GM_API_KEY is not set" : "GM_STAFF_KEY is not set");
+  let token = null;
+  if (member) token = await gmMemberToken(env, member);
+  const all = { api_key: key, ...(token ? { token } : {}), ...params };
+  let init = { method };
+  if (method === "GET") for (const [k, v] of Object.entries(all)) { if (v !== undefined && v !== null && v !== "") u.searchParams.set(k, v); }
+  else {
+    const f = new URLSearchParams();
+    for (const [k, v] of Object.entries({ ...all, ...(body || {}) })) if (v !== undefined && v !== null && v !== "") f.set(k, typeof v === "object" ? JSON.stringify(v) : v);
+    init = { method, headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: f };
+  }
+  const r = await fetch(u.toString(), init);
+  const t = await r.text();
+  try { return JSON.parse(t); } catch { return { error: "GymMaster replied " + r.status }; }
+}
+const tokenCache = new Map();
+async function gmMemberToken(env, memberId) {
+  const hit = tokenCache.get(memberId);
+  if (hit && hit.exp > Date.now()) return hit.token;
+  const f = new URLSearchParams({ api_key: env.GM_STAFF_KEY, memberid: String(memberId) });
+  const d = await fetch(GM_ROOT + "/v1/login", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: f }).then(r => r.json());
+  const token = d && d.result && d.result.token;
+  if (!token) throw new Error("GymMaster wouldn't open that member (" + (d.error || "no token") + ")");
+  tokenCache.set(memberId, { token, exp: Date.now() + 10 * 60_000 });
+  return token;
+}
+
+// Owner-only window into GymMaster's raw replies, for building and fixing the data feeds.
+const PROBE_PATHS = ["/booking/classes/schedule", "/booking/classes/filter_options", "/booking/classes", "/member/outstandingbalance", "/member/memberships",
+  "/member/bookings", "/member/bookings/past", "/member/visits/monthly", "/member/accounthistory", "/member/profile", "/settings", "/companies", "/memberships"];
+async function gmProbe(env, can, q) {
+  if (!can.settings) return { error: "Owners only" };
+  const v = q.get("v") === "v2" ? "v2" : "v1", path = q.get("path") || "";
+  const ok = PROBE_PATHS.includes(path) || /^\/booking\/classes\/\d+(\/attendees)?$/.test(path);
+  if (!ok) return { error: "Path not allowed" };
+  const params = {};
+  for (const [k, val] of q) if (!["v", "path", "auth", "member"].includes(k)) params[k] = val;
+  try {
+    const d = await gmCall(env, v, path, { auth: q.get("auth") === "high" ? "high" : "low", member: q.get("member") ? +q.get("member") : null, params });
+    return { ok: true, data: d };
+  } catch (e) { return { ok: false, error: String(e.message || e) }; }
 }
 
 /* ---------------- settings (owners) ---------------- */
