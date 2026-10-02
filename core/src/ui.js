@@ -62,6 +62,10 @@ h1{font-size:32px}h2{font-size:21px}h3{font-size:16px}
 .cam video,.cam canvas,.cam .view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cam .ring{position:absolute;inset:8%;border:3px dashed rgba(223,255,0,.8);border-radius:50%;pointer-events:none}
 .photoRow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.tbl{border-collapse:collapse;width:100%;font-size:13.5px}
+.tbl th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl tr[data-member]:hover td{background:var(--tile)}
 .search{display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:0 16px;height:48px;border:1px solid var(--line)}
 .search input{border:0;outline:0;flex:1;min-width:0;background:transparent}
 .list .r{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 6px;border-top:1px solid var(--line);cursor:pointer}
@@ -115,7 +119,10 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
+<button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
+<button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
 <button class="nav" data-go="import" id="navImport" hidden>Import from GymMaster</button>
+<button class="nav" data-go="settings" id="navSettings" hidden>Settings</button>
 </nav>
 <div class="me"><div class="av" id="meAv"></div><div><span id="meName"></span><small id="meRole"></small></div></div>
 </aside>
@@ -189,6 +196,52 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <input id="lookTag" class="tagbox" autocomplete="off" placeholder="Scan tag">
 <div id="lookRes"></div>
 </section>
+</section>
+
+<!-- REPORTS -->
+<section data-view="reports" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+<div style="margin-right:auto"><div class="eyebrow">Your GymMaster favourites</div><h1>Reports<span class="dot">.</span></h1></div>
+<a class="btn line" id="repCsv" href="#">Download CSV</a>
+</div>
+<div class="chips" id="repKinds" style="margin-bottom:12px"></div>
+<div id="repDates" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px" hidden><label class="fld">From<input type="date" id="repFrom"></label><label class="fld">To<input type="date" id="repTo"></label></div>
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px"><h2 id="repTitle">Report</h2><span class="muted" id="repCount"></span></div><div style="overflow-x:auto" id="repTable"><div class="muted">Loading...</div></div></section>
+</section>
+
+<!-- STAFF -->
+<section data-view="staff" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Staff and access<span class="dot">.</span></h1></div>
+<div class="row2">
+<section class="card"><h2>Team</h2><p class="muted" style="margin:0">Everyone signs in with their own email and a code. Their role decides what they see: only owners see business numbers, trainers see only their own clients.</p><div class="list" id="staffList"><div class="muted">Loading...</div></div></section>
+<section class="card"><h2 id="stTitle">Add someone</h2>
+<input type="hidden" id="stId">
+<label class="fld">Name<input id="stName" autocomplete="off"></label>
+<label class="fld">Email they sign in with<input id="stEmail" type="email" autocomplete="off"></label>
+<label class="fld">Role<select id="stRole"><option value="reception">Reception</option><option value="trainer">Trainer</option><option value="coach">Coach</option><option value="manager">Manager</option><option value="owner">Owner</option></select></label>
+<label class="fld">Order for free PT leads (lower gets them first)<input id="stOrder" type="number" value="100"></label>
+<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="stActive" checked> Can sign in</label>
+<div class="err" id="stErr"></div><div id="stOk"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark" id="stSave">Save</button><button class="btn line" id="stNew">Clear</button></div>
+<p class="muted" style="margin:0;font-size:13px">People with an @m2club.co.nz email can sign in straight away. Anyone on Gmail or another address also needs adding to the sign-in rule in Cloudflare (Zero Trust, Access, m2-core policy).</p>
+</section>
+</div>
+</section>
+
+<!-- SETTINGS -->
+<section data-view="settings" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Settings<span class="dot">.</span></h1></div>
+<div class="row2">
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Club rules</h2><p class="muted" style="margin:0">Change a number and press Save. It applies straight away and is logged.</p><div id="setRules"></div></section>
+<section class="card"><h2>Club details</h2><dl class="kv" id="setClub"></dl></section>
+</div>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Connections</h2><div class="list" id="setInt"></div></section>
+<section class="card"><h2>Last copies</h2><div class="hist" id="setSync"></div></section>
+</div>
+</div>
+<section class="card" style="margin-top:18px"><h2>Membership types</h2><p class="muted" style="margin:0">GymMaster's types and the plan each one counts as in the Core. Prices and new types still come from GymMaster while it bills.</p><div style="overflow-x:auto" id="setPlans"></div></section>
 </section>
 
 <!-- IMPORT -->
@@ -329,6 +382,9 @@ function show(v){
  if(v==="add")startAdd();
  if(v==="tag")setTimeout(function(){$("#lookTag").focus()},50);
  if(v==="passport")loadPassport();
+ if(v==="reports")loadReport();
+ if(v==="staff")loadStaff();
+ if(v==="settings")loadSettings();
  if(v==="members")setTimeout(function(){$("#q").focus()},50);
 }
 document.addEventListener("click",function(e){var b=e.target.closest("[data-go]");if(b){e.preventDefault();show(b.dataset.go)}});
@@ -341,7 +397,8 @@ get("/api/me").then(function(me){
  $("#hello").innerHTML="Morning, "+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  var h=new Date().getHours();if(h>=12)$("#hello").innerHTML=(h<17?"Afternoon, ":"Evening, ")+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  if(me.can.members===true)$("#navFp").hidden=false;
- if(me.can.settings)$("#navImport").hidden=false;
+ if(me.can.settings){$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
+ if(me.can.collections)$("#navReports").hidden=false;
  if(me.can.add){$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
  loadToday();
  if(me.can.business)loadBiz();
@@ -580,6 +637,58 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-phot
 // Add member: photo before saving.
 var PHOTO=null;
 $("#aPhotoBtn").addEventListener("click",function(){openCam(($("#first").value+" "+$("#last").value).trim(),function(url){PHOTO=url;$("#aFace").innerHTML='<img src="'+url+'" alt="New member photo">';$("#aPhotoBtn").textContent="Retake photo";$("#aNoPhoto").checked=false})});
+
+/* ---------- reports ---------- */
+var REP={kind:"current_members"};
+function repQuery(){var q="kind="+REP.kind;if(!$("#repDates").hidden&&$("#repFrom").value)q+="&from="+$("#repFrom").value+"&to="+$("#repTo").value;return q}
+function loadReport(){
+ get("/api/report?"+repQuery()).then(function(d){
+  if(d.error){$("#repTable").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  $("#repKinds").innerHTML=d.reports.map(function(r){return '<button class="chip'+(r.kind===d.kind?" on":"")+'" data-rk="'+r.kind+'">'+esc(r.title)+'</button>'}).join("");
+  $("#repDates").hidden=!d.dates;if(d.dates){$("#repFrom").value=d.from;$("#repTo").value=d.to}
+  $("#repTitle").textContent=d.title;$("#repCount").textContent=d.total.toLocaleString("en-NZ")+(d.total>500?" (first 500 shown, all in the CSV)":"");
+  $("#repCsv").href="/api/report?"+repQuery()+"&format=csv";
+  $("#repTable").innerHTML=d.rows.length?'<table class="tbl"><thead><tr>'+d.columns.map(function(c){return '<th>'+esc(c)+'</th>'}).join("")+'</tr></thead><tbody>'+d.rows.map(function(r){return '<tr'+(r.ID?' data-member="'+r.ID+'" style="cursor:pointer"':"")+'>'+d.columns.map(function(c){var v=r[c];return '<td>'+esc(v==null?"":v)+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table>':'<div class="muted">Nothing for this one.</div>';
+ });
+}
+$("#repKinds").addEventListener("click",function(e){var b=e.target.closest("[data-rk]");if(!b)return;REP.kind=b.dataset.rk;$("#repFrom").value="";$("#repTo").value="";loadReport()});
+$("#repFrom").addEventListener("change",loadReport);$("#repTo").addEventListener("change",loadReport);
+
+/* ---------- settings ---------- */
+var FAMS={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",transporter:"Transporter",passport:"Fitness Passport",pass:"Visit pass",pool:"Pool",trial:"Trial",challenge:"Challenge",staff:"Staff",other:"Other"};
+function loadSettings(){
+ get("/api/settings").then(function(d){
+  if(d.error){$("#setRules").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  var g="";$("#setRules").innerHTML=d.settings.map(function(s){var h=(s.group!==g?'<div class="eyebrow" style="margin-top:14px">'+esc(s.group)+'</div>':"");g=s.group;
+   return h+'<div class="person" data-set="'+esc(s.key)+'"><label class="fld">'+esc(s.label)+'<input class="setIn" value="'+esc(s.value)+'"'+(s.type==="tiers"?"":' inputmode="decimal"')+'></label><div style="display:flex;gap:8px;align-items:center"><button class="btn dark sm" data-setsave="1">Save</button><span class="muted setMsg"></span></div></div>'}).join("");
+  $("#setClub").innerHTML=[["Name",d.club.name],["Address",d.club.address],["Phone",d.club.phone],["Email",d.club.email],["Hours",d.club.hours]].map(function(x){return '<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>'}).join("");
+  $("#setInt").innerHTML=d.integrations.map(function(i){var good=/^(Connected|Set up|Cloudflare)/.test(i.status);return '<div class="person"><div class="top"><b>'+esc(i.name)+'</b> <span class="pill'+(good?" ok":" warn")+'">'+esc(i.status)+'</span></div><div class="muted">'+esc(i.detail)+'</div></div>'}).join("");
+  $("#setSync").innerHTML=d.sync.map(function(x){return '<div><span>'+esc(day(x.finished_at))+'</span><span>'+esc(x.source==="gymmaster_csv"?"Import from GymMaster":x.source==="gymmaster_members"?"Nightly GymMaster copy":x.source)+' '+(x.ok?'<span class="pill ok">OK, '+(x.rows_changed||0)+' rows</span>':'<span class="pill warn">'+esc(x.error||"Failed")+'</span>')+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>';
+  $("#setPlans").innerHTML='<table class="tbl"><thead><tr><th>GymMaster type</th><th>Category</th><th>Counts as</th><th>Billing</th><th>Members</th><th></th></tr></thead><tbody>'+d.plans.map(function(p){return '<tr><td>'+esc(p.name)+'</td><td>'+esc(p.category||"")+'</td><td>'+esc(FAMS[p.family]||p.family)+(p.flexi?", Flexi":"")+(p.corporate?", Corporate"+(p.employer?" ("+esc(p.employer)+")":""):"")+'</td><td>'+esc(p.frequency||"")+'</td><td>'+p.members+'</td><td>'+(p.legacy?'<span class="pill">Existing only</span>':"")+'</td></tr>'}).join("")+'</tbody></table>';
+ });
+}
+$("#setRules").addEventListener("click",function(e){var b=e.target.closest("[data-setsave]");if(!b)return;var box=b.closest("[data-set]"),m=box.querySelector(".setMsg");
+ post("/api/settings",{key:box.dataset.set,value:box.querySelector(".setIn").value}).then(function(r){if(!r.ok){m.textContent=r.error;m.style.color="var(--red)";return}box.querySelector(".setIn").value=r.value;m.style.color="";m.textContent="Saved"})});
+
+/* ---------- staff and access ---------- */
+var ROLE_N={owner:"Owner",manager:"Manager",reception:"Reception",trainer:"Trainer",coach:"Coach"};
+function loadStaff(){
+ get("/api/staff-admin").then(function(d){
+  if(d.error){$("#staffList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  $("#staffList").innerHTML=d.staff.map(function(s){return '<div class="r" data-st="'+esc(JSON.stringify(s))+'" style="cursor:pointer'+(s.active?"":";opacity:.5")+'"><span><b>'+esc(s.name)+'</b> <span class="muted">'+esc(s.email)+'</span></span><span class="pill'+(s.role==="owner"?" dark":"")+'">'+esc(ROLE_N[s.role]||s.role)+(s.active?"":", off")+'</span></div>'}).join("");
+ });
+}
+function stFill(s){s=s||{};$("#stId").value=s.id||"";$("#stName").value=s.name||"";$("#stEmail").value=s.email||"";$("#stRole").value=s.role||"reception";$("#stOrder").value=s.list_order==null?100:s.list_order;$("#stActive").checked=s.active!==0;$("#stTitle").textContent=s.id?"Edit "+s.name:"Add someone";$("#stErr").textContent="";$("#stOk").innerHTML=""}
+$("#staffList").addEventListener("click",function(e){var r=e.target.closest("[data-st]");if(r)stFill(JSON.parse(r.dataset.st))});
+$("#stNew").addEventListener("click",function(){stFill(null)});
+$("#stSave").addEventListener("click",function(){
+ $("#stErr").textContent="";
+ post("/api/staff-admin",{id:$("#stId").value||null,name:$("#stName").value,email:$("#stEmail").value,role:$("#stRole").value,list_order:$("#stOrder").value,active:$("#stActive").checked}).then(function(r){
+  if(!r.ok){$("#stErr").textContent=r.error;return}
+  var msg='<div class="ok">Saved.'+(r.outsideDomain?" This email isn't @m2club.co.nz, so also add it to the m2-core sign-in rule in Cloudflare.":" They can sign in now with their email and a code.")+'</div>';
+  loadStaff();if(!$("#stId").value)stFill(null);$("#stOk").innerHTML=msg;
+ });
+});
 
 /* ---------- import from GymMaster ---------- */
 // Same rules as scripts/import_gymmaster_csv.py, run in the browser so the file goes

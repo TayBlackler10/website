@@ -79,6 +79,10 @@ h1{font-size:32px}h2{font-size:21px}h3{font-size:16px}
 .cam video,.cam canvas,.cam .view img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cam .ring{position:absolute;inset:8%;border:3px dashed rgba(223,255,0,.8);border-radius:50%;pointer-events:none}
 .photoRow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.tbl{border-collapse:collapse;width:100%;font-size:13.5px}
+.tbl th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl tr[data-member]:hover td{background:var(--tile)}
 .search{display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:0 16px;height:48px;border:1px solid var(--line)}
 .search input{border:0;outline:0;flex:1;min-width:0;background:transparent}
 .list .r{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 6px;border-top:1px solid var(--line);cursor:pointer}
@@ -132,7 +136,10 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
+<button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
+<button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
 <button class="nav" data-go="import" id="navImport" hidden>Import from GymMaster</button>
+<button class="nav" data-go="settings" id="navSettings" hidden>Settings</button>
 </nav>
 <div class="me"><div class="av" id="meAv"></div><div><span id="meName"></span><small id="meRole"></small></div></div>
 </aside>
@@ -206,6 +213,52 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <input id="lookTag" class="tagbox" autocomplete="off" placeholder="Scan tag">
 <div id="lookRes"></div>
 </section>
+</section>
+
+<!-- REPORTS -->
+<section data-view="reports" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+<div style="margin-right:auto"><div class="eyebrow">Your GymMaster favourites</div><h1>Reports<span class="dot">.</span></h1></div>
+<a class="btn line" id="repCsv" href="#">Download CSV</a>
+</div>
+<div class="chips" id="repKinds" style="margin-bottom:12px"></div>
+<div id="repDates" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px" hidden><label class="fld">From<input type="date" id="repFrom"></label><label class="fld">To<input type="date" id="repTo"></label></div>
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px"><h2 id="repTitle">Report</h2><span class="muted" id="repCount"></span></div><div style="overflow-x:auto" id="repTable"><div class="muted">Loading...</div></div></section>
+</section>
+
+<!-- STAFF -->
+<section data-view="staff" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Staff and access<span class="dot">.</span></h1></div>
+<div class="row2">
+<section class="card"><h2>Team</h2><p class="muted" style="margin:0">Everyone signs in with their own email and a code. Their role decides what they see: only owners see business numbers, trainers see only their own clients.</p><div class="list" id="staffList"><div class="muted">Loading...</div></div></section>
+<section class="card"><h2 id="stTitle">Add someone</h2>
+<input type="hidden" id="stId">
+<label class="fld">Name<input id="stName" autocomplete="off"></label>
+<label class="fld">Email they sign in with<input id="stEmail" type="email" autocomplete="off"></label>
+<label class="fld">Role<select id="stRole"><option value="reception">Reception</option><option value="trainer">Trainer</option><option value="coach">Coach</option><option value="manager">Manager</option><option value="owner">Owner</option></select></label>
+<label class="fld">Order for free PT leads (lower gets them first)<input id="stOrder" type="number" value="100"></label>
+<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="stActive" checked> Can sign in</label>
+<div class="err" id="stErr"></div><div id="stOk"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark" id="stSave">Save</button><button class="btn line" id="stNew">Clear</button></div>
+<p class="muted" style="margin:0;font-size:13px">People with an @m2club.co.nz email can sign in straight away. Anyone on Gmail or another address also needs adding to the sign-in rule in Cloudflare (Zero Trust, Access, m2-core policy).</p>
+</section>
+</div>
+</section>
+
+<!-- SETTINGS -->
+<section data-view="settings" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Settings<span class="dot">.</span></h1></div>
+<div class="row2">
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Club rules</h2><p class="muted" style="margin:0">Change a number and press Save. It applies straight away and is logged.</p><div id="setRules"></div></section>
+<section class="card"><h2>Club details</h2><dl class="kv" id="setClub"></dl></section>
+</div>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Connections</h2><div class="list" id="setInt"></div></section>
+<section class="card"><h2>Last copies</h2><div class="hist" id="setSync"></div></section>
+</div>
+</div>
+<section class="card" style="margin-top:18px"><h2>Membership types</h2><p class="muted" style="margin:0">GymMaster's types and the plan each one counts as in the Core. Prices and new types still come from GymMaster while it bills.</p><div style="overflow-x:auto" id="setPlans"></div></section>
 </section>
 
 <!-- IMPORT -->
@@ -346,6 +399,9 @@ function show(v){
  if(v==="add")startAdd();
  if(v==="tag")setTimeout(function(){$("#lookTag").focus()},50);
  if(v==="passport")loadPassport();
+ if(v==="reports")loadReport();
+ if(v==="staff")loadStaff();
+ if(v==="settings")loadSettings();
  if(v==="members")setTimeout(function(){$("#q").focus()},50);
 }
 document.addEventListener("click",function(e){var b=e.target.closest("[data-go]");if(b){e.preventDefault();show(b.dataset.go)}});
@@ -358,7 +414,8 @@ get("/api/me").then(function(me){
  $("#hello").innerHTML="Morning, "+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  var h=new Date().getHours();if(h>=12)$("#hello").innerHTML=(h<17?"Afternoon, ":"Evening, ")+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  if(me.can.members===true)$("#navFp").hidden=false;
- if(me.can.settings)$("#navImport").hidden=false;
+ if(me.can.settings){$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
+ if(me.can.collections)$("#navReports").hidden=false;
  if(me.can.add){$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
  loadToday();
  if(me.can.business)loadBiz();
@@ -597,6 +654,58 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-phot
 // Add member: photo before saving.
 var PHOTO=null;
 $("#aPhotoBtn").addEventListener("click",function(){openCam(($("#first").value+" "+$("#last").value).trim(),function(url){PHOTO=url;$("#aFace").innerHTML='<img src="'+url+'" alt="New member photo">';$("#aPhotoBtn").textContent="Retake photo";$("#aNoPhoto").checked=false})});
+
+/* ---------- reports ---------- */
+var REP={kind:"current_members"};
+function repQuery(){var q="kind="+REP.kind;if(!$("#repDates").hidden&&$("#repFrom").value)q+="&from="+$("#repFrom").value+"&to="+$("#repTo").value;return q}
+function loadReport(){
+ get("/api/report?"+repQuery()).then(function(d){
+  if(d.error){$("#repTable").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  $("#repKinds").innerHTML=d.reports.map(function(r){return '<button class="chip'+(r.kind===d.kind?" on":"")+'" data-rk="'+r.kind+'">'+esc(r.title)+'</button>'}).join("");
+  $("#repDates").hidden=!d.dates;if(d.dates){$("#repFrom").value=d.from;$("#repTo").value=d.to}
+  $("#repTitle").textContent=d.title;$("#repCount").textContent=d.total.toLocaleString("en-NZ")+(d.total>500?" (first 500 shown, all in the CSV)":"");
+  $("#repCsv").href="/api/report?"+repQuery()+"&format=csv";
+  $("#repTable").innerHTML=d.rows.length?'<table class="tbl"><thead><tr>'+d.columns.map(function(c){return '<th>'+esc(c)+'</th>'}).join("")+'</tr></thead><tbody>'+d.rows.map(function(r){return '<tr'+(r.ID?' data-member="'+r.ID+'" style="cursor:pointer"':"")+'>'+d.columns.map(function(c){var v=r[c];return '<td>'+esc(v==null?"":v)+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table>':'<div class="muted">Nothing for this one.</div>';
+ });
+}
+$("#repKinds").addEventListener("click",function(e){var b=e.target.closest("[data-rk]");if(!b)return;REP.kind=b.dataset.rk;$("#repFrom").value="";$("#repTo").value="";loadReport()});
+$("#repFrom").addEventListener("change",loadReport);$("#repTo").addEventListener("change",loadReport);
+
+/* ---------- settings ---------- */
+var FAMS={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",transporter:"Transporter",passport:"Fitness Passport",pass:"Visit pass",pool:"Pool",trial:"Trial",challenge:"Challenge",staff:"Staff",other:"Other"};
+function loadSettings(){
+ get("/api/settings").then(function(d){
+  if(d.error){$("#setRules").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  var g="";$("#setRules").innerHTML=d.settings.map(function(s){var h=(s.group!==g?'<div class="eyebrow" style="margin-top:14px">'+esc(s.group)+'</div>':"");g=s.group;
+   return h+'<div class="person" data-set="'+esc(s.key)+'"><label class="fld">'+esc(s.label)+'<input class="setIn" value="'+esc(s.value)+'"'+(s.type==="tiers"?"":' inputmode="decimal"')+'></label><div style="display:flex;gap:8px;align-items:center"><button class="btn dark sm" data-setsave="1">Save</button><span class="muted setMsg"></span></div></div>'}).join("");
+  $("#setClub").innerHTML=[["Name",d.club.name],["Address",d.club.address],["Phone",d.club.phone],["Email",d.club.email],["Hours",d.club.hours]].map(function(x){return '<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>'}).join("");
+  $("#setInt").innerHTML=d.integrations.map(function(i){var good=/^(Connected|Set up|Cloudflare)/.test(i.status);return '<div class="person"><div class="top"><b>'+esc(i.name)+'</b> <span class="pill'+(good?" ok":" warn")+'">'+esc(i.status)+'</span></div><div class="muted">'+esc(i.detail)+'</div></div>'}).join("");
+  $("#setSync").innerHTML=d.sync.map(function(x){return '<div><span>'+esc(day(x.finished_at))+'</span><span>'+esc(x.source==="gymmaster_csv"?"Import from GymMaster":x.source==="gymmaster_members"?"Nightly GymMaster copy":x.source)+' '+(x.ok?'<span class="pill ok">OK, '+(x.rows_changed||0)+' rows</span>':'<span class="pill warn">'+esc(x.error||"Failed")+'</span>')+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>';
+  $("#setPlans").innerHTML='<table class="tbl"><thead><tr><th>GymMaster type</th><th>Category</th><th>Counts as</th><th>Billing</th><th>Members</th><th></th></tr></thead><tbody>'+d.plans.map(function(p){return '<tr><td>'+esc(p.name)+'</td><td>'+esc(p.category||"")+'</td><td>'+esc(FAMS[p.family]||p.family)+(p.flexi?", Flexi":"")+(p.corporate?", Corporate"+(p.employer?" ("+esc(p.employer)+")":""):"")+'</td><td>'+esc(p.frequency||"")+'</td><td>'+p.members+'</td><td>'+(p.legacy?'<span class="pill">Existing only</span>':"")+'</td></tr>'}).join("")+'</tbody></table>';
+ });
+}
+$("#setRules").addEventListener("click",function(e){var b=e.target.closest("[data-setsave]");if(!b)return;var box=b.closest("[data-set]"),m=box.querySelector(".setMsg");
+ post("/api/settings",{key:box.dataset.set,value:box.querySelector(".setIn").value}).then(function(r){if(!r.ok){m.textContent=r.error;m.style.color="var(--red)";return}box.querySelector(".setIn").value=r.value;m.style.color="";m.textContent="Saved"})});
+
+/* ---------- staff and access ---------- */
+var ROLE_N={owner:"Owner",manager:"Manager",reception:"Reception",trainer:"Trainer",coach:"Coach"};
+function loadStaff(){
+ get("/api/staff-admin").then(function(d){
+  if(d.error){$("#staffList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  $("#staffList").innerHTML=d.staff.map(function(s){return '<div class="r" data-st="'+esc(JSON.stringify(s))+'" style="cursor:pointer'+(s.active?"":";opacity:.5")+'"><span><b>'+esc(s.name)+'</b> <span class="muted">'+esc(s.email)+'</span></span><span class="pill'+(s.role==="owner"?" dark":"")+'">'+esc(ROLE_N[s.role]||s.role)+(s.active?"":", off")+'</span></div>'}).join("");
+ });
+}
+function stFill(s){s=s||{};$("#stId").value=s.id||"";$("#stName").value=s.name||"";$("#stEmail").value=s.email||"";$("#stRole").value=s.role||"reception";$("#stOrder").value=s.list_order==null?100:s.list_order;$("#stActive").checked=s.active!==0;$("#stTitle").textContent=s.id?"Edit "+s.name:"Add someone";$("#stErr").textContent="";$("#stOk").innerHTML=""}
+$("#staffList").addEventListener("click",function(e){var r=e.target.closest("[data-st]");if(r)stFill(JSON.parse(r.dataset.st))});
+$("#stNew").addEventListener("click",function(){stFill(null)});
+$("#stSave").addEventListener("click",function(){
+ $("#stErr").textContent="";
+ post("/api/staff-admin",{id:$("#stId").value||null,name:$("#stName").value,email:$("#stEmail").value,role:$("#stRole").value,list_order:$("#stOrder").value,active:$("#stActive").checked}).then(function(r){
+  if(!r.ok){$("#stErr").textContent=r.error;return}
+  var msg='<div class="ok">Saved.'+(r.outsideDomain?" This email isn't @m2club.co.nz, so also add it to the m2-core sign-in rule in Cloudflare.":" They can sign in now with their email and a code.")+'</div>';
+  loadStaff();if(!$("#stId").value)stFill(null);$("#stOk").innerHTML=msg;
+ });
+});
 
 /* ---------- import from GymMaster ---------- */
 // Same rules as scripts/import_gymmaster_csv.py, run in the browser so the file goes
@@ -915,12 +1024,12 @@ export default {
       if (mn && req.method === "POST") return json(await updateMember(env, who, can, +mn[1], mn[2], await req.json()));
       if (url.pathname === "/api/plans") return json(await sellablePlans(env, can));
       if (url.pathname === "/api/passport") return json(await passportReport(env, can, url.searchParams.get("month")));
-      if (url.pathname === "/api/passport.csv") return passportCsv(env, can, url.searchParams.get("month"));
+      if (url.pathname === "/api/passport.csv") return await passportCsv(env, can, url.searchParams.get("month"));
       if (url.pathname === "/api/members" && req.method === "POST") return json(await addMember(env, who, can, await req.json()));
       if (url.pathname === "/api/members") return json(await searchMembers(env, who, can, url.searchParams.get("q") || ""));
       const ph = url.pathname.match(/^\/api\/members\/(\d+)\/photo$/);
       if (ph && req.method === "POST") return json(await savePhoto(env, who, can, +ph[1], await req.json()));
-      if (ph) return memberPhoto(env, who, can, +ph[1]);
+      if (ph) return await memberPhoto(env, who, can, +ph[1]);
       const kt = url.pathname.match(/^\/api\/members\/(\d+)\/key-tag$/);
       if (kt && req.method === "POST") return json(await assignKeyTag(env, who, can, +kt[1], await req.json()));
       const bl = url.pathname.match(/^\/api\/members\/(\d+)\/billing-link$/);
@@ -929,6 +1038,9 @@ export default {
       if (tg) return json(await whoHasTag(env, can, decodeURIComponent(tg[1])));
       const m = url.pathname.match(/^\/api\/members\/(\d+)$/);
       if (m) return json(await memberDetail(env, who, can, +m[1]));
+      if (url.pathname === "/api/staff-admin") return json(req.method === "POST" ? await saveStaff(env, who, can, await req.json()) : await staffAdmin(env, can));
+      if (url.pathname === "/api/report") return await report(env, can, url.searchParams);
+      if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
         return json(await syncMembers(env));
@@ -1804,6 +1916,164 @@ async function applyBlockRule(env) {
     db.prepare(`DELETE FROM member_flags WHERE flag = 'blocked' AND member_id IN
                 (SELECT member_id FROM billing_accounts WHERE balance_owing < ?)`).bind(limit),
   ]);
+}
+
+/* ---------------- staff and access (owners) ---------------- */
+const ROLES = ["owner", "manager", "reception", "trainer", "coach"];
+
+async function staffAdmin(env, can) {
+  if (!can.settings) return { error: "Only Taylor and Tim can manage staff." };
+  const staff = (await env.DB.prepare(`SELECT s.id, s.name, s.email, s.role, s.active, s.list_order,
+                                         (SELECT count(*) FROM leads l WHERE l.assigned_to = s.id AND l.stage IN ('new','contacted')) open_leads
+                                       FROM staff s ORDER BY s.active DESC, s.list_order, s.name`).all()).results;
+  return { staff, roles: ROLES };
+}
+
+async function saveStaff(env, who, can, b) {
+  if (!can.settings) return { ok: false, error: "Only Taylor and Tim can manage staff." };
+  const name = String(b.name || "").trim(), email = String(b.email || "").trim().toLowerCase(), role = String(b.role || "");
+  const active = b.active === false || b.active === 0 ? 0 : 1, order = Number.isFinite(+b.list_order) ? +b.list_order : 100;
+  if (!name) return { ok: false, error: "Add their name." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "That email doesn't look right. It's what they sign in with." };
+  if (!ROLES.includes(role)) return { ok: false, error: "Pick a role." };
+  if (b.id && +b.id === who.id && (role !== "owner" || !active)) return { ok: false, error: "You can't take away your own owner access." };
+  const clash = await env.DB.prepare("SELECT id FROM staff WHERE lower(email) = ? AND id <> ?").bind(email, +b.id || 0).first();
+  if (clash) return { ok: false, error: "Someone already signs in with that email." };
+  if (b.id) {
+    await env.DB.prepare("UPDATE staff SET name = ?, email = ?, role = ?, active = ?, list_order = ? WHERE id = ?").bind(name, email, role, active, order, +b.id).run();
+  } else {
+    await env.DB.prepare("INSERT INTO staff(name, email, role, active, list_order) VALUES (?, ?, ?, ?, ?)").bind(name, email, role, active, order).run();
+  }
+  return { ok: true, outsideDomain: !email.endsWith("@m2club.co.nz") };
+}
+
+/* ---------------- settings (owners) ---------------- */
+// The club's rules live in the settings table so they can change without new code.
+const SETTINGS = [
+  { key: "block_at_balance", group: "Money owed", label: "Block at the doors, in the app and from classes when a member owes ($)", type: "money" },
+  { key: "settle_pct_upto_1500", group: "Money owed", label: "Settlement offer when owing $1,500 or less (% of the debt)", type: "pct" },
+  { key: "settle_pct_over_1500", group: "Money owed", label: "Settlement offer when owing more than $1,500 (% of the debt)", type: "pct" },
+  { key: "referral_min_amount", group: "Money owed", label: "Only refer to Marshall Freeman from ($)", type: "money" },
+  { key: "class_capacity", group: "Classes", label: "Spots per class", type: "int" },
+  { key: "late_cancel_hours", group: "Classes", label: "Cancel at least this many hours before, or it's a late cancel", type: "int" },
+  { key: "no_show_after_minutes", group: "Classes", label: "Mark a no-show this many minutes after the start", type: "int" },
+  { key: "fp_tiers", group: "Fitness Passport", label: "Pay rates per visit (up to visit:rate, comma between tiers, last one open)", type: "tiers" },
+];
+
+async function settingsView(env, can) {
+  if (!can.settings) return { error: "Only Taylor and Tim can change settings." };
+  const db = env.DB;
+  const vals = Object.fromEntries((await db.prepare("SELECT key, value FROM settings").all()).results.map(r => [r.key, r.value]));
+  const plans = (await db.prepare(`SELECT p.id, p.gm_type_name name, p.gm_category category, p.family, p.frequency, p.flexi, p.legacy, p.corporate, p.employer,
+                                     p.includes_classes, p.includes_recovery,
+                                     (SELECT count(*) FROM memberships ms WHERE ms.plan_id = p.id AND ms.status = 'current') members
+                                   FROM plans p ORDER BY members DESC, p.family, p.gm_type_name`).all()).results;
+  const sync = (await db.prepare("SELECT source, finished_at, ok, rows_changed, error FROM sync_log ORDER BY id DESC LIMIT 6").all()).results;
+  const club = { name: "M2 Training Club", address: "8 Nugent Street, Grafton, Auckland 1023", phone: "09 558 1408", email: "reception@m2club.co.nz",
+                 hours: "Mon to Fri 5am to 10pm, Sat and Sun 7am to 7pm" };
+  const integrations = [
+    { name: "GymMaster", status: env.GM_API_KEY && env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Members copied nightly at 2:15am. Sign-ups go into GymMaster first while it runs billing and doors." },
+    { name: "Fitness Passport", status: env.FP_MEMBERSHIP_ID ? "Set up" : "Not set", detail: "GymMaster reports Passport check-ins until the doors move. Passport membership type " + (env.FP_MEMBERSHIP_ID || "not set") + "." },
+    { name: "Ezidebit", status: (env.BILLING_MODE || "gymmaster") === "ezidebit" ? "Billing in the Core" : "Billing still in GymMaster", detail: "Switches to Ezidebit's own bank form after the billing pilot." },
+    { name: "Website forms", status: env.INTAKE_KEY ? "Connected" : "Not connected yet", detail: "Leads from the website land in Leads once the intake key is set." },
+    { name: "Sign-in", status: env.ACCESS_TEAM ? "Cloudflare Access, email codes" : "Not set", detail: "Who can sign in is managed in Staff and access." },
+  ];
+  return { settings: SETTINGS.map(s => ({ ...s, value: vals[s.key] ?? "" })), plans, sync, club, integrations };
+}
+
+async function saveSetting(env, who, can, b) {
+  if (!can.settings) return { ok: false, error: "Only Taylor and Tim can change settings." };
+  const def = SETTINGS.find(s => s.key === b.key);
+  if (!def) return { ok: false, error: "That setting can't be changed here." };
+  let v = String(b.value ?? "").trim();
+  if (def.type === "tiers") {
+    if (!/^(\d+:\d+(\.\d+)?)(,\s*\d+:\d+(\.\d+)?)*$/.test(v)) return { ok: false, error: "Write it like 458:7.39,919:8.21,0:11.04 (0 means no top)." };
+    v = v.replace(/\s+/g, "");
+  } else {
+    const n = Number(v.replace(/[$,%]/g, ""));
+    if (!Number.isFinite(n) || n < 0) return { ok: false, error: "That needs to be a number." };
+    if (def.type === "pct" && n > 100) return { ok: false, error: "A percentage can't be more than 100." };
+    v = String(def.type === "int" ? Math.round(n) : n);
+  }
+  await env.DB.batch([
+    env.DB.prepare("INSERT INTO settings(key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(def.key, v),
+    env.DB.prepare("INSERT INTO activity(staff_id, kind, detail) VALUES (?, 'note', ?)").bind(who.id, "Setting changed: " + def.label + " = " + v),
+  ]);
+  return { ok: true, value: v };
+}
+
+/* ---------------- reports ---------------- */
+// Taylor's GymMaster favourites, rebuilt on Core data. Owners and the manager.
+// Prices only show for owners.
+const REPORTS = {
+  current_members: { title: "Current members", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.email "Email", m.mobile "Mobile", p.gm_type_name "Membership",
+                 p.family "Plan", m.joined_on "Joined", m.total_visits_gm "Visits" #MONEY#
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' ORDER BY m.first_name, m.last_name` },
+  new_members: { title: "New members", dates: true,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", p.gm_type_name "Membership", m.joined_on "Joined",
+                 m.lead_source "Came from", ms.sold_by "Sold by" #MONEY#
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.joined_on >= ? AND m.joined_on <= ? ORDER BY m.joined_on DESC` },
+  expiring: { title: "Lock-ins and paid in full ending", dates: true, pairs: 2,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", p.gm_type_name "Membership",
+                 ms.min_term_end "Lock-in ends", ms.end_date "Membership ends" #MONEY#
+          FROM members m JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' JOIN plans p ON p.id = ms.plan_id
+          WHERE (ms.min_term_end >= ? AND ms.min_term_end <= ?) OR (ms.end_date >= ? AND ms.end_date <= ?)
+          ORDER BY coalesce(ms.end_date, ms.min_term_end)` },
+  passport: { title: "Fitness Passport members", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.fp_id "Fitness Passport ID",
+                 CASE WHEN m.fp_id_in_gm = 1 THEN 'Yes' ELSE 'No' END "In GymMaster", m.joined_on "Joined", m.total_visits_gm "Visits"
+          FROM members m JOIN member_flags f ON f.member_id = m.id AND f.flag = 'passport'
+          WHERE m.status = 'active' ORDER BY (m.fp_id IS NULL) DESC, m.first_name` },
+  linked: { title: "Linked members (shared email or mobile)", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.email "Email", m.mobile "Mobile", p.gm_type_name "Membership"
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' AND (
+            (m.email IS NOT NULL AND m.email <> '' AND m.email IN (SELECT email FROM members WHERE status = 'active' AND email <> '' GROUP BY email HAVING count(*) > 1))
+            OR (m.mobile IS NOT NULL AND m.mobile IN (SELECT mobile FROM members WHERE status = 'active' AND mobile IS NOT NULL GROUP BY mobile HAVING count(*) > 1)))
+          ORDER BY m.email, m.mobile` },
+  missing_contact: { title: "No email or mobile", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.email "Email", m.mobile "Mobile", p.gm_type_name "Membership"
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' AND (coalesce(m.email,'') = '' OR coalesce(m.mobile,'') = '') ORDER BY m.first_name` },
+  never_visited: { title: "Never visited", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", p.gm_type_name "Membership", m.joined_on "Joined"
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' AND coalesce(m.total_visits_gm, 0) = 0 AND NOT EXISTS (SELECT 1 FROM visits v WHERE v.member_id = m.id)
+          ORDER BY m.joined_on` },
+  lead_sources: { title: "Where members came from", dates: false,
+    sql: `SELECT coalesce(nullif(m.lead_source, ''), 'Not recorded') "Source", count(*) "Members"
+          FROM members m WHERE m.status = 'active' GROUP BY 1 ORDER BY 2 DESC` },
+  trials: { title: "Trials and how many joined", dates: true,
+    sql: `SELECT substr(l.created_at, 1, 7) "Month", count(*) "Trials", sum(CASE WHEN l.stage = 'joined' THEN 1 ELSE 0 END) "Joined",
+                 round(100.0 * sum(CASE WHEN l.stage = 'joined' THEN 1 ELSE 0 END) / count(*), 1) "Joined %"
+          FROM leads l WHERE l.kind = 'trial' AND l.created_at >= ? AND l.created_at <= ? || ' 23:59:59'
+          GROUP BY 1 ORDER BY 1 DESC` },
+};
+
+async function report(env, can, q) {
+  if (!can.collections) return json({ error: "Reports are for owners and the manager." }, 403);
+  const kind = q.get("kind") || "current_members", r = REPORTS[kind];
+  if (!r) return json({ error: "Unknown report" }, 404);
+  const today = nzDateTime(new Date()).slice(0, 10);
+  const from = /^\d{4}-\d{2}-\d{2}$/.test(q.get("from") || "") ? q.get("from") : (kind === "expiring" ? today : isoDaysAgo(30));
+  const to = /^\d{4}-\d{2}-\d{2}$/.test(q.get("to") || "") ? q.get("to") : (kind === "expiring" ? nzDateTime(new Date(Date.now() + 60 * 86400_000)).slice(0, 10) : today);
+  const sql = r.sql.replace("#MONEY#", can.business ? `, ms.price "Price", ms.weekly_value "Per week"` : "");
+  const stmt = env.DB.prepare(sql);
+  const binds = r.dates ? Array.from({ length: r.pairs || 1 }, () => [from, to]).flat() : [];
+  const res = await (binds.length ? stmt.bind(...binds) : stmt).all();
+  const rows = res.results || [];
+  const columns = rows.length ? Object.keys(rows[0]) : [];
+  if (q.get("format") === "csv") {
+    const cell = v => { const t = String(v ?? ""); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+    const body = [columns.map(cell).join(",")].concat(rows.map(x => columns.map(c => cell(x[c])).join(","))).join("\r\n") + "\r\n";
+    return new Response(body, { headers: { "Content-Type": "text/csv; charset=utf-8", "Cache-Control": "no-store",
+      "Content-Disposition": `attachment; filename="m2-${kind}-${today}.csv"` } });
+  }
+  return json({ kind, title: r.title, dates: r.dates, from, to, columns, rows: rows.slice(0, 500), total: rows.length,
+                reports: Object.entries(REPORTS).map(([k, v]) => ({ kind: k, title: v.title })) });
 }
 
 /* ---------------- first run: the database sets itself up ---------------- */

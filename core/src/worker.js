@@ -58,12 +58,12 @@ export default {
       if (mn && req.method === "POST") return json(await updateMember(env, who, can, +mn[1], mn[2], await req.json()));
       if (url.pathname === "/api/plans") return json(await sellablePlans(env, can));
       if (url.pathname === "/api/passport") return json(await passportReport(env, can, url.searchParams.get("month")));
-      if (url.pathname === "/api/passport.csv") return passportCsv(env, can, url.searchParams.get("month"));
+      if (url.pathname === "/api/passport.csv") return await passportCsv(env, can, url.searchParams.get("month"));
       if (url.pathname === "/api/members" && req.method === "POST") return json(await addMember(env, who, can, await req.json()));
       if (url.pathname === "/api/members") return json(await searchMembers(env, who, can, url.searchParams.get("q") || ""));
       const ph = url.pathname.match(/^\/api\/members\/(\d+)\/photo$/);
       if (ph && req.method === "POST") return json(await savePhoto(env, who, can, +ph[1], await req.json()));
-      if (ph) return memberPhoto(env, who, can, +ph[1]);
+      if (ph) return await memberPhoto(env, who, can, +ph[1]);
       const kt = url.pathname.match(/^\/api\/members\/(\d+)\/key-tag$/);
       if (kt && req.method === "POST") return json(await assignKeyTag(env, who, can, +kt[1], await req.json()));
       const bl = url.pathname.match(/^\/api\/members\/(\d+)\/billing-link$/);
@@ -72,6 +72,9 @@ export default {
       if (tg) return json(await whoHasTag(env, can, decodeURIComponent(tg[1])));
       const m = url.pathname.match(/^\/api\/members\/(\d+)$/);
       if (m) return json(await memberDetail(env, who, can, +m[1]));
+      if (url.pathname === "/api/staff-admin") return json(req.method === "POST" ? await saveStaff(env, who, can, await req.json()) : await staffAdmin(env, can));
+      if (url.pathname === "/api/report") return await report(env, can, url.searchParams);
+      if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
         return json(await syncMembers(env));
@@ -947,6 +950,164 @@ async function applyBlockRule(env) {
     db.prepare(`DELETE FROM member_flags WHERE flag = 'blocked' AND member_id IN
                 (SELECT member_id FROM billing_accounts WHERE balance_owing < ?)`).bind(limit),
   ]);
+}
+
+/* ---------------- staff and access (owners) ---------------- */
+const ROLES = ["owner", "manager", "reception", "trainer", "coach"];
+
+async function staffAdmin(env, can) {
+  if (!can.settings) return { error: "Only Taylor and Tim can manage staff." };
+  const staff = (await env.DB.prepare(`SELECT s.id, s.name, s.email, s.role, s.active, s.list_order,
+                                         (SELECT count(*) FROM leads l WHERE l.assigned_to = s.id AND l.stage IN ('new','contacted')) open_leads
+                                       FROM staff s ORDER BY s.active DESC, s.list_order, s.name`).all()).results;
+  return { staff, roles: ROLES };
+}
+
+async function saveStaff(env, who, can, b) {
+  if (!can.settings) return { ok: false, error: "Only Taylor and Tim can manage staff." };
+  const name = String(b.name || "").trim(), email = String(b.email || "").trim().toLowerCase(), role = String(b.role || "");
+  const active = b.active === false || b.active === 0 ? 0 : 1, order = Number.isFinite(+b.list_order) ? +b.list_order : 100;
+  if (!name) return { ok: false, error: "Add their name." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "That email doesn't look right. It's what they sign in with." };
+  if (!ROLES.includes(role)) return { ok: false, error: "Pick a role." };
+  if (b.id && +b.id === who.id && (role !== "owner" || !active)) return { ok: false, error: "You can't take away your own owner access." };
+  const clash = await env.DB.prepare("SELECT id FROM staff WHERE lower(email) = ? AND id <> ?").bind(email, +b.id || 0).first();
+  if (clash) return { ok: false, error: "Someone already signs in with that email." };
+  if (b.id) {
+    await env.DB.prepare("UPDATE staff SET name = ?, email = ?, role = ?, active = ?, list_order = ? WHERE id = ?").bind(name, email, role, active, order, +b.id).run();
+  } else {
+    await env.DB.prepare("INSERT INTO staff(name, email, role, active, list_order) VALUES (?, ?, ?, ?, ?)").bind(name, email, role, active, order).run();
+  }
+  return { ok: true, outsideDomain: !email.endsWith("@m2club.co.nz") };
+}
+
+/* ---------------- settings (owners) ---------------- */
+// The club's rules live in the settings table so they can change without new code.
+const SETTINGS = [
+  { key: "block_at_balance", group: "Money owed", label: "Block at the doors, in the app and from classes when a member owes ($)", type: "money" },
+  { key: "settle_pct_upto_1500", group: "Money owed", label: "Settlement offer when owing $1,500 or less (% of the debt)", type: "pct" },
+  { key: "settle_pct_over_1500", group: "Money owed", label: "Settlement offer when owing more than $1,500 (% of the debt)", type: "pct" },
+  { key: "referral_min_amount", group: "Money owed", label: "Only refer to Marshall Freeman from ($)", type: "money" },
+  { key: "class_capacity", group: "Classes", label: "Spots per class", type: "int" },
+  { key: "late_cancel_hours", group: "Classes", label: "Cancel at least this many hours before, or it's a late cancel", type: "int" },
+  { key: "no_show_after_minutes", group: "Classes", label: "Mark a no-show this many minutes after the start", type: "int" },
+  { key: "fp_tiers", group: "Fitness Passport", label: "Pay rates per visit (up to visit:rate, comma between tiers, last one open)", type: "tiers" },
+];
+
+async function settingsView(env, can) {
+  if (!can.settings) return { error: "Only Taylor and Tim can change settings." };
+  const db = env.DB;
+  const vals = Object.fromEntries((await db.prepare("SELECT key, value FROM settings").all()).results.map(r => [r.key, r.value]));
+  const plans = (await db.prepare(`SELECT p.id, p.gm_type_name name, p.gm_category category, p.family, p.frequency, p.flexi, p.legacy, p.corporate, p.employer,
+                                     p.includes_classes, p.includes_recovery,
+                                     (SELECT count(*) FROM memberships ms WHERE ms.plan_id = p.id AND ms.status = 'current') members
+                                   FROM plans p ORDER BY members DESC, p.family, p.gm_type_name`).all()).results;
+  const sync = (await db.prepare("SELECT source, finished_at, ok, rows_changed, error FROM sync_log ORDER BY id DESC LIMIT 6").all()).results;
+  const club = { name: "M2 Training Club", address: "8 Nugent Street, Grafton, Auckland 1023", phone: "09 558 1408", email: "reception@m2club.co.nz",
+                 hours: "Mon to Fri 5am to 10pm, Sat and Sun 7am to 7pm" };
+  const integrations = [
+    { name: "GymMaster", status: env.GM_API_KEY && env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Members copied nightly at 2:15am. Sign-ups go into GymMaster first while it runs billing and doors." },
+    { name: "Fitness Passport", status: env.FP_MEMBERSHIP_ID ? "Set up" : "Not set", detail: "GymMaster reports Passport check-ins until the doors move. Passport membership type " + (env.FP_MEMBERSHIP_ID || "not set") + "." },
+    { name: "Ezidebit", status: (env.BILLING_MODE || "gymmaster") === "ezidebit" ? "Billing in the Core" : "Billing still in GymMaster", detail: "Switches to Ezidebit's own bank form after the billing pilot." },
+    { name: "Website forms", status: env.INTAKE_KEY ? "Connected" : "Not connected yet", detail: "Leads from the website land in Leads once the intake key is set." },
+    { name: "Sign-in", status: env.ACCESS_TEAM ? "Cloudflare Access, email codes" : "Not set", detail: "Who can sign in is managed in Staff and access." },
+  ];
+  return { settings: SETTINGS.map(s => ({ ...s, value: vals[s.key] ?? "" })), plans, sync, club, integrations };
+}
+
+async function saveSetting(env, who, can, b) {
+  if (!can.settings) return { ok: false, error: "Only Taylor and Tim can change settings." };
+  const def = SETTINGS.find(s => s.key === b.key);
+  if (!def) return { ok: false, error: "That setting can't be changed here." };
+  let v = String(b.value ?? "").trim();
+  if (def.type === "tiers") {
+    if (!/^(\d+:\d+(\.\d+)?)(,\s*\d+:\d+(\.\d+)?)*$/.test(v)) return { ok: false, error: "Write it like 458:7.39,919:8.21,0:11.04 (0 means no top)." };
+    v = v.replace(/\s+/g, "");
+  } else {
+    const n = Number(v.replace(/[$,%]/g, ""));
+    if (!Number.isFinite(n) || n < 0) return { ok: false, error: "That needs to be a number." };
+    if (def.type === "pct" && n > 100) return { ok: false, error: "A percentage can't be more than 100." };
+    v = String(def.type === "int" ? Math.round(n) : n);
+  }
+  await env.DB.batch([
+    env.DB.prepare("INSERT INTO settings(key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(def.key, v),
+    env.DB.prepare("INSERT INTO activity(staff_id, kind, detail) VALUES (?, 'note', ?)").bind(who.id, "Setting changed: " + def.label + " = " + v),
+  ]);
+  return { ok: true, value: v };
+}
+
+/* ---------------- reports ---------------- */
+// Taylor's GymMaster favourites, rebuilt on Core data. Owners and the manager.
+// Prices only show for owners.
+const REPORTS = {
+  current_members: { title: "Current members", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.email "Email", m.mobile "Mobile", p.gm_type_name "Membership",
+                 p.family "Plan", m.joined_on "Joined", m.total_visits_gm "Visits" #MONEY#
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' ORDER BY m.first_name, m.last_name` },
+  new_members: { title: "New members", dates: true,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", p.gm_type_name "Membership", m.joined_on "Joined",
+                 m.lead_source "Came from", ms.sold_by "Sold by" #MONEY#
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.joined_on >= ? AND m.joined_on <= ? ORDER BY m.joined_on DESC` },
+  expiring: { title: "Lock-ins and paid in full ending", dates: true, pairs: 2,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", p.gm_type_name "Membership",
+                 ms.min_term_end "Lock-in ends", ms.end_date "Membership ends" #MONEY#
+          FROM members m JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' JOIN plans p ON p.id = ms.plan_id
+          WHERE (ms.min_term_end >= ? AND ms.min_term_end <= ?) OR (ms.end_date >= ? AND ms.end_date <= ?)
+          ORDER BY coalesce(ms.end_date, ms.min_term_end)` },
+  passport: { title: "Fitness Passport members", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.fp_id "Fitness Passport ID",
+                 CASE WHEN m.fp_id_in_gm = 1 THEN 'Yes' ELSE 'No' END "In GymMaster", m.joined_on "Joined", m.total_visits_gm "Visits"
+          FROM members m JOIN member_flags f ON f.member_id = m.id AND f.flag = 'passport'
+          WHERE m.status = 'active' ORDER BY (m.fp_id IS NULL) DESC, m.first_name` },
+  linked: { title: "Linked members (shared email or mobile)", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.email "Email", m.mobile "Mobile", p.gm_type_name "Membership"
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' AND (
+            (m.email IS NOT NULL AND m.email <> '' AND m.email IN (SELECT email FROM members WHERE status = 'active' AND email <> '' GROUP BY email HAVING count(*) > 1))
+            OR (m.mobile IS NOT NULL AND m.mobile IN (SELECT mobile FROM members WHERE status = 'active' AND mobile IS NOT NULL GROUP BY mobile HAVING count(*) > 1)))
+          ORDER BY m.email, m.mobile` },
+  missing_contact: { title: "No email or mobile", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.email "Email", m.mobile "Mobile", p.gm_type_name "Membership"
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' AND (coalesce(m.email,'') = '' OR coalesce(m.mobile,'') = '') ORDER BY m.first_name` },
+  never_visited: { title: "Never visited", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", p.gm_type_name "Membership", m.joined_on "Joined"
+          FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' LEFT JOIN plans p ON p.id = ms.plan_id
+          WHERE m.status = 'active' AND coalesce(m.total_visits_gm, 0) = 0 AND NOT EXISTS (SELECT 1 FROM visits v WHERE v.member_id = m.id)
+          ORDER BY m.joined_on` },
+  lead_sources: { title: "Where members came from", dates: false,
+    sql: `SELECT coalesce(nullif(m.lead_source, ''), 'Not recorded') "Source", count(*) "Members"
+          FROM members m WHERE m.status = 'active' GROUP BY 1 ORDER BY 2 DESC` },
+  trials: { title: "Trials and how many joined", dates: true,
+    sql: `SELECT substr(l.created_at, 1, 7) "Month", count(*) "Trials", sum(CASE WHEN l.stage = 'joined' THEN 1 ELSE 0 END) "Joined",
+                 round(100.0 * sum(CASE WHEN l.stage = 'joined' THEN 1 ELSE 0 END) / count(*), 1) "Joined %"
+          FROM leads l WHERE l.kind = 'trial' AND l.created_at >= ? AND l.created_at <= ? || ' 23:59:59'
+          GROUP BY 1 ORDER BY 1 DESC` },
+};
+
+async function report(env, can, q) {
+  if (!can.collections) return json({ error: "Reports are for owners and the manager." }, 403);
+  const kind = q.get("kind") || "current_members", r = REPORTS[kind];
+  if (!r) return json({ error: "Unknown report" }, 404);
+  const today = nzDateTime(new Date()).slice(0, 10);
+  const from = /^\d{4}-\d{2}-\d{2}$/.test(q.get("from") || "") ? q.get("from") : (kind === "expiring" ? today : isoDaysAgo(30));
+  const to = /^\d{4}-\d{2}-\d{2}$/.test(q.get("to") || "") ? q.get("to") : (kind === "expiring" ? nzDateTime(new Date(Date.now() + 60 * 86400_000)).slice(0, 10) : today);
+  const sql = r.sql.replace("#MONEY#", can.business ? `, ms.price "Price", ms.weekly_value "Per week"` : "");
+  const stmt = env.DB.prepare(sql);
+  const binds = r.dates ? Array.from({ length: r.pairs || 1 }, () => [from, to]).flat() : [];
+  const res = await (binds.length ? stmt.bind(...binds) : stmt).all();
+  const rows = res.results || [];
+  const columns = rows.length ? Object.keys(rows[0]) : [];
+  if (q.get("format") === "csv") {
+    const cell = v => { const t = String(v ?? ""); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+    const body = [columns.map(cell).join(",")].concat(rows.map(x => columns.map(c => cell(x[c])).join(","))).join("\r\n") + "\r\n";
+    return new Response(body, { headers: { "Content-Type": "text/csv; charset=utf-8", "Cache-Control": "no-store",
+      "Content-Disposition": `attachment; filename="m2-${kind}-${today}.csv"` } });
+  }
+  return json({ kind, title: r.title, dates: r.dates, from, to, columns, rows: rows.slice(0, 500), total: rows.length,
+                reports: Object.entries(REPORTS).map(([k, v]) => ({ kind: k, title: v.title })) });
 }
 
 /* ---------------- first run: the database sets itself up ---------------- */
