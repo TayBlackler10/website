@@ -69,8 +69,8 @@
      the browser supports it). To swap one, replace both files.
 
   6. ROLE TICK. Reception / Personal Training is required before checkout.
-     All branded pieces print white for everyone, except Reception's
-     Lululemon tops (green) and 1/4 zips (grey). Branded items carry their
+     All branded pieces print white, except Lululemon tops (the reception
+     top, always green) and Reception's 1/4 zips (grey). Branded items carry their
      print colour in the item name, e.g. "Stencil Half Zip Crew (Grey print)". Role and colour both ride along in the sheet row, they don't talk to Stripe on their
      own.
 
@@ -328,7 +328,7 @@
           <button type="button" class="role-btn" data-role="Personal Training">Personal training team</button>
         </div>
         <p class="role-note" id="roleNote">You're ordering as <strong id="roleNoteText"></strong>. Branded pieces will print in <strong id="roleColourText"></strong>.</p>
-        <p class="fine">Branded pieces print white for both teams. Only exception: reception's Lululemon tops print green and 1/4 zips print grey.</p>
+        <p class="fine">Branded pieces print white for both teams. Exceptions: Lululemon tops (the reception top) print green, and reception's 1/4 zips print grey.</p>
       </div>
     </div>
   </div>
@@ -373,10 +373,10 @@
 <section class="section" id="lululemon">
   <div class="wrap">
     <div class="section-head">
-      <div><span class="eyebrow">M2 print</span><h2>Lululemon tops</h2></div>
+      <div><span class="eyebrow">Reception uniform</span><h2>Lululemon tops</h2></div>
       <span class="badge">Branded</span>
     </div>
-    <p class="section-sub">Short sleeve Lululemon training tops, printed with the M2 Training Club mark. White for personal training, green for reception.</p>
+    <p class="section-sub">Short sleeve Lululemon training tops, the reception team's uniform top, printed with the M2 Training Club mark in green.</p>
     <div class="grid" id="grid-lululemon"></div>
   </div>
 </section>
@@ -434,7 +434,7 @@
     <div class="faq">
       <details open><summary>How do I pay?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Build your cart, then tap checkout. It takes you to a secure Stripe checkout for your whole order, and you pay by card. Once it's paid you'll see a confirmation page, and an email with your order lands within about 10 minutes.</div></details>
       <details><summary>Where do my sizes and role go?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">When you check out, your name, role and full order (sizes and colours included) are logged automatically. You don't need to add anything at Stripe, just pay.</div></details>
-      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests, jackets, long sleeves, Lululemon tops and 1/4 zips get the M2 mark, printed in white for everyone except reception's Lululemon tops (green) and 1/4 zips (grey). Shorts, leggings and socks are plain LSKD with no print.</div></details>
+      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests, jackets, long sleeves, Lululemon tops and 1/4 zips get the M2 mark, printed in white, except the Lululemon tops (the reception top), which print green, and reception's 1/4 zips, which print grey. Shorts, leggings and socks are plain LSKD with no print.</div></details>
       <details><summary>When do I get it?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Unbranded pieces come through as normal store orders. Branded pieces go to print in batches. We'll message you when it's ready to collect at reception, 8 Nugent Street, Grafton.</div></details>
       <details><summary>How do I pick my size?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Tap Size guide under any product. Shorts and leggings open LSKD's fit guide, everything else opens the product page where the size chart sits. If you're between sizes, ask reception, some of the team have tried them on.</div></details>
       <details><summary>Wrong size or need to change something?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Let reception know as soon as you can, before anything goes to print.</div></details>
@@ -529,7 +529,7 @@
       img: '/assets/img/uniform/lulu-shirt-mens.jpg', w: 700, h: 844,
       lskd: 'https://www.lululemon.co.nz/en-nz/p/zeroed-in-short-sleeve-shirt/prod11680098.html',
       viewLabel: 'View on Lululemon',
-      receptionPrint: 'green',
+      fixedPrint: 'green',
       grid: 'grid-lululemon'
     },
     {
@@ -538,7 +538,7 @@
       img: '/assets/img/uniform/lulu-shirt-womens.jpg', w: 700, h: 1310,
       lskd: 'https://www.lululemon.co.nz/en-nz/p/swiftly-tech-short-sleeve-shirt-2.0-waist-length/prod9820343.html',
       viewLabel: 'View on Lululemon',
-      receptionPrint: 'green',
+      fixedPrint: 'green',
       grid: 'grid-lululemon'
     },
     {
@@ -656,9 +656,10 @@
     return p.lskd;
   }
 
-  // White for everyone, except reception on products with a receptionPrint
-  // (Lululemon tops print green, 1/4 zips print grey for reception).
+  // White for everyone. Lululemon tops (reception's top) always print green.
+  // 1/4 zips print grey when ordered by reception.
   function printFor(p, role) {
+    if (p && p.fixedPrint) return p.fixedPrint;
     if (p && role === 'Reception' && p.receptionPrint) return p.receptionPrint;
     return 'white';
   }
@@ -955,7 +956,7 @@
       selectedRole = btn.dataset.role;
       selectedColour = ROLE_COLOURS[selectedRole] || '';
       roleNoteText.textContent = selectedRole;
-      roleColourText.textContent = selectedRole === 'Reception' ? 'white, except Lululemon tops (green) and 1/4 zips (grey)' : 'white';
+      roleColourText.textContent = selectedRole === 'Reception' ? 'white, except Lululemon tops (green) and 1/4 zips (grey)' : 'white (Lululemon tops print green)';
       roleNote.classList.add('show');
       updatePrintChips();
       saveDetails();
