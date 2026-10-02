@@ -1047,5 +1047,50 @@
     }, 900);
   });
 </script>
+<script>
+  // ---- Inside the M2 app (?embed=1): browse and build the cart in the app, then hand the final
+  // card payment to the phone's browser (Stripe's payment page can't run inside an app).
+  // The order travels in the URL #fragment, which is never sent to any server.
+  (function () {
+    var EMBED = /[?&]embed=1/.test(location.search);
+    function enc(o) { return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    function dec(t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; return JSON.parse(decodeURIComponent(escape(atob(t)))); }
+
+    // Browser side: arrived from the app with an order, go straight to payment.
+    var m = location.hash.match(/^#co=([A-Za-z0-9_-]+)$/);
+    if (m) {
+      try {
+        var a = dec(m[1]);
+        if (history.replaceState) history.replaceState(null, '', location.pathname);
+        var btn = document.getElementById('checkoutBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Taking you to payment...'; }
+        document.body.insertAdjacentHTML('afterbegin', '<div style="position:fixed;inset:0;z-index:99999;background:#F3F3F0;display:flex;align-items:center;justify-content:center;font:600 17px/1.4 DM Sans,system-ui,sans-serif;color:#0A0A0A;text-align:center;padding:24px">Taking you to secure payment...</div>');
+        submitOrderAndGoToStripe(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+      } catch (e) {}
+      return;
+    }
+    if (!EMBED) return;
+
+    document.documentElement.classList.add('in-app');
+    // product and size-guide links open in the browser, not inside the app
+    document.addEventListener('click', function (e) {
+      var l = e.target.closest && e.target.closest('a[href^="http"]');
+      if (l && l.host !== location.host) { e.preventDefault(); window.open(l.href, '_blank'); }
+    }, true);
+
+    submitOrderAndGoToStripe = function (orderId, name, email, phone, role, colour, items, total) {
+      var url = location.origin + location.pathname + '#co=' + enc([orderId, name, email, phone, role, colour, items, total]);
+      window.open(url, '_blank');
+      var btn = document.getElementById('checkoutBtn');
+      setTimeout(function () {
+        if (btn) { btn.disabled = false; btn.textContent = 'Continue to secure checkout →'; }
+        var t = document.getElementById('appPayNote');
+        if (!t) { t = document.createElement('div'); t.id = 'appPayNote'; t.style.cssText = 'position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:99999;background:#0A0A0A;color:#fff;border-radius:14px;padding:14px 16px;font:500 15px/1.4 DM Sans,system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.25)'; document.body.appendChild(t); t.addEventListener('click', function () { t.remove(); }); }
+        t.innerHTML = '<strong style="color:#DFFF00">Payment opened in your browser.</strong><br>Finish paying there and we\'ll message you when your kit is ready at reception.';
+        setTimeout(function () { if (t.parentNode) t.remove(); }, 9000);
+      }, 600);
+    };
+  })();
+</script>
 </body>
 </html>
