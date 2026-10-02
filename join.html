@@ -290,7 +290,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
 
             <div id="passportPick" hidden>
               <div class="fpbox">
-                <p>Got Fitness Passport through work? Join M2 with it and your visits are covered. Nothing to pay.</p>
+                <p>Got Fitness Passport through work? Join M2 with it and your visits are covered. Just a one-off $25 key tag on your first visit.</p>
                 <ul>
                   <li>Full gym floor and group classes</li>
                   <li>Pool, spa, sauna and ice bath</li>
@@ -733,7 +733,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     if (chosen._fp) {
       var id = fpClean(val('fpid'));
       s.innerHTML = '<div class="sname">Fitness Passport</div>' +
-        '<div class="sline"><span>Price</span><span>Covered by Fitness Passport</span></div>' +
+        '<div class="sline"><span>Membership</span><span>Covered by Fitness Passport</span></div>' +
+        '<div class="sline"><span>Key tag, first visit</span><span>$25</span></div>' +
         (id ? '<div class="sline"><span>Fitness Passport ID</span><span>' + esc(id) + '</span></div>' : '') +
         '<div class="snote">Bring your Fitness Passport card or app when you pick up your key tag so we can check your ID. M2 offers and trials don\'t apply to Fitness Passport memberships.</div>';
       s.classList.add('show');
@@ -1031,7 +1032,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     $('doneLead').textContent = 'You\'re signed up to ' + name + '. Here\'s what happens next.';
     var steps = chosen._fp ? [
       '<b>Come in and see us at reception.</b> Bring your Fitness Passport card or app so we can check your ID, then we\'ll get your key tag sorted.',
-      '<b>That\'s it, nothing to pay.</b> Every visit is covered by Fitness Passport, so come as often as you like.'
+      '<b>Your visits are covered.</b> Just the one-off $25 key tag on your first visit, then come as often as you like.'
     ] : [
       '<b>Come in and see us at reception.</b> We\'ll get your key tag sorted so you can get in.',
       free ? '<b>Your trial starts today,</b> so make the most of it. Classes, pool, sauna and ice bath are all yours.'
