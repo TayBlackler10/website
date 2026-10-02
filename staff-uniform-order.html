@@ -69,8 +69,9 @@
      the browser supports it). To swap one, replace both files.
 
   6. ROLE TICK. Reception / Personal Training is required before checkout.
-     All branded pieces print white for everyone (Reception and Personal
-     Training). Role and colour both ride along in the sheet row, they don't talk to Stripe on their
+     All branded pieces print white for everyone, except Reception's
+     Lululemon tops (green) and 1/4 zips (grey). Branded items carry their
+     print colour in the item name, e.g. "Stencil Half Zip Crew (Grey print)". Role and colour both ride along in the sheet row, they don't talk to Stripe on their
      own.
 
   7. CUSTOMER DETAILS. Full name, email and phone are required before
@@ -171,6 +172,7 @@
   .print-chip .mark { width:21px; height:14px; background:#DFFF00; -webkit-mask:url(/assets/img/m2-mark.png) left center/contain no-repeat; mask:url(/assets/img/m2-mark.png) left center/contain no-repeat; transition:background .25s ease; }
   .print-chip.white .mark { background:#FFFFFF; }
   .print-chip.grey .mark { background:#A7A7A2; }
+  .print-chip.green .mark { background:#7CC242; }
   .print-chip.none .mark { display:none; }
   .card .links { display:flex; justify-content:center; gap:18px; }
   .notice { display:none; margin-bottom:18px !important; background:var(--white); border:1px solid var(--line); border-left:4px solid var(--lime); border-radius:14px; padding:14px 18px; margin:0 0 4px; font-size:15px; }
@@ -326,7 +328,7 @@
           <button type="button" class="role-btn" data-role="Personal Training">Personal training team</button>
         </div>
         <p class="role-note" id="roleNote">You're ordering as <strong id="roleNoteText"></strong>. Branded pieces will print in <strong id="roleColourText"></strong>.</p>
-        <p class="fine">All branded pieces print in white for both teams.</p>
+        <p class="fine">Branded pieces print white for both teams. Only exception: reception's Lululemon tops print green and 1/4 zips print grey.</p>
       </div>
     </div>
   </div>
@@ -374,7 +376,7 @@
       <div><span class="eyebrow">M2 print</span><h2>Lululemon tops</h2></div>
       <span class="badge">Branded</span>
     </div>
-    <p class="section-sub">Short sleeve Lululemon training tops, printed with the M2 Training Club mark in white.</p>
+    <p class="section-sub">Short sleeve Lululemon training tops, printed with the M2 Training Club mark. White for personal training, green for reception.</p>
     <div class="grid" id="grid-lululemon"></div>
   </div>
 </section>
@@ -385,7 +387,7 @@
       <div><span class="eyebrow">M2 print</span><h2>1/4 zips</h2></div>
       <span class="badge">Branded</span>
     </div>
-    <p class="section-sub">AS Colour Stencil half zip crews, printed with the M2 Training Club mark in white.</p>
+    <p class="section-sub">AS Colour Stencil half zip crews, printed with the M2 Training Club mark. White for personal training, grey for reception.</p>
     <div class="grid" id="grid-halfzip"></div>
   </div>
 </section>
@@ -432,7 +434,7 @@
     <div class="faq">
       <details open><summary>How do I pay?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Build your cart, then tap checkout. It takes you to a secure Stripe checkout for your whole order, and you pay by card. Once it's paid you'll see a confirmation page, and an email with your order lands within about 10 minutes.</div></details>
       <details><summary>Where do my sizes and role go?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">When you check out, your name, role and full order (sizes and colours included) are logged automatically. You don't need to add anything at Stripe, just pay.</div></details>
-      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests, jackets, long sleeves, Lululemon tops and 1/4 zips get the M2 mark, printed in white for everyone. Shorts, leggings and socks are plain LSKD with no print.</div></details>
+      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests, jackets, long sleeves, Lululemon tops and 1/4 zips get the M2 mark, printed in white for everyone except reception's Lululemon tops (green) and 1/4 zips (grey). Shorts, leggings and socks are plain LSKD with no print.</div></details>
       <details><summary>When do I get it?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Unbranded pieces come through as normal store orders. Branded pieces go to print in batches. We'll message you when it's ready to collect at reception, 8 Nugent Street, Grafton.</div></details>
       <details><summary>How do I pick my size?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Tap Size guide under any product. Shorts and leggings open LSKD's fit guide, everything else opens the product page where the size chart sits. If you're between sizes, ask reception, some of the team have tried them on.</div></details>
       <details><summary>Wrong size or need to change something?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Let reception know as soon as you can, before anything goes to print.</div></details>
@@ -527,6 +529,7 @@
       img: '/assets/img/uniform/lulu-shirt-mens.jpg', w: 700, h: 844,
       lskd: 'https://www.lululemon.co.nz/en-nz/p/zeroed-in-short-sleeve-shirt/prod11680098.html',
       viewLabel: 'View on Lululemon',
+      receptionPrint: 'green',
       grid: 'grid-lululemon'
     },
     {
@@ -535,6 +538,7 @@
       img: '/assets/img/uniform/lulu-shirt-womens.jpg', w: 700, h: 1310,
       lskd: 'https://www.lululemon.co.nz/en-nz/p/swiftly-tech-short-sleeve-shirt-2.0-waist-length/prod9820343.html',
       viewLabel: 'View on Lululemon',
+      receptionPrint: 'green',
       grid: 'grid-lululemon'
     },
     {
@@ -543,6 +547,7 @@
       img: '/assets/img/uniform/halfzip-mens.jpg', w: 700, h: 679,
       lskd: 'https://www.ascolour.co.nz/stencil-half-zip-crew-5125/',
       viewLabel: 'View on AS Colour',
+      receptionPrint: 'grey',
       grid: 'grid-halfzip'
     },
     {
@@ -551,6 +556,7 @@
       img: '/assets/img/uniform/halfzip-womens.jpg', w: 700, h: 594,
       lskd: 'https://www.ascolour.co.nz/wos-stencil-half-zip-crew-4125/',
       viewLabel: 'View on AS Colour',
+      receptionPrint: 'grey',
       grid: 'grid-halfzip'
     },
     {
@@ -650,11 +656,26 @@
     return p.lskd;
   }
 
+  // White for everyone, except reception on products with a receptionPrint
+  // (Lululemon tops print green, 1/4 zips print grey for reception).
+  function printFor(p, role) {
+    if (p && role === 'Reception' && p.receptionPrint) return p.receptionPrint;
+    return 'white';
+  }
+  function cap(c) { return c.charAt(0).toUpperCase() + c.slice(1); }
+
   function updatePrintChips() {
     document.querySelectorAll('.print-chip').forEach(chip => {
-      chip.classList.remove('none', 'white', 'grey');
-      chip.classList.add('white');
-      chip.querySelector('.txt').textContent = 'White M2 print';
+      const p = PRODUCTS.find(x => x.id === chip.dataset.pid);
+      chip.classList.remove('none', 'white', 'grey', 'green');
+      if (p && p.receptionPrint && !selectedRole) {
+        chip.classList.add('none');
+        chip.querySelector('.txt').textContent = 'Print colour depends on role';
+        return;
+      }
+      const c = printFor(p, selectedRole);
+      chip.classList.add(c);
+      chip.querySelector('.txt').textContent = cap(c) + ' M2 print';
     });
   }
 
@@ -685,6 +706,7 @@
         if (p.branded) {
           const chip = document.createElement('span');
           chip.className = 'print-chip white';
+          chip.dataset.pid = p.id;
           chip.innerHTML = '<span class="mark"></span><span class="txt">White M2 print</span>';
           photo.appendChild(chip);
         }
@@ -933,7 +955,7 @@
       selectedRole = btn.dataset.role;
       selectedColour = ROLE_COLOURS[selectedRole] || '';
       roleNoteText.textContent = selectedRole;
-      roleColourText.textContent = selectedColour;
+      roleColourText.textContent = selectedRole === 'Reception' ? 'white, except Lululemon tops (green) and 1/4 zips (grey)' : 'white';
       roleNote.classList.add('show');
       updatePrintChips();
       saveDetails();
@@ -975,6 +997,14 @@
     document.body.removeChild(form);
   }
 
+  // Branded items carry their print colour in the item name, so the sheet
+  // row and Stripe line both show it (the order-level colour is the default).
+  function itemNameWithPrint(l) {
+    const p = PRODUCTS.find(x => x.id === l.id);
+    if (!p || !p.branded) return l.name;
+    return l.name + ' (' + cap(printFor(p, selectedRole)) + ' print)';
+  }
+
   document.getElementById('checkoutBtn').addEventListener('click', () => {
     const warning = document.getElementById('cartRoleWarning');
     const nameInput = document.getElementById('customerName');
@@ -1004,7 +1034,7 @@
 
     const orderId = 'M2-' + Date.now();
 
-    const itemsForSheet = cart.map(l => ({ name: l.name, variant: l.variant, qty: l.qty, price: l.price, lineTotal: l.price * l.qty }));
+    const itemsForSheet = cart.map(l => ({ name: itemNameWithPrint(l), variant: l.variant, qty: l.qty, price: l.price, lineTotal: l.price * l.qty }));
     saveCart();
     const btn = document.getElementById('checkoutBtn');
     btn.disabled = true;
