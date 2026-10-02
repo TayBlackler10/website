@@ -99,6 +99,10 @@ Owners: Taylor and Tim. Each staff member has their own login. Their gym members
 - Collections has two tabs: current members, and people who left with money owing. Settled and ready-to-refer are pinned to the top.
 - Paid memberships give bank details online through Ezidebit's hosted form. Trials converting in person can still do it at reception. To be tested before committing.
 
+**Key tags**
+- One tag per person. Every tag ever issued is kept with its status (active, lost, replaced, returned) and who handed it out.
+- Until doors move off GymMaster, a new tag is also added on the GymMaster profile.
+
 **Classes**
 - Cap of 20. Cancel 12 or more hours before; late cancels count as no-shows.
 - Gate scan checks people in. Not scanned 10 minutes after start: no-show, spot offered to the waitlist.
@@ -127,6 +131,7 @@ All screens follow the website's look: black sidebar with the lime logo, paper b
 | Classes | Reception, coaches | Week timetable, roster, waitlist, book someone in, attendance |
 | Collections | Manager, owners | Two tabs, rules, door status per person, settlement offers, totals for owners only |
 | Fitness Passport | Everyone (money owners only) | Month's visits against the payment tiers, trends, win-back lists |
+| Add member | Reception, manager, owners | Plan (Perform first, live prices), details with compulsory goal and source, Passport and Bring a Mate, on-screen signature, bank details on the same screen, key tag scan. Creates the member in GymMaster then the Core |
 | Point of sale | Reception | GymMaster's product categories, member lookup, adds what they owe to the sale |
 | Messages | Owners, manager | Automations and their status, one inbox for email, text and app replies |
 | Email results | Owners | Live: sent today, results today, each automation's rate with a status, happening-now feed |

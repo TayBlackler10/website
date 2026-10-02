@@ -31,7 +31,9 @@ Run these from this `core` folder on your Mac. You need Node installed.
         npx wrangler d1 execute m2-core --remote --file data/seed.sql
 
    It prints a summary. Check `current_members` against the GymMaster dashboard.
-6. Add the GymMaster staff key: `npx wrangler secret put GM_STAFF_KEY` (paste it when asked, never in chat).
+6. Add the two GymMaster keys (paste each when asked, never in chat):
+   - `npx wrangler secret put GM_STAFF_KEY` for the nightly copy
+   - `npx wrangler secret put GM_API_KEY`, the same "Low Permission API Key" m2-join uses, for Add member
 7. Put it live: `npx wrangler deploy`. It prints the address, e.g. `https://m2-core.taylor-3e5.workers.dev`.
 
 ## Sign-in (Cloudflare Access, no passwords)
@@ -48,6 +50,20 @@ Open the address: Cloudflare emails you a code, you're in. Someone not in the st
 ## Testing on your own computer
 
 Create `.dev.vars` (ignored by git) with `DEV_EMAIL=taylor@m2club.co.nz`, then `npx wrangler d1 execute m2-core --local --file schema.sql` (and the seeds) and `npx wrangler dev`. The sign-in shortcut only works on localhost.
+
+## Add member
+
+The **Add member** button (owners, manager, reception) walks through:
+
+1. **Membership.** Perform first, then frequency and Flexi. Prices come live from GymMaster.
+2. **Details.** Name, email, mobile, date of birth, emergency contact. Goal and where they heard about us are compulsory. Fitness Passport tick. Bring a Mate: search the member who brought them.
+3. **Terms and signature** on screen.
+4. **Bank details.** Opens on the same screen. While GymMaster bills, it opens the member's GymMaster billing page. Once billing moves (`BILLING_MODE = "ezidebit"`), it opens Ezidebit's secure form, with a QR code so the member can type their details on their own phone. M2 never sees the numbers either way.
+5. **Key tag.** Scan the tag; the reader types the number. One tag per person, every tag kept in history (active, lost, replaced, returned), so a found tag can be traced.
+
+The member is created in GymMaster first (same signup the join page uses), then in the Core with the same id, so the two always agree. Until doors move off GymMaster, the tag also needs adding on the GymMaster profile; the screen gives a link straight to it.
+
+Built-in checks: no duplicate people (email or mobile), Fitness Passport members can't take trials or use Bring a Mate, Bring a Mate gives both people 4 weeks credit, and anyone with billing gets a "missing billing" job on Today until it's done.
 
 ## Rules built in now
 

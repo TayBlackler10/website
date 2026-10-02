@@ -40,6 +40,20 @@ CREATE TABLE IF NOT EXISTS members (
 CREATE INDEX IF NOT EXISTS members_email  ON members(email);
 CREATE INDEX IF NOT EXISTS members_mobile ON members(mobile);
 CREATE INDEX IF NOT EXISTS members_status ON members(status);
+CREATE UNIQUE INDEX IF NOT EXISTS members_key_tag ON members(key_tag) WHERE key_tag IS NOT NULL;
+
+-- Every key tag ever handed out, so a found tag can be traced and a lost one never opens a door.
+CREATE TABLE IF NOT EXISTS key_tags (
+  id           INTEGER PRIMARY KEY,
+  tag          TEXT NOT NULL,
+  member_id    INTEGER NOT NULL REFERENCES members(id),
+  status       TEXT NOT NULL DEFAULT 'active',   -- active, lost, returned, replaced
+  assigned_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  assigned_by  INTEGER REFERENCES staff(id),
+  ended_at     TEXT,
+  in_gymmaster INTEGER NOT NULL DEFAULT 0          -- 1 once the tag is set on the GymMaster member too (doors read GymMaster until January)
+);
+CREATE INDEX IF NOT EXISTS key_tags_tag ON key_tags(tag);
 
 -- Flags drive the rules: Passport is excluded from offers, gifted time never
 -- goes to collections, corporate is never sold online, blocked stops entry.
