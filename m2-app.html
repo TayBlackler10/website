@@ -2193,7 +2193,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-02c';
+const APP_VER='2026-10-02d';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2358,7 +2358,10 @@ if(LIVE){
   if(on)el.innerHTML=`<button class="card dk press timer-cta" onclick="openCoachMode()" style="width:100%;border:0;font:inherit"><span class="ic">${ico('i-users')}</span><span style="flex:1;text-align:left"><span class="eb">For coaches</span><span class="h3" style="display:block;margin-top:6px;color:#fff">Coach mode</span><span class="small" style="display:block;color:var(--muted-d);margin-top:2px">Your classes, check-ins and no-shows</span></span>${ico('i-right','i chev')}</button>`
   const sc=$('staffCard');if(sc){const so=LIVE&&!!LS.get('staff',false)&&!!S.doorSess;sc.style.display=so?'':'none';
   if(so)sc.innerHTML=`<button class="card press" onclick="openUniform()" style="width:100%;border:0;font:inherit;display:flex;align-items:center;gap:14px;text-align:left"><span class="ic">${ico('i-bag')}</span><span style="flex:1"><span class="eb">For staff</span><span class="h3" style="display:block;margin-top:6px">Staff uniform</span><span class="small muted" style="display:block;margin-top:2px">Order your M2 kit at staff prices</span></span>${ico('i-right','i chev')}</button>`}}}
-function openUniform(){try{haptic(8)}catch(e){}window.open('https://m2club.co.nz/staff-uniform-order.html','_blank','noopener')}
+function uniformFrame(){let o=document.getElementById('uniformFrame');if(!o){o=document.createElement('div');o.id='uniformFrame';o.style.cssText='position:fixed;inset:0;z-index:9999;background:#0A0A0A;box-sizing:border-box;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);display:none;flex-direction:column';
+ o.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:10px 12px 10px 8px;border-bottom:1px solid #222;background:#0A0A0A;flex:none"><button onclick="closeUniform()" aria-label="Back" style="border:0;background:none;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer">'+ico('i-back')+'</button><span style="font:900 15px/1 Archivo,sans-serif;text-transform:uppercase;letter-spacing:.02em;color:#fff">Staff uniform</span></div><iframe src="/staff-uniform-order.html?embed=1" style="border:0;width:100%;flex:1;display:block;background:#0A0A0A"></iframe>';document.body.appendChild(o)}return o}
+function openUniform(){try{haptic(8)}catch(e){}uniformFrame().style.display='flex'}
+function closeUniform(){const o=document.getElementById('uniformFrame');if(o)o.style.display='none'}
 
 function coachFrame(show){let o=document.getElementById('coachFrame');if(!o){o=document.createElement('div');o.id='coachFrame';o.style.cssText='position:fixed;inset:0;z-index:9999;background:#F3F3F0;box-sizing:border-box;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);display:none';o.innerHTML='<iframe src="/coach.html?embed=1" style="border:0;width:100%;height:100%;display:block"></iframe>';document.body.appendChild(o)}return o}
 function openCoachMode(){const o=coachFrame();o.style.display='';try{o.querySelector('iframe').contentWindow.postMessage('m2-coach-refresh',location.origin)}catch(e){}try{haptic(8)}catch(e){}}
