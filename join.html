@@ -991,6 +991,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       .then(function(r){ return r.json(); })
       .then(function(d){
         if (d.ok) {
+          if (d.warnings && d.warnings.length) { try { console.warn('M2 join warnings', d.warnings); } catch(e){} }
           if (chosen._fp) {
             notifyPassport(payload, d);
             try { if (window.fbq) fbq('track', 'CompleteRegistration', {content_name: 'Fitness Passport', status: 'passport', value: 0, currency: 'NZD'}); } catch(e){}

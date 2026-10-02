@@ -258,9 +258,11 @@ async function signup(env, b) {
 
   // Profile photo (selfie from the join page). GymMaster shows it at the desk.
   let photoSaved = false;
+  if (!token && b.photo) warnings.push("photo: GymMaster sign-up returned no login token");
   if (token && typeof b.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(b.photo) && b.photo.length < 2_000_000) {
-    photoSaved = await savePhoto(env, token, b.photo);
-    if (!photoSaved) warnings.push("photo: not saved");
+    const pr = await savePhoto(env, token, b.photo);
+    photoSaved = pr.ok;
+    if (!pr.ok) warnings.push("photo: " + pr.log.join(" | "));
   }
 
   // Fitness Passport ID: Passport pays M2 per visit on this number. GymMaster's online
@@ -314,22 +316,43 @@ async function signup(env, b) {
   return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, passport: isPassport, fpSaved, photoSaved, warnings };
 }
 
-// GymMaster takes the photo on the member's profile. The docs say it accepts a file or a
-// base64 string, so try the plain base64 first, then a real file upload.
+// GymMaster takes the photo on the member's profile (POST /v1/member/profile, multipart,
+// field memberphoto: a file or a base64 string). GymMaster can answer "ok" without
+// storing the photo, so after each attempt we read the profile back and only call it
+// saved once memberphoto has a URL. Every attempt is logged (Cloudflare, m2-join, Logs).
 async function savePhoto(env, token, dataUrl) {
+  const type = dataUrl.slice(5, dataUrl.indexOf(";"));
   const b64 = dataUrl.split(",")[1];
-  let r = await gmPost(env, "/v1/member/profile", { token, memberphoto: b64 });
-  if (!r.error) return true;
-  try {
-    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-    const fd = new FormData();
-    fd.set("api_key", env.GM_API_KEY);
-    fd.set("token", token);
-    fd.set("memberphoto", new Blob([bytes], { type: dataUrl.slice(5, dataUrl.indexOf(";")) }), "selfie.jpg");
-    const res = await fetch(env.GM_BASE + "/v1/member/profile", { method: "POST", body: fd });
-    const j = await res.json().catch(() => ({}));
-    return res.ok && !j.error;
-  } catch (e) { return false; }
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const url = env.GM_BASE + "/v1/member/profile";
+  const photoNow = async () => {
+    try {
+      const u = new URL(url); u.searchParams.set("api_key", env.GM_API_KEY); u.searchParams.set("token", token);
+      const j = await (await fetch(u.toString())).json();
+      const m = j.result || j;
+      return String((m && m.memberphoto) || "");
+    } catch (e) { return ""; }
+  };
+  const before = await photoNow();
+  const attempts = [
+    ["file", () => { const fd = new FormData(); fd.set("api_key", env.GM_API_KEY); fd.set("token", token);
+                     fd.set("memberphoto", new Blob([bytes], { type }), type === "image/png" ? "selfie.png" : "selfie.jpg"); return fd; }],
+    ["base64", () => { const fd = new FormData(); fd.set("api_key", env.GM_API_KEY); fd.set("token", token); fd.set("memberphoto", b64); return fd; }],
+    ["dataurl", () => { const fd = new FormData(); fd.set("api_key", env.GM_API_KEY); fd.set("token", token); fd.set("memberphoto", dataUrl); return fd; }],
+  ];
+  const log = [];
+  for (const [name, body] of attempts) {
+    try {
+      const r = await fetch(url, { method: "POST", body: body() });
+      const text = (await r.text()).slice(0, 200);
+      const after = await photoNow();
+      const ok = r.ok && !/"error"\s*:\s*"[^"]/.test(text) && after && after !== before;
+      log.push(name + " " + r.status + " " + text.replace(/\s+/g, " ") + (after ? " photo=" + after.slice(0, 80) : " no photo"));
+      if (ok) { console.log("photo saved via " + name, log); return { ok: true, via: name, log }; }
+    } catch (e) { log.push(name + " threw " + String(e && e.message || e)); }
+  }
+  console.log("photo NOT saved", log);
+  return { ok: false, log };
 }
 
 function friendly(err) {
