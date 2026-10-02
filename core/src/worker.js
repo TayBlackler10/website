@@ -15,9 +15,11 @@
 // up in the staff table to get the person's role.
 
 import { APP_HTML } from "./ui.js";
-import { SCHEMA, STAFF_SEED } from "./schema_sql.js";
+import { SCHEMA, STAFF_SEED, SCHEMA_VERSION } from "./schema_sql.js";
+import { makeHub } from "./hub.js";
 
 const TZ = "Pacific/Auckland";
+const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -77,6 +79,19 @@ export default {
       if (url.pathname === "/api/gm-probe") return json(await gmProbe(env, can, url.searchParams));
       if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
+      if (url.pathname === "/api/classes") return json(await H.classesWeek(env, who, can, url.searchParams));
+      const cl = url.pathname.match(/^\/api\/classes\/(\d+)(?:\/(book|cancel))?$/);
+      if (cl && cl[2] === "book" && req.method === "POST") return json(await H.bookMember(env, who, can, cl[1], await req.json()));
+      if (cl && cl[2] === "cancel" && req.method === "POST") return json(await H.cancelBooking(env, who, can, cl[1], await req.json()));
+      if (cl && !cl[2]) return json(await H.classDetail(env, who, can, cl[1]));
+      const lv = url.pathname.match(/^\/api\/members\/(\d+)\/live$/);
+      if (lv) return json(await H.memberLive(env, who, can, +lv[1]));
+      if (url.pathname === "/api/collections") return json(req.method === "POST" ? await H.collectionAction(env, who, can, await req.json()) : await H.collections(env, can));
+      if (url.pathname === "/api/money") return json(await H.money(env, can));
+      if (url.pathname === "/api/growth") return json(await H.growth(env, can));
+      if (url.pathname === "/api/marketing") return json(await H.marketing(env, can, url.searchParams));
+      if (url.pathname === "/api/push" && req.method === "POST") return json(await H.pushData(env, who, can, await req.json()));
+      if (url.pathname === "/api/refresh-balances" && can.settings && req.method === "POST") return json(await H.refreshBalances(env));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
         return json(await syncMembers(env));
       }
@@ -86,11 +101,15 @@ export default {
     }
   },
 
-  // Nightly copy from GymMaster (see wrangler.toml for the time).
+  // Two schedules (wrangler.toml): 2:15am NZ for the nightly copy and the day's snapshot,
+  // and every 15 minutes for live balances from GymMaster.
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
+      await ensureSchema(env);
+      if (event.cron === "*/15 * * * *") { await H.refreshBalances(env); return; }
       await syncMembers(env);
       await applyBlockRule(env);
+      await H.takeSnapshot(env);
     })());
   },
 };
@@ -996,9 +1015,10 @@ async function gmCall(env, version, path, { auth = "low", member = null, params 
   let init = { method };
   if (method === "GET") for (const [k, v] of Object.entries(all)) { if (v !== undefined && v !== null && v !== "") u.searchParams.set(k, v); }
   else {
-    const f = new URLSearchParams();
-    for (const [k, v] of Object.entries({ ...all, ...(body || {}) })) if (v !== undefined && v !== null && v !== "") f.set(k, typeof v === "object" ? JSON.stringify(v) : v);
-    init = { method, headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: f };
+    // GymMaster's documented way: keys in headers, JSON body (the keys go in the body too for older endpoints).
+    const headers = { "Content-Type": "application/json", "X-GM-API-KEY": key };
+    if (token) headers["X-GM-AUTH"] = token;
+    init = { method, headers, body: JSON.stringify({ ...all, ...(body || {}) }) };
   }
   const r = await fetch(u.toString(), init);
   const t = await r.text();
@@ -1042,6 +1062,8 @@ const SETTINGS = [
   { key: "class_capacity", group: "Classes", label: "Spots per class", type: "int" },
   { key: "late_cancel_hours", group: "Classes", label: "Cancel at least this many hours before, or it's a late cancel", type: "int" },
   { key: "no_show_after_minutes", group: "Classes", label: "Mark a no-show this many minutes after the start", type: "int" },
+  { key: "fy_target_ex_gst", group: "Targets", label: "Income target this financial year, excluding GST ($)", type: "money" },
+  { key: "meta_budget_month", group: "Targets", label: "Meta ads budget per month ($)", type: "money" },
   { key: "fp_tiers", group: "Fitness Passport", label: "Pay rates per visit (up to visit:rate, comma between tiers, last one open)", type: "tiers" },
 ];
 
@@ -1060,6 +1082,9 @@ async function settingsView(env, can) {
     { name: "GymMaster", status: env.GM_API_KEY && env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Members copied nightly at 2:15am. Sign-ups go into GymMaster first while it runs billing and doors." },
     { name: "Fitness Passport", status: env.FP_MEMBERSHIP_ID ? "Set up" : "Not set", detail: "GymMaster reports Passport check-ins until the doors move. Passport membership type " + (env.FP_MEMBERSHIP_ID || "not set") + "." },
     { name: "Ezidebit", status: (env.BILLING_MODE || "gymmaster") === "ezidebit" ? "Billing in the Core" : "Billing still in GymMaster", detail: "Switches to Ezidebit's own bank form after the billing pilot." },
+    { name: "Xero", status: "Pushed in by Claude", detail: "Profit and loss by month, cash and bills land on Money. Ask Claude to refresh them any time." },
+    { name: "Meta ads and Google Analytics", status: "Pushed in by Claude", detail: "Spend, leads and website visits by day land on Marketing." },
+    { name: "Live balances", status: env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Every 15 minutes the Core checks 20 members' balances in GymMaster, so the $250 block and Collections stay true." },
     { name: "Website forms", status: env.INTAKE_KEY ? "Connected" : "Not connected yet", detail: "Leads from the website land in Leads once the intake key is set." },
     { name: "Sign-in", status: env.ACCESS_TEAM ? "Cloudflare Access, email codes" : "Not set", detail: "Who can sign in is managed in Staff and access." },
   ];
@@ -1167,10 +1192,13 @@ async function report(env, can, q) {
 let schemaReady = false;
 async function ensureSchema(env) {
   if (schemaReady) return;
-  const have = await env.DB.prepare("SELECT count(*) n FROM sqlite_master WHERE type = 'table' AND name IN ('staff', 'member_photos', 'settings')").first();
-  if (!have || have.n < 3) {
+  // New tables and settings are added automatically when the schema changes (all IF NOT EXISTS / OR IGNORE).
+  let current = null;
+  try { current = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'schema_version'").first())?.value; } catch { current = null; }
+  if (current !== SCHEMA_VERSION) {
     const all = SCHEMA.concat(STAFF_SEED);
     for (let i = 0; i < all.length; i += 40) await env.DB.batch(all.slice(i, i + 40).map(x => env.DB.prepare(x)));
+    await env.DB.prepare("INSERT INTO settings(key, value) VALUES ('schema_version', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(SCHEMA_VERSION).run();
   }
   schemaReady = true;
 }
@@ -1229,6 +1257,10 @@ async function importRows(env, who, can, b) {
   if (b.step === "finish") {
     const stmts = [db.prepare("UPDATE sync_log SET finished_at = datetime('now'), rows_in = ?, rows_changed = ?, ok = 1 WHERE id = ?").bind(+b.rowsIn || 0, +b.rowsChanged || 0, +b.log || 0)];
     if (b.fpLoaded) stmts.push(db.prepare("UPDATE settings SET value = '1' WHERE key = 'fp_ids_loaded'"));
+    // Anyone active with no current membership after a full import has left M2. Their balance stays for Collections.
+    const gone = `SELECT id FROM members WHERE status = 'active' AND NOT EXISTS (SELECT 1 FROM memberships ms WHERE ms.member_id = members.id AND ms.status = 'current')`;
+    stmts.push(db.prepare(`INSERT INTO activity(member_id, kind, detail) SELECT id, 'cancel', 'Left M2 (no longer current in GymMaster)' FROM (${gone})`));
+    stmts.push(db.prepare(`UPDATE members SET status = 'former', updated_at = datetime('now') WHERE id IN (${gone})`));
     await db.batch(stmts);
     const n = await db.prepare("SELECT count(*) n FROM members WHERE status = 'active'").first();
     return { ok: true, members: n.n };

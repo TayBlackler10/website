@@ -180,6 +180,70 @@ CREATE TABLE IF NOT EXISTS collections_cases (
   closed_on      TEXT
 );
 
+-- ---------- live data from GymMaster, Xero, Meta and the website ----------
+
+-- Latest balance GymMaster holds for a member, checked on a rolling loop every 15 minutes.
+CREATE TABLE IF NOT EXISTS balance_checks (
+  member_id   INTEGER PRIMARY KEY REFERENCES members(id),
+  owing       REAL NOT NULL DEFAULT 0,
+  next_bill   TEXT,
+  no_billing  INTEGER NOT NULL DEFAULT 0,  -- GymMaster says there's no way to bill them
+  checked_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Monthly profit and loss from Xero (ex GST), owners only.
+CREATE TABLE IF NOT EXISTS finance_months (
+  month         TEXT PRIMARY KEY,           -- 2026-09
+  income        REAL,
+  cost_of_sales REAL,
+  expenses      REAL,
+  net           REAL,
+  lines         TEXT,                       -- JSON: income and expense lines
+  source        TEXT,
+  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS finance_points (
+  key     TEXT PRIMARY KEY,                 -- cash, payables, receivables, gst_owed ...
+  label   TEXT,
+  value   REAL,
+  as_of   TEXT
+);
+
+-- One row a day so growth can be charted over time.
+CREATE TABLE IF NOT EXISTS member_snapshots (
+  day           TEXT PRIMARY KEY,
+  members       INTEGER,
+  passport      INTEGER,
+  perform       INTEGER,
+  daily         INTEGER,
+  classes       INTEGER,
+  recovery      INTEGER,
+  other         INTEGER,
+  weekly_billed REAL,
+  owed          REAL
+);
+
+-- Ad spend and results by day and campaign (Meta and others).
+CREATE TABLE IF NOT EXISTS marketing_days (
+  day         TEXT NOT NULL,
+  source      TEXT NOT NULL,                -- meta, google
+  campaign    TEXT NOT NULL,
+  spend       REAL,
+  impressions INTEGER,
+  clicks      INTEGER,
+  leads       INTEGER,
+  landing_views INTEGER,
+  PRIMARY KEY (day, source, campaign)
+);
+-- Website sessions by channel (GA4).
+CREATE TABLE IF NOT EXISTS web_days (
+  day         TEXT NOT NULL,
+  channel     TEXT NOT NULL,
+  sessions    INTEGER,
+  conversions INTEGER,
+  PRIMARY KEY (day, channel)
+);
+
 -- ---------- visits, classes, bookings ----------
 
 CREATE TABLE IF NOT EXISTS visits (
@@ -346,7 +410,10 @@ INSERT OR IGNORE INTO settings(key, value) VALUES
   -- Fitness Passport pays per visit on monthly tiers that reset each month: up to visit N at $X. The last tier has no top.
   ('fp_tiers', '458:7.39,919:8.21,1380:9.12,1841:10.03,0:11.04'),
   -- 1 once a GymMaster export with the Fitness Passport ID column has been imported, so missing IDs are real gaps.
-  ('fp_ids_loaded', '0');
+  ('fp_ids_loaded', '0'),
+  ('fy_target_ex_gst', '1235600'),
+  ('meta_budget_month', '3500'),
+  ('balance_cursor', '0');
 
 INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VALUES
   ('trial_ending',       'Trial ending',          'joined',    7,  0),

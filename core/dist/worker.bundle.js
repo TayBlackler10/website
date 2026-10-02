@@ -121,9 +121,31 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .bars i{background:var(--line);border-radius:5px 5px 0 0;display:block}
 .bars i.last{background:var(--ink)}
 .next{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
+.cls{display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 8px;border-top:1px solid var(--line);cursor:pointer;border-radius:10px;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%}
+.cls:hover,.cls.on{background:var(--tile)}
+.cls.past{opacity:.55}
+.fill{height:6px;border-radius:3px;background:var(--line);overflow:hidden;width:90px;margin-top:4px}.fill i{display:block;height:100%;background:var(--ink)}.fill i.full{background:var(--olive)}
+.dayh{font-weight:600;margin:14px 0 4px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--olive)}
+.dayh:first-child{margin-top:0}
+.att{display:flex;gap:10px;align-items:center;padding:8px 2px;border-top:1px solid var(--line)}
+.att .who{margin-right:auto;min-width:0}
+.chart{display:flex;align-items:flex-end;gap:6px;height:160px;border-bottom:1px solid var(--line);padding-top:8px}
+.chart .c{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:2px;min-width:0;height:100%}
+.chart .b{flex:1;max-width:28px;border-radius:4px 4px 0 0;background:var(--ink);min-height:2px}
+.chart .b.s1{background:#C9C9BF}.chart .b.s2{background:var(--olive)}.chart .b.neg{background:var(--red)}
+.clab{display:flex;gap:6px}.clab span{flex:1;text-align:center;font-size:11px;color:var(--muted);min-width:0;overflow:hidden;white-space:nowrap}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.hb{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 56px;gap:10px;align-items:center;font-size:13.5px;padding:4px 0}
+.hb .bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}.hb .bar i{display:block;height:100%;background:var(--ink)}
+.hb b{text-align:right;font-variant-numeric:tabular-nums}
+.goal{height:12px;border-radius:6px;background:var(--ink2);overflow:hidden;margin-top:6px}.goal i{display:block;height:100%;background:var(--lime)}
+.goal i.mark{background:transparent}
+.line svg{width:100%;height:170px;display:block}
+.navlab{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E66;padding:14px 12px 4px}
+.tbl td.r,.tbl th.r{text-align:right;font-variant-numeric:tabular-nums}
 [hidden]{display:none!important}a.btn,label.btn{text-decoration:none;display:inline-flex;align-items:center}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-@media (max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:column;align-items:stretch;gap:10px;padding:12px}nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;min-width:0;max-width:100%}aside{min-width:0;max-width:100vw}.nav{width:auto;white-space:nowrap;padding:8px 12px}.me{display:none}.row2{grid-template-columns:1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px 14px 40px}}
+@media (max-width:900px){.navlab{display:none}.hb{grid-template-columns:minmax(0,110px) minmax(0,1fr) 50px}.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:column;align-items:stretch;gap:10px;padding:12px}nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;min-width:0;max-width:100%}aside{min-width:0;max-width:100vw}.nav{width:auto;white-space:nowrap;padding:8px 12px}.me{display:none}.row2{grid-template-columns:1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px 14px 40px}}
 @media (prefers-reduced-motion:no-preference){.card{animation:none}}
 </style></head><body>
 <div class="app">
@@ -133,10 +155,17 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav on" data-go="today">Today<span class="ct" id="ctToday" hidden></span></button>
 <button class="nav" data-go="members">Members</button>
 <button class="nav" data-go="leads">Leads<span class="ct" id="ctLeads" hidden></span></button>
+<button class="nav" data-go="classes">Classes</button>
 <button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
+<button class="nav" data-go="collections" id="navCol" hidden>Money owed</button>
 <button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
+<div class="navlab" id="navBizLab" hidden>The business</div>
+<button class="nav" data-go="money" id="navMoney" hidden>Money</button>
+<button class="nav" data-go="growth" id="navGrowth" hidden>Growth</button>
+<button class="nav" data-go="marketing" id="navMkt" hidden>Marketing</button>
+<div class="navlab" id="navAdminLab" hidden>Admin</div>
 <button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
 <button class="nav" data-go="import" id="navImport" hidden>Import from GymMaster</button>
 <button class="nav" data-go="settings" id="navSettings" hidden>Settings</button>
@@ -243,6 +272,83 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <p class="muted" style="margin:0;font-size:13px">People with an @m2club.co.nz email can sign in straight away. Anyone on Gmail or another address also needs adding to the sign-in rule in Cloudflare (Zero Trust, Access, m2-core policy).</p>
 </section>
 </div>
+</section>
+
+<!-- CLASSES -->
+<section data-view="classes" hidden>
+<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Live from GymMaster, the same as the M2 App</div><h1>Classes<span class="dot">.</span></h1></div>
+<button class="btn line sm" id="clsPrev">Last week</button><button class="btn line sm" id="clsNow">This week</button><button class="btn line sm" id="clsNext">Next week</button>
+</div>
+<div class="row2">
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="clsTitle">This week</h2><span class="muted" id="clsCount"></span></div><div id="clsWeek"><div class="muted">Loading...</div></div></section>
+<section class="card" id="clsPanel"><h2>Pick a class</h2><p class="muted" style="margin:0">See who's booked with their photos, and book people in or cancel them. Members who owe $250 or more can't be booked until it's paid.</p></section>
+</div>
+</section>
+
+<!-- MONEY OWED -->
+<section data-view="collections" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Real balances, checked in GymMaster all day</div><h1>Money owed<span class="dot">.</span></h1></div>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div class="tiles" id="colTiles"></div><div class="muted" style="color:var(--soft)" id="colNote"></div><div class="muted" style="color:var(--soft)" id="colRules"></div></section>
+<div class="chips" id="colTabs" style="margin-bottom:12px"></div>
+<div class="row2">
+<section class="card"><div style="overflow-x:auto" id="colTable"><div class="muted">Loading...</div></div></section>
+<section class="card" id="colPanel"><h2>Pick someone</h2><p class="muted" style="margin:0">Call, record what they said, and settle or refer. Everything is logged on their profile.</p></section>
+</div>
+</section>
+
+<!-- MONEY -->
+<section data-view="money" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Xero and the Core. Only you and Tim see this</div><h1>Money<span class="dot">.</span></h1></div>
+<span class="muted" id="monUpd"></span>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div id="monGoal"></div><div class="tiles" id="monTiles"></div></section>
+<div class="row2">
+<section class="card"><h2>Income and costs by month</h2><div id="monChart"></div></section>
+<section class="card"><h2>Cash and bills</h2><dl class="kv" id="monPoints"></dl></section>
+</div>
+<section class="card" style="margin-top:18px"><h2>Profit and loss</h2><div style="overflow-x:auto" id="monTable"></div></section>
+<section class="card" style="margin-top:18px" id="monLinesCard" hidden><h2 id="monLinesTitle">Where the money went</h2><div class="row2" id="monLines"></div></section>
+</section>
+
+<!-- GROWTH -->
+<section data-view="growth" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Members, joins, leaves and trials</div><h1>Growth<span class="dot">.</span></h1></div>
+<section class="card dark" style="margin-bottom:18px"><div class="tiles" id="grTiles"></div></section>
+<div class="row2">
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px"><h2>Members</h2><span class="muted" id="grLineNote"></span></div><div class="line" id="grLine"></div></section>
+<section class="card"><h2>Membership mix</h2><div id="grMix"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Joins and leaves by month</h2><div id="grJoins"></div></section>
+<section class="card"><h2>Where new members came from</h2><p class="muted" style="margin:0">Last 90 days</p><div id="grSources"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>5 Days for $5</h2><div style="overflow-x:auto" id="grTrials"></div></section>
+<section class="card"><h2>Leads, last 90 days</h2><div id="grLeads"></div></section>
+</div>
+</section>
+
+<!-- MARKETING -->
+<section data-view="marketing" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Meta, Google Analytics and who actually joined</div><h1>Marketing<span class="dot">.</span></h1></div>
+<label class="fld" style="min-width:170px">Month<input type="month" id="mkMonth"></label>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div id="mkBudget"></div><div class="tiles" id="mkTiles"></div><div class="muted" style="color:var(--soft)" id="mkNote"></div></section>
+<div class="row2">
+<section class="card"><h2>Spend by day</h2><div id="mkDaily"></div></section>
+<section class="card"><h2>Last 6 months</h2><div id="mkTrend"></div></section>
+</div>
+<section class="card" style="margin-top:18px"><h2>Campaigns</h2><div style="overflow-x:auto" id="mkCamps"></div></section>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Who joined, by where they heard about us</h2><div id="mkJoins"></div></section>
+<section class="card"><h2>Website visits by channel</h2><div style="overflow-x:auto" id="mkWeb"></div></section>
+</div>
+<section class="card" style="margin-top:18px"><h2>Leads in the Core by source</h2><div id="mkLeads"></div></section>
 </section>
 
 <!-- SETTINGS -->
@@ -402,6 +508,11 @@ function show(v){
  if(v==="reports")loadReport();
  if(v==="staff")loadStaff();
  if(v==="settings")loadSettings();
+ if(v==="classes")loadClasses(CLS.week);
+ if(v==="collections")loadCol();
+ if(v==="money")loadMoney();
+ if(v==="growth")loadGrowth();
+ if(v==="marketing")loadMkt();
  if(v==="members")setTimeout(function(){$("#q").focus()},50);
 }
 document.addEventListener("click",function(e){var b=e.target.closest("[data-go]");if(b){e.preventDefault();show(b.dataset.go)}});
@@ -415,7 +526,9 @@ get("/api/me").then(function(me){
  var h=new Date().getHours();if(h>=12)$("#hello").innerHTML=(h<17?"Afternoon, ":"Evening, ")+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  if(me.can.members===true)$("#navFp").hidden=false;
  if(me.can.settings){$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
- if(me.can.collections)$("#navReports").hidden=false;
+ if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false}
+ if(me.can.business){$("#navBizLab").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
+ if(me.can.settings)$("#navAdminLab").hidden=false;
  if(me.can.add){$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
  loadToday();
  if(me.can.business)loadBiz();
@@ -535,11 +648,13 @@ function renderMember(d,id){
   (ME.can.add?'<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn '+(d.photo_at?"line":"dark")+' sm" data-photo="'+id+'" data-name="'+esc(nm(m))+'">'+(d.photo_at?"Retake photo":"Take photo")+'</button><button class="btn line sm" data-edit="'+id+'">Edit details</button><button class="btn line sm" data-tagfor="'+id+'">'+(m.key_tag?"Replace key tag":"Give key tag")+'</button><button class="btn line sm" data-flagfor="'+id+'">Flags</button></div>':"")+
   '<div id="editBox"></div></section>'+
   '<section class="card dark"><div class="next"><div><div class="eyebrow">Best next step</div><div style="font-size:16px;margin-top:4px">'+esc(d.next_step.text)+'</div></div></div></section>'+
+  '<div id="liveBox"><section class="card"><h2>Live from GymMaster</h2><div class="muted">Checking GymMaster...</div></section></div>'+
   (vis.length?'<section class="card"><h2>Visits</h2><div class="bars">'+weeks.map(function(n,i){return '<i class="'+(i===11?"last":"")+'" style="height:'+Math.max(4,Math.round(n/mx*100))+'%" title="'+n+' visits"></i>'}).join("")+'</div><div class="muted">Last 12 weeks</div></section>':"")+
   bill+
   '<section class="card"><h2>Notes and history</h2><div style="display:flex;gap:8px"><label class="sr" for="noteIn">Add a note</label><input id="noteIn" class="fld" style="flex:1;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px" placeholder="Add a note, like what they said at the desk"><button class="btn dark sm" data-note="'+id+'" style="height:44px">Save</button></div>'+
   '<div class="hist">'+(d.activity.map(function(a){return '<div><span>'+esc(day(a.at))+'</span><span>'+esc(a.detail)+(a.staff?' <span class="muted">'+esc(a.staff)+'</span>':"")+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>')+'</div></section>'+
   (tagRows?'<section class="card"><h2>Key tags</h2><div class="hist">'+tagRows+'</div></section>':"");
+ loadLive(id);
 }
 document.addEventListener("click",function(e){
  var t;
@@ -671,6 +786,198 @@ function loadReport(){
 $("#repKinds").addEventListener("click",function(e){var b=e.target.closest("[data-rk]");if(!b)return;REP.kind=b.dataset.rk;$("#repFrom").value="";$("#repTo").value="";loadReport()});
 $("#repFrom").addEventListener("change",loadReport);$("#repTo").addEventListener("change",loadReport);
 
+/* ---------- charts ---------- */
+var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function ml(ym){var p=String(ym||"").split("-");return p.length>1?MON[+p[1]-1]+(p[1]==="01"?" "+p[0].slice(2):""):String(ym)}
+function k$(n){n=Number(n||0);var a=Math.abs(n);return (n<0?"-":"")+"$"+(a>=1e6?(a/1e6).toFixed(2)+"m":a>=1e4?Math.round(a/1e3)+"k":a>=1e3?(a/1e3).toFixed(1)+"k":Math.round(a))}
+function whole$(n){return "$"+Math.round(Number(n||0)).toLocaleString("en-NZ")}
+// cols: [{label, vals:[...]}], series: [{name, cls}]
+function bars(cols,series,fmt){
+ fmt=fmt||function(x){return x};
+ var mx=1;cols.forEach(function(c){c.vals.forEach(function(v){mx=Math.max(mx,Math.abs(v||0))})});
+ return '<div class="chart">'+cols.map(function(c){return '<div class="c">'+c.vals.map(function(v,i){return '<i class="b '+(series[i]&&series[i].cls||"")+(v<0?" neg":"")+'" style="height:'+Math.max(1,Math.round(Math.abs(v||0)/mx*100))+'%" title="'+esc(c.label+": "+(series[i]?series[i].name+" ":"")+fmt(v))+'"></i>'}).join("")+'</div>'}).join("")+'</div>'+
+  '<div class="clab">'+cols.map(function(c){return '<span>'+esc(c.label)+'</span>'}).join("")+'</div>'+
+  (series.length>1?'<div class="legend">'+series.map(function(s){return '<span><i class="'+s.cls+'" style="background:'+(s.cls==="s1"?"#C9C9BF":s.cls==="s2"?"var(--olive)":"var(--ink)")+'"></i>'+esc(s.name)+'</span>'}).join("")+'</div>':"");
+}
+function hbars(rows,fmt){fmt=fmt||function(x){return x};var mx=1;rows.forEach(function(r){mx=Math.max(mx,r[1]||0)});
+ return rows.length?rows.map(function(r){return '<div class="hb"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r[0])+'</span><span class="bar"><i style="width:'+Math.round((r[1]||0)/mx*100)+'%"></i></span><b>'+esc(fmt(r[1]||0))+'</b></div>'}).join(""):'<div class="muted">Nothing yet.</div>'}
+function lineChart(pts){
+ if(pts.length<2)return '<div class="muted">Builds up from today: the Core takes a count every night.</div>';
+ var ys=pts.map(function(p){return p[1]}),lo=Math.min.apply(null,ys),hi=Math.max.apply(null,ys);if(hi===lo){hi+=1;lo-=1}var pad=(hi-lo)*.15;lo-=pad;hi+=pad;
+ var W=600,Hh=150,xy=pts.map(function(p,i){return [Math.round(i/(pts.length-1)*W),Math.round(Hh-(p[1]-lo)/(hi-lo)*Hh)]});
+ return '<svg viewBox="0 0 600 170" preserveAspectRatio="none" role="img" aria-label="Members over time"><polyline fill="none" stroke="#0A0A0A" stroke-width="2.5" vector-effect="non-scaling-stroke" points="'+xy.map(function(p){return p.join(",")}).join(" ")+'"/><polygon fill="rgba(223,255,0,.35)" points="0,150 '+xy.map(function(p){return p.join(",")}).join(" ")+' 600,150"/></svg>'+
+  '<div class="clab"><span style="text-align:left">'+esc(pts[0][0])+'</span><span style="text-align:right">'+esc(pts[pts.length-1][0])+'</span></div>';
+}
+function table(cols,rows){return '<table class="tbl"><thead><tr>'+cols.map(function(c){return '<th'+(c[2]?' class="r"':"")+'>'+esc(c[0])+'</th>'}).join("")+'</tr></thead><tbody>'+rows.map(function(r){return '<tr'+(r._member?' data-member="'+r._member+'" style="cursor:pointer"':"")+'>'+cols.map(function(c){var v=typeof c[1]==="function"?c[1](r):r[c[1]];return '<td'+(c[2]?' class="r"':"")+'>'+(c[3]?v:esc(v==null?"":v))+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table>'}
+function tile(n,l){return '<div class="tile"><div class="n">'+esc(n)+'</div><div class="l">'+esc(l)+'</div></div>'}
+
+/* ---------- classes ---------- */
+var CLS={week:null,data:null,cur:null};
+function loadClasses(w){
+ get("/api/classes"+(w?"?week="+w:"")).then(function(d){
+  if(d.error){$("#clsWeek").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  CLS.data=d;CLS.week=d.week;
+  var mon=new Date(d.week+"T12:00:00");
+  $("#clsTitle").textContent=(d.today>=d.week&&d.today<d.next?"This week":"Week of "+mon.toLocaleDateString("en-NZ",{day:"numeric",month:"long"}));
+  $("#clsCount").textContent=d.classes.length+" classes, "+d.classes.reduce(function(a,c){return a+c.booked},0)+" booked";
+  var by={};d.classes.forEach(function(c){(by[c.day]=by[c.day]||[]).push(c)});
+  $("#clsWeek").innerHTML=Object.keys(by).sort().map(function(dy){
+   var dd=new Date(dy+"T12:00:00");
+   return '<div class="dayh">'+esc(dd.toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"short"}))+(dy===d.today?" (today)":"")+'</div>'+by[dy].map(function(c){
+    var pct=c.max?Math.round(c.booked/c.max*100):0,full=c.max&&c.booked>=c.max;
+    return '<button class="cls'+(dy<d.today?" past":"")+(CLS.cur&&CLS.cur.id===c.id?" on":"")+'" data-cls="'+c.id+'"><b>'+esc(c.start)+'</b><span><b>'+esc(c.name)+'</b> <span class="muted">'+esc(c.coach||"")+'</span><div class="fill"><i class="'+(full?"full":"")+'" style="width:'+pct+'%"></i></div></span><span class="pill'+(full?" dark":"")+'">'+c.booked+"/"+c.max+(c.waitlist?" +"+c.waitlist+" waiting":"")+'</span></button>'}).join("")}).join("")||'<div class="muted">No classes this week.</div>';
+ });
+}
+$("#clsPrev").addEventListener("click",function(){if(CLS.data)loadClasses(CLS.data.prev)});
+$("#clsNext").addEventListener("click",function(){if(CLS.data)loadClasses(CLS.data.next)});
+$("#clsNow").addEventListener("click",function(){loadClasses(null)});
+$("#clsWeek").addEventListener("click",function(e){var b=e.target.closest("[data-cls]");if(!b)return;var c=CLS.data.classes.find(function(x){return String(x.id)===b.dataset.cls});CLS.cur=c;$$(".cls").forEach(function(x){x.classList.toggle("on",x===b)});openClass(c)});
+function clsLabel(c){return c.name+", "+new Date(c.day+"T12:00:00").toLocaleDateString("en-NZ",{weekday:"short",day:"numeric",month:"short"})+" "+c.time}
+function openClass(c){
+ var P=$("#clsPanel");
+ P.innerHTML='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2>'+esc(c.name)+'</h2><span class="muted">'+esc(clsLabel(c).split(", ")[1])+'</span></div><dl class="kv"><dt>Coach</dt><dd>'+esc(c.coach||"-")+'</dd><dt>Booked</dt><dd>'+c.booked+' of '+c.max+(c.waitlist?", "+c.waitlist+" waiting":"")+'</dd>'+(c.location?'<dt>Where</dt><dd>'+esc(c.location)+'</dd>':"")+'</dl>'+
+  (CLS.data.can_book&&c.day>=CLS.data.today?'<div><label class="sr" for="clsQ">Find a member to book</label><div class="search" style="height:42px"><input id="clsQ" autocomplete="off" placeholder="Book someone in: name, mobile or key tag"></div><div class="list" id="clsFind"></div><div class="err" id="clsErr"></div></div>':"")+
+  '<div id="clsAtt"><div class="muted">Getting the list from GymMaster...</div></div>';
+ var q=$("#clsQ"),t;if(q)q.addEventListener("input",function(){clearTimeout(t);t=setTimeout(function(){var v=q.value;if(v.trim().length<2){$("#clsFind").innerHTML="";return}
+  get("/api/members?q="+encodeURIComponent(v)).then(function(d){$("#clsFind").innerHTML=(d.results||[]).slice(0,8).map(function(m){return '<div class="r" style="cursor:default"><span><b>'+esc(nm(m))+'</b> <span class="muted">'+esc(m.plan||m.status)+'</span></span><button class="btn dark sm" data-book="'+m.id+'">Book</button></div>'}).join("")||'<div class="muted">No one found.</div>'})},250)});
+ get("/api/classes/"+c.id).then(function(d){
+  if(d.error){$("#clsAtt").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  var a=d.attendees||[];
+  $("#clsAtt").innerHTML=(a.length?'<h3 style="margin-top:6px">Who\'s coming</h3>':'<div class="muted">Nobody booked yet.</div>')+a.map(function(p){
+   return '<div class="att"><div class="face sm">'+(p.has_photo?'<img src="/api/members/'+p.member_id+'/photo" alt="">':esc(initials(p.name)))+'</div><div class="who"><b>'+(p.open?'<a href="#" data-member="'+p.member_id+'">'+esc(p.name)+'</a>':esc(p.name))+'</b> '+(p.status!=="booked"?'<span class="pill'+(p.status==="waitlist"?" warn":" ok")+'">'+esc(p.status==="waitlist"?"Waitlist":p.status==="attended"?"Here":p.status)+'</span> ':"")+(p.blocked?'<span class="pill warn">Owes money</span> ':"")+(p.passport?'<span class="pill">Passport</span>':"")+'</div>'+
+    (CLS.data.can_book&&c.day>=CLS.data.today&&p.member_id?'<button class="btn line sm" data-unbook="'+p.member_id+'" data-bid="'+esc(p.booking_id||"")+'">Cancel</button>':"")+'</div>'}).join("")+
+   (d.unknown_fields?'<div class="muted">GymMaster sent fields the Core doesn\'t know yet: '+esc(d.unknown_fields.join(", "))+'</div>':"");
+ });
+}
+$("#clsPanel").addEventListener("click",function(e){
+ var b=e.target.closest("[data-book]"),u=e.target.closest("[data-unbook]"),c=CLS.cur;if(!c||(!b&&!u))return;
+ if(b){b.disabled=true;$("#clsErr").textContent="";post("/api/classes/"+c.id+"/book",{member_id:+b.dataset.book,label:clsLabel(c)}).then(function(r){if(!r.ok){b.disabled=false;$("#clsErr").textContent=r.error;return}c.booked++;openClass(c);loadClasses(CLS.week)})}
+ if(u){if(!confirm("Cancel this booking?"))return;u.disabled=true;post("/api/classes/"+c.id+"/cancel",{member_id:+u.dataset.unbook,booking_id:u.dataset.bid||null,label:clsLabel(c)}).then(function(r){if(!r.ok){u.disabled=false;alertIn(u.parentNode,r.error);return}c.booked=Math.max(0,c.booked-1);openClass(c);loadClasses(CLS.week)})}
+});
+
+/* ---------- live member panel ---------- */
+function loadLive(id){
+ get("/api/members/"+id+"/live").then(function(d){
+  var B=$("#liveBox");if(!B)return;
+  if(d.error){B.innerHTML='<section class="card"><h2>Live from GymMaster</h2><div class="muted">'+esc(d.error)+'</div></section>';return}
+  var h='<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>Live from GymMaster</h2><span class="muted">Checked just now</span></div>';
+  if(d.owing!=null)h+=(d.owing>0?'<div class="warnbox">Owes <b>'+money(d.owing)+'</b> right now.'+(d.owing>=250?" Blocked at the doors, in the app and from classes until it's paid.":"")+'</div>':'<div class="ok">Nothing owing.</div>');
+  if(d.next_bill)h+='<div class="muted">'+esc(d.next_bill)+'</div>';
+  if(d.memberships&&d.memberships.length)h+='<div class="hist">'+d.memberships.map(function(x){return '<div><span>'+esc(day(x.start))+'</span><span><b>'+esc(x.name)+'</b>'+(x.price?" "+esc(x.price):"")+(x.on_hold?' <span class="pill warn">On hold</span>':"")+(x.hold_coming?' <span class="pill">Hold coming</span>':"")+(x.in_min_term?' <span class="pill">In lock-in</span>':"")+'<br><span>'+[x.next_payment?"Next payment "+day(x.next_payment):"",x.end?"Ends "+day(x.end):"",x.earliest_cancel?"Can cancel from "+day(x.earliest_cancel):"",x.visit_limit?x.visits_used+" of "+x.visit_limit+" visits used":""].filter(Boolean).map(esc).join(". ")+'</span></span></div>'}).join("")+'</div>';
+  if(d.bookings&&d.bookings.length)h+='<h3>Booked in</h3><div class="hist">'+d.bookings.map(function(b){return '<div><span>'+esc(day(b.day))+" "+esc(b.time)+'</span><span>'+esc(b.name)+(b.waitlist?' <span class="pill warn">Waitlist</span>':"")+'</span></div>'}).join("")+'</div>';
+  if(d.visits&&d.visits.length){h+='<h3>Visits by month</h3>'+bars(d.visits.map(function(v){return {label:MON[(v.month-1+12)%12]||v.month,vals:[v.visits]}}),[{name:"Visits",cls:""}],function(x){return x+" visits"})}
+  if(d.history&&d.history.length)h+='<h3>Account</h3><div style="overflow-x:auto">'+table([["When","when"],["What","note"],["Charged","debit",1],["Paid",function(r){return r.credit||""},1],["Balance","total",1]],d.history)+'</div>';
+  B.innerHTML=h+'</section>';
+ });
+}
+
+/* ---------- money owed ---------- */
+var COL={tab:"current",data:null,cur:null};
+function loadCol(){
+ get("/api/collections").then(function(d){
+  if(d.error){$("#colTable").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  COL.data=d;var t=d.totals,r=d.rules;
+  $("#colTiles").innerHTML=tile(whole$(t.current_sum),t.current+" members owing")+tile(t.blocked,"Blocked at $"+r.limit)+tile(whole$(t.left_sum),t.left+" people who left owing")+tile(t.referable,"Could go to Marshall Freeman");
+  var cv=d.coverage||{};$("#colNote").textContent="Balances checked in the last 2 days: "+(cv.recent||0).toLocaleString("en-NZ")+" of "+(cv.n||0).toLocaleString("en-NZ")+" members. The Core checks 20 every 15 minutes"+(cv.last?", last at "+new Date(cv.last.replace(" ","T")+"Z").toLocaleTimeString("en-NZ",{hour:"numeric",minute:"2-digit"}):"")+". Gifted time is never listed.";
+  $("#colRules").textContent="Settlement offer: "+r.p1+"% of the debt up to $1,500, "+r.p2+"% above. Only debts of $"+r.refMin.toLocaleString("en-NZ")+" or more go to Marshall Freeman. Change these in Settings.";
+  drawCol();
+ });
+}
+function drawCol(){
+ var d=COL.data,rows=d.rows.filter(function(x){return COL.tab==="left"?x.left:!x.left});
+ $("#colTabs").innerHTML='<button class="chip'+(COL.tab==="current"?" on":"")+'" data-ct="current">Still members '+d.totals.current+'</button><button class="chip'+(COL.tab==="left"?" on":"")+'" data-ct="left">Left M2 '+d.totals.left+'</button>';
+ $("#colTable").innerHTML=rows.length?table([["Name",function(x){return '<a href="#" data-col="'+x.id+'">'+esc(nm(x))+'</a>'},0,1],["Owes",function(x){return money(x.owing)},1],["Offer",function(x){return money(x.offer)},1],["Status",function(x){return x.case_status?'<span class="pill">'+esc({open:"Chasing",promised:"Promised",referred:"Marshall Freeman"}[x.case_status]||x.case_status)+'</span>':(x.blocked&&!x.left?'<span class="pill warn">Blocked</span>':"")},0,1],["Last contact",function(x){return x.last_at?day(x.last_at):""}],["Checked",function(x){return x.checked_at?day(x.checked_at):"Import"}]],rows):'<div class="ok">Nobody here. Nice.</div>';
+}
+$("#colTabs").addEventListener("click",function(e){var b=e.target.closest("[data-ct]");if(!b)return;COL.tab=b.dataset.ct;drawCol()});
+$("#colTable").addEventListener("click",function(e){var a=e.target.closest("[data-col]");if(!a)return;e.preventDefault();e.stopPropagation();openCol(+a.dataset.col)});
+function openCol(id){
+ var x=COL.data.rows.find(function(r){return r.id===id});if(!x)return;COL.cur=x;
+ var owner=ME.can.settings;
+ $("#colPanel").innerHTML='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2>'+esc(nm(x))+'</h2><a href="#" class="muted" data-member="'+x.id+'">Profile</a></div>'+
+  '<div class="warnbox">Owes <b>'+money(x.owing)+'</b>. Settle for <b>'+money(x.offer)+'</b> if they pay today.</div>'+
+  '<dl class="kv"><dt>Mobile</dt><dd>'+(x.mobile?'<a href="tel:'+esc(x.mobile)+'">'+esc(x.mobile)+'</a>':"None")+'</dd><dt>Email</dt><dd>'+esc(x.email||"None")+'</dd><dt>Membership</dt><dd>'+esc(x.plan||"-")+(x.left?" (left)":"")+'</dd>'+(x.next_bill?'<dt>GymMaster</dt><dd>'+esc(x.next_bill)+'</dd>':"")+(x.last_note?'<dt>Last note</dt><dd>'+esc(x.last_note)+'</dd>':"")+'</dl>'+
+  '<label class="fld">Note<input id="colNote2" placeholder="What did they say?"></label>'+
+  '<div class="outs"><button class="btn dark sm" data-ca="called">Called</button><button class="btn line sm" data-ca="promised">Promised to pay</button><button class="btn line sm" data-ca="settled">Settled</button>'+
+  (owner&&x.can_refer?'<button class="btn line sm" data-ca="referred">Refer to Marshall Freeman</button>':"")+(owner?'<button class="btn line sm" data-ca="written_off">Write off</button>':"")+'<button class="btn line sm" data-ca="check">Check balance now</button></div><div class="err" id="colErr"></div>';
+}
+$("#colPanel").addEventListener("click",function(e){
+ var b=e.target.closest("[data-ca]");if(!b)return;var x=COL.cur,a=b.dataset.ca;$("#colErr").textContent="";
+ if(a==="check"){b.disabled=true;get("/api/members/"+x.id+"/live").then(function(r){b.disabled=false;if(r.error){$("#colErr").textContent=r.error;return}loadCol();$("#colErr").textContent="GymMaster says "+money(r.owing||0)+".";$("#colErr").style.color="var(--ink)"});return}
+ var body={member_id:x.id,action:a,note:$("#colNote2").value};
+ if(a==="promised"){var w=prompt("Pay by what date? (like 2026-10-20)","");if(w===null)return;body.when=w}
+ if(a==="settled"){var amt=prompt("How much did they pay?",x.offer.toFixed(2));if(amt===null)return;body.amount=amt}
+ if(a==="written_off"&&!confirm("Write off "+money(x.owing)+"?"))return;
+ post("/api/collections",body).then(function(r){if(!r.ok){$("#colErr").textContent=r.error;return}$("#colPanel").innerHTML='<div class="ok">Saved for '+esc(nm(x))+'.</div>';loadCol()});
+});
+
+/* ---------- money (owners) ---------- */
+function loadMoney(){
+ get("/api/money").then(function(d){
+  if(d.error){$("#monTiles").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  var pct=d.target?Math.round(d.ytd/d.target*100):0,due=d.target?Math.round(d.target_to_date/d.target*100):0;
+  $("#monGoal").innerHTML='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span class="eyebrow">This financial year, from '+esc(ml(d.fy))+'</span><span style="margin-left:auto;color:var(--soft);font-size:13px">'+whole$(d.ytd)+' of '+whole$(d.target)+' ('+pct+'%). On plan would be '+whole$(d.target_to_date)+' by the end of this month.</span></div><div class="goal" style="position:relative"><i style="width:'+Math.min(100,pct)+'%"></i><span style="position:absolute;top:-3px;bottom:-3px;left:'+Math.min(100,due)+'%;width:2px;background:#fff"></span></div>';
+  var cash=(d.points||[]).find(function(p){return p.key==="cash"});
+  $("#monTiles").innerHTML=tile(k$(d.ytd),"Income this year, excl GST")+tile(k$(d.ytd_net),"Profit this year")+tile(d.pace?k$(d.pace):"-","Year at this pace")+
+   tile(whole$(d.weekly_billed),"Billed weekly by direct debit")+tile(k$(d.yearly_billed_ex_gst),"Memberships per year, excl GST")+
+   (d.passport_estimate!=null?tile(whole$(d.passport_estimate),"Fitness Passport this month so far"):"")+tile(whole$(d.owed_current),"Owed by members")+(cash?tile(k$(cash.value),"Cash in the bank"):"");
+  $("#monUpd").textContent=d.updated?"Xero figures from "+day(d.updated):"No Xero figures yet";
+  var ms=(d.months||[]).slice(0,12).reverse();
+  $("#monChart").innerHTML=ms.length?bars(ms.map(function(m){return {label:ml(m.month),vals:[m.income||0,(m.cost_of_sales||0)+(m.expenses||0),m.net||0]}}),[{name:"Income",cls:""},{name:"Costs",cls:"s1"},{name:"Profit",cls:"s2"}],whole$):'<div class="muted">Ask Claude to bring in Xero and this fills in.</div>';
+  $("#monPoints").innerHTML=(d.points||[]).map(function(p){return '<dt>'+esc(p.label||p.key)+'</dt><dd><b>'+money(p.value)+'</b> <span class="muted">'+esc(day(p.as_of))+'</span></dd>'}).join("")+'<dt>Owed by people who left</dt><dd>'+money(d.owed_left)+'</dd>';
+  $("#monTable").innerHTML=(d.months||[]).length?table([["Month",function(m){return MON[+m.month.slice(5,7)-1]+" "+m.month.slice(0,4)}],["Income",function(m){return whole$(m.income)},1],["Cost of sales",function(m){return whole$(m.cost_of_sales)},1],["Expenses",function(m){return whole$(m.expenses)},1],["Profit",function(m){return '<b style="color:'+((m.net||0)<0?"var(--red)":"inherit")+'">'+whole$(m.net)+'</b>'},1,1],["Margin",function(m){return m.income?Math.round((m.net||0)/m.income*100)+"%":""},1]],d.months):'<div class="muted">Nothing yet.</div>';
+  var lm=(d.months||[]).find(function(m){return m.lines});
+  if(lm){$("#monLinesCard").hidden=false;$("#monLinesTitle").textContent="Where the money came from and went, "+MON[+lm.month.slice(5,7)-1]+" "+lm.month.slice(0,4);
+   var inc=(lm.lines.income||[]).slice().sort(function(a,b){return b[1]-a[1]}).slice(0,10),exp=(lm.lines.expenses||[]).slice().sort(function(a,b){return b[1]-a[1]}).slice(0,12);
+   $("#monLines").innerHTML='<div><h3>Income</h3>'+hbars(inc,whole$)+'</div><div><h3>Biggest costs</h3>'+hbars(exp,whole$)+'</div>'}
+ });
+}
+
+/* ---------- growth (owners) ---------- */
+function loadGrowth(){
+ get("/api/growth").then(function(d){
+  if(d.error){$("#grTiles").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  var sn=d.snaps||[],last=sn[sn.length-1]||{},ym=new Date().toISOString().slice(0,7);
+  var ago=sn.filter(function(s){return s.day<=new Date(Date.now()-30*864e5).toISOString().slice(0,10)}).pop();
+  var j=(d.joins.find(function(x){return x.month===ym})||{}).n||0,l=(d.leaves.find(function(x){return x.month===ym})||{}).n||0;
+  var tr=d.trials.slice(-4,-1),tn=tr.reduce(function(a,x){return a+x.n},0),tj=tr.reduce(function(a,x){return a+(x.joined||0)},0);
+  var perf=(d.mix.find(function(x){return x.family==="perform"})||{}).n||0;
+  $("#grTiles").innerHTML=tile((last.members||0).toLocaleString("en-NZ"),"Members today")+tile(ago?((last.members-ago.members>=0?"+":"")+(last.members-ago.members)):"-","Change in 30 days")+tile(j,"Joined this month")+tile(l,"Left this month")+tile(tn?Math.round(tj/tn*100)+"%":"-","Trials who joined (3 months)")+tile(last.members?Math.round(perf/last.members*100)+"%":"-","On Perform");
+  var pts=sn.map(function(s){return [day(s.day),s.members]});var note="Counted nightly";
+  if(pts.length<5&&d.history&&d.history.length>1){pts=d.history.filter(function(h){return h.members}).map(function(h){return [MON[+String(h.month).slice(5,7)-1]+" "+String(h.month).slice(0,4),h.members]});note="Month-end counts from GymMaster"}
+  $("#grLineNote").textContent=note;$("#grLine").innerHTML=lineChart(pts);
+  var F={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",passport:"Fitness Passport",transporter:"Transporter",pass:"Visit pass",pool:"Pool",trial:"Trial",staff:"Staff",other:"Other",challenge:"Challenge"};
+  $("#grMix").innerHTML=hbars(d.mix.map(function(x){return [F[x.family]||x.family,x.n]}),function(n){return n.toLocaleString("en-NZ")});
+  var months={};d.joins.forEach(function(x){(months[x.month]=months[x.month]||[0,0])[0]=x.n});d.leaves.forEach(function(x){(months[x.month]=months[x.month]||[0,0])[1]=x.n});
+  (d.history||[]).forEach(function(h){if(!months[h.month]&&h.joins!=null)months[h.month]=[h.joins,h.cancels||0]});
+  var mk=Object.keys(months).sort().slice(-12);
+  $("#grJoins").innerHTML=mk.length?bars(mk.map(function(m){return {label:ml(m),vals:months[m]}}),[{name:"Joined",cls:""},{name:"Left",cls:"s2"}]):'<div class="muted">Nothing yet.</div>';
+  $("#grSources").innerHTML=hbars(d.sources.map(function(x){return [x.source,x.n]}));
+  $("#grTrials").innerHTML=d.trials.length?table([["Month",function(x){return MON[+x.month.slice(5,7)-1]+" "+x.month.slice(0,4)}],["Trials","n",1],["Joined","joined",1],["Joined %",function(x){return x.n?Math.round((x.joined||0)/x.n*100)+"%":""},1]],d.trials.slice().reverse()):'<div class="muted">No trials yet.</div>';
+  $("#grLeads").innerHTML=hbars(d.leads.map(function(x){return [(KIND[x.kind]||x.kind)+(x.joined?" ("+x.joined+" joined)":""),x.n]}));
+ });
+}
+
+/* ---------- marketing (owners) ---------- */
+function loadMkt(){
+ var m=$("#mkMonth").value;
+ get("/api/marketing"+(m?"?month="+m:"")).then(function(d){
+  if(d.error){$("#mkTiles").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  if(!m)$("#mkMonth").value=d.month;
+  var pct=d.budget?Math.round(d.meta_spend/d.budget*100):0,ppct=d.budget?Math.round(d.projected/d.budget*100):0;
+  $("#mkBudget").innerHTML='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span class="eyebrow">Meta budget</span><span style="margin-left:auto;color:var(--soft);font-size:13px">'+money(d.meta_spend)+' of '+whole$(d.budget)+' ('+pct+'%). Heading for '+whole$(d.projected)+' ('+ppct+'%).</span></div><div class="goal"><i style="width:'+Math.min(100,pct)+'%;'+(ppct>110?"background:#FFB27A":"")+'"></i></div>';
+  var sess=(d.web||[]).reduce(function(a,w){return a+(w.sessions||0)},0),conv=(d.web||[]).reduce(function(a,w){return a+(w.conversions||0)},0);
+  $("#mkTiles").innerHTML=tile(whole$(d.all_spend),"Ad spend")+tile(d.platform_leads,"Leads Meta counted")+tile(d.cpl!=null?money(d.cpl):"-","Cost per lead")+tile(d.social_leads,"Leads in the Core from Instagram and Facebook")+tile(d.social_joins,"Joined from Instagram and Facebook")+tile(d.cost_per_join!=null?whole$(d.cost_per_join):"-","Meta spend per member who joined")+tile(sess.toLocaleString("en-NZ"),"Website visits")+tile(conv.toLocaleString("en-NZ"),"Website conversions");
+  $("#mkNote").textContent=d.data_to?"Ad figures up to "+day(d.data_to)+". Joins count members whose Came from says Instagram or Facebook, so recording it at sign-up matters.":"No ad figures yet. Ask Claude to bring in Meta and Google Analytics.";
+  $("#mkDaily").innerHTML=d.daily.length?bars(d.daily.map(function(x){return {label:String(+x.day.slice(8)),vals:[x.spend]}}),[{name:"Spend",cls:""}],money):'<div class="muted">Nothing this month yet.</div>';
+  $("#mkTrend").innerHTML=d.trend.length?bars(d.trend.map(function(x){return {label:ml(x.month),vals:[x.spend,x.joins*100]}}),[{name:"Spend",cls:""},{name:"Joins from social (x100)",cls:"s2"}],function(v){return v}):'<div class="muted">Nothing yet.</div>';
+  $("#mkCamps").innerHTML=d.campaigns.length?table([["Campaign","campaign"],["Where","source"],["Spend",function(x){return money(x.spend)},1],["Seen by",function(x){return (x.impressions||0).toLocaleString("en-NZ")},1],["Clicks",function(x){return (x.clicks||0).toLocaleString("en-NZ")},1],["Leads",function(x){return x.leads||0},1],["Per lead",function(x){return x.leads?money(x.spend/x.leads):"-"},1]],d.campaigns):'<div class="muted">No campaigns this month yet.</div>';
+  $("#mkJoins").innerHTML=hbars(d.joins.map(function(x){return [x.source,x.n]}));
+  $("#mkWeb").innerHTML=d.web.length?table([["Channel","channel"],["Visits",function(x){return (x.sessions||0).toLocaleString("en-NZ")},1],["Conversions",function(x){return x.conversions||0},1]],d.web):'<div class="muted">No website figures yet.</div>';
+  $("#mkLeads").innerHTML=hbars(d.core_leads.map(function(x){return [x.source+(x.joined?" ("+x.joined+" joined)":""),x.n]}));
+ });
+}
+$("#mkMonth").addEventListener("change",loadMkt);
+
 /* ---------- settings ---------- */
 var FAMS={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",transporter:"Transporter",passport:"Fitness Passport",pass:"Visit pass",pool:"Pool",trial:"Trial",challenge:"Challenge",staff:"Staff",other:"Other"};
 function loadSettings(){
@@ -679,7 +986,7 @@ function loadSettings(){
   var g="";$("#setRules").innerHTML=d.settings.map(function(s){var h=(s.group!==g?'<div class="eyebrow" style="margin-top:14px">'+esc(s.group)+'</div>':"");g=s.group;
    return h+'<div class="person" data-set="'+esc(s.key)+'"><label class="fld">'+esc(s.label)+'<input class="setIn" value="'+esc(s.value)+'"'+(s.type==="tiers"?"":' inputmode="decimal"')+'></label><div style="display:flex;gap:8px;align-items:center"><button class="btn dark sm" data-setsave="1">Save</button><span class="muted setMsg"></span></div></div>'}).join("");
   $("#setClub").innerHTML=[["Name",d.club.name],["Address",d.club.address],["Phone",d.club.phone],["Email",d.club.email],["Hours",d.club.hours]].map(function(x){return '<dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd>'}).join("");
-  $("#setInt").innerHTML=d.integrations.map(function(i){var good=/^(Connected|Set up|Cloudflare)/.test(i.status);return '<div class="person"><div class="top"><b>'+esc(i.name)+'</b> <span class="pill'+(good?" ok":" warn")+'">'+esc(i.status)+'</span></div><div class="muted">'+esc(i.detail)+'</div></div>'}).join("");
+  $("#setInt").innerHTML=d.integrations.map(function(i){var good=/^(Connected|Set up|Cloudflare|Pushed)/.test(i.status);return '<div class="person"><div class="top"><b>'+esc(i.name)+'</b> <span class="pill'+(good?" ok":" warn")+'">'+esc(i.status)+'</span></div><div class="muted">'+esc(i.detail)+'</div></div>'}).join("");
   $("#setSync").innerHTML=d.sync.map(function(x){return '<div><span>'+esc(day(x.finished_at))+'</span><span>'+esc(x.source==="gymmaster_csv"?"Import from GymMaster":x.source==="gymmaster_members"?"Nightly GymMaster copy":x.source)+' '+(x.ok?'<span class="pill ok">OK, '+(x.rows_changed||0)+' rows</span>':'<span class="pill warn">'+esc(x.error||"Failed")+'</span>')+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>';
   $("#setPlans").innerHTML='<table class="tbl"><thead><tr><th>GymMaster type</th><th>Category</th><th>Counts as</th><th>Billing</th><th>Members</th><th></th></tr></thead><tbody>'+d.plans.map(function(p){return '<tr><td>'+esc(p.name)+'</td><td>'+esc(p.category||"")+'</td><td>'+esc(FAMS[p.family]||p.family)+(p.flexi?", Flexi":"")+(p.corporate?", Corporate"+(p.employer?" ("+esc(p.employer)+")":""):"")+'</td><td>'+esc(p.frequency||"")+'</td><td>'+p.members+'</td><td>'+(p.legacy?'<span class="pill">Existing only</span>':"")+'</td></tr>'}).join("")+'</tbody></table>';
  });
@@ -953,6 +1260,12 @@ const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS payments (\n  id           INTEGER PRIMARY KEY,\n  member_id    INTEGER REFERENCES members(id),\n  amount       REAL NOT NULL,\n  kind         TEXT NOT NULL,    \n  status       TEXT NOT NULL,    \n  failure_reason TEXT,\n  occurred_at  TEXT NOT NULL,\n  source       TEXT,             \n  external_ref TEXT\n);",
 "CREATE INDEX IF NOT EXISTS payments_member ON payments(member_id, occurred_at);",
 "CREATE TABLE IF NOT EXISTS collections_cases (\n  id             INTEGER PRIMARY KEY,\n  member_id      INTEGER NOT NULL REFERENCES members(id),\n  opened_on      TEXT NOT NULL,\n  amount_owed    REAL NOT NULL,\n  is_former      INTEGER NOT NULL DEFAULT 0,\n  status         TEXT NOT NULL DEFAULT 'open', \n  settle_offer   REAL,                         \n  referred_on    TEXT,                         \n  closed_on      TEXT\n);",
+"CREATE TABLE IF NOT EXISTS balance_checks (\n  member_id   INTEGER PRIMARY KEY REFERENCES members(id),\n  owing       REAL NOT NULL DEFAULT 0,\n  next_bill   TEXT,\n  no_billing  INTEGER NOT NULL DEFAULT 0, \n  checked_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS finance_months (\n  month         TEXT PRIMARY KEY,          \n  income        REAL,\n  cost_of_sales REAL,\n  expenses      REAL,\n  net           REAL,\n  lines         TEXT,                      \n  source        TEXT,\n  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS finance_points (\n  key     TEXT PRIMARY KEY,                \n  label   TEXT,\n  value   REAL,\n  as_of   TEXT\n);",
+"CREATE TABLE IF NOT EXISTS member_snapshots (\n  day           TEXT PRIMARY KEY,\n  members       INTEGER,\n  passport      INTEGER,\n  perform       INTEGER,\n  daily         INTEGER,\n  classes       INTEGER,\n  recovery      INTEGER,\n  other         INTEGER,\n  weekly_billed REAL,\n  owed          REAL\n);",
+"CREATE TABLE IF NOT EXISTS marketing_days (\n  day         TEXT NOT NULL,\n  source      TEXT NOT NULL,               \n  campaign    TEXT NOT NULL,\n  spend       REAL,\n  impressions INTEGER,\n  clicks      INTEGER,\n  leads       INTEGER,\n  landing_views INTEGER,\n  PRIMARY KEY (day, source, campaign)\n);",
+"CREATE TABLE IF NOT EXISTS web_days (\n  day         TEXT NOT NULL,\n  channel     TEXT NOT NULL,\n  sessions    INTEGER,\n  conversions INTEGER,\n  PRIMARY KEY (day, channel)\n);",
 "CREATE TABLE IF NOT EXISTS visits (\n  id          INTEGER PRIMARY KEY,\n  member_id   INTEGER NOT NULL REFERENCES members(id),\n  at          TEXT NOT NULL,             \n  door        TEXT,                      \n  via         TEXT,                      \n  gm_visit_id TEXT UNIQUE,\n  fp_id       TEXT,                      \n  fp_status   TEXT                       \n);",
 "CREATE INDEX IF NOT EXISTS visits_member_at ON visits(member_id, at);",
 "CREATE INDEX IF NOT EXISTS visits_at ON visits(at);",
@@ -975,15 +1288,444 @@ const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS sale_lines (\n  sale_id    INTEGER NOT NULL REFERENCES sales(id) ON DELETE CASCADE,\n  product_id INTEGER REFERENCES products(id),\n  label      TEXT NOT NULL,\n  qty        INTEGER NOT NULL DEFAULT 1,\n  price      REAL NOT NULL\n);",
 "CREATE TABLE IF NOT EXISTS sync_log (\n  id          INTEGER PRIMARY KEY,\n  source      TEXT NOT NULL,    \n  started_at  TEXT NOT NULL,\n  finished_at TEXT,\n  rows_in     INTEGER DEFAULT 0,\n  rows_changed INTEGER DEFAULT 0,\n  ok          INTEGER,\n  error       TEXT\n);",
 "CREATE TABLE IF NOT EXISTS settings (\n  key   TEXT PRIMARY KEY,\n  value TEXT NOT NULL\n);",
-"INSERT OR IGNORE INTO settings(key, value) VALUES\n  ('block_at_balance', '250'),\n  ('settle_pct_upto_1500', '50'),\n  ('settle_pct_over_1500', '30'),\n  ('referral_min_amount', '1000'),\n  ('class_capacity', '20'),\n  ('late_cancel_hours', '12'),\n  ('no_show_after_minutes', '10'),\n  ('fp_tiers', '458:7.39,919:8.21,1380:9.12,1841:10.03,0:11.04'),\n  ('fp_ids_loaded', '0');",
+"INSERT OR IGNORE INTO settings(key, value) VALUES\n  ('block_at_balance', '250'),\n  ('settle_pct_upto_1500', '50'),\n  ('settle_pct_over_1500', '30'),\n  ('referral_min_amount', '1000'),\n  ('class_capacity', '20'),\n  ('late_cancel_hours', '12'),\n  ('no_show_after_minutes', '10'),\n  ('fp_tiers', '458:7.39,919:8.21,1380:9.12,1841:10.03,0:11.04'),\n  ('fp_ids_loaded', '0'),\n  ('fy_target_ex_gst', '1235600'),\n  ('meta_budget_month', '3500'),\n  ('balance_cursor', '0');",
 "INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VALUES\n  ('trial_ending',       'Trial ending',          'joined',    7,  0),\n  ('trial_comeback',     'Trial come-back',       'joined',    14, 0),\n  ('passport_winback',   'Fitness Passport win-back', 'visited', 7, 0),\n  ('we_miss_you',        'We miss you',           'visited',   7,  0),\n  ('new_member_checkin', 'New member check-in',   'visited',   7,  0),\n  ('failed_payment',     'Failed payment',        'paid',      7,  0),\n  ('daily_to_perform',   'Daily to Perform',      'upgraded',  14, 0),\n  ('no_show',            'Class no-show',         'attended',  14, 0);"
 ];
 const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2);"
 ];
+const SCHEMA_VERSION = "4a482677fa91";
+
+// hub.js (bundled)
+// M2 Core: the joined-up parts.
+// Classes and bookings, the live GymMaster panel on a member, collections with real balances,
+// and the owners' Money, Growth and Marketing pages. Everything here reads the same database
+// as the rest of the Core, plus GymMaster live, plus figures pushed in from Xero, Meta and GA4.
+
+function makeHub(L) {
+  const { json, nzDateTime, gmCall, applyBlockRule } = L;
+  const todayNz = () => nzDateTime(new Date()).slice(0, 10);
+  const num = v => { const n = parseFloat(String(v ?? "").replace(/[^0-9.\-]/g, "")); return Number.isFinite(n) ? n : 0; };
+  const setting = async (env, key, dflt) => (await env.DB.prepare("SELECT value FROM settings WHERE key = ?").bind(key).first())?.value ?? dflt;
+  const all = (env, sql, ...a) => env.DB.prepare(sql).bind(...a).all().then(r => r.results || []);
+  const one = (env, sql, ...a) => env.DB.prepare(sql).bind(...a).first();
+
+  function mondayOf(iso) {
+    const d = new Date(iso + "T12:00:00Z");
+    const back = (d.getUTCDay() + 6) % 7;
+    return new Date(d.getTime() - back * 86400_000).toISOString().slice(0, 10);
+  }
+  const addDays = (iso, n) => new Date(new Date(iso + "T12:00:00Z").getTime() + n * 86400_000).toISOString().slice(0, 10);
+
+  async function canSeeMember(env, who, can, id) {
+    if (!can.members) return false;
+    if (can.members === true) return true;
+    const m = await one(env, "SELECT trainer_id FROM members WHERE id = ?", id);
+    return !!m && m.trainer_id === who.id;
+  }
+
+  /* ---------------- classes ---------------- */
+  // The timetable comes live from GymMaster, so a booking made in the M2 App shows here straight away.
+
+  async function classesWeek(env, who, can, q) {
+    const asked = q.get("week");
+    const week = mondayOf(/^\d{4}-\d{2}-\d{2}$/.test(asked || "") ? asked : todayNz());
+    const d = await gmCall(env, "v1", "/booking/classes/schedule", { params: { week } });
+    if (!Array.isArray(d.result)) return { error: "GymMaster didn't send the timetable (" + (d.error || "no reply") + ")." };
+    const classes = d.result.map(c => ({
+      id: c.id, day: c.arrival, start: String(c.starttime || "").slice(0, 5), end: String(c.endtime || "").slice(0, 5),
+      time: c.start_str, name: c.classname || c.bookingname, coach: c.staffname, location: c.location,
+      booked: c.num_students || 0, max: c.max_students || 0, free: c.spacesfree ?? null, waitlist: c.waitlist_count || 0,
+      colour: c.bgcolour || null,
+    })).filter(c => c.day >= week && c.day < addDays(week, 7)).sort((a, b) => (a.day + a.start).localeCompare(b.day + b.start));
+    return { week, prev: addDays(week, -7), next: addDays(week, 7), today: todayNz(), classes, can_book: !!can.add };
+  }
+
+  function readAttendee(a) {
+    const member_id = +(a.memberid ?? a.member_id ?? a.memberID ?? a.member ?? 0) || null;
+    const name = a.name || a.membername || a.fullname || [a.firstname, a.surname].filter(Boolean).join(" ") || "Member";
+    const wait = a.waitlist === true || a.is_waitlist === true || a.waitinglist === true || /wait/i.test(a.status || "");
+    const attended = a.attended === true || a.attended === 1 || /attend|arrived|checked/i.test(a.status || "");
+    const status = wait ? "waitlist" : attended ? "attended" : /cancel/i.test(a.status || "") ? "cancelled" : "booked";
+    return { member_id, name, status, booking_id: a.bookingid ?? a.booking_id ?? a.id ?? null };
+  }
+
+  async function classDetail(env, who, can, classId) {
+    const d = await gmCall(env, "v2", "/booking/classes/" + classId + "/attendees", { auth: "high" });
+    if (!Array.isArray(d.result)) return { error: "GymMaster didn't send the class list (" + (d.error || "no reply") + ")." };
+    const people = d.result.map(readAttendee);
+    const ids = people.map(p => p.member_id).filter(Boolean);
+    const core = {};
+    if (ids.length) {
+      const rows = await all(env, `SELECT m.id, m.first_name, m.last_name, m.trainer_id,
+          EXISTS (SELECT 1 FROM member_photos p WHERE p.member_id = m.id) has_photo,
+          (SELECT group_concat(flag) FROM member_flags f WHERE f.member_id = m.id) flags
+        FROM members m WHERE m.id IN (${ids.map(() => "?").join(",")})`, ...ids);
+      for (const r of rows) core[r.id] = r;
+    }
+    const out = people.map(p => {
+      const c = p.member_id && core[p.member_id];
+      const flags = c && c.flags ? c.flags.split(",") : [];
+      return { ...p, in_core: !!c, name: c ? (c.first_name + " " + (c.last_name || "")).trim() : p.name, has_photo: !!(c && c.has_photo),
+               blocked: flags.includes("blocked") && can.balances, passport: flags.includes("passport"),
+               open: !!c && (can.members === true || (can.members === "own" && c.trainer_id === who.id)) };
+    });
+    const unknownShape = d.result.length && !people.some(p => p.member_id) ? Object.keys(d.result[0]) : null;
+    return { attendees: out, unknown_fields: can.settings ? unknownShape : null };
+  }
+
+  async function blockReason(env, memberId) {
+    const f = await all(env, "SELECT flag FROM member_flags WHERE member_id = ?", memberId);
+    if (f.some(x => x.flag === "gifted_time")) return null;
+    const limit = +(await setting(env, "block_at_balance", 250));
+    const b = await one(env, "SELECT balance_owing FROM billing_accounts WHERE member_id = ?", memberId);
+    if (f.some(x => x.flag === "blocked") || (b && b.balance_owing >= limit)) {
+      return "Owes $" + (b ? b.balance_owing.toFixed(2) : "money") + ", so they can't book until it's paid (the $" + limit + " rule).";
+    }
+    return null;
+  }
+
+  async function bookMember(env, who, can, classId, b) {
+    if (!can.add) return { ok: false, error: "Only reception, the manager and owners can book people in." };
+    const mid = +b.member_id;
+    const m = await one(env, "SELECT id, first_name, last_name FROM members WHERE id = ?", mid);
+    if (!m) return { ok: false, error: "Pick a member first." };
+    const stop = await blockReason(env, mid);
+    if (stop) return { ok: false, error: stop };
+    const d = await gmCall(env, "v2", "/booking/classes", { member: mid, method: "POST", body: { bookingid: +classId } });
+    if (d.error) return { ok: false, error: "GymMaster said: " + (typeof d.error === "string" ? d.error : JSON.stringify(d.error)) };
+    await env.DB.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', ?)")
+      .bind(mid, who.id, "Booked into " + String(b.label || "a class").slice(0, 120)).run();
+    return { ok: true, waitlist: /wait/i.test(JSON.stringify(d.result || "")) };
+  }
+
+  async function cancelBooking(env, who, can, classId, b) {
+    if (!can.add) return { ok: false, error: "Only reception, the manager and owners can cancel bookings." };
+    const mid = +b.member_id;
+    if (!mid) return { ok: false, error: "This person isn't matched to a member, so cancel them in GymMaster." };
+    let bookingId = null;
+    const mine = await gmCall(env, "v2", "/member/bookings", { member: mid });
+    const list = [].concat(mine.result?.classbookings || [], mine.result?.classwaitlists || []);
+    const hit = list.find(x => [x.bookingid, x.classid, x.class_id, x.sessionid, x.booking_id, x.classbookingid].map(String).includes(String(classId)));
+    if (hit) bookingId = hit.id ?? hit.booking_id ?? hit.bookingid;
+    if (!bookingId) bookingId = b.booking_id;
+    if (!bookingId) return { ok: false, error: "Couldn't find their booking in GymMaster." };
+    const d = await gmCall(env, "v1", "/member/cancelbooking", { member: mid, method: "POST", body: { bookingid: bookingId } });
+    if (d.error) return { ok: false, error: "GymMaster said: " + (typeof d.error === "string" ? d.error : JSON.stringify(d.error)) };
+    await env.DB.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', ?)")
+      .bind(mid, who.id, "Cancelled from " + String(b.label || "a class").slice(0, 120)).run();
+    return { ok: true };
+  }
+
+  /* ---------------- live member panel ---------------- */
+
+  async function saveBalance(env, id, bal) {
+    const owing = num(bal.owingamount);
+    const next = bal.next_bill || null;
+    const noBill = /no (billing|payment|direct)/i.test(next || "") ? 1 : 0;
+    await env.DB.batch([
+      env.DB.prepare(`INSERT INTO balance_checks(member_id, owing, next_bill, no_billing, checked_at) VALUES (?, ?, ?, ?, datetime('now'))
+                      ON CONFLICT(member_id) DO UPDATE SET owing = excluded.owing, next_bill = excluded.next_bill, no_billing = excluded.no_billing, checked_at = excluded.checked_at`)
+        .bind(id, owing, next, noBill),
+      env.DB.prepare(`INSERT INTO billing_accounts(member_id, balance_owing) VALUES (?, ?)
+                      ON CONFLICT(member_id) DO UPDATE SET balance_owing = excluded.balance_owing, updated_at = datetime('now')`).bind(id, owing),
+    ]);
+    return owing;
+  }
+
+  async function memberLive(env, who, can, id) {
+    if (!(await canSeeMember(env, who, can, id))) return { error: "No access" };
+    const safe = p => p.catch(e => ({ error: String(e.message || e) }));
+    const [bal, mships, books, visits, hist] = await Promise.all([
+      can.balances ? safe(gmCall(env, "v1", "/member/outstandingbalance", { member: id })) : null,
+      safe(gmCall(env, "v1", "/member/memberships", { member: id })),
+      safe(gmCall(env, "v2", "/member/bookings", { member: id })),
+      safe(gmCall(env, "v1", "/member/visits/monthly", { member: id })),
+      can.balances ? safe(gmCall(env, "v1", "/member/accounthistory", { member: id })) : null,
+    ]);
+    if (mships.error && /wouldn't open/.test(mships.error)) return { error: "This person isn't in GymMaster, so there's nothing live to show." };
+    const out = { checked_at: new Date().toISOString() };
+    if (bal && !bal.error) {
+      out.owing = await saveBalance(env, id, bal);
+      out.next_bill = bal.next_bill || null;
+      await applyBlockRule(env);
+    }
+    out.memberships = (mships.result || []).map(x => ({
+      name: x.name, start: x.startdate, end: x.enddate, next_payment: x.nextpaymentdate, on_hold: !!x.onhold, hold_coming: !!x.upcoming_hold_exists,
+      in_min_term: !!x.within_min_term, earliest_cancel: x.earliest_cancellation_date, visits_used: x.visitsused, visit_limit: x.visitlimit,
+      price: can.balances ? x.price : undefined,
+    }));
+    const cb = books.result || {};
+    out.bookings = [].concat((cb.classbookings || []).map(x => ({ ...x, _w: false })), (cb.classwaitlists || []).map(x => ({ ...x, _w: true })))
+      .map(x => ({ name: x.classname || x.bookingname || x.name || "Class", day: x.arrival || x.day || x.date || "", time: x.start_str || String(x.starttime || "").slice(0, 5),
+                   waitlist: x._w })).slice(0, 10);
+    out.services = (cb.servicebookings || []).length;
+    out.visits = (visits.result || []).map(v => ({ month: v.month, visits: v.visits }));
+    if (hist && Array.isArray(hist.result)) {
+      out.history = hist.result.slice(0, 12).map(h => ({ when: h.occurred_str || h.occurred, note: h.note, debit: h.debit, credit: h.credit, unpaid: !!h.unpaid, total: h.running_total }));
+    }
+    return out;
+  }
+
+  /* ---------------- balances, all day ---------------- */
+  // Every 15 minutes: 15 members in turn plus the 5 owing longest since a check. A full lap of the
+  // club takes about a day, and anyone owing is rechecked often, so the $250 block stays true.
+
+  async function refreshBalances(env) {
+    if (!env.GM_STAFF_KEY || !env.GM_API_KEY) return { ok: false, error: "GymMaster keys missing" };
+    const cursor = +(await setting(env, "balance_cursor", 0));
+    const lap = (await all(env, "SELECT id FROM members WHERE status = 'active' AND id > ? ORDER BY id LIMIT 15", cursor)).map(r => r.id);
+    const owing = (await all(env, "SELECT member_id id FROM balance_checks WHERE owing > 0 ORDER BY checked_at LIMIT 5")).map(r => r.id);
+    const ids = [...new Set(lap.concat(owing))];
+    let done = 0, failed = 0;
+    for (let i = 0; i < ids.length; i += 5) {
+      await Promise.all(ids.slice(i, i + 5).map(async id => {
+        try {
+          const b = await gmCall(env, "v1", "/member/outstandingbalance", { member: id });
+          if (b.error && b.owingamount === undefined) { failed++; return; }
+          await saveBalance(env, id, b); done++;
+        } catch { failed++; }
+      }));
+    }
+    await env.DB.prepare("INSERT INTO settings(key, value) VALUES ('balance_cursor', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")
+      .bind(String(lap.length < 15 ? 0 : lap[lap.length - 1])).run();
+    await applyBlockRule(env);
+    return { ok: true, done, failed };
+  }
+
+  /* ---------------- daily snapshot ---------------- */
+
+  async function takeSnapshot(env) {
+    const day = todayNz();
+    const fam = Object.fromEntries((await all(env, `SELECT p.family, count(DISTINCT ms.member_id) n FROM memberships ms JOIN plans p ON p.id = ms.plan_id
+                                                   JOIN members m ON m.id = ms.member_id AND m.status = 'active'
+                                                   WHERE ms.status = 'current' GROUP BY p.family`)).map(r => [r.family, r.n]));
+    const members = (await one(env, "SELECT count(*) n FROM members WHERE status = 'active'")).n;
+    const passport = (await one(env, "SELECT count(*) n FROM member_flags f JOIN members m ON m.id = f.member_id AND m.status = 'active' WHERE f.flag = 'passport'")).n;
+    const weekly = (await one(env, "SELECT round(sum(weekly_value), 2) v FROM memberships WHERE status = 'current' AND billed_by <> 'passport'")).v || 0;
+    const owed = (await one(env, "SELECT round(sum(balance_owing), 2) v FROM billing_accounts WHERE balance_owing > 0")).v || 0;
+    const named = ["perform", "daily", "classes", "recovery"].reduce((a, k) => a + (fam[k] || 0), 0);
+    await env.DB.prepare(`INSERT INTO member_snapshots(day, members, passport, perform, daily, classes, recovery, other, weekly_billed, owed)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                          ON CONFLICT(day) DO UPDATE SET members = excluded.members, passport = excluded.passport, perform = excluded.perform,
+                            daily = excluded.daily, classes = excluded.classes, recovery = excluded.recovery, other = excluded.other,
+                            weekly_billed = excluded.weekly_billed, owed = excluded.owed`)
+      .bind(day, members, passport, fam.perform || 0, fam.daily || 0, fam.classes || 0, fam.recovery || 0, Math.max(0, members - named - passport), weekly, owed).run();
+    return { day, members };
+  }
+
+  /* ---------------- collections ---------------- */
+
+  async function collections(env, can) {
+    if (!can.collections) return { error: "Collections are for owners and the manager." };
+    const [p1, p2, refMin, limit] = await Promise.all([setting(env, "settle_pct_upto_1500", 50), setting(env, "settle_pct_over_1500", 30),
+      setting(env, "referral_min_amount", 1000), setting(env, "block_at_balance", 250)]);
+    const rows = await all(env, `SELECT m.id, m.first_name, m.last_name, m.mobile, m.email, m.status, b.balance_owing owing,
+        bc.checked_at, bc.next_bill, c.id case_id, c.status case_status, c.referred_on, c.opened_on,
+        (SELECT a.detail FROM activity a WHERE a.member_id = m.id AND a.kind IN ('call','note') ORDER BY a.at DESC, a.id DESC LIMIT 1) last_note,
+        (SELECT a.at FROM activity a WHERE a.member_id = m.id AND a.kind IN ('call','note') ORDER BY a.at DESC, a.id DESC LIMIT 1) last_at,
+        (SELECT p.gm_type_name FROM memberships ms JOIN plans p ON p.id = ms.plan_id WHERE ms.member_id = m.id ORDER BY ms.status = 'current' DESC, ms.start_date DESC LIMIT 1) plan
+      FROM billing_accounts b JOIN members m ON m.id = b.member_id
+      LEFT JOIN balance_checks bc ON bc.member_id = m.id
+      LEFT JOIN collections_cases c ON c.member_id = m.id AND c.status IN ('open','promised','referred')
+      WHERE b.balance_owing > 0
+        AND NOT EXISTS (SELECT 1 FROM member_flags f WHERE f.member_id = m.id AND f.flag = 'gifted_time')
+      ORDER BY b.balance_owing DESC LIMIT 600`);
+    for (const r of rows) {
+      r.left = r.status !== "active";
+      r.offer = Math.round(r.owing * (r.owing <= 1500 ? +p1 : +p2)) / 100;
+      r.can_refer = r.owing >= +refMin;
+      r.blocked = r.owing >= +limit;
+    }
+    const sum = l => Math.round(l.reduce((a, r) => a + r.owing, 0) * 100) / 100;
+    const cur = rows.filter(r => !r.left), left = rows.filter(r => r.left);
+    const cover = await one(env, `SELECT count(*) n, sum(CASE WHEN bc.checked_at >= datetime('now','-2 days') THEN 1 ELSE 0 END) recent, max(bc.checked_at) last
+                                  FROM members m LEFT JOIN balance_checks bc ON bc.member_id = m.id WHERE m.status = 'active'`);
+    return { rows, totals: { current: cur.length, current_sum: sum(cur), left: left.length, left_sum: sum(left), blocked: rows.filter(r => r.blocked && !r.left).length,
+             referable: rows.filter(r => r.can_refer && !r.case_status).length },
+             rules: { p1: +p1, p2: +p2, refMin: +refMin, limit: +limit }, coverage: cover };
+  }
+
+  const CASE_ACTIONS = { called: "Called about the balance", promised: "Promised to pay", settled: "Settled", referred: "Referred to Marshall Freeman",
+                         written_off: "Written off", note: "Note" };
+  async function collectionAction(env, who, can, b) {
+    if (!can.collections) return { ok: false, error: "Collections are for owners and the manager." };
+    const mid = +b.member_id, act = String(b.action || "");
+    if (!CASE_ACTIONS[act]) return { ok: false, error: "Unknown action" };
+    const m = await one(env, `SELECT m.id, m.status, b.balance_owing owing FROM members m LEFT JOIN billing_accounts b ON b.member_id = m.id WHERE m.id = ?`, mid);
+    if (!m) return { ok: false, error: "Member not found" };
+    const gifted = await one(env, "SELECT 1 x FROM member_flags WHERE member_id = ? AND flag = 'gifted_time'", mid);
+    if (gifted) return { ok: false, error: "Gifted time: never chased for money." };
+    const owing = m.owing || 0;
+    if (act === "referred") {
+      const min = +(await setting(env, "referral_min_amount", 1000));
+      if (owing < min) return { ok: false, error: "Only debts of $" + min + " or more go to Marshall Freeman." };
+    }
+    if ((act === "written_off" || act === "referred") && !can.settings) return { ok: false, error: "Only Taylor and Tim can refer or write off a debt." };
+    const note = String(b.note || "").trim().slice(0, 500);
+    const pct = owing <= 1500 ? +(await setting(env, "settle_pct_upto_1500", 50)) : +(await setting(env, "settle_pct_over_1500", 30));
+    const open = await one(env, "SELECT id FROM collections_cases WHERE member_id = ? AND status IN ('open','promised','referred') ORDER BY id DESC LIMIT 1", mid);
+    const status = { called: "open", note: "open", promised: "promised", settled: "settled", referred: "referred", written_off: "written_off" }[act];
+    const closed = ["settled", "written_off"].includes(status);
+    const stmts = [];
+    if (open) {
+      stmts.push(env.DB.prepare(`UPDATE collections_cases SET status = ?, amount_owed = ?, settle_offer = ?, referred_on = CASE WHEN ? = 'referred' THEN date('now') ELSE referred_on END,
+                                 closed_on = CASE WHEN ? = 1 THEN date('now') ELSE NULL END WHERE id = ?`)
+        .bind(status, owing, Math.round(owing * pct) / 100, status, closed ? 1 : 0, open.id));
+    } else {
+      stmts.push(env.DB.prepare(`INSERT INTO collections_cases(member_id, opened_on, amount_owed, is_former, status, settle_offer, referred_on, closed_on)
+                                 VALUES (?, date('now'), ?, ?, ?, ?, CASE WHEN ? = 'referred' THEN date('now') END, CASE WHEN ? = 1 THEN date('now') END)`)
+        .bind(mid, owing, m.status === "active" ? 0 : 1, status, Math.round(owing * pct) / 100, status, closed ? 1 : 0));
+    }
+    const amt = b.amount ? " $" + num(b.amount).toFixed(2) : "";
+    stmts.push(env.DB.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, ?, ?)")
+      .bind(mid, who.id, act === "called" ? "call" : "note", CASE_ACTIONS[act] + amt + (b.when ? " by " + String(b.when).slice(0, 10) : "") + (note ? ": " + note : "")));
+    await env.DB.batch(stmts);
+    return { ok: true };
+  }
+
+  /* ---------------- data pushed in (Xero, Meta, GA4) ---------------- */
+  const PUSH = {
+    finance_months: { cols: ["month", "income", "cost_of_sales", "expenses", "net", "lines", "source"], key: r => /^\d{4}-\d{2}$/.test(r.month),
+      sql: `INSERT INTO finance_months(month, income, cost_of_sales, expenses, net, lines, source, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+            ON CONFLICT(month) DO UPDATE SET income = excluded.income, cost_of_sales = excluded.cost_of_sales, expenses = excluded.expenses, net = excluded.net,
+              lines = excluded.lines, source = excluded.source, updated_at = excluded.updated_at` },
+    finance_points: { cols: ["key", "label", "value", "as_of"], key: r => /^[a-z_]{2,40}$/.test(r.key),
+      sql: `INSERT INTO finance_points(key, label, value, as_of) VALUES (?, ?, ?, ?)
+            ON CONFLICT(key) DO UPDATE SET label = excluded.label, value = excluded.value, as_of = excluded.as_of` },
+    marketing_days: { cols: ["day", "source", "campaign", "spend", "impressions", "clicks", "leads", "landing_views"], key: r => /^\d{4}-\d{2}-\d{2}$/.test(r.day) && r.source && r.campaign,
+      sql: `INSERT INTO marketing_days(day, source, campaign, spend, impressions, clicks, leads, landing_views) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(day, source, campaign) DO UPDATE SET spend = excluded.spend, impressions = excluded.impressions, clicks = excluded.clicks,
+              leads = excluded.leads, landing_views = excluded.landing_views` },
+    web_days: { cols: ["day", "channel", "sessions", "conversions"], key: r => /^\d{4}-\d{2}-\d{2}$/.test(r.day) && r.channel,
+      sql: `INSERT INTO web_days(day, channel, sessions, conversions) VALUES (?, ?, ?, ?)
+            ON CONFLICT(day, channel) DO UPDATE SET sessions = excluded.sessions, conversions = excluded.conversions` },
+  };
+  async function pushData(env, who, can, b) {
+    if (!can.settings) return { ok: false, error: "Owners only" };
+    const p = PUSH[b.kind];
+    if (!p) return { ok: false, error: "Unknown kind" };
+    const rows = Array.isArray(b.rows) ? b.rows : [];
+    if (!rows.length || rows.length > 3000) return { ok: false, error: "Send 1 to 3,000 rows" };
+    const stmts = [];
+    for (const r of rows) {
+      if (!r || !p.key(r)) return { ok: false, error: "Bad row: " + JSON.stringify(r).slice(0, 120) };
+      stmts.push(env.DB.prepare(p.sql).bind(...p.cols.map(c => {
+        const v = r[c];
+        if (v === undefined || v === null || v === "") return null;
+        return typeof v === "object" ? JSON.stringify(v) : v;
+      })));
+    }
+    for (let i = 0; i < stmts.length; i += 80) await env.DB.batch(stmts.slice(i, i + 80));
+    await env.DB.prepare("INSERT INTO sync_log(source, started_at, finished_at, rows_in, rows_changed, ok) VALUES (?, datetime('now'), datetime('now'), ?, ?, 1)")
+      .bind("push_" + b.kind, rows.length, stmts.length).run();
+    return { ok: true, rows: stmts.length };
+  }
+
+  /* ---------------- Money (owners) ---------------- */
+  function fyStart(iso) { const y = +iso.slice(0, 4), m = +iso.slice(5, 7); return (m >= 4 ? y : y - 1) + "-04"; }
+
+  async function money(env, can) {
+    if (!can.business) return { error: "Owners only" };
+    const now = todayNz(), ym = now.slice(0, 7), fy = fyStart(now);
+    const months = (await all(env, "SELECT month, income, cost_of_sales, expenses, net, lines, source, updated_at FROM finance_months ORDER BY month DESC LIMIT 24"))
+      .map(r => ({ ...r, lines: (() => { try { return JSON.parse(r.lines || "null"); } catch { return null; } })() }));
+    const points = await all(env, "SELECT key, label, value, as_of FROM finance_points ORDER BY key");
+    const target = +(await setting(env, "fy_target_ex_gst", 1235600));
+    const fyRows = months.filter(r => r.month >= fy && r.month <= ym);
+    const ytd = fyRows.reduce((a, r) => a + (r.income || 0), 0);
+    const ytdNet = fyRows.reduce((a, r) => a + (r.net || 0), 0);
+    const closed = fyRows.filter(r => r.month < ym);
+    const pace = closed.length ? closed.reduce((a, r) => a + (r.income || 0), 0) / closed.length * 12 : null;
+    const fyMonthsGone = ((+ym.slice(0, 4) - +fy.slice(0, 4)) * 12 + (+ym.slice(5, 7) - 4)) + 1;
+    const weekly = (await one(env, "SELECT round(sum(weekly_value), 2) v FROM memberships WHERE status = 'current' AND billed_by <> 'passport'")).v || 0;
+    const owed = await one(env, `SELECT round(sum(CASE WHEN m.status = 'active' THEN b.balance_owing ELSE 0 END), 2) cur,
+                                        round(sum(CASE WHEN m.status <> 'active' THEN b.balance_owing ELSE 0 END), 2) left_
+                                 FROM billing_accounts b JOIN members m ON m.id = b.member_id WHERE b.balance_owing > 0`);
+    const fpVisits = (await one(env, `SELECT count(*) n FROM visits v JOIN member_flags f ON f.member_id = v.member_id AND f.flag = 'passport'
+                                      WHERE v.at >= ? AND v.at < ?`, ym + "-01", ym + "-32")).n;
+    const fpTiers = await setting(env, "fp_tiers", "");
+    return { ym, fy, target, ytd: Math.round(ytd), ytd_net: Math.round(ytdNet), pace: pace && Math.round(pace), fy_months_gone: fyMonthsGone,
+             target_to_date: Math.round(target / 12 * Math.min(12, fyMonthsGone)), months, points,
+             weekly_billed: weekly, yearly_billed_ex_gst: Math.round(weekly * 52 / 1.15),
+             owed_current: owed?.cur || 0, owed_left: owed?.left_ || 0,
+             passport_visits: fpVisits, passport_estimate: fpVisits ? L.passportPay(fpVisits, fpTiers).total : null,
+             updated: months[0]?.updated_at || null };
+  }
+
+  /* ---------------- Growth (owners) ---------------- */
+  async function growth(env, can) {
+    if (!can.business) return { error: "Owners only" };
+    const today = todayNz();
+    if (!(await one(env, "SELECT 1 x FROM member_snapshots WHERE day = ?", today))) await takeSnapshot(env);
+    const snaps = await all(env, "SELECT * FROM member_snapshots WHERE day >= ? ORDER BY day", addDays(today, -400));
+    const from = addDays(today.slice(0, 7) + "-01", -366).slice(0, 7);
+    const joins = await all(env, "SELECT substr(joined_on, 1, 7) month, count(*) n FROM members WHERE joined_on >= ? GROUP BY 1 ORDER BY 1", from + "-01");
+    const leaves = await all(env, "SELECT substr(at, 1, 7) month, count(*) n FROM activity WHERE kind = 'cancel' AND at >= ? GROUP BY 1 ORDER BY 1", from + "-01");
+    const trials = await all(env, `SELECT substr(created_at, 1, 7) month, count(*) n, sum(CASE WHEN stage = 'joined' THEN 1 ELSE 0 END) joined
+                                   FROM leads WHERE kind = 'trial' AND created_at >= ? GROUP BY 1 ORDER BY 1`, from + "-01");
+    const sources = await all(env, `SELECT coalesce(nullif(lead_source, ''), 'Not recorded') source, count(*) n FROM members
+                                    WHERE joined_on >= ? GROUP BY 1 ORDER BY 2 DESC`, addDays(today, -90));
+    const mix = await all(env, `SELECT p.family, count(DISTINCT ms.member_id) n FROM memberships ms JOIN plans p ON p.id = ms.plan_id
+                                JOIN members m ON m.id = ms.member_id AND m.status = 'active' WHERE ms.status = 'current' GROUP BY 1 ORDER BY 2 DESC`);
+    const leads = await all(env, `SELECT kind, count(*) n, sum(CASE WHEN stage = 'joined' THEN 1 ELSE 0 END) joined FROM leads
+                                  WHERE created_at >= ? GROUP BY 1 ORDER BY 2 DESC`, addDays(today, -90));
+    let history = [];
+    if (env.M2CC) {
+      try {
+        let cursor;
+        do {
+          const l = await env.M2CC.list({ prefix: "snap:", cursor });
+          for (const k of l.keys) { const v = await env.M2CC.get(k.name, "json"); if (v) history.push({ month: v.month, members: v.members, joins: v.newMembers, cancels: v.cancels, visits: v.visits, trials: v.trials, pt_leads: v.ptLeads }); }
+          cursor = l.list_complete ? null : l.cursor;
+        } while (cursor && history.length < 60);
+      } catch { history = []; }
+    }
+    return { snaps, joins, leaves, trials, sources, mix, leads, history: history.sort((a, b) => String(a.month).localeCompare(String(b.month))) };
+  }
+
+  /* ---------------- Marketing (owners) ---------------- */
+  const SOCIAL = ["instagram", "facebook", "meta"];
+  async function marketing(env, can, q) {
+    if (!can.business) return { error: "Owners only" };
+    const today = todayNz();
+    const month = /^\d{4}-\d{2}$/.test(q.get("month") || "") ? q.get("month") : today.slice(0, 7);
+    const lo = month + "-01", hi = month + "-32";
+    const campaigns = await all(env, `SELECT source, campaign, round(sum(spend), 2) spend, sum(impressions) impressions, sum(clicks) clicks, sum(leads) leads,
+                                        sum(landing_views) landing_views FROM marketing_days WHERE day >= ? AND day < ? GROUP BY 1, 2 ORDER BY 3 DESC`, lo, hi);
+    const daily = await all(env, "SELECT day, round(sum(spend), 2) spend, sum(leads) leads FROM marketing_days WHERE day >= ? AND day < ? GROUP BY 1 ORDER BY 1", lo, hi);
+    const web = await all(env, "SELECT channel, sum(sessions) sessions, sum(conversions) conversions FROM web_days WHERE day >= ? AND day < ? GROUP BY 1 ORDER BY 2 DESC", lo, hi);
+    const coreLeads = await all(env, `SELECT coalesce(nullif(source, ''), 'Not recorded') source, count(*) n, sum(CASE WHEN stage = 'joined' THEN 1 ELSE 0 END) joined
+                                      FROM leads WHERE created_at >= ? AND created_at < ? GROUP BY 1 ORDER BY 2 DESC`, lo, hi);
+    const joins = await all(env, `SELECT coalesce(nullif(lead_source, ''), 'Not recorded') source, count(*) n FROM members
+                                  WHERE joined_on >= ? AND joined_on < ? GROUP BY 1 ORDER BY 2 DESC`, lo, hi);
+    const trend = await all(env, `SELECT substr(day, 1, 7) month, round(sum(spend), 2) spend, sum(leads) leads FROM marketing_days
+                                  WHERE day >= ? GROUP BY 1 ORDER BY 1`, addDays(lo, -190).slice(0, 7) + "-01");
+    const joinsTrend = await all(env, `SELECT substr(joined_on, 1, 7) month, count(*) n FROM members WHERE joined_on >= ?
+                                       AND lower(coalesce(lead_source, '')) IN ('instagram','facebook') GROUP BY 1`, addDays(lo, -190).slice(0, 7) + "-01");
+    const budget = +(await setting(env, "meta_budget_month", 3500));
+    const spend = campaigns.filter(c => c.source === "meta").reduce((a, c) => a + (c.spend || 0), 0);
+    const allSpend = campaigns.reduce((a, c) => a + (c.spend || 0), 0);
+    const platformLeads = campaigns.reduce((a, c) => a + (c.leads || 0), 0);
+    const socialJoins = joins.filter(j => SOCIAL.includes(j.source.toLowerCase())).reduce((a, j) => a + j.n, 0);
+    const socialLeads = coreLeads.filter(j => SOCIAL.includes(j.source.toLowerCase())).reduce((a, j) => a + j.n, 0);
+    const dim = new Date(Date.UTC(+month.slice(0, 4), +month.slice(5, 7), 0)).getUTCDate();
+    const daysIn = month === today.slice(0, 7) ? +today.slice(8, 10) : dim;
+    const last = await one(env, "SELECT max(day) d FROM marketing_days");
+    return { month, budget, meta_spend: Math.round(spend * 100) / 100, all_spend: Math.round(allSpend * 100) / 100,
+             projected: daysIn ? Math.round(spend / daysIn * dim) : 0, platform_leads: platformLeads, social_leads: socialLeads, social_joins: socialJoins,
+             cpl: platformLeads ? Math.round(allSpend / platformLeads * 100) / 100 : null,
+             cost_per_join: socialJoins ? Math.round(spend / socialJoins * 100) / 100 : null,
+             campaigns, daily, web, core_leads: coreLeads, joins, trend: trend.map(t => ({ ...t, joins: (joinsTrend.find(j => j.month === t.month) || {}).n || 0 })),
+             data_to: last?.d || null };
+  }
+
+  return { classesWeek, classDetail, bookMember, cancelBooking, memberLive, refreshBalances, takeSnapshot, collections, collectionAction, pushData, money, growth, marketing };
+}
 
 
 const TZ = "Pacific/Auckland";
+const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -1043,6 +1785,19 @@ export default {
       if (url.pathname === "/api/gm-probe") return json(await gmProbe(env, can, url.searchParams));
       if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
+      if (url.pathname === "/api/classes") return json(await H.classesWeek(env, who, can, url.searchParams));
+      const cl = url.pathname.match(/^\/api\/classes\/(\d+)(?:\/(book|cancel))?$/);
+      if (cl && cl[2] === "book" && req.method === "POST") return json(await H.bookMember(env, who, can, cl[1], await req.json()));
+      if (cl && cl[2] === "cancel" && req.method === "POST") return json(await H.cancelBooking(env, who, can, cl[1], await req.json()));
+      if (cl && !cl[2]) return json(await H.classDetail(env, who, can, cl[1]));
+      const lv = url.pathname.match(/^\/api\/members\/(\d+)\/live$/);
+      if (lv) return json(await H.memberLive(env, who, can, +lv[1]));
+      if (url.pathname === "/api/collections") return json(req.method === "POST" ? await H.collectionAction(env, who, can, await req.json()) : await H.collections(env, can));
+      if (url.pathname === "/api/money") return json(await H.money(env, can));
+      if (url.pathname === "/api/growth") return json(await H.growth(env, can));
+      if (url.pathname === "/api/marketing") return json(await H.marketing(env, can, url.searchParams));
+      if (url.pathname === "/api/push" && req.method === "POST") return json(await H.pushData(env, who, can, await req.json()));
+      if (url.pathname === "/api/refresh-balances" && can.settings && req.method === "POST") return json(await H.refreshBalances(env));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
         return json(await syncMembers(env));
       }
@@ -1052,11 +1807,15 @@ export default {
     }
   },
 
-  // Nightly copy from GymMaster (see wrangler.toml for the time).
+  // Two schedules (wrangler.toml): 2:15am NZ for the nightly copy and the day's snapshot,
+  // and every 15 minutes for live balances from GymMaster.
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
+      await ensureSchema(env);
+      if (event.cron === "*/15 * * * *") { await H.refreshBalances(env); return; }
       await syncMembers(env);
       await applyBlockRule(env);
+      await H.takeSnapshot(env);
     })());
   },
 };
@@ -1962,9 +2721,10 @@ async function gmCall(env, version, path, { auth = "low", member = null, params 
   let init = { method };
   if (method === "GET") for (const [k, v] of Object.entries(all)) { if (v !== undefined && v !== null && v !== "") u.searchParams.set(k, v); }
   else {
-    const f = new URLSearchParams();
-    for (const [k, v] of Object.entries({ ...all, ...(body || {}) })) if (v !== undefined && v !== null && v !== "") f.set(k, typeof v === "object" ? JSON.stringify(v) : v);
-    init = { method, headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: f };
+    // GymMaster's documented way: keys in headers, JSON body (the keys go in the body too for older endpoints).
+    const headers = { "Content-Type": "application/json", "X-GM-API-KEY": key };
+    if (token) headers["X-GM-AUTH"] = token;
+    init = { method, headers, body: JSON.stringify({ ...all, ...(body || {}) }) };
   }
   const r = await fetch(u.toString(), init);
   const t = await r.text();
@@ -2008,6 +2768,8 @@ const SETTINGS = [
   { key: "class_capacity", group: "Classes", label: "Spots per class", type: "int" },
   { key: "late_cancel_hours", group: "Classes", label: "Cancel at least this many hours before, or it's a late cancel", type: "int" },
   { key: "no_show_after_minutes", group: "Classes", label: "Mark a no-show this many minutes after the start", type: "int" },
+  { key: "fy_target_ex_gst", group: "Targets", label: "Income target this financial year, excluding GST ($)", type: "money" },
+  { key: "meta_budget_month", group: "Targets", label: "Meta ads budget per month ($)", type: "money" },
   { key: "fp_tiers", group: "Fitness Passport", label: "Pay rates per visit (up to visit:rate, comma between tiers, last one open)", type: "tiers" },
 ];
 
@@ -2026,6 +2788,9 @@ async function settingsView(env, can) {
     { name: "GymMaster", status: env.GM_API_KEY && env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Members copied nightly at 2:15am. Sign-ups go into GymMaster first while it runs billing and doors." },
     { name: "Fitness Passport", status: env.FP_MEMBERSHIP_ID ? "Set up" : "Not set", detail: "GymMaster reports Passport check-ins until the doors move. Passport membership type " + (env.FP_MEMBERSHIP_ID || "not set") + "." },
     { name: "Ezidebit", status: (env.BILLING_MODE || "gymmaster") === "ezidebit" ? "Billing in the Core" : "Billing still in GymMaster", detail: "Switches to Ezidebit's own bank form after the billing pilot." },
+    { name: "Xero", status: "Pushed in by Claude", detail: "Profit and loss by month, cash and bills land on Money. Ask Claude to refresh them any time." },
+    { name: "Meta ads and Google Analytics", status: "Pushed in by Claude", detail: "Spend, leads and website visits by day land on Marketing." },
+    { name: "Live balances", status: env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Every 15 minutes the Core checks 20 members' balances in GymMaster, so the $250 block and Collections stay true." },
     { name: "Website forms", status: env.INTAKE_KEY ? "Connected" : "Not connected yet", detail: "Leads from the website land in Leads once the intake key is set." },
     { name: "Sign-in", status: env.ACCESS_TEAM ? "Cloudflare Access, email codes" : "Not set", detail: "Who can sign in is managed in Staff and access." },
   ];
@@ -2133,10 +2898,13 @@ async function report(env, can, q) {
 let schemaReady = false;
 async function ensureSchema(env) {
   if (schemaReady) return;
-  const have = await env.DB.prepare("SELECT count(*) n FROM sqlite_master WHERE type = 'table' AND name IN ('staff', 'member_photos', 'settings')").first();
-  if (!have || have.n < 3) {
+  // New tables and settings are added automatically when the schema changes (all IF NOT EXISTS / OR IGNORE).
+  let current = null;
+  try { current = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'schema_version'").first())?.value; } catch { current = null; }
+  if (current !== SCHEMA_VERSION) {
     const all = SCHEMA.concat(STAFF_SEED);
     for (let i = 0; i < all.length; i += 40) await env.DB.batch(all.slice(i, i + 40).map(x => env.DB.prepare(x)));
+    await env.DB.prepare("INSERT INTO settings(key, value) VALUES ('schema_version', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(SCHEMA_VERSION).run();
   }
   schemaReady = true;
 }
@@ -2195,6 +2963,10 @@ async function importRows(env, who, can, b) {
   if (b.step === "finish") {
     const stmts = [db.prepare("UPDATE sync_log SET finished_at = datetime('now'), rows_in = ?, rows_changed = ?, ok = 1 WHERE id = ?").bind(+b.rowsIn || 0, +b.rowsChanged || 0, +b.log || 0)];
     if (b.fpLoaded) stmts.push(db.prepare("UPDATE settings SET value = '1' WHERE key = 'fp_ids_loaded'"));
+    // Anyone active with no current membership after a full import has left M2. Their balance stays for Collections.
+    const gone = `SELECT id FROM members WHERE status = 'active' AND NOT EXISTS (SELECT 1 FROM memberships ms WHERE ms.member_id = members.id AND ms.status = 'current')`;
+    stmts.push(db.prepare(`INSERT INTO activity(member_id, kind, detail) SELECT id, 'cancel', 'Left M2 (no longer current in GymMaster)' FROM (${gone})`));
+    stmts.push(db.prepare(`UPDATE members SET status = 'former', updated_at = datetime('now') WHERE id IN (${gone})`));
     await db.batch(stmts);
     const n = await db.prepare("SELECT count(*) n FROM members WHERE status = 'active'").first();
     return { ok: true, members: n.n };

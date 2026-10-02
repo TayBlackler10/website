@@ -5,7 +5,7 @@ workers_dev = true
 
 # Nightly copy from GymMaster at 2:15am NZ daylight time (1:15am in winter).
 [triggers]
-crons = ["15 13 * * *"]
+crons = ["15 13 * * *", "*/15 * * * *"]
 
 [[d1_databases]]
 binding = "DB"
@@ -34,3 +34,8 @@ FP_MEMBERSHIP_ID = "844596" # GymMaster membership type "Fitness Passport" (1,23
 # Later, only when the Core reports Passport visits itself (after GymMaster):
 #   npx wrangler secret put FP_SITE_TOKEN    and    FP_DEVICE_TOKEN   (from Fitness Passport, same as in GymMaster)
 #   npx wrangler secret put ACCESS_AUD     Application Audience (AUD) tag from Cloudflare Access
+
+# Read only: the month-end snapshots m2-command has kept since 2025, shown on Growth.
+[[kv_namespaces]]
+binding = "M2CC"
+id = "d4237aaa27d24bddb1e4fc7f6b67b863"
