@@ -2533,8 +2533,42 @@ async function intake(req, env) {
   let b;
   try { b = await req.json(); } catch { return reply({ error: "Bad request" }, 400); }
   if (b.m2_check) return reply({ ok: true });   // bot trap field filled in
+  if (b.kind === "passport_join") {
+    const pr = await passportJoin(env, b);
+    return reply(pr, pr.ok ? 200 : 400);
+  }
   const r = await saveLead(env, b, null);
   return reply(r.ok ? { ok: true } : { ok: false, error: r.error }, r.ok ? 200 : 400);
+}
+
+// The join worker (m2club.co.nz/join.html) posts here after a Fitness Passport member
+// signs up online. GymMaster's sign-up can't take the Fitness Passport ID, so the Core
+// keeps it and puts "type the ID into GymMaster" on reception's Today list.
+// Member ids in the Core are the GymMaster ids, so the nightly copy lands on the same row.
+async function passportJoin(env, b) {
+  const db = env.DB;
+  const gmId = Number(b.gm_id);
+  const fpId = cleanFpId(b.fp_id);
+  const clean = s => String(s ?? "").trim().replace(/\s+/g, " ").slice(0, 120);
+  if (!Number.isInteger(gmId) || gmId <= 0) return { ok: false, error: "Missing GymMaster member id" };
+  if (!fpId) return { ok: false, error: "Missing or invalid Fitness Passport ID" };
+  const first = clean(b.first) || "Unknown";
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Pacific/Auckland" }).format(new Date());
+  const taken = await db.prepare("SELECT id, first_name, last_name FROM members WHERE fp_id = ? AND id <> ? LIMIT 1").bind(fpId, gmId).first();
+  const stmts = [
+    db.prepare(`INSERT INTO members(id, gm_id, first_name, last_name, email, mobile, dob, lead_source, status, joined_on, fp_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
+                ON CONFLICT(id) DO UPDATE SET fp_id = coalesce(members.fp_id, excluded.fp_id), updated_at = datetime('now')`)
+      .bind(gmId, gmId, first, clean(b.last) || null, clean(b.email).toLowerCase() || null, normMobile(b.mobile), clean(b.dob) || null,
+            clean(b.source) || "Online signup", today, fpId),
+    db.prepare("INSERT OR IGNORE INTO member_flags(member_id, flag, detail) VALUES (?, 'passport', 'Joined online')").bind(gmId),
+    db.prepare("INSERT INTO activity(member_id, kind, detail) VALUES (?, 'note', ?)")
+      .bind(gmId, "Joined online with Fitness Passport, ID " + fpId + (taken ? ". Same ID is already on " + [taken.first_name, taken.last_name].filter(Boolean).join(" ") + ", check their card" : "")),
+  ];
+  const open = await db.prepare("SELECT 1 FROM tasks WHERE kind = 'fp_id_gm' AND member_id = ? AND outcome IS NULL").bind(gmId).first();
+  if (!open) stmts.push(db.prepare("INSERT INTO tasks(kind, member_id, owner_role, due_on) VALUES ('fp_id_gm', ?, 'reception', ?)").bind(gmId, today));
+  await db.batch(stmts);
+  return { ok: true, member_id: gmId, duplicate_id: !!taken };
 }
 
 /* ---------------- member edits ---------------- */

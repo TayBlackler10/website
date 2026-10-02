@@ -99,9 +99,14 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .hint{font-size:13px;color:var(--muted);margin-top:6px}
 
   /* segmented switch */
-  .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--soft);border-radius:999px;padding:4px;margin-bottom:22px}
+  .seg{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--soft);border-radius:999px;padding:4px;margin-bottom:22px}
   .seg button{border:0;background:none;font:inherit;font-size:15px;font-weight:500;color:var(--muted);padding:10px;border-radius:999px;cursor:pointer;transition:all .15s}
   .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  @media (max-width:480px){.seg button{font-size:13px;padding:10px 4px;line-height:1.2}}
+  .fpbox{background:var(--soft);border-radius:14px;padding:18px 18px 4px;margin-bottom:6px}
+  .fpbox p{font-size:15px;margin-bottom:12px;color:var(--body)}
+  .fpbox ul{margin:0 0 14px 18px;font-size:14px;color:var(--body)}
+  .fpbox li{margin-bottom:4px}
 
   /* option pills */
   .opts{display:grid;gap:10px;border-radius:12px}
@@ -243,6 +248,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
             <div class="seg" role="tablist">
               <button type="button" data-mode="members" class="on">Memberships</button>
               <button type="button" data-mode="trials">Trials &amp; passes</button>
+              <button type="button" data-mode="passport">Fitness Passport</button>
             </div>
             <div id="pickLoading" class="loading">Loading memberships...</div>
 
@@ -268,6 +274,23 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
               <div class="field" data-req="trial">
                 <div class="opts" id="trialOpts"></div>
                 <div class="msg">Pick a trial or pass.</div>
+              </div>
+            </div>
+
+            <div id="passportPick" hidden>
+              <div class="fpbox">
+                <p>Got Fitness Passport through work? Join M2 with it and your visits are covered. Nothing to pay.</p>
+                <ul>
+                  <li>Full gym floor and group classes</li>
+                  <li>Pool, spa, sauna and ice bath</li>
+                  <li>A free PT session to get you started</li>
+                </ul>
+              </div>
+              <div class="field" data-req="fpid">
+                <label for="fpid">Fitness Passport ID</label>
+                <input type="text" id="fpid" name="fpid" inputmode="numeric" autocomplete="off" placeholder="e.g. 1234567">
+                <div class="hint">It's the number on your Fitness Passport card or in the Fitness Passport app. We need it to sign you up.</div>
+                <div class="msg">Enter your Fitness Passport ID. It's numbers only, on your card or in the app.</div>
               </div>
             </div>
 
@@ -435,6 +458,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     Recovery: 'Pool, spa, sauna and ice bath'
   };
   var FREQ_ORDER = ['Weekly','Fortnightly','Monthly','Quarterly'];
+  // GymMaster "Fitness Passport" membership type. Passport members pay nothing to M2,
+  // Fitness Passport pays per visit, matched on their Fitness Passport ID.
+  var PASSPORT_ID = '844596';
+  var NOTIFY_KEY = '2aaede0f-585b-484d-9c06-663e3a4f3c45'; // Web3Forms, lands in M2's inbox
+  function isPassport(m){ return String(m.id) === PASSPORT_ID || /fitness\s*passport/i.test(m.name || ''); }
+  function fpClean(v){ return String(v || '').replace(/[\s-]/g, ''); }
 
   var form = document.getElementById('joinForm');
   var steps = [].slice.call(form.querySelectorAll('.step'));
@@ -445,7 +474,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   var errEl = document.getElementById('submitErr');
   var current = 0;
   var mode = 'members';
-  var all = [], trials = [], tiers = {};
+  var all = [], trials = [], tiers = {}, passport = null;
   var chosen = null, loadedTermsFor = null;
 
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -514,7 +543,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       }
     });
     all = list; trials = []; tiers = {};
+    passport = list.filter(isPassport)[0] || {id: Number(PASSPORT_ID), name: 'Fitness Passport', price: '$0.00', priceValue: 0, description: []};
+    passport._fp = true;
     all.forEach(function(m){
+      if (isPassport(m)) return;
       var p = parse(m);
       if (!p) { trials.push(m); return; }
       m._p = p;
@@ -530,7 +562,6 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     if (!d.ok) throw new Error(d.error);
     ingest(d.memberships);
     $('pickLoading').hidden = true;
-    $('promo').hidden = false;
     nextBtn.disabled = false;
 
     // Preselect from link: ?m=<membership id>, ?m=trial, ?tier=perform
@@ -538,16 +569,18 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     var pick = all.filter(function(m){ return String(m.id) === want; })[0];
     // Old ?m=trial / free links: the free trial is gone, so open on 5 Days for $5.
     if (!pick && /trial|free/.test(want)) pick = trials.filter(function(m){ return String(m.id) === '844624' || /5 days/i.test(m.name); })[0] || trials[0];
-    if (pick && !pick._p) { setMode('trials'); check('trial', pick.id); }
+    if (want === 'passport' || want === 'fp' || want === PASSPORT_ID || qs.get('type') === 'passport') { setMode('passport'); }
+    else if (pick && !pick._p) { setMode('trials'); check('trial', pick.id); }
     else {
       setMode(qs.get('type') === 'trial' ? 'trials' : 'members');
       var t = pick ? pick._p.tier : TIER_ORDER.filter(function(t){ return t.toLowerCase() === (qs.get('tier') || '').toLowerCase(); })[0];
       if (t && tiers[t]) { check('tier', t); onTier(); }
       if (pick) { check('term', termOf(pick)); onTerm(); check('freq', pick._p.freq); }
     }
+    $('promo').hidden = mode === 'passport';
     update();
     var linkCode = (qs.get('code') || qs.get('promo') || '').trim();
-    if (linkCode) { $('promoInput').value = linkCode; applyCode(linkCode, true); }
+    if (linkCode && mode !== 'passport') { $('promoInput').value = linkCode; applyCode(linkCode, true); }
   }).catch(function(){
     $('pickLoading').innerHTML = 'We couldn\'t load memberships just now. Please refresh, or call us on <a href="tel:+6495581408" style="font-weight:600;color:#111">09 558 1408</a> and we\'ll sign you up.';
   });
@@ -660,6 +693,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
 
   function termOf(m){ return m._p.annual ? 'annual' : m._p.flexi ? 'flexi' : 'fixed'; }
   function resolve(){
+    if (mode === 'passport') return passport;
     if (mode === 'trials') {
       var id = val('trial');
       return all.filter(function(m){ return String(m.id) === id; })[0] || null;
@@ -673,6 +707,15 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     chosen = resolve();
     var s = $('summary');
     if (!chosen) { s.classList.remove('show'); return; }
+    if (chosen._fp) {
+      var id = fpClean(val('fpid'));
+      s.innerHTML = '<div class="sname">Fitness Passport</div>' +
+        '<div class="sline"><span>Price</span><span>Covered by Fitness Passport</span></div>' +
+        (id ? '<div class="sline"><span>Fitness Passport ID</span><span>' + esc(id) + '</span></div>' : '') +
+        '<div class="snote">Bring your Fitness Passport card or app when you pick up your key tag so we can check your ID. M2 offers and trials don\'t apply to Fitness Passport memberships.</div>';
+      s.classList.add('show');
+      return;
+    }
     var name = chosen._p ? (chosen._p.annual ? 'M2 ' + chosen._p.tier + ', 12 months paid upfront' : 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') + ', ' + chosen._p.freq.toLowerCase()) : titleCase(chosen.name);
     var h = '<div class="sname">' + esc(name) + '</div>';
     h += '<div class="sline"><span>' + (chosen._p ? 'Membership' : 'Price') + '</span><span>' + (chosen.fullPrice ? '<s class="was">' + esc(chosen.fullPrice) + '</s>' : '') + (chosen.priceValue ? esc(per(chosen)) : 'Free') + '</span></div>';
@@ -691,6 +734,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     [].forEach.call(document.querySelectorAll('.seg button'), function(b){ b.classList.toggle('on', b.getAttribute('data-mode') === m); });
     $('membersPick').hidden = m !== 'members';
     $('trialsPick').hidden = m !== 'trials';
+    $('passportPick').hidden = m !== 'passport';
+    $('promo').hidden = m === 'passport' || !all.length;
     update();
   }
   [].forEach.call(document.querySelectorAll('.seg button'), function(b){
@@ -730,6 +775,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     if (name === 'signature') return sigDrawn;
     if (name === 'tier' || name === 'term' || name === 'freq') return mode !== 'members' || v.length > 0;
     if (name === 'trial') return mode !== 'trials' || v.length > 0;
+    if (name === 'fpid') return mode !== 'passport' || /^\d{5,12}$/.test(fpClean(v));
     return v.length > 0;
   }
   function checkStep(i){
@@ -749,6 +795,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     return ok;
   }
   form.addEventListener('input', function(e){
+    if (e.target.name === 'fpid') update();
     var f = e.target.closest('.field[data-req]');
     if (f && f.classList.contains('err') && valid(f.getAttribute('data-req'))) f.classList.remove('err');
   });
@@ -815,7 +862,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     bars.forEach(function(b,j){ b.classList.toggle('on', j<=i); });
     countEl.textContent = 'Step ' + (i+1) + ' of ' + steps.length;
     backBtn.hidden = i === 0;
-    nextBtn.textContent = i === steps.length-1 ? (chosen && !chosen.priceValue ? 'Start my free trial' : 'Join M2') : 'Next';
+    nextBtn.textContent = i === steps.length-1 ? finalLabel() : 'Next';
     current = i;
     errEl.style.display = 'none';
     if (i === 2) { loadTerms(); setTimeout(sizeCanvas, 30); $('billingNotice').hidden = !(chosen && chosen.priceValue > 0); }
@@ -842,7 +889,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   function fail(html){
     errEl.innerHTML = html; errEl.style.display = 'block';
     nextBtn.disabled = false;
-    nextBtn.textContent = chosen && !chosen.priceValue ? 'Start my free trial' : 'Join M2';
+    nextBtn.textContent = finalLabel();
+  }
+  function finalLabel(){
+    if (chosen && chosen._fp) return 'Join with Fitness Passport';
+    return chosen && !chosen.priceValue ? 'Start my free trial' : 'Join M2';
   }
 
   function submit(){
@@ -862,7 +913,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       agreed: true,
       signature: signatureData(),
       source: src,
-      code: promoCode
+      code: chosen._fp ? '' : promoCode,
+      fpId: chosen._fp ? fpClean(val('fpid')) : ''
     };
     nextBtn.disabled = true; nextBtn.textContent = 'Signing you up...';
     errEl.style.display = 'none';
@@ -871,6 +923,13 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       .then(function(r){ return r.json(); })
       .then(function(d){
         if (d.ok) {
+          if (chosen._fp) {
+            notifyPassport(payload, d);
+            try { if (window.fbq) fbq('track', 'CompleteRegistration', {content_name: 'Fitness Passport', status: 'passport', value: 0, currency: 'NZD'}); } catch(e){}
+            try { if (window.gtag) gtag('event', 'sign_up', {method: 'website', membership: 'Fitness Passport'}); } catch(e){}
+            finish(payload.firstname, false);
+            return;
+          }
           var free = !chosen.priceValue;
           // CompleteRegistration for every signup (what ads optimise on), plus StartTrial for trials
           try { if (window.fbq) {
@@ -890,11 +949,34 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       .catch(function(){ fail('Something went wrong sending that. Please try again, or give reception a call.'); });
   }
 
+  // Fitness Passport pays on the member's Fitness Passport ID, and GymMaster's online
+  // sign-up can't store it. The join worker records it; this email is a backup so
+  // reception always gets the ID into GymMaster (profile, Additional Details).
+  function notifyPassport(p, d){
+    try {
+      fetch('https://api.web3forms.com/submit', {method: 'POST', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}, body: JSON.stringify({
+        access_key: NOTIFY_KEY,
+        subject: 'New Fitness Passport member: ' + p.firstname + ' ' + p.surname + ' (ID ' + p.fpId + ')',
+        from_name: 'M2 join page',
+        'Action': 'Type the Fitness Passport ID into GymMaster: their profile, Additional Details, Fitness Passport ID',
+        'Name': p.firstname + ' ' + p.surname,
+        'Fitness Passport ID': p.fpId,
+        'GymMaster member ID': d.memberid || '',
+        'Email': p.email,
+        'Mobile': p.phone,
+        'Saved by the join page': d.fpSaved ? 'Yes, already in GymMaster' : 'No, type it in'
+      })});
+    } catch(e){}
+  }
+
   function finish(first, free){
-    var name = chosen._p ? 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') : titleCase(chosen.name);
+    var name = chosen._fp ? 'M2 with Fitness Passport' : chosen._p ? 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') : titleCase(chosen.name);
     $('doneTitle').textContent = 'Welcome to M2' + (first ? ', ' + first : '') + '.';
     $('doneLead').textContent = 'You\'re signed up to ' + name + '. Here\'s what happens next.';
-    var steps = [
+    var steps = chosen._fp ? [
+      '<b>Come in and see us at reception.</b> Bring your Fitness Passport card or app so we can check your ID, then we\'ll get your key tag sorted.',
+      '<b>That\'s it, nothing to pay.</b> Every visit is covered by Fitness Passport, so come as often as you like.'
+    ] : [
       '<b>Come in and see us at reception.</b> We\'ll get your key tag sorted so you can get in.',
       free ? '<b>Your trial starts today,</b> so make the most of it. Classes, pool, sauna and ice bath are all yours.'
            : '<b>Bring your bank or card details.</b> We\'ll pop them in for your payments while you\'re at the desk. Nothing comes out today.',

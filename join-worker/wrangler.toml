@@ -10,6 +10,10 @@ PT_SCRIPT = ""   # off: new members book via the free-pt.html button on the conf
 BILLING_GRACE_DAYS = "3"
 HIDE_IDS = ""
 ALLOWED_ORIGINS = "https://m2club.co.nz,https://www.m2club.co.nz"
+PASSPORT_IDS = "844596"   # GymMaster "Fitness Passport" membership type
+CORE_URL = "https://m2-core.taylor-3e5.workers.dev"
 
 # Secret (not in this file): GM_API_KEY
 #   npx wrangler secret put GM_API_KEY
+# Secret: INTAKE_KEY (same value as M2 Core's INTAKE_KEY), sends Passport IDs to the Core
+#   npx wrangler secret put INTAKE_KEY

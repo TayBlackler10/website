@@ -20,6 +20,12 @@
 //           BILLING_GRACE_DAYS  days after start before the first debit (0 = GymMaster default)
 //           HIDE_IDS       comma separated membership type ids to keep off the page
 //           ALLOWED_ORIGINS comma separated origins allowed to call this worker
+//           PASSPORT_IDS   comma separated Fitness Passport membership type ids (default 844596).
+//                          Signups on these need a Fitness Passport ID and never take promo codes.
+//           CORE_URL       M2 Core base URL. With the INTAKE_KEY secret set, new Passport members
+//                          and their ID go to the Core, which puts "type the ID into GymMaster"
+//                          on reception's Today list.
+// Secret:   INTAKE_KEY     same value as M2 Core's INTAKE_KEY
 
 const CACHE_SECONDS = 300;
 const recent = new Map(); // ip -> [timestamps], simple per-isolate rate limit
@@ -172,6 +178,10 @@ async function signup(env, b) {
   // (Not called "company": Chrome autofills that with the person's employer.)
   if (b.m2_check || (typeof b.elapsed === "number" && b.elapsed < 8)) return { ok: true };
 
+  const passportIds = (env.PASSPORT_IDS || "844596").split(",").map(s => s.trim()).filter(Boolean);
+  const isPassport = passportIds.includes(String(b.membershipId || ""));
+  const fpId = String(b.fpId || "").replace(/\D/g, "");
+
   const f = {
     firstname: clean(b.firstname),
     surname: clean(b.surname),
@@ -194,13 +204,16 @@ async function signup(env, b) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f.dob)) return { ok: false, error: "Please check your date of birth." };
   if (f.password.length < 6) return { ok: false, error: "Your password needs to be at least 6 characters." };
   if (!b.agreed) return { ok: false, error: "Please agree to the terms and conditions." };
+  if (isPassport && (fpId.length < 5 || fpId.length > 12)) return { ok: false, error: "Please enter your Fitness Passport ID. It's the number on your Fitness Passport card or in the app." };
 
-  // Make sure the membership is still one we sell online
-  const code = clean(b.code).toUpperCase();
+  // Make sure the membership is still one we sell online.
+  // Passport members never get promo codes (they're excluded from every M2 offer).
+  const code = isPassport ? "" : clean(b.code).toUpperCase();
   const mr = await memberships(env, code);
   if (!mr.ok) return { ok: false, error: mr.error };
   const ms = mr.memberships;
-  const m = ms.find(x => String(x.id) === f.membershiptypeid);
+  let m = ms.find(x => String(x.id) === f.membershiptypeid);
+  if (!m && isPassport) m = { id: Number(f.membershiptypeid), name: "Fitness Passport", price: "$0.00", priceValue: 0, priceDescription: "", length: null };
   if (!m) return { ok: false, error: "That membership isn't available online any more. Please pick another." };
 
   // Already in GymMaster?
@@ -224,6 +237,9 @@ async function signup(env, b) {
     res = await gmPost(env, "/v1/signup", fields);
   }
   if (res.error || !res.memberid) {
+    if (isPassport && /not available|online|not found|invalid membership/i.test(String(res.error || ""))) {
+      return { ok: false, error: "Fitness Passport sign-up isn't open online just yet. Please pop in to reception with your Fitness Passport card and we'll sign you up in a couple of minutes." };
+    }
     return { ok: false, error: friendly(res.error) };
   }
 
@@ -240,12 +256,33 @@ async function signup(env, b) {
     }
   }
 
+  // Fitness Passport ID: Passport pays M2 per visit on this number. GymMaster's online
+  // sign-up has no field for it, so hand it to M2 Core, which lists it on reception's
+  // Today screen until someone types it into GymMaster (Additional Details).
+  let fpSaved = false;
+  if (isPassport && env.CORE_URL && env.INTAKE_KEY) {
+    try {
+      const r = await fetch(env.CORE_URL.replace(/\/$/, "") + "/api/intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-M2-Key": env.INTAKE_KEY, "Origin": "https://m2club.co.nz" },
+        body: JSON.stringify({
+          kind: "passport_join", gm_id: memberid, fp_id: fpId,
+          first: f.firstname, last: f.surname, email: f.email, mobile: f.phonecell, dob: f.dob,
+          source: clean(b.source) || "Online signup"
+        })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!j.ok) warnings.push("core: " + (j.error || r.status));
+    } catch (e) { warnings.push("core: " + String(e && e.message || e)); }
+  }
+
   // Tell the team: goes into the PT Leads sheet, which emails Tim
   if (env.PT_SCRIPT) {
     const source = "Online signup: " + m.name + (code ? " [code " + code + "]" : "") + (b.source ? " (" + clean(b.source) + ")" : "");
     const note = [
       "Joined online: " + m.name + " (" + m.price + " " + (m.priceDescription || "") + ")",
-      paid ? "BILLING DETAILS NEEDED at reception before key tag" : "Free trial, no billing needed",
+      isPassport ? "FITNESS PASSPORT member, ID " + fpId + ". Type it into GymMaster (Additional Details)"
+        : paid ? "BILLING DETAILS NEEDED at reception before key tag" : "Free trial, no billing needed",
       /recovery/i.test(m.name) ? "Recovery membership, no free PT" : "",
       "GymMaster member ID " + memberid,
       warnings.length ? "Check in GymMaster: " + warnings.join("; ") : ""
@@ -267,7 +304,7 @@ async function signup(env, b) {
     } catch (e) { /* never fail a signup because the notification didn't send */ }
   }
 
-  return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, warnings };
+  return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, passport: isPassport, fpSaved, warnings };
 }
 
 function friendly(err) {
