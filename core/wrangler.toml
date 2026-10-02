@@ -17,6 +17,7 @@ GM_BASE = "https://m2trainingclub.gymmasteronline.com/portal/api"
 ACCESS_TEAM = "PASTE_TEAM_NAME"   # the part before .cloudflareaccess.com
 GM_SITE = "https://m2trainingclub.gymmasteronline.com"
 COMPANY_ID = "4"
+ALLOWED_ORIGINS = "https://m2club.co.nz,https://www.m2club.co.nz"
 # Where reception enters bank details on Add member.
 #   "gymmaster" (now): opens the member's GymMaster profile, because GymMaster still bills.
 #   "ezidebit" (after the billing pilot): Ezidebit's own secure form, on screen or by QR on the member's phone.
@@ -27,4 +28,5 @@ EZIDEBIT_PUBLIC_KEY = ""   # Ezidebit public key (not secret), from Ezidebit
 # Secrets, set with wrangler (never in this file, never in chat):
 #   npx wrangler secret put GM_STAFF_KEY   GymMaster staff API key (nightly copy)
 #   npx wrangler secret put GM_API_KEY     GymMaster low permission API key (Add member, same one m2-join uses)
+#   npx wrangler secret put INTAKE_KEY     Shared key for website forms posting leads (any long random string)
 #   npx wrangler secret put ACCESS_AUD     Application Audience (AUD) tag from Cloudflare Access

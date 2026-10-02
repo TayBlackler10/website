@@ -14,6 +14,8 @@
 // The worker checks the Access token on every request, then looks the email
 // up in the staff table to get the person's role.
 
+import { APP_HTML } from "./ui.js";
+
 const TZ = "Pacific/Auckland";
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
@@ -31,6 +33,10 @@ export default {
     const url = new URL(req.url);
     try {
       if (url.pathname === "/health") return json({ ok: true });
+      // Public: the member lands here on their own phone after Ezidebit's form.
+      if (url.pathname === "/billing-done") return html(BILLING_DONE_HTML);
+      // Public: website forms post leads here with the shared intake key.
+      if (url.pathname === "/api/intake") return intake(req, env);
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -38,6 +44,16 @@ export default {
       if (url.pathname === "/" || url.pathname === "/index.html") return html(APP_HTML);
       if (url.pathname === "/api/me") return json({ name: who.name, role: who.role, can });
       if (url.pathname === "/api/summary") return json(await summary(env, can));
+      if (url.pathname === "/api/today") return json(await today(env, who, can));
+      if (url.pathname === "/api/jobs" && req.method === "POST") return json(await recordOutcome(env, who, can, await req.json()));
+      if (url.pathname === "/api/staff") return json(await staffList(env, can));
+      if (url.pathname === "/api/leads" && req.method === "POST") return json(await addLead(env, who, can, await req.json()));
+      if (url.pathname === "/api/leads") return json(await listLeads(env, who, can, url.searchParams));
+      const ld = url.pathname.match(/^\/api\/leads\/(\d+)$/);
+      if (ld && req.method === "POST") return json(await updateLead(env, who, can, +ld[1], await req.json()));
+      if (ld) return json(await leadDetail(env, who, can, +ld[1]));
+      const mn = url.pathname.match(/^\/api\/members\/(\d+)\/(notes|flags|details)$/);
+      if (mn && req.method === "POST") return json(await updateMember(env, who, can, +mn[1], mn[2], await req.json()));
       if (url.pathname === "/api/plans") return json(await sellablePlans(env, can));
       if (url.pathname === "/api/members" && req.method === "POST") return json(await addMember(env, who, can, await req.json()));
       if (url.pathname === "/api/members") return json(await searchMembers(env, who, can, url.searchParams.get("q") || ""));
@@ -47,7 +63,6 @@ export default {
       if (bl) return json(await billingLink(env, can, +bl[1], url.origin));
       const tg = url.pathname.match(/^\/api\/key-tags\/([^/]+)$/);
       if (tg) return json(await whoHasTag(env, can, decodeURIComponent(tg[1])));
-      if (url.pathname === "/billing-done") return html(BILLING_DONE_HTML);
       const m = url.pathname.match(/^\/api\/members\/(\d+)$/);
       if (m) return json(await memberDetail(env, who, can, +m[1]));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
@@ -167,21 +182,49 @@ async function memberDetail(env, who, can, id) {
   const m = await db.prepare("SELECT * FROM members WHERE id = ?").bind(id).first();
   if (!m) return { error: "Member not found" };
   if (can.members === "own" && m.trainer_id !== who.id) return { error: "Not one of your clients" };
-  const memberships = (await db.prepare(`SELECT ms.*, p.family, p.gm_type_name plan, p.frequency, p.flexi, p.paid_in_full
-                                         FROM memberships ms JOIN plans p ON p.id = ms.plan_id
-                                         WHERE ms.member_id = ? ORDER BY ms.start_date DESC`).bind(id).all()).results;
-  const flags = (await db.prepare("SELECT flag, detail FROM member_flags WHERE member_id = ?").bind(id).all()).results;
-  const visits = (await db.prepare(`SELECT substr(at,1,10) day, count(*) n FROM visits WHERE member_id = ?
-                                    AND at >= date('now','-84 days') GROUP BY day ORDER BY day`).bind(id).all()).results;
-  const activity = (await db.prepare("SELECT kind, detail, at FROM activity WHERE member_id = ? ORDER BY at DESC LIMIT 20").bind(id).all()).results;
-  const out = { member: m, memberships, flags, visits, activity };
+  const all = (sql, ...a) => db.prepare(sql).bind(...a).all().then(r => r.results);
+  const memberships = await all(`SELECT ms.*, p.family, p.gm_type_name plan, p.frequency, p.flexi, p.paid_in_full, p.corporate, p.employer,
+                                 p.includes_classes, p.includes_recovery
+                                 FROM memberships ms JOIN plans p ON p.id = ms.plan_id
+                                 WHERE ms.member_id = ? ORDER BY ms.start_date DESC`, id);
+  const flags = await all("SELECT flag, detail, set_at FROM member_flags WHERE member_id = ?", id);
+  const visits = await all(`SELECT substr(at,1,10) day, count(*) n FROM visits WHERE member_id = ?
+                            AND at >= date('now','-84 days') GROUP BY day ORDER BY day`, id);
+  const lastVisit = await db.prepare("SELECT max(at) at FROM visits WHERE member_id = ?").bind(id).first();
+  const activity = await all(`SELECT a.kind, a.detail, a.at, s.name staff FROM activity a LEFT JOIN staff s ON s.id = a.staff_id
+                              WHERE a.member_id = ? ORDER BY a.at DESC, a.id DESC LIMIT 30`, id);
+  const tags = await all("SELECT tag, status, assigned_at, ended_at FROM key_tags WHERE member_id = ? ORDER BY id DESC", id);
+  const leads = await all("SELECT id, kind, stage, created_at FROM leads WHERE member_id = ? ORDER BY created_at DESC LIMIT 5", id);
+  const referrer = m.referred_by ? await db.prepare("SELECT id, first_name, last_name FROM members WHERE id = ?").bind(m.referred_by).first() : null;
+  const trainer = m.trainer_id ? await db.prepare("SELECT id, name FROM staff WHERE id = ?").bind(m.trainer_id).first() : null;
+  const out = { member: m, memberships, flags, visits, last_visit: lastVisit && lastVisit.at, activity, tags, leads, referrer, trainer };
   if (can.balances) {
-    out.billing = await db.prepare("SELECT balance_owing, next_debit_date, next_debit_amount, billed_by_system FROM billing_accounts WHERE member_id = ?").bind(id).first();
+    out.billing = await db.prepare("SELECT balance_owing, next_debit_date, next_debit_amount, billed_by_system, free_weeks_credit FROM billing_accounts WHERE member_id = ?").bind(id).first();
   } else {
     for (const ms of memberships) { delete ms.price; delete ms.weekly_value; delete ms.gm_billing_note; }
   }
+  out.next_step = nextStep(out, can);
   return out;
 }
+
+// The one most useful thing to do with this person right now.
+function nextStep(d, can) {
+  const m = d.member, ms = d.memberships.find(x => x.status === "current");
+  const flag = f => d.flags.some(x => x.flag === f);
+  if (flag("blocked") && can.balances) return { text: `Owes $${(d.billing && d.billing.balance_owing || 0).toFixed(2)}. Blocked at the doors, in the app and from classes until it's paid.`, action: "billing" };
+  if (d.billing && d.billing.balance_owing > 0 && can.balances) return { text: `Owes $${d.billing.balance_owing.toFixed(2)}. Ask about it next time they're in.`, action: "billing" };
+  if (ms && ms.billed_by === "ezidebit" && d.activity.every(a => !/bank details/i.test(a.detail || "")) && m.joined_on && m.joined_on >= isoDaysAgo(14)) {
+    return { text: "New member. Check their bank details are in.", action: "billing" };
+  }
+  if (!m.key_tag && ms && ms.family !== "passport" && (d.tags.length || d.activity.some(a => a.kind === "sale"))) return { text: "No key tag on record. Scan one next time they're in.", action: "tag" };
+  if (!m.lead_source) return { text: "We don't know how they found us. Ask, and record it.", action: "details" };
+  if (ms && ms.family === "perform" && !d.leads.some(l => l.kind === "free_pt") && !m.trainer_id) return { text: "Perform member who hasn't had their free PT. Book one.", action: "pt" };
+  if (ms && ms.family === "daily" && (m.total_visits_gm || 0) >= 100) return { text: "Trains a lot on Daily. Perform adds classes and recovery for $22 more a week.", action: "upgrade" };
+  if (!m.goal) return { text: "No goal recorded. Ask what they're training for.", action: "details" };
+  return { text: "Nothing outstanding. Say hi.", action: null };
+}
+
+function isoDaysAgo(n) { return nzDateTime(new Date(Date.now() - n * 86400_000)).slice(0, 10); }
 
 /* ---------------- add a member ---------------- */
 // Reception adds members here. While GymMaster still bills and runs the doors,
@@ -265,14 +308,19 @@ async function addMember(env, who, can, b) {
     if (ref) return { ok: false, error: "Fitness Passport members can't use Bring a Mate. Take the referral off, or pick the right member." };
   }
   if (dupe && !b.confirmDuplicate) {
-    return { ok: false, duplicate: dupe, error: `${dupe.first_name} ${dupe.last_name || ""} is already in the system (${dupe.status}). Open their profile instead.` };
+    // Families often share one email (lots of Passport households do), so it's a warning, not a wall.
+    const same = String(dupe.first_name || "").toLowerCase() === f.first.toLowerCase();
+    return { ok: false, duplicate: dupe, canOverride: !same,
+             error: same ? `${dupe.first_name} ${dupe.last_name || ""} is already in the system (${dupe.status}). Open their profile instead.`
+                         : `That email or mobile belongs to ${dupe.first_name} ${dupe.last_name || ""}. If they're family sharing it, add anyway.` };
   }
 
   // 1. GymMaster first, while it runs billing and doors.
   if (!env.GM_API_KEY) return { ok: false, error: "GM_API_KEY is not set, so members can't be added yet." };
   const ex = await gmMember(env, "GET", "/v2/member/exists", { email: f.email });
   if (ex && ex.result && ex.result.id && !b.confirmDuplicate) {
-    return { ok: false, duplicate: { id: ex.result.id }, error: "That email is already in GymMaster." };
+    return { ok: false, duplicate: { id: ex.result.id }, canOverride: true,
+             error: "That email is already in GymMaster. If it's a family member sharing it, add anyway." };
   }
   const today = nzDateTime(new Date()).slice(0, 10);
   const password = Array.from(crypto.getRandomValues(new Uint8Array(12)), x => (x % 36).toString(36)).join("");
@@ -331,6 +379,16 @@ async function addMember(env, who, can, b) {
   if (billedBy === "ezidebit") {
     stmts.push(db.prepare("INSERT INTO tasks(kind, member_id, owner_role, due_on, value_at_stake) VALUES ('missing_billing', ?, 'reception', ?, ?)")
       .bind(id, today, null));
+  }
+  // Any open lead for this person is now a join (or a trial if that's what they took).
+  stmts.push(db.prepare(`UPDATE leads SET member_id = ?, stage = ?, closed_at = CASE WHEN ? = 'joined' THEN datetime('now') ELSE closed_at END
+                         WHERE stage NOT IN ('joined','lost') AND (lower(email) = ? OR mobile = ?)`)
+    .bind(id, plan.family === "trial" ? "trial" : "joined", plan.family === "trial" ? "trial" : "joined", f.email, f.mobile));
+  if (plan.family === "trial") {
+    stmts.push(db.prepare(`INSERT INTO leads(member_id, name, email, mobile, kind, source, campaign, stage, goal)
+                           SELECT ?, ?, ?, ?, 'trial', ?, ?, 'trial', ?
+                           WHERE NOT EXISTS (SELECT 1 FROM leads WHERE member_id = ? AND kind = 'trial' AND stage = 'trial')`)
+      .bind(id, f.first + " " + f.last, f.email, f.mobile, f.source, f.campaign || null, f.goal, id));
   }
   await db.batch(stmts);
   return { ok: true, id, needsBilling: billedBy === "ezidebit", warnings, gymmasterUrl: (env.GM_SITE || "") + "/member/view/" + id };
@@ -394,6 +452,320 @@ async function whoHasTag(env, can, tag) {
   const history = (await env.DB.prepare(`SELECT k.member_id, m.first_name, m.last_name, k.status, k.assigned_at, k.ended_at
                                          FROM key_tags k JOIN members m ON m.id = k.member_id WHERE k.tag = ? ORDER BY k.id DESC`).bind(tag).all()).results;
   return { tag, current: cur || null, history };
+}
+
+/* ---------------- Today: the ranked job list ---------------- */
+// Every job is worked from this list, and every finished job records what happened,
+// so after a month we know which jobs actually make money.
+
+const JOBS = {
+  new_lead:        { label: "New leads to contact",             one: "new lead to contact",            owner: "reception", order: 1 },
+  missing_billing: { label: "New members with no bank details", one: "new member with no bank details", owner: "reception", order: 2 },
+  trial_ending:    { label: "Trials finishing",                 one: "trial finishing",                owner: "reception", order: 3 },
+  blocked:         { label: "Blocked for money owing",          one: "member blocked for money owing", owner: "manager",   order: 4 },
+  call_back:       { label: "Call backs due",                   one: "call back due",                  owner: "reception", order: 5 },
+  no_tag:          { label: "Paying members with no key tag",   one: "paying member with no key tag",  owner: "reception", order: 6 },
+};
+const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "done"];
+
+async function today(env, who, can) {
+  const db = env.DB;
+  const all = (sql, ...a) => db.prepare(sql).bind(...a).all().then(r => r.results);
+  const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
+  const nzToday = nzDateTime(new Date()).slice(0, 10);
+  const own = can.members === "own";
+  const jobs = [];
+  const push = (kind, items) => { if (items.length) jobs.push({ kind, ...JOBS[kind], count: items.length, items: items.slice(0, 50) }); };
+
+  // Leads nobody has contacted yet, oldest first. Trainers see the ones assigned to them.
+  push("new_lead", (await all(`SELECT l.id lead_id, l.member_id, coalesce(l.name, m.first_name || ' ' || coalesce(m.last_name,'')) name,
+                                 l.kind, l.source, l.goal, l.notes, l.created_at, l.mobile
+                               FROM leads l LEFT JOIN members m ON m.id = l.member_id
+                               WHERE l.stage = 'new' AND (l.notes IS NULL OR l.notes <> 'gymmaster_import') ${own ? "AND l.assigned_to = ?" : ""}
+                               ORDER BY l.created_at LIMIT 100`, ...(own ? [who.id] : [])))
+    .map(r => ({ ...r, detail: leadKindLabel(r.kind) + (r.goal ? ", goal: " + r.goal : "") + (r.source ? ", from " + r.source : "") + (r.notes ? ". " + r.notes : "") })));
+
+  if (!own) {
+    push("missing_billing", (await all(`SELECT t.id task_id, t.member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, t.due_on
+                                        FROM tasks t JOIN members m ON m.id = t.member_id
+                                        WHERE t.kind = 'missing_billing' AND t.outcome IS NULL ORDER BY t.due_on`))
+      .map(r => ({ ...r, detail: "Joined " + r.due_on + ". Get their bank details in." })));
+
+    // 5 Days for $5: on day 4 or later they're about to finish.
+    push("trial_ending", (await all(`SELECT l.id lead_id, l.member_id, coalesce(l.name, m.first_name || ' ' || coalesce(m.last_name,'')) name, l.mobile, l.created_at
+                                     FROM leads l LEFT JOIN members m ON m.id = l.member_id
+                                     WHERE l.kind = 'trial' AND l.stage = 'trial' AND date(l.created_at) <= date(?, '-3 days')
+                                       AND (l.notes IS NULL OR l.notes <> 'gymmaster_import')
+                                     ORDER BY l.created_at`, nzToday))
+      .map(r => ({ ...r, detail: "Trial started " + String(r.created_at).slice(0, 10) + ". Best time to ask them to join." })));
+
+    // Call backs promised for today or earlier.
+    push("call_back", (await all(`SELECT t.id task_id, t.member_id, t.lead_id, coalesce(m.first_name || ' ' || coalesce(m.last_name,''), l.name) name,
+                                    coalesce(m.mobile, l.mobile) mobile, t.outcome_note, t.due_on
+                                  FROM tasks t LEFT JOIN members m ON m.id = t.member_id LEFT JOIN leads l ON l.id = t.lead_id
+                                  WHERE t.kind = 'call_back' AND t.outcome IS NULL AND t.due_on <= ? ORDER BY t.due_on`, nzToday))
+      .map(r => ({ ...r, detail: r.outcome_note || "Promised a call back" })));
+  }
+
+  if (can.collections) {
+    push("blocked", (await all(`SELECT f.member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, f.detail
+                                FROM member_flags f JOIN members m ON m.id = f.member_id WHERE f.flag = 'blocked' ORDER BY f.set_at`)));
+  }
+
+  if (!own) {
+    push("no_tag", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, p.gm_type_name plan
+                               FROM members m JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current'
+                               JOIN plans p ON p.id = ms.plan_id
+                               WHERE m.status = 'active' AND m.key_tag IS NULL AND p.family IN ('perform','classes','daily','recovery','transporter')
+                                 AND m.joined_on >= date(?, '-30 days')
+                                 -- Only people added in the Core: GymMaster's export doesn't include tag numbers yet.
+                                 AND EXISTS (SELECT 1 FROM activity a WHERE a.member_id = m.id AND a.kind = 'sale')
+                               ORDER BY m.joined_on DESC`, nzToday))
+      .map(r => ({ ...r, detail: "Joined recently on " + r.plan + ". Give them a tag when they're in." })));
+  }
+
+  jobs.sort((a, b) => a.order - b.order);
+  const doneToday = await one(`SELECT count(*) n FROM tasks WHERE outcome IS NOT NULL AND date(done_at) = date('now') ${own ? "AND done_by = ?" : ""}`, ...(own ? [who.id] : []));
+  const joinedToday = await one("SELECT count(*) n FROM members WHERE joined_on = ?", nzToday);
+  const out = { date: nzToday, jobs, done_today: doneToday.n, joined_today: joinedToday.n };
+  if (!own) {
+    out.recent = await all(`SELECT m.id, m.first_name, m.last_name, m.joined_on, p.gm_type_name plan, m.lead_source
+                            FROM members m LEFT JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current'
+                            LEFT JOIN plans p ON p.id = ms.plan_id
+                            WHERE m.joined_on IS NOT NULL ORDER BY m.joined_on DESC, m.id DESC LIMIT 8`);
+  }
+  return out;
+}
+
+function leadKindLabel(k) {
+  return ({ trial: "Trial", free_pt: "Free PT", unfinished_signup: "Started signing up online", bring_a_mate: "Bring a Mate",
+            app_upgrade: "Upgrade request in the app", website_form: "Website enquiry", meta_form: "Meta ad form", walk_in: "Walk in" })[k] || k;
+}
+
+// One tap after a call or a job. Moves the lead along and logs who did what.
+async function recordOutcome(env, who, can, b) {
+  const db = env.DB;
+  const outcome = String(b.outcome || "");
+  if (!OUTCOMES.includes(outcome)) return { ok: false, error: "Pick what happened." };
+  const kind = String(b.kind || "");
+  if (!JOBS[kind]) return { ok: false, error: "Unknown job." };
+  if (can.members === "own" && kind !== "new_lead") return { ok: false, error: "No access" };
+  const memberId = b.member_id ? Number(b.member_id) : null, leadId = b.lead_id ? Number(b.lead_id) : null;
+  if (leadId && can.members === "own") {
+    const l = await db.prepare("SELECT assigned_to FROM leads WHERE id = ?").bind(leadId).first();
+    if (!l || l.assigned_to !== who.id) return { ok: false, error: "Not one of your leads" };
+  }
+  const note = String(b.note || "").trim().slice(0, 500) || null;
+  const nzToday = nzDateTime(new Date()).slice(0, 10);
+  const stmts = [];
+  if (b.task_id) {
+    stmts.push(db.prepare("UPDATE tasks SET outcome = ?, outcome_note = coalesce(?, outcome_note), done_by = ?, done_at = datetime('now') WHERE id = ? AND outcome IS NULL")
+      .bind(outcome, note, who.id, Number(b.task_id)));
+  } else {
+    stmts.push(db.prepare(`INSERT INTO tasks(kind, member_id, lead_id, owner_role, assigned_to, due_on, outcome, outcome_note, done_by, done_at)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`)
+      .bind(kind, memberId, leadId, JOBS[kind].owner, who.id, nzToday, outcome, note, who.id));
+  }
+  if (leadId) {
+    const stage = { joined: "joined", not_interested: "lost", joining_at_desk: "trial" }[outcome] || "contacted";
+    stmts.push(db.prepare(`UPDATE leads SET stage = CASE WHEN stage IN ('joined','lost') THEN stage ELSE ? END,
+                           contacted_at = coalesce(contacted_at, datetime('now')),
+                           closed_at = CASE WHEN ? IN ('joined','lost') THEN datetime('now') ELSE closed_at END WHERE id = ?`)
+      .bind(stage, stage, leadId));
+  }
+  if (outcome === "call_back") {
+    const when = /^\d{4}-\d{2}-\d{2}$/.test(b.call_back_on || "") ? b.call_back_on : nzDateTime(new Date(Date.now() + 86400_000)).slice(0, 10);
+    stmts.push(db.prepare("INSERT INTO tasks(kind, member_id, lead_id, owner_role, assigned_to, due_on, outcome_note) VALUES ('call_back', ?, ?, 'reception', ?, ?, ?)")
+      .bind(memberId, leadId, who.id, when, note || "Call back"));
+  }
+  stmts.push(db.prepare("INSERT INTO activity(member_id, lead_id, staff_id, kind, detail) VALUES (?, ?, ?, 'call', ?)")
+    .bind(memberId, leadId, who.id, `${JOBS[kind].label}: ${outcome.replace(/_/g, " ")}${note ? ". " + note : ""}`));
+  await db.batch(stmts);
+  return { ok: true };
+}
+
+/* ---------------- leads ---------------- */
+
+async function staffList(env, can) {
+  if (!can.members) return { error: "No access" };
+  return { staff: (await env.DB.prepare("SELECT id, name, role FROM staff WHERE active = 1 ORDER BY list_order, name").all()).results };
+}
+
+async function listLeads(env, who, can, q) {
+  if (!can.members) return { error: "No access" };
+  const where = ["(l.notes IS NULL OR l.notes <> 'gymmaster_import')"], binds = [];
+  if (can.members === "own") { where.push("l.assigned_to = ?"); binds.push(who.id); }
+  const kind = q.get("kind"); if (kind) { where.push("l.kind = ?"); binds.push(kind); }
+  const days = Math.min(+(q.get("days") || 30), 365);
+  where.push("(l.stage NOT IN ('joined','lost') OR l.closed_at >= datetime('now', ?))"); binds.push(`-${days} days`);
+  const rows = (await env.DB.prepare(`SELECT l.id, l.member_id, l.name, l.email, l.mobile, l.kind, l.source, l.campaign, l.stage, l.goal,
+                                        l.created_at, l.contacted_at, l.assigned_to, s.name assigned_name
+                                      FROM leads l LEFT JOIN staff s ON s.id = l.assigned_to
+                                      WHERE ${where.join(" AND ")} ORDER BY l.created_at DESC LIMIT 400`).bind(...binds).all()).results;
+  const counts = {};
+  for (const r of rows) counts[r.kind] = (counts[r.kind] || 0) + 1;
+  return { leads: rows, counts };
+}
+
+async function leadDetail(env, who, can, id) {
+  if (!can.members) return { error: "No access" };
+  const l = await env.DB.prepare("SELECT l.*, s.name assigned_name FROM leads l LEFT JOIN staff s ON s.id = l.assigned_to WHERE l.id = ?").bind(id).first();
+  if (!l) return { error: "Lead not found" };
+  if (can.members === "own" && l.assigned_to !== who.id) return { error: "Not one of your leads" };
+  const activity = (await env.DB.prepare(`SELECT a.kind, a.detail, a.at, s.name staff FROM activity a LEFT JOIN staff s ON s.id = a.staff_id
+                                          WHERE a.lead_id = ? ORDER BY a.at DESC LIMIT 20`).bind(id).all()).results;
+  return { lead: l, activity };
+}
+
+const LEAD_KINDS = ["trial", "free_pt", "unfinished_signup", "bring_a_mate", "app_upgrade", "website_form", "meta_form", "walk_in"];
+
+async function addLead(env, who, can, b) {
+  if (!can.add) return { ok: false, error: "No access" };
+  const r = await saveLead(env, { ...b, kind: b.kind || "walk_in" }, who);
+  return r;
+}
+
+async function updateLead(env, who, can, id, b) {
+  if (!can.members) return { ok: false, error: "No access" };
+  const db = env.DB;
+  const l = await db.prepare("SELECT * FROM leads WHERE id = ?").bind(id).first();
+  if (!l) return { ok: false, error: "Lead not found" };
+  if (can.members === "own" && l.assigned_to !== who.id) return { ok: false, error: "Not one of your leads" };
+  const stmts = [];
+  if (b.assigned_to !== undefined && can.add) {
+    stmts.push(db.prepare("UPDATE leads SET assigned_to = ? WHERE id = ?").bind(b.assigned_to ? Number(b.assigned_to) : null, id));
+    stmts.push(db.prepare("INSERT INTO activity(lead_id, member_id, staff_id, kind, detail) VALUES (?, ?, ?, 'note', ?)")
+      .bind(id, l.member_id, who.id, "Assigned to " + (b.assigned_name || "nobody")));
+  }
+  if (b.stage && ["new", "contacted", "trial", "joined", "lost"].includes(b.stage)) {
+    stmts.push(db.prepare(`UPDATE leads SET stage = ?, closed_at = CASE WHEN ? IN ('joined','lost') THEN datetime('now') ELSE NULL END WHERE id = ?`)
+      .bind(b.stage, b.stage, id));
+  }
+  if (b.note) stmts.push(db.prepare("INSERT INTO activity(lead_id, member_id, staff_id, kind, detail) VALUES (?, ?, ?, 'note', ?)")
+    .bind(id, l.member_id, who.id, String(b.note).slice(0, 500)));
+  if (!stmts.length) return { ok: false, error: "Nothing to change" };
+  await db.batch(stmts);
+  return { ok: true };
+}
+
+// Shared by the staff "add lead" button and the public intake.
+async function saveLead(env, b, who) {
+  const db = env.DB;
+  const clean = s => String(s ?? "").trim().replace(/\s+/g, " ").slice(0, 200);
+  const kind = LEAD_KINDS.includes(b.kind) ? b.kind : "website_form";
+  const name = clean(b.name || [b.first, b.last].filter(Boolean).join(" "));
+  const email = clean(b.email).toLowerCase() || null;
+  const mobile = normMobile(b.mobile || b.phone);
+  if (!name && !email && !mobile) return { ok: false, error: "Need at least a name and a way to contact them." };
+  // Match to an existing member so the lead lands on the right profile.
+  let member = null;
+  if (email || mobile) {
+    member = await db.prepare("SELECT id, first_name, last_name FROM members WHERE (? IS NOT NULL AND lower(email) = ?) OR (? IS NOT NULL AND mobile = ?) LIMIT 1")
+      .bind(email, email, mobile, mobile).first();
+  }
+  // Same person, same kind, still open in the last 14 days: update it instead of making a second lead.
+  const open = await db.prepare(`SELECT id FROM leads WHERE kind = ? AND stage NOT IN ('joined','lost') AND created_at >= datetime('now','-14 days')
+                                 AND ((? IS NOT NULL AND lower(email) = ?) OR (? IS NOT NULL AND mobile = ?)) LIMIT 1`)
+    .bind(kind, email, email, mobile, mobile).first();
+  if (open) {
+    await db.prepare("INSERT INTO activity(lead_id, member_id, staff_id, kind, detail) VALUES (?, ?, ?, 'note', ?)")
+      .bind(open.id, member && member.id, who ? who.id : null, "Came in again: " + leadKindLabel(kind) + (b.notes ? ". " + clean(b.notes) : "")).run();
+    return { ok: true, id: open.id, repeat: true };
+  }
+  let assigned = b.assigned_to ? Number(b.assigned_to) : null;
+  if (!assigned && kind === "free_pt") assigned = await nextTrainer(db);
+  const stage = kind === "trial" ? "trial" : "new";
+  const row = await db.prepare(`INSERT INTO leads(member_id, name, email, mobile, kind, source, campaign, stage, assigned_to, goal, notes)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`)
+    .bind(member && member.id, name || null, email, mobile, kind, clean(b.source) || null, clean(b.campaign) || null, stage, assigned,
+          clean(b.goal) || null, clean(b.notes) || null).first();
+  await db.prepare("INSERT INTO activity(lead_id, member_id, staff_id, kind, detail) VALUES (?, ?, ?, 'note', ?)")
+    .bind(row.id, member && member.id, who ? who.id : null, (who ? "Added by " + who.name : "Came in from the website") + ": " + leadKindLabel(kind)).run();
+  return { ok: true, id: row.id, member_id: member && member.id, assigned_to: assigned };
+}
+
+// New trainers first, then whoever has the fewest open leads.
+async function nextTrainer(db) {
+  const r = await db.prepare(`SELECT s.id FROM staff s
+                              WHERE s.active = 1 AND s.role = 'trainer'
+                              ORDER BY (SELECT count(*) FROM leads l WHERE l.assigned_to = s.id AND l.stage IN ('new','contacted')), s.list_order, s.id
+                              LIMIT 1`).first();
+  return r ? r.id : null;
+}
+
+// Website forms (join page drop-offs, free PT, enquiries) post here.
+// Needs the X-M2-Key header to match INTAKE_KEY, and only accepts M2's own sites.
+async function intake(req, env) {
+  const origin = req.headers.get("Origin") || "";
+  const allowed = (env.ALLOWED_ORIGINS || "https://m2club.co.nz,https://www.m2club.co.nz").split(",").map(s => s.trim());
+  const cors = allowed.includes(origin) ? { "Access-Control-Allow-Origin": origin, "Vary": "Origin" } : {};
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: { ...cors, "Access-Control-Allow-Methods": "POST", "Access-Control-Allow-Headers": "Content-Type, X-M2-Key", "Access-Control-Max-Age": "86400" } });
+  }
+  const reply = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { ...cors, "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  if (req.method !== "POST") return reply({ error: "POST only" }, 405);
+  if (!env.INTAKE_KEY || req.headers.get("X-M2-Key") !== env.INTAKE_KEY) return reply({ error: "Not allowed" }, 403);
+  let b;
+  try { b = await req.json(); } catch { return reply({ error: "Bad request" }, 400); }
+  if (b.m2_check) return reply({ ok: true });   // bot trap field filled in
+  const r = await saveLead(env, b, null);
+  return reply(r.ok ? { ok: true } : { ok: false, error: r.error }, r.ok ? 200 : 400);
+}
+
+/* ---------------- member edits ---------------- */
+
+const EDITABLE_FLAGS = { gifted_time: "owner_manager", do_not_contact: "staff", corporate: "owner_manager", student: "staff", passport: "staff" };
+
+async function updateMember(env, who, can, id, what, b) {
+  if (!can.members) return { ok: false, error: "No access" };
+  const db = env.DB;
+  const m = await db.prepare("SELECT * FROM members WHERE id = ?").bind(id).first();
+  if (!m) return { ok: false, error: "Member not found" };
+  if (can.members === "own" && m.trainer_id !== who.id) return { ok: false, error: "Not one of your clients" };
+  if (what === "notes") {
+    const text = String(b.text || "").trim().slice(0, 1000);
+    if (!text) return { ok: false, error: "Write a note first." };
+    await db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, ?, ?)")
+      .bind(id, who.id, b.kind === "call" ? "call" : "note", text).run();
+    return { ok: true };
+  }
+  if (!can.add) return { ok: false, error: "Trainers can add notes only." };
+  if (what === "flags") {
+    const flag = String(b.flag || ""), rule = EDITABLE_FLAGS[flag];
+    if (!rule) return { ok: false, error: "That flag can't be changed here." };
+    if (rule === "owner_manager" && !can.collections) return { ok: false, error: "Only owners and the manager can change that." };
+    if (b.on) {
+      await db.batch([
+        db.prepare("INSERT OR REPLACE INTO member_flags(member_id, flag, detail, set_by) VALUES (?, ?, ?, ?)").bind(id, flag, String(b.detail || "").slice(0, 100) || null, who.id),
+        db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', ?)").bind(id, who.id, "Flag on: " + flag.replace(/_/g, " ")),
+      ]);
+    } else {
+      await db.batch([
+        db.prepare("DELETE FROM member_flags WHERE member_id = ? AND flag = ?").bind(id, flag),
+        db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', ?)").bind(id, who.id, "Flag off: " + flag.replace(/_/g, " ")),
+      ]);
+    }
+    return { ok: true };
+  }
+  if (what === "details") {
+    const fields = { email: v => String(v).trim().toLowerCase(), mobile: normMobile, goal: v => String(v).trim(), lead_source: v => String(v).trim(),
+                     preferred_name: v => String(v).trim(), emergency_name: v => String(v).trim(), emergency_phone: normMobile };
+    const sets = [], binds = [], changed = [];
+    for (const [k, fn] of Object.entries(fields)) {
+      if (b[k] === undefined) continue;
+      const v = fn(b[k]) || null;
+      if (k === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return { ok: false, error: "That email address doesn't look right." };
+      if (v === m[k]) continue;
+      sets.push(k + " = ?"); binds.push(v); changed.push(k.replace(/_/g, " "));
+    }
+    if (!sets.length) return { ok: true, unchanged: true };
+    await db.batch([
+      db.prepare(`UPDATE members SET ${sets.join(", ")}, updated_at = datetime('now') WHERE id = ?`).bind(...binds, id),
+      db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', ?)").bind(id, who.id, "Updated " + changed.join(", ")),
+    ]);
+    return { ok: true, note: changed.includes("email") || changed.includes("mobile") ? "Change it in GymMaster too, so emails and texts still reach them." : null };
+  }
+  return { ok: false, error: "Unknown change" };
 }
 
 /* ---------------- nightly sync from GymMaster ---------------- */
@@ -484,207 +856,3 @@ const BILLING_DONE_HTML = `<!doctype html><html lang="en"><head><meta charset="u
 <body style="margin:0;font:16px/1.5 Arial,sans-serif;background:#0A0A0A;color:#fff;display:grid;place-items:center;min-height:100vh;text-align:center;padding:24px">
 <div><div style="color:#DFFF00;font-weight:800;font-size:28px">You're all set.</div><p>Your bank details have gone straight to Ezidebit. Welcome to M2.</p><p style="color:#B9B9B0">You can hand the screen back now.</p></div></body></html>`;
 
-/* ---------------- the first screen ---------------- */
-// Phase 1 screen: the business summary for owners, and member search with a
-// profile panel for everyone allowed to see members. The full staff CRM
-// (designs in the M2 Staff CRM canvas) replaces this screen by screen.
-
-const APP_HTML = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>M2 Core</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=DM+Sans:opsz,wght@9..40,400;9..40,600&display=swap">
-<style>
-:root{--lime:#DFFF00;--ink:#0A0A0A;--paper:#F3F3F0;--tile:#F1F1EC;--olive:#5E6B00;--muted:#5B5B55;--line:#E2E2DC}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "DM Sans",Arial,sans-serif}
-header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px}
-header b{background:var(--lime);color:var(--ink);padding:2px 7px;border-radius:4px;font-family:Archivo,Arial,sans-serif}
-header span{margin-left:auto;color:#B9B9B0;font-size:13px}
-main{max-width:1100px;margin:0 auto;padding:24px 16px;display:flex;flex-direction:column;gap:20px}
-h1,h2{font-family:Archivo,Arial,sans-serif;font-weight:800;letter-spacing:-.02em;margin:0}h1{font-size:30px}h2{font-size:20px}
-.card{background:#fff;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.tile{background:var(--tile);border-radius:14px;padding:14px}.tile.dark{background:var(--ink);color:#fff}
-.tile .n{font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px}.tile.dark .n{color:var(--lime)}
-.tile .l{font-size:13px;color:var(--muted)}.tile.dark .l{color:#B9B9B0}
-input{height:46px;border:1px solid var(--line);border-radius:999px;padding:0 18px;font:inherit;width:100%}
-.row{display:flex;justify-content:space-between;gap:10px;padding:10px 4px;border-top:1px solid var(--line);cursor:pointer}
-.row:hover{background:var(--tile)}.pill{font-size:12px;background:var(--tile);border-radius:999px;padding:2px 10px;font-weight:600}
-.pill.dark{background:var(--ink);color:var(--lime)}.muted{color:var(--muted);font-size:13px}
-.err{color:#A33A00}
-.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
-.chip.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}
-.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.plan{border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px;text-align:left;font:inherit;cursor:pointer}
-.plan.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}.plan b{display:block}.plan span{font-size:13px;color:var(--muted)}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.fld{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}.fld input,.fld select{height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;font:inherit;color:var(--ink);background:#fff;width:100%}
-.btn{height:46px;padding:0 22px;border:0;border-radius:999px;background:var(--lime);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
-.btn.dark{background:var(--ink);color:var(--lime)}.btn.line{background:transparent;border:1px solid var(--ink)}
-.stepn{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--lime);display:inline-grid;place-items:center;font-size:13px;font-weight:600;margin-right:8px}
-canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:12px;background:#fff;touch-action:none}
-.ok{background:#F7FBD9;border-radius:12px;padding:12px 14px;font-size:14px}
-.tagbox{font-size:28px;height:64px;text-align:center;letter-spacing:.1em;font-family:Archivo,Arial,sans-serif}
-</style></head><body>
-<header><b>M2</b><strong>Core</strong><span id="me"></span><button class="btn" id="addBtn" hidden style="height:38px;margin-left:12px">Add member</button></header>
-<main>
-<div><span class="muted" id="sync"></span><h1>Today<span style="color:var(--olive)">.</span></h1></div>
-<section class="card" id="biz" hidden><div class="muted">Only you and Tim see this</div><div class="tiles" id="tiles"></div></section>
-<section class="card"><h2>Find a member</h2><label for="q" class="muted">Name, email, mobile or key tag</label><input id="q" autocomplete="off"><div id="results"></div></section>
-<section class="card" id="profile" hidden></section>
-<section class="card" id="add" hidden>
-<div style="display:flex;align-items:center;gap:10px"><h2 style="margin-right:auto">Add a member</h2><button class="btn line" id="addClose" style="height:38px">Close</button></div>
-<div id="a1">
-<h3 style="margin:0 0 8px"><span class="stepn">1</span>Membership</h3>
-<div class="chips" id="fam"></div>
-<div class="chips" id="freq" style="margin-top:8px"></div>
-<label style="display:flex;gap:8px;align-items:center;margin-top:8px;font-size:14px"><input type="checkbox" id="flexi"> Flexi (+$5 a week, 30 days notice, no lock-in)</label>
-<div class="plans" id="plans" style="margin-top:10px"></div>
-<h3 style="margin:18px 0 8px"><span class="stepn">2</span>Their details</h3>
-<div class="grid2">
-<label class="fld">First name<input id="first" autocomplete="off"></label>
-<label class="fld">Last name<input id="last" autocomplete="off"></label>
-<label class="fld">Email<input id="email" type="email" autocomplete="off"></label>
-<label class="fld">Mobile<input id="mobile" inputmode="tel" autocomplete="off"></label>
-<label class="fld">Date of birth<input id="dob" type="date"></label>
-<label class="fld">Gender<select id="gender"><option value="">Prefer not to say</option><option value="F">Female</option><option value="M">Male</option><option value="O">Other</option></select></label>
-<label class="fld">Main goal<select id="goal"><option value="">Pick one</option></select></label>
-<label class="fld">Where did they hear about us<select id="source"><option value="">Pick one</option></select></label>
-<label class="fld">Emergency contact name<input id="ename" autocomplete="off"></label>
-<label class="fld">Emergency contact phone<input id="ephone" inputmode="tel" autocomplete="off"></label>
-</div>
-<label style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px"><input type="checkbox" id="passport"> Fitness Passport member (no M2 offers or trials)</label>
-<div id="mateWrap" style="margin-top:10px"><label class="fld">Brought by a member? (Bring a Mate)<input id="mate" placeholder="Search the member who brought them" autocomplete="off"></label><div id="mateRes"></div><div id="mateSel" class="muted"></div></div>
-<h3 style="margin:18px 0 8px"><span class="stepn">3</span>Terms and signature</h3>
-<p class="muted" style="margin:0 0 8px">Talk them through the membership terms, then they sign below.</p>
-<canvas id="sig"></canvas>
-<div style="display:flex;gap:10px;align-items:center;margin-top:8px"><label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="agreed"> They've agreed to the terms</label><button class="btn line" id="sigClear" style="height:34px;margin-left:auto">Clear signature</button></div>
-<div class="err" id="aErr" style="margin-top:10px"></div>
-<button class="btn dark" id="aSave" style="margin-top:12px">Add member</button>
-</div>
-<div id="a2" hidden>
-<div class="ok" id="aDone"></div>
-<h3 style="margin:16px 0 8px"><span class="stepn">4</span>Bank details</h3>
-<p class="muted" id="billNote" style="margin:0 0 10px"></p>
-<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><button class="btn dark" id="billOpen">Enter bank details</button><div id="qr"></div></div>
-<label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px"><input type="checkbox" id="billDone"> Bank details are in</label>
-<h3 style="margin:18px 0 8px"><span class="stepn">5</span>Key tag</h3>
-<p class="muted" style="margin:0 0 8px">Scan the new tag. The reader types the number for you.</p>
-<input id="tag" class="tagbox" autocomplete="off" placeholder="Scan tag">
-<div class="err" id="tagErr" style="margin-top:8px"></div>
-<div id="tagOk"></div>
-<button class="btn" id="aFinish" style="margin-top:14px">Done</button>
-</div>
-</section>
-</main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const get=u=>fetch(u).then(r=>r.json());
-(async()=>{
- const me=await get("/api/me"); $("#me").textContent=me.name+", "+me.role;
- const s=await get("/api/summary");
- if(s.last_sync) $("#sync").textContent="Last copy from GymMaster: "+(s.last_sync.finished_at||"running")+(s.last_sync.ok===0?" (failed)":"");
- const fam=Object.fromEntries((s.by_family||[]).map(f=>[f.family,f.n]));
- const t=[["Members",s.members,1],["Fitness Passport",s.passport],["Perform",fam.perform||0],["Daily",fam.daily||0],
-  ["Lead source recorded",s.lead_source_pct+"%"],["Trials that joined",s.trials&&s.trials.total?Math.round(100*s.trials.joined/s.trials.total)+"%":"-"],["Blocked at the door",s.blocked]];
- if(me.can.business){t.push(["Billed weekly by Ezidebit","$"+Math.round(s.weekly_billed||0).toLocaleString(),1]);t.push(["Owed to M2","$"+Math.round(s.owed_total||0).toLocaleString()]);}
- $("#tiles").innerHTML=t.map(([l,n,d])=>'<div class="tile'+(d?" dark":"")+'"><div class="n">'+esc(typeof n==="number"?n.toLocaleString():n)+'</div><div class="l">'+esc(l)+'</div></div>').join("");
- $("#biz").hidden=false;
-})().catch(e=>{$("#sync").innerHTML='<span class="err">'+esc(e)+'</span>'});
-let timer;
-$("#q").addEventListener("input",e=>{clearTimeout(timer);timer=setTimeout(async()=>{
- const d=await get("/api/members?q="+encodeURIComponent(e.target.value));
- $("#results").innerHTML=(d.results||[]).map(m=>'<div class="row" data-id="'+m.id+'"><span><b>'+esc(m.first_name+" "+(m.last_name||""))+'</b> <span class="muted">'+esc(m.plan||"")+'</span></span><span class="pill'+(m.family==="perform"?" dark":"")+'">'+esc(m.family||m.status)+'</span></div>').join("")||(e.target.value.length>1?'<div class="muted">No one found</div>':"");
-},250)});
-$("#results").addEventListener("click",async e=>{const r=e.target.closest(".row");if(!r)return;
- const d=await get("/api/members/"+r.dataset.id);const p=$("#profile");p.hidden=false;
- if(d.error){p.innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
- const m=d.member,ms=d.memberships[0]||{};
- p.innerHTML='<h2>'+esc(m.first_name+" "+(m.last_name||""))+'</h2>'+
-  '<div>'+d.flags.map(f=>'<span class="pill">'+esc(f.flag+(f.detail?": "+f.detail:""))+'</span> ').join("")+'</div>'+
-  '<div class="tiles">'+
-  '<div class="tile"><div class="l">Plan</div><div>'+esc(ms.plan||"-")+'</div></div>'+
-  '<div class="tile"><div class="l">Since</div><div>'+esc(ms.start_date||m.joined_on||"-")+'</div></div>'+
-  '<div class="tile"><div class="l">Visits, all time</div><div>'+esc(m.total_visits_gm)+'</div></div>'+
-  '<div class="tile"><div class="l">Came from</div><div>'+esc(m.lead_source||"Not recorded")+'</div></div>'+
-  (d.billing?'<div class="tile"><div class="l">Owes</div><div>$'+esc((d.billing.balance_owing||0).toFixed(2))+'</div></div>':"")+
-  '</div><div class="muted">Mobile '+esc(m.mobile||"-")+', email '+esc(m.email||"-")+'</div>';
- p.scrollIntoView({behavior:"smooth"});
-});
-/* ---------- add a member ---------- */
-let PL=null,pick={fam:"perform",freq:"weekly"},sel=null,mate=null,newId=null;
-const FAMN={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",trial:"Trial or pass"};
-const FREQN={weekly:"Weekly",fortnightly:"Fortnightly",monthly:"Monthly",quarterly:"Quarterly",upfront:"Paid upfront"};
-fetch("/api/me").then(r=>r.json()).then(me=>{ if(me.can&&me.can.add) $("#addBtn").hidden=false; });
-$("#addBtn").addEventListener("click",async()=>{ $("#add").hidden=false; $("#a1").hidden=false; $("#a2").hidden=true; $("#add").scrollIntoView({behavior:"smooth"}); if(!PL) await loadPlans(); });
-$("#addClose").addEventListener("click",()=>{ $("#add").hidden=true; });
-async function loadPlans(){
- const d=await get("/api/plans"); if(d.error){ $("#plans").innerHTML='<div class="err">'+esc(d.error)+'</div>'; return; }
- PL=d.plans;
- $("#goal").innerHTML+=d.goals.map(g=>'<option>'+esc(g)+'</option>').join("");
- $("#source").innerHTML+=d.sources.map(g=>'<option>'+esc(g)+'</option>').join("");
- drawPlans();
-}
-function drawPlans(){
- const fams=[...new Set(PL.map(p=>p.family))];
- $("#fam").innerHTML=fams.map(f=>'<button type="button" class="chip'+(f===pick.fam?" on":"")+'" data-f="'+f+'">'+FAMN[f]+'</button>').join("");
- const freqs=[...new Set(PL.filter(p=>p.family===pick.fam).map(p=>p.frequency))];
- if(!freqs.includes(pick.freq)) pick.freq=freqs[0];
- $("#freq").innerHTML=pick.fam==="trial"?"":freqs.map(f=>'<button type="button" class="chip'+(f===pick.freq?" on":"")+'" data-q="'+f+'">'+FREQN[f]+'</button>').join("");
- const fx=$("#flexi").checked;
- const list=PL.filter(p=>p.family===pick.fam&&(pick.fam==="trial"||(p.frequency===pick.freq&&(p.frequency==="upfront"||p.frequency==="quarterly"||p.flexi===fx))));
- $("#plans").innerHTML=list.map(p=>'<button type="button" class="plan'+(sel&&sel.id===p.id?" on":"")+'" data-p="'+p.id+'"><b>'+esc(p.name)+'</b><span>'+esc(p.price+" "+(p.priceDescription||""))+(p.signupFee?", joining fee $"+p.signupFee:"")+'</span></button>').join("")||'<div class="muted">Nothing for that combination.</div>';
-}
-$("#fam").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;pick.fam=b.dataset.f;sel=null;drawPlans();});
-$("#freq").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(!b)return;pick.freq=b.dataset.q;sel=null;drawPlans();});
-$("#flexi").addEventListener("change",()=>{sel=null;drawPlans();});
-$("#plans").addEventListener("click",e=>{const b=e.target.closest("[data-p]");if(!b)return;sel=PL.find(p=>p.id===+b.dataset.p);drawPlans();});
-$("#passport").addEventListener("change",e=>{ $("#mateWrap").hidden=e.target.checked; if(e.target.checked){mate=null;$("#mateSel").textContent="";} });
-let mt; $("#mate").addEventListener("input",e=>{clearTimeout(mt);mt=setTimeout(async()=>{
- if(e.target.value.length<2){$("#mateRes").innerHTML="";return;}
- const d=await get("/api/members?q="+encodeURIComponent(e.target.value));
- $("#mateRes").innerHTML=(d.results||[]).slice(0,6).map(m=>'<div class="row" data-m="'+m.id+'" data-n="'+esc(m.first_name+" "+(m.last_name||""))+'"><span>'+esc(m.first_name+" "+(m.last_name||""))+'</span><span class="pill">'+esc(m.family||"")+'</span></div>').join("");
-},250)});
-$("#mateRes").addEventListener("click",e=>{const r=e.target.closest("[data-m]");if(!r)return;mate=+r.dataset.m;$("#mateSel").textContent="Brought by "+r.dataset.n+". Both get 4 weeks free.";$("#mateRes").innerHTML="";$("#mate").value="";});
-// signature pad
-const cv=$("#sig"),cx=cv.getContext("2d");let drawing=false,signed=false;
-function sizeSig(){const r=cv.getBoundingClientRect();if(!r.width)return;cv.width=r.width*2;cv.height=r.height*2;cx.scale(2,2);cx.lineWidth=2;cx.lineCap="round";cx.strokeStyle="#0A0A0A";signed=false;}
-new ResizeObserver(sizeSig).observe(cv);
-const pt=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
-cv.addEventListener("pointerdown",e=>{drawing=true;cv.setPointerCapture(e.pointerId);const[x,y]=pt(e);cx.beginPath();cx.moveTo(x,y);});
-cv.addEventListener("pointermove",e=>{if(!drawing)return;const[x,y]=pt(e);cx.lineTo(x,y);cx.stroke();signed=true;});
-cv.addEventListener("pointerup",()=>{drawing=false;});
-$("#sigClear").addEventListener("click",()=>{cx.clearRect(0,0,cv.width,cv.height);signed=false;});
-$("#aSave").addEventListener("click",async()=>{
- $("#aErr").textContent="";
- if(!sel){$("#aErr").textContent="Pick a membership first.";return;}
- if(!signed){$("#aErr").textContent="They need to sign first.";return;}
- const body={planId:sel.id,planName:sel.name,first:$("#first").value,last:$("#last").value,email:$("#email").value,mobile:$("#mobile").value,
-  dob:$("#dob").value,gender:$("#gender").value,goal:$("#goal").value,source:$("#source").value,emergencyName:$("#ename").value,emergencyPhone:$("#ephone").value,
-  passport:$("#passport").checked,referredBy:mate,agreed:$("#agreed").checked,signature:cv.toDataURL("image/png")};
- $("#aSave").disabled=true;$("#aSave").textContent="Adding...";
- let d; try{ d=await fetch("/api/members",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(r=>r.json()); }catch(e){ d={error:String(e)}; }
- $("#aSave").disabled=false;$("#aSave").textContent="Add member";
- if(!d.ok){$("#aErr").textContent=d.error||"Something went wrong.";return;}
- newId=d.id;$("#a1").hidden=true;$("#a2").hidden=false;
- $("#aDone").innerHTML="<b>"+esc(body.first+" "+body.last)+"</b> is in, on "+esc(sel.name)+"."+(d.warnings&&d.warnings.length?"<br>"+d.warnings.map(esc).join("<br>"):"");
- const bl=await get("/api/members/"+newId+"/billing-link");
- if(!d.needsBilling){$("#billNote").textContent="No bank details needed for this one.";$("#billOpen").hidden=true;}
- else{$("#billNote").textContent=bl.note||"";$("#billOpen").hidden=false;$("#billOpen").dataset.url=bl.url||"";
-  if(bl.mode==="ezidebit"&&window.QRCode){$("#qr").innerHTML="";new QRCode($("#qr"),{text:bl.url,width:120,height:120});}}
- setTimeout(()=>$("#tag").focus(),100);
-});
-$("#billOpen").addEventListener("click",e=>{const u=e.currentTarget.dataset.url;if(u)window.open(u,"m2billing","width=900,height=900");});
-async function saveTag(){
- $("#tagErr").textContent="";const t=$("#tag").value.trim();if(!t)return;
- const d=await fetch("/api/members/"+newId+"/key-tag",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({tag:t})}).then(r=>r.json());
- if(!d.ok){$("#tagErr").textContent=d.error;$("#tag").select();return;}
- $("#tagOk").innerHTML='<div class="ok">Tag '+esc(d.tag)+' saved. '+esc(d.note||"")+' <a href="'+esc(d.gymmasterUrl)+'" target="_blank" rel="noopener">Open in GymMaster</a></div>';
-}
-$("#tag").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();saveTag();}});
-$("#tag").addEventListener("change",saveTag);
-$("#aFinish").addEventListener("click",()=>{
- if(newId&&!$("#billDone").checked&&!$("#billOpen").hidden&&!confirm("Bank details aren't ticked off. It'll stay on the Today list until they are. Finish anyway?"))return;
- location.reload();
-});
-</script></body></html>`;

@@ -11,7 +11,8 @@ The engine behind the M2 staff CRM, the M2 App and the website: one member recor
 | `schema.sql` | The database: members, flags, plans, memberships, billing ledger, collections, visits, classes, bookings, leads, tasks with outcomes, activity log, automations and results, point of sale, staff, settings |
 | `seed_staff.sql` | The first logins: Taylor and Tim as owners |
 | `scripts/import_gymmaster_csv.py` | Turns the GymMaster "Current Memberships" export into SQL. Maps GymMaster's 123 membership type names onto 12 clean plan families |
-| `src/worker.js` | Sign-in check, role rules, the first screen (summary and member search), nightly GymMaster sync, the $250 block rule |
+| `src/worker.js` | Sign-in check, role rules, Today jobs and outcomes, members, leads and website intake, add member, key tags, nightly GymMaster sync, the $250 block rule |
+| `src/ui.js` | The staff app: Today, Members, Leads, Add member, Key tag lookup |
 | `wrangler.toml` | Cloudflare settings, nightly schedule (2:15am) |
 
 Member data never goes in git. Exports and `data/` are in `.gitignore`.
@@ -42,14 +43,28 @@ Run these from this `core` folder on your Mac. You need Node installed.
 2. Settings > Authentication > add **One-time PIN**.
 3. Access > Applications > Add > Self-hosted. Name `M2 Core`, domain = the worker address from step 7.
 4. Policy: Allow, Include > Emails: `taylor@m2club.co.nz`, `tim@m2club.co.nz`. Add staff emails later as they get logins.
-5. Open the application's Overview and copy the **Application Audience (AUD) tag**. Run `npx wrangler secret put ACCESS_AUD` and paste it.
-6. Put the team name in `wrangler.toml` as `ACCESS_TEAM`, then `npx wrangler deploy` again.
+5. Add a second policy on the same app: **Bypass**, Include > Everyone, for the paths `/api/intake` and `/billing-done` (website forms and members' phones need these without signing in; the worker checks its own key on `/api/intake`).
+6. Open the application's Overview and copy the **Application Audience (AUD) tag**. Run `npx wrangler secret put ACCESS_AUD` and paste it.
+7. Put the team name in `wrangler.toml` as `ACCESS_TEAM`, then `npx wrangler deploy` again.
 
 Open the address: Cloudflare emails you a code, you're in. Someone not in the staff table gets turned away even if Access lets them through.
 
 ## Testing on your own computer
 
 Create `.dev.vars` (ignored by git) with `DEV_EMAIL=taylor@m2club.co.nz`, then `npx wrangler d1 execute m2-core --local --file schema.sql` (and the seeds) and `npx wrangler dev`. The sign-in shortcut only works on localhost.
+
+## The staff app
+
+- **Today.** Owners see the business strip (members, Passport, weekly billing, money owed). Everyone sees "Do this today": new leads to contact, new members with no bank details, trials finishing, call backs due, blocked members (manager and owners), new members with no key tag. Open a job and record what happened in one tap: joined, call back (with date and note), no answer, not for them, paid, bank details in, tag given. Every outcome is saved with who did it, so we can see which jobs make money.
+- **Members.** Search by name, email, mobile or tag. Profile with plan, flags, goal, where they came from, Passport number, visits, billing (by role), key tag history, notes and history, and a "best next step". Edit details, set flags (gifted time and corporate are owner or manager only), give or replace a key tag.
+- **Leads.** One board from new to joined, filter by type, add a walk-in, assign to a trainer, record outcomes. Free PT leads go to the trainer with the fewest open leads, new trainers first.
+- **Key tag lookup.** Scan a found tag to see whose it is and its history.
+
+### Website leads into the Core
+
+`POST /api/intake` takes `{kind, name, email, mobile, goal, source, campaign, notes}` with the header `X-M2-Key` set to the `INTAKE_KEY` secret. Kinds: trial, free_pt, unfinished_signup, bring_a_mate, app_upgrade, website_form, meta_form. Call it from the website's workers (m2-join, the free PT form), never from browser code, so the key stays private. The same person and type within 14 days updates the open lead instead of making a second one.
+
+Set the key with `npx wrangler secret put INTAKE_KEY` (any long random string) and add the same value to the worker that calls it.
 
 ## Add member
 

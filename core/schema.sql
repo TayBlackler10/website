@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS members (
   referred_by     INTEGER REFERENCES members(id),
   trainer_id      INTEGER REFERENCES staff(id),
   key_tag         TEXT,
+  passport_number TEXT,                         -- Fitness Passport member number (GymMaster kept it in the surname)
   status          TEXT NOT NULL DEFAULT 'active',   -- active, frozen, cancelled, prospect, former
   joined_on       TEXT,
   total_visits_gm INTEGER DEFAULT 0,             -- lifetime visits carried over from GymMaster
@@ -221,6 +222,8 @@ CREATE TABLE IF NOT EXISTS leads (
   closed_at    TEXT
 );
 CREATE INDEX IF NOT EXISTS leads_stage ON leads(stage, created_at);
+CREATE INDEX IF NOT EXISTS leads_email ON leads(email);
+CREATE INDEX IF NOT EXISTS leads_mobile ON leads(mobile);
 
 -- Jobs on the Today list, and what happened when someone did them.
 CREATE TABLE IF NOT EXISTS tasks (
@@ -243,12 +246,14 @@ CREATE INDEX IF NOT EXISTS tasks_due ON tasks(due_on, outcome);
 CREATE TABLE IF NOT EXISTS activity (
   id          INTEGER PRIMARY KEY,
   member_id   INTEGER REFERENCES members(id),
+  lead_id     INTEGER REFERENCES leads(id),
   staff_id    INTEGER REFERENCES staff(id),
   kind        TEXT NOT NULL,      -- note, call, sale, refund, freeze, cancel, plan_change, block, unblock, email, sms, push
   detail      TEXT,
   at          TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS activity_member ON activity(member_id, at);
+CREATE INDEX IF NOT EXISTS activity_lead ON activity(lead_id, at);
 
 -- ---------- messages and their results ----------
 

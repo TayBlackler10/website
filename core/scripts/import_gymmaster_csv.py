@@ -40,6 +40,14 @@ def num(v, default=None):
     except (TypeError, ValueError):
         return default
 
+def split_passport(last):
+    """GymMaster keeps the Fitness Passport number in the surname ("Cohen - 1090377", or just "1085508")."""
+    last = (last or "").strip()
+    m = re.match(r"^(.*?)[\s-]*\(?\s*(?:FP|ID:?)?\s*(\d{6,8})\s*\)?\s*$", last, re.I)
+    if not m:
+        return last, None
+    return m.group(1).strip(" -") or None, m.group(2)
+
 def mobile(v):
     d = re.sub(r"\D", "", v or "")
     if d.startswith("64"):
@@ -146,6 +154,7 @@ for i, ((name, cat), p) in enumerate(sorted(plans.items()), start=1):
         p["student"], p["legacy"], p["includes_classes"], p["includes_recovery"]])) + ");")
 
 seen = set()
+passport_numbers = 0
 fam_count, flag_count = Counter(), Counter()
 weekly_total = 0.0
 for r in current:
@@ -158,9 +167,16 @@ for r in current:
     price = num(r.get("Membership Type Price"))
     wv = weekly_value(price, p)
     by = billed_by(p, r.get("Price Description"))
-    w("INSERT INTO members(id, gm_id, first_name, last_name, email, mobile, gender, lead_source, status, joined_on, "
+    last, pp_no = split_passport(r["Member Last Name"])
+    first = r["Member First Name"].strip()
+    if pp_no:
+        passport_numbers += 1
+    if not last and " " in first:
+        # Surname was only the Passport number, and the full name sits in the first name.
+        first, last = first.rsplit(" ", 1)
+    w("INSERT INTO members(id, gm_id, first_name, last_name, passport_number, email, mobile, gender, lead_source, status, joined_on, "
       "total_visits_gm) VALUES (" + ", ".join(map(q, [
-        gm, gm, r["Member First Name"], r["Member Last Name"], (r.get("Member Email") or "").lower(),
+        gm, gm, first, last, pp_no, (r.get("Member Email") or "").lower(),
         mobile(r.get("Member Cell")), r.get("Member Gender"), r.get("Member Source Promotion"), "active",
         r.get("Membership Start Date"), int(num(r.get("Member Total Visit"), 0))])) + ");")
     w("INSERT INTO memberships(member_id, plan_id, price, weekly_value, start_date, min_term_end, end_date, status, "
@@ -216,5 +232,6 @@ summary = {
     "ezidebit_weekly_value": round(weekly_total, 2),
     "lead_source_recorded_pct": round(100 * sum(1 for r in current if (r.get("Member Source Promotion") or "").strip()) / max(len(current), 1), 1),
     "trial_leads": trials,
+    "passport_numbers_moved_out_of_surname": passport_numbers,
 }
 print(json.dumps(summary, indent=2), file=sys.stderr)
