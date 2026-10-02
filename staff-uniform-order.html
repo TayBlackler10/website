@@ -1072,6 +1072,30 @@
     if (!EMBED) return;
 
     document.documentElement.classList.add('in-app');
+
+    // Fill their details from their M2 app profile (same site, so the app's saved profile is readable here)
+    try {
+      var me = JSON.parse(localStorage.getItem('m2v5.me') || 'null');
+      if (me && me.email) {
+        var full = [me.first, me.last].filter(Boolean).join(' ').trim();
+        var setv = function (id, v) { var el = document.getElementById(id); if (el && v) { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); } };
+        setv('customerName', full); setv('customerEmail', me.email); setv('customerPhone', me.phone);
+        var grid = document.querySelector('#details .details-grid'), rem = document.getElementById('remembered');
+        if (rem) rem.style.display = 'none';
+        if (grid) {
+          // keep the phone box only if the profile has no phone number
+          [].forEach.call(grid.querySelectorAll('.field'), function (f) { var i = f.querySelector('input'); if (!(i && i.id === 'customerPhone' && !me.phone)) f.style.display = 'none'; });
+          var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+          grid.insertAdjacentHTML('beforebegin', '<p class="fine" style="margin:6px 0 14px">Ordering as <strong>' + esc(full) + '</strong> (' + esc(me.email) + ') from your M2 app profile.</p>');
+        }
+        var h = document.querySelector('#details h2'); if (h) h.textContent = 'Your team';
+        // coaches are on the personal training team; anyone can switch
+        if (JSON.parse(localStorage.getItem('m2v5.coach') || 'false')) {
+          var pt = document.querySelector('.role-btn[data-role="Personal Training"]');
+          if (pt && !document.querySelector('.role-btn.active, .role-btn.selected, .role-btn[aria-pressed="true"]')) pt.click();
+        }
+      }
+    } catch (e) {}
     // product and size-guide links open in the browser, not inside the app
     document.addEventListener('click', function (e) {
       var l = e.target.closest && e.target.closest('a[href^="http"]');
