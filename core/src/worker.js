@@ -37,6 +37,8 @@ export default {
       if (url.pathname === "/billing-done") return html(BILLING_DONE_HTML);
       // Public: website forms post leads here with the shared intake key.
       if (url.pathname === "/api/intake") return intake(req, env);
+      // One-off data load during setup. Only works while the IMPORT_KEY secret exists; delete it after.
+      if (url.pathname === "/admin/import" && req.method === "POST") return adminImport(req, env);
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -944,6 +946,22 @@ async function applyBlockRule(env) {
     db.prepare(`DELETE FROM member_flags WHERE flag = 'blocked' AND member_id IN
                 (SELECT member_id FROM billing_accounts WHERE balance_owing < ?)`).bind(limit),
   ]);
+}
+
+/* ---------------- setup import ---------------- */
+// Loads the GymMaster export into D1 during setup. Locked by the IMPORT_KEY secret,
+// which is deleted straight after, so this route answers 404 the rest of the time.
+async function adminImport(req, env) {
+  const key = req.headers.get("X-M2-Import") || "";
+  if (!env.IMPORT_KEY || key.length !== env.IMPORT_KEY.length || key !== env.IMPORT_KEY) return new Response("Not found", { status: 404 });
+  const b = await req.json();
+  const list = Array.isArray(b.statements) ? b.statements.filter(x => typeof x === "string" && x.trim()) : [];
+  let done = 0;
+  for (let i = 0; i < list.length; i += 100) {
+    await env.DB.batch(list.slice(i, i + 100).map(x => env.DB.prepare(x)));
+    done += Math.min(100, list.length - i);
+  }
+  return json({ ok: true, done });
 }
 
 /* ---------------- member photos ---------------- */
