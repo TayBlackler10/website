@@ -52,6 +52,9 @@ def mobile(v):
     d = re.sub(r"\D", "", v or "")
     if d.startswith("64"):
         d = "0" + d[2:]
+    elif d.startswith("2") and 8 <= len(d) <= 10:
+        # Typed without the leading 0 (274354824 is 0274354824).
+        d = "0" + d
     return d or None
 
 EMPLOYERS = ["woods", "smartfit", "hectre", "bnb group", "red bull", "msd", "auckland council"]
@@ -65,7 +68,7 @@ def classify(name, category, price_desc):
             "employer": None, "student": 0, "legacy": 0, "includes_classes": 0, "includes_recovery": 0}
     if "fitness passport" in n:
         plan["family"] = "passport"
-    elif "trip pass" in n:
+    elif "trip pass" in n or "group fitness pass" in n:
         plan["family"] = "pass"
     elif "trial" in n or "day pass" in n or "hour pass" in n or re.search(r"days (for|on us)|days\. \d|free class|bring a friend", n):
         plan["family"] = "trial"
@@ -81,7 +84,7 @@ def classify(name, category, price_desc):
         plan["family"] = "recovery"
     elif "perform" in n or "gateway" in n:
         plan["family"] = "perform"
-    elif "classes" in n:
+    elif "classes" in n or "group fitness" in n:
         plan["family"] = "classes"
     elif "daily" in n or "entry" in n:
         plan["family"] = "daily"
