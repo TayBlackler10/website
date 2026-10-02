@@ -148,6 +148,16 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .funnel i{display:block;height:26px;border-radius:8px;background:var(--ink)}.funnel div:nth-child(n+4) i{background:var(--olive)}.funnel b{text-align:right;font-variant-numeric:tabular-nums}
 .delta{font-size:12px;font-weight:600}.delta.up{color:#3C4400}.delta.down{color:var(--red)}
 .tips{display:flex;flex-direction:column;gap:8px}.tips div{background:var(--tile);border-radius:12px;padding:10px 14px;font-size:14px}
+.rgrid{border-collapse:separate;border-spacing:6px;width:100%;table-layout:fixed;min-width:860px}
+.rgrid th{font-size:12px;text-align:left;color:var(--muted);font-weight:600;padding:4px}
+.rgrid th.today{color:var(--olive)}
+.rgrid td{background:var(--tile);border-radius:12px;vertical-align:top;padding:6px;height:64px;cursor:pointer}
+.rgrid td.who{background:none;cursor:default;font-weight:600;font-size:14px;padding:8px 4px}
+.rgrid td.tot{background:none;cursor:default;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.rgrid td:hover:not(.who):not(.tot){box-shadow:inset 0 0 0 2px var(--ink)}
+.shift{display:block;background:var(--ink);color:var(--lime);border-radius:8px;padding:4px 7px;font-size:12.5px;font-weight:600;margin-bottom:4px;border:0;width:100%;text-align:left;cursor:pointer}
+.shift.draft{background:#fff;color:var(--ink);border:1.5px dashed var(--ink)}
+.shift.mine{box-shadow:0 0 0 2px var(--lime)}
 [hidden]{display:none!important}a.btn,label.btn{text-decoration:none;display:inline-flex;align-items:center}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 @media (max-width:900px){.prof,.row3{grid-template-columns:1fr}.wall{grid-template-columns:1fr}.funnel div{grid-template-columns:110px minmax(0,1fr) 70px}.navlab{display:none}.hb{grid-template-columns:minmax(0,110px) minmax(0,1fr) 50px}.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:column;align-items:stretch;gap:10px;padding:12px}nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;min-width:0;max-width:100%}aside{min-width:0;max-width:100vw}.nav{width:auto;white-space:nowrap;padding:8px 12px}.me{display:none}.row2{grid-template-columns:1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px 14px 40px}}
@@ -162,6 +172,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="members">Members</button>
 <button class="nav" data-go="leads">Leads<span class="ct" id="ctLeads" hidden></span></button>
 <button class="nav" data-go="classes">Classes</button>
+<button class="nav" data-go="roster">Roster</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
 <button class="nav" data-go="collections" id="navCol" hidden>Money owed</button>
@@ -203,6 +214,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="row3" style="margin-top:18px">
 <section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>Recent visits</h2><span class="muted" id="rvCount"></span></div><div id="rvList"><div class="muted">Loading...</div></div></section>
 <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>On the desk today</h2><div id="tdDesk"><div class="muted">Loading...</div></div></section>
 <section class="card"><h2>Today's classes</h2><div id="tdClasses"><div class="muted">Loading...</div></div></section>
 <section class="card"><h2>Birthdays today</h2><div id="tdBday"></div></section>
 </div>
@@ -260,6 +272,24 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card" id="leadList" hidden><div style="overflow-x:auto" id="leadTbl"></div></section>
 </div>
 <section class="card" id="leadPanel" hidden style="margin-top:14px"></section>
+</section>
+
+<!-- ROSTER -->
+<section data-view="roster" hidden>
+<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Reception team. Pay stays in Smartpay</div><h1>Roster<span class="dot">.</span></h1></div>
+<button class="btn line sm" id="roPrev">Last week</button><button class="btn line sm" id="roNow">This week</button><button class="btn line sm" id="roNext">Next week</button>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow" id="roTitle"></span><span class="muted" style="color:var(--soft)" id="roNote"></span>
+<span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap" id="roTools" hidden><button class="btn line sm" id="roCopy" style="color:#fff;border-color:#fff">Copy last week</button><a class="btn line sm" id="roCsv" style="color:#fff;border-color:#fff">Download hours</a><button class="btn sm" id="roPub">Publish</button></span></div>
+<div class="tiles" id="roTiles"></div></section>
+<section class="card"><div style="overflow-x:auto"><table class="rgrid" id="roGrid"></table></div><p class="muted" style="margin:0" id="roHelp"></p></section>
+<div class="row2" style="margin-top:18px">
+<section class="card" id="roEdit" hidden></section>
+<section class="card"><h2>Days off and swaps</h2><div class="list" id="roReq"></div>
+<div class="grid2" style="margin-top:8px"><label class="fld">Day<input type="date" id="raDay"></label><label class="fld">What<select id="raKind"><option value="leave">Day off</option><option value="swap">Swap a shift</option><option value="available">I can do extra</option></select></label></div>
+<label class="fld">Note<input id="raNote" placeholder="Anything Bekka should know"></label><div class="err" id="raErr"></div><button class="btn dark sm" id="raSave" style="align-self:flex-start">Ask</button></section>
+</div>
 </section>
 
 <!-- KEY TAG LOOKUP -->
@@ -577,6 +607,7 @@ function show(v){
  if(v==="staff")loadStaff();
  if(v==="settings")loadSettings();
  if(v==="classes"){loadClasses(CLS.week);loadClassStats()}
+ if(v==="roster")loadRoster(RO.week);
  if(v==="collections")loadCol();
  if(v==="money")loadMoney();
  if(v==="growth")loadGrowth();
@@ -636,6 +667,7 @@ $("#jobs").addEventListener("click",function(e){var b=e.target.closest("[data-jo
 function face(id,name,has){var ini=initials(name);return '<div class="face sm">'+(has?'<img loading="lazy" src="/api/members/'+id+'/photo" alt="" data-ini="'+esc(ini)+'">':esc(ini))+'</div>'}
 function ago(s){var t=new Date(String(s).replace(" ","T")+(String(s).length>16?"":":00"));var m=Math.round((Date.now()-t.getTime())/60000);if(isNaN(m))return "";if(m<1)return "just now";if(m<60)return m+" min ago";if(m<1440)return Math.round(m/60)+" h ago";return day(s)}
 function loadTodayMore(){
+ get("/api/roster/now").then(function(r){$("#tdDesk").innerHTML=(r||[]).map(function(x){return '<div class="vis" data-go="roster" style="grid-template-columns:110px minmax(0,1fr) auto"><b>'+esc(x.start)+' to '+esc(x.end)+'</b><span>'+esc(x.name)+' <span class="muted">'+esc(x.area||"")+'</span></span>'+(x.now?'<span class="pill ok">On now</span>':"")+'</div>'}).join("")||'<div class="muted">Nobody rostered today yet.</div>'});
  get("/api/visits/recent").then(function(d){
   if(d.error){$("#rvList").innerHTML='<div class="muted">'+esc(d.error)+'</div>';return}
   $("#tdBday").innerHTML=(d.birthdays||[]).map(function(b){return '<div class="vis" data-member="'+b.id+'">'+face(b.id,nm(b),b.has_photo)+'<span><b>'+esc(nm(b))+'</b></span><span class="pill ok">Happy birthday</span></div>'}).join("")||'<div class="muted">No birthdays today.</div>';
@@ -1193,6 +1225,49 @@ function loadMktMore(){
    $("#mkCamps").innerHTML=table([["Campaign","campaign"],["Spend",function(x){return money(x.spend)},1],["Share",function(x){return Math.round(x.spend/tot*100)+"%"},1],["Seen by",function(x){return (x.impressions||0).toLocaleString("en-NZ")},1],["Click rate",function(x){return x.impressions?(x.clicks/x.impressions*100).toFixed(2)+"%":"-"},1],["Per click",function(x){return x.clicks?money(x.spend/x.clicks):"-"},1],["Website visits",function(x){return (x.views||0).toLocaleString("en-NZ")},1],["Per visit",function(x){return x.views?money(x.spend/x.views):"-"},1]],d.campaigns)}
  });
 }
+
+/* ---------- roster ---------- */
+var RO={week:null,d:null};
+var WDN=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+function addD(iso,n){var d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
+function loadRoster(w){
+ get("/api/roster"+(w?"?week="+w:"")).then(function(d){
+  if(d.error){$("#roGrid").innerHTML='<tr><td class="err">'+esc(d.error)+'</td></tr>';return}
+  RO.d=d;RO.week=d.week;var days=[0,1,2,3,4,5,6].map(function(i){return addD(d.week,i)});
+  $("#roTitle").textContent="Week of "+new Date(d.week+"T12:00:00").toLocaleDateString("en-NZ",{day:"numeric",month:"long"});
+  $("#roTools").hidden=!d.can_edit;$("#roPub").textContent=d.unpublished?"Publish "+d.unpublished+" shift"+(d.unpublished===1?"":"s"):"All published";$("#roPub").disabled=!d.unpublished;
+  $("#roCsv").href="/api/roster.csv?from="+d.week+"&to="+addD(d.week,6);
+  $("#roNote").textContent=d.can_edit?(d.unpublished?"Dashed shifts are drafts. Staff only see them once you publish.":""):"Your shifts are outlined.";
+  var tot=0,per={};d.shifts.forEach(function(s){tot+=s.hours;per[s.staff_id]=(per[s.staff_id]||0)+s.hours});
+  var cover=days.filter(function(x){return d.shifts.some(function(s){return s.day===x})}).length;
+  $("#roTiles").innerHTML=tile(d.shifts.length,"Shifts")+tile(Math.round(tot*10)/10,"Hours rostered")+tile(cover+" of 7","Days covered")+tile(d.requests.filter(function(r){return r.status==="pending"}).length,"Requests waiting");
+  var people=d.people.filter(function(p){return d.can_edit||d.shifts.some(function(s){return s.staff_id===p.id})});
+  $("#roGrid").innerHTML='<tr><th style="width:140px"></th>'+days.map(function(x,i){return '<th class="'+(x===d.today?"today":"")+'">'+WDN[i]+' '+(+x.slice(8))+'</th>'}).join("")+'<th style="width:60px">Hours</th></tr>'+
+   people.map(function(p){return '<tr><td class="who">'+esc(p.name)+'<div class="muted" style="font-weight:400">'+esc(p.role)+'</div></td>'+days.map(function(x){return '<td data-cell="'+p.id+'|'+x+'">'+d.shifts.filter(function(s){return s.staff_id===p.id&&s.day===x}).map(function(s){return '<button class="shift'+(s.published?"":" draft")+(s.staff_id===d.me?" mine":"")+'" data-shift="'+s.id+'">'+esc(s.start)+' to '+esc(s.end)+(s.area&&s.area!=="Reception"?'<br>'+esc(s.area):"")+'</button>'}).join("")+'</td>'}).join("")+'<td class="tot">'+(Math.round((per[p.id]||0)*10)/10)+' h</td></tr>'}).join("")||'<tr><td class="muted">No reception team yet. Add them in Staff and access with the Reception role.</td></tr>';
+  $("#roHelp").textContent=d.can_edit?"Tap a square to add a shift, tap a shift to change it. Add new reception staff in Staff and access (they don't need to sign in to be rostered).":"";
+  $("#roReq").innerHTML=d.requests.map(function(r){return '<div class="r" style="cursor:default"><span><b>'+esc(r.name)+'</b> <span class="muted">'+esc({leave:"Day off",swap:"Swap",available:"Can do extra"}[r.kind])+', '+esc(day(r.day))+(r.note?". "+esc(r.note):"")+'</span></span>'+(r.status==="pending"&&d.can_edit?'<span style="display:flex;gap:6px"><button class="btn dark sm" data-rq="'+r.id+'" data-st="approved">Approve</button><button class="btn line sm" data-rq="'+r.id+'" data-st="declined">Decline</button></span>':'<span class="pill'+(r.status==="approved"?" ok":r.status==="declined"?" warn":"")+'">'+esc(r.status)+'</span>')+'</div>'}).join("")||'<div class="muted">Nothing waiting.</div>';
+ });
+}
+function roForm(s){
+ var d=RO.d,E=$("#roEdit");E.hidden=false;
+ E.innerHTML='<h2>'+(s.id?"Change shift":"New shift")+'</h2><div class="grid2"><label class="fld">Who<select id="rfWho">'+d.people.map(function(p){return '<option value="'+p.id+'"'+(p.id===s.staff_id?" selected":"")+'>'+esc(p.name)+'</option>'}).join("")+'</select></label><label class="fld">Day<input type="date" id="rfDay" value="'+esc(s.day)+'"></label><label class="fld">Start<input type="time" id="rfStart" value="'+esc(s.start||"05:30")+'"></label><label class="fld">Finish<input type="time" id="rfEnd" value="'+esc(s.end||"13:30")+'"></label><label class="fld">Unpaid break (minutes)<input type="number" id="rfBreak" value="'+(s.break_min||0)+'"></label><label class="fld">Area<input id="rfArea" value="'+esc(s.area||"Reception")+'"></label></div><label class="fld">Note<input id="rfNote" value="'+esc(s.note||"")+'"></label><div class="err" id="rfErr"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark sm" id="rfSave">Save</button>'+(s.id?'<button class="btn line sm" id="rfDel">Delete</button>':"")+'<button class="btn line sm" id="rfClose">Close</button></div>';
+ E.scrollIntoView({behavior:"smooth",block:"nearest"});
+ $("#rfClose").onclick=function(){E.hidden=true};
+ $("#rfSave").onclick=function(){post("/api/roster",{id:s.id||null,staff_id:$("#rfWho").value,day:$("#rfDay").value,start:$("#rfStart").value,end:$("#rfEnd").value,break_min:$("#rfBreak").value,area:$("#rfArea").value,note:$("#rfNote").value}).then(function(r){if(!r.ok){$("#rfErr").textContent=r.error;return}E.hidden=true;loadRoster(RO.week)})};
+ if(s.id)$("#rfDel").onclick=function(){post("/api/roster",{action:"delete",id:s.id}).then(function(){E.hidden=true;loadRoster(RO.week)})};
+}
+$("#roGrid").addEventListener("click",function(e){
+ var d=RO.d;if(!d||!d.can_edit)return;
+ var b=e.target.closest("[data-shift]");if(b){roForm(d.shifts.find(function(s){return String(s.id)===b.dataset.shift}));return}
+ var c=e.target.closest("[data-cell]");if(c){var p=c.dataset.cell.split("|");roForm({staff_id:+p[0],day:p[1]})}
+});
+$("#roPrev").addEventListener("click",function(){if(RO.d)loadRoster(RO.d.prev)});
+$("#roNext").addEventListener("click",function(){if(RO.d)loadRoster(RO.d.next)});
+$("#roNow").addEventListener("click",function(){loadRoster(null)});
+$("#roPub").addEventListener("click",function(){post("/api/roster",{action:"publish",week:RO.week}).then(function(){loadRoster(RO.week)})});
+$("#roCopy").addEventListener("click",function(){post("/api/roster",{action:"copy",week:RO.week}).then(function(r){if(!r.ok&&r.canForce){if(confirm(r.error+" Copy anyway?"))post("/api/roster",{action:"copy",week:RO.week,force:true}).then(function(){loadRoster(RO.week)});return}loadRoster(RO.week)})});
+$("#roReq").addEventListener("click",function(e){var b=e.target.closest("[data-rq]");if(!b)return;post("/api/roster",{action:"request",id:+b.dataset.rq,status:b.dataset.st}).then(function(){loadRoster(RO.week)})});
+$("#raSave").addEventListener("click",function(){$("#raErr").textContent="";post("/api/roster/ask",{day:$("#raDay").value,kind:$("#raKind").value,note:$("#raNote").value}).then(function(r){if(!r.ok){$("#raErr").textContent=r.error;return}$("#raNote").value="";loadRoster(RO.week)})});
 
 /* ---------- settings ---------- */
 var FAMS={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",transporter:"Transporter",passport:"Fitness Passport",pass:"Visit pass",pool:"Pool",trial:"Trial",challenge:"Challenge",staff:"Staff",other:"Other"};

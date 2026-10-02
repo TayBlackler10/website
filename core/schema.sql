@@ -302,6 +302,34 @@ CREATE TABLE IF NOT EXISTS roster_chunks (
   json TEXT NOT NULL
 );
 
+
+-- ---------- reception roster (replaces Deputy) ----------
+CREATE TABLE IF NOT EXISTS shifts (
+  id         INTEGER PRIMARY KEY,
+  staff_id   INTEGER NOT NULL REFERENCES staff(id),
+  day        TEXT NOT NULL,
+  start      TEXT NOT NULL,          -- 05:30
+  end        TEXT NOT NULL,
+  break_min  INTEGER NOT NULL DEFAULT 0,
+  area       TEXT DEFAULT 'Reception',
+  note       TEXT,
+  published  INTEGER NOT NULL DEFAULT 0,
+  created_by INTEGER REFERENCES staff(id),
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS shifts_day ON shifts(day);
+CREATE TABLE IF NOT EXISTS shift_requests (
+  id         INTEGER PRIMARY KEY,
+  staff_id   INTEGER NOT NULL REFERENCES staff(id),
+  kind       TEXT NOT NULL,          -- leave, swap, available
+  day        TEXT NOT NULL,
+  note       TEXT,
+  status     TEXT NOT NULL DEFAULT 'pending',
+  decided_by INTEGER REFERENCES staff(id),
+  decided_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 -- ---------- visits, classes, bookings ----------
 
 CREATE TABLE IF NOT EXISTS visits (

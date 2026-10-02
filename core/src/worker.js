@@ -18,9 +18,11 @@ import { APP_HTML } from "./ui.js";
 import { SCHEMA, STAFF_SEED, SCHEMA_VERSION } from "./schema_sql.js";
 import { makeHub } from "./hub.js";
 import { makeHub2 } from "./hub2.js";
+import { makeRoster } from "./roster.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
+const R = makeRoster({ nzDateTime });
 const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
@@ -87,6 +89,10 @@ export default {
         if (w.classes) { const job = H2.saveClassCounts(env, w.classes).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job; }
         return json(w);
       }
+      if (url.pathname === "/api/roster") return json(req.method === "POST" ? await R.save(env, who, await req.json()) : await R.week(env, who, url.searchParams));
+      if (url.pathname === "/api/roster/ask" && req.method === "POST") return json(await R.ask(env, who, await req.json()));
+      if (url.pathname === "/api/roster/now") return json(await R.onNow(env));
+      if (url.pathname === "/api/roster.csv") return await R.csv(env, who, url.searchParams);
       if (url.pathname === "/api/classes/stats") return json(await H2.classStats(env, can));
       if (url.pathname === "/api/members/browse") return json(await H2.browse(env, who, can, url.searchParams));
       if (url.pathname === "/api/visits/recent") return json(await H2.recentVisits(env, who, can));

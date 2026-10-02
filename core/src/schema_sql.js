@@ -37,6 +37,9 @@ export const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS member_agreements (\n  id         INTEGER PRIMARY KEY,\n  member_id  INTEGER NOT NULL,\n  plan       TEXT,\n  body       TEXT,\n  signature  TEXT,\n  signed_at  TEXT NOT NULL DEFAULT (datetime('now')),\n  staff_id   INTEGER\n);",
 "CREATE INDEX IF NOT EXISTS member_agreements_member ON member_agreements(member_id);",
 "CREATE TABLE IF NOT EXISTS roster_chunks (\n  id   INTEGER PRIMARY KEY,\n  json TEXT NOT NULL\n);",
+"CREATE TABLE IF NOT EXISTS shifts (\n  id         INTEGER PRIMARY KEY,\n  staff_id   INTEGER NOT NULL REFERENCES staff(id),\n  day        TEXT NOT NULL,\n  start      TEXT NOT NULL,         \n  end        TEXT NOT NULL,\n  break_min  INTEGER NOT NULL DEFAULT 0,\n  area       TEXT DEFAULT 'Reception',\n  note       TEXT,\n  published  INTEGER NOT NULL DEFAULT 0,\n  created_by INTEGER REFERENCES staff(id),\n  created_at TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS shifts_day ON shifts(day);",
+"CREATE TABLE IF NOT EXISTS shift_requests (\n  id         INTEGER PRIMARY KEY,\n  staff_id   INTEGER NOT NULL REFERENCES staff(id),\n  kind       TEXT NOT NULL,         \n  day        TEXT NOT NULL,\n  note       TEXT,\n  status     TEXT NOT NULL DEFAULT 'pending',\n  decided_by INTEGER REFERENCES staff(id),\n  decided_at TEXT,\n  created_at TEXT NOT NULL DEFAULT (datetime('now'))\n);",
 "CREATE TABLE IF NOT EXISTS visits (\n  id          INTEGER PRIMARY KEY,\n  member_id   INTEGER NOT NULL REFERENCES members(id),\n  at          TEXT NOT NULL,             \n  door        TEXT,                      \n  via         TEXT,                      \n  gm_visit_id TEXT UNIQUE,\n  fp_id       TEXT,                      \n  fp_status   TEXT                       \n);",
 "CREATE INDEX IF NOT EXISTS visits_member_at ON visits(member_id, at);",
 "CREATE INDEX IF NOT EXISTS visits_at ON visits(at);",
@@ -63,6 +66,6 @@ export const SCHEMA = [
 "INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VALUES\n  ('trial_ending',       'Trial ending',          'joined',    7,  0),\n  ('trial_comeback',     'Trial come-back',       'joined',    14, 0),\n  ('passport_winback',   'Fitness Passport win-back', 'visited', 7, 0),\n  ('we_miss_you',        'We miss you',           'visited',   7,  0),\n  ('new_member_checkin', 'New member check-in',   'visited',   7,  0),\n  ('failed_payment',     'Failed payment',        'paid',      7,  0),\n  ('daily_to_perform',   'Daily to Perform',      'upgraded',  14, 0),\n  ('no_show',            'Class no-show',         'attended',  14, 0);"
 ];
 export const STAFF_SEED = [
-"INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2);"
+"INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "aacfacf5e5c2";
+export const SCHEMA_VERSION = "c55c428315bb";
