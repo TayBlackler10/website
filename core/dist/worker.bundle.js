@@ -915,7 +915,7 @@ function loadMoney(){
  get("/api/money").then(function(d){
   if(d.error){$("#monTiles").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
   var pct=d.target?Math.round(d.ytd/d.target*100):0,due=d.target?Math.round(d.target_to_date/d.target*100):0;
-  $("#monGoal").innerHTML='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span class="eyebrow">This financial year, from '+esc(ml(d.fy))+'</span><span style="margin-left:auto;color:var(--soft);font-size:13px">'+whole$(d.ytd)+' of '+whole$(d.target)+' ('+pct+'%). On plan would be '+whole$(d.target_to_date)+' by the end of this month.</span></div><div class="goal" style="position:relative"><i style="width:'+Math.min(100,pct)+'%"></i><span style="position:absolute;top:-3px;bottom:-3px;left:'+Math.min(100,due)+'%;width:2px;background:#fff"></span></div>';
+  $("#monGoal").innerHTML='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span class="eyebrow">This financial year, from '+esc(ml(d.fy))+'</span><span style="margin-left:auto;color:var(--soft);font-size:13px">'+whole$(d.ytd)+' of '+whole$(d.target)+' ('+pct+'%). On plan would be '+whole$(d.target_to_date)+' by the end of '+(d.last_month?MON[+d.last_month.slice(5,7)-1]:"this month")+'.</span></div><div class="goal" style="position:relative"><i style="width:'+Math.min(100,pct)+'%"></i><span style="position:absolute;top:-3px;bottom:-3px;left:'+Math.min(100,due)+'%;width:2px;background:#fff"></span></div>';
   var cash=(d.points||[]).find(function(p){return p.key==="cash"});
   $("#monTiles").innerHTML=tile(k$(d.ytd),"Income this year, excl GST")+tile(k$(d.ytd_net),"Profit this year")+tile(d.pace?k$(d.pace):"-","Year at this pace")+
    tile(whole$(d.weekly_billed),"Billed weekly by direct debit")+tile(k$(d.yearly_billed_ex_gst),"Memberships per year, excl GST")+
@@ -966,7 +966,7 @@ function loadMkt(){
   var pct=d.budget?Math.round(d.meta_spend/d.budget*100):0,ppct=d.budget?Math.round(d.projected/d.budget*100):0;
   $("#mkBudget").innerHTML='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><span class="eyebrow">Meta budget</span><span style="margin-left:auto;color:var(--soft);font-size:13px">'+money(d.meta_spend)+' of '+whole$(d.budget)+' ('+pct+'%). Heading for '+whole$(d.projected)+' ('+ppct+'%).</span></div><div class="goal"><i style="width:'+Math.min(100,pct)+'%;'+(ppct>110?"background:#FFB27A":"")+'"></i></div>';
   var sess=(d.web||[]).reduce(function(a,w){return a+(w.sessions||0)},0),conv=(d.web||[]).reduce(function(a,w){return a+(w.conversions||0)},0);
-  $("#mkTiles").innerHTML=tile(whole$(d.all_spend),"Ad spend")+tile(d.platform_leads,"Leads Meta counted")+tile(d.cpl!=null?money(d.cpl):"-","Cost per lead")+tile(d.social_leads,"Leads in the Core from Instagram and Facebook")+tile(d.social_joins,"Joined from Instagram and Facebook")+tile(d.cost_per_join!=null?whole$(d.cost_per_join):"-","Meta spend per member who joined")+tile(sess.toLocaleString("en-NZ"),"Website visits")+tile(conv.toLocaleString("en-NZ"),"Website conversions");
+  $("#mkTiles").innerHTML=tile(whole$(d.all_spend),"Ad spend")+(d.platform_leads>=10?tile(d.platform_leads,"Leads Meta counted")+tile(money(d.cpl),"Cost per lead"):tile((d.landing_views||0).toLocaleString("en-NZ"),"People who reached the website from ads")+tile(d.cost_per_view!=null?money(d.cost_per_view):"-","Cost per website visit from ads"))+tile(d.social_leads,"Leads in the Core from Instagram and Facebook")+tile(d.social_joins,"Joined from Instagram and Facebook")+tile(d.cost_per_join!=null?whole$(d.cost_per_join):"-","Meta spend per member who joined")+tile(sess.toLocaleString("en-NZ"),"Website visits")+tile(conv.toLocaleString("en-NZ"),"Website conversions");
   $("#mkNote").textContent=d.data_to?"Ad figures up to "+day(d.data_to)+". Joins count members whose Came from says Instagram or Facebook, so recording it at sign-up matters.":"No ad figures yet. Ask Claude to bring in Meta and Google Analytics.";
   $("#mkDaily").innerHTML=d.daily.length?bars(d.daily.map(function(x){return {label:String(+x.day.slice(8)),vals:[x.spend]}}),[{name:"Spend",cls:""}],money):'<div class="muted">Nothing this month yet.</div>';
   $("#mkTrend").innerHTML=d.trend.length?bars(d.trend.map(function(x){return {label:ml(x.month),vals:[x.spend,x.joins*100]}}),[{name:"Spend",cls:""},{name:"Joins from social (x100)",cls:"s2"}],function(v){return v}):'<div class="muted">Nothing yet.</div>';
@@ -1646,7 +1646,7 @@ function makeHub(L) {
                                       WHERE v.at >= ? AND v.at < ?`, ym + "-01", ym + "-32")).n;
     const fpTiers = await setting(env, "fp_tiers", "");
     return { ym, fy, target, ytd: Math.round(ytd), ytd_net: Math.round(ytdNet), pace: pace && Math.round(pace), fy_months_gone: fyMonthsGone,
-             target_to_date: Math.round(target / 12 * Math.min(12, fyMonthsGone)), months, points,
+             target_to_date: Math.round(target / 12 * Math.min(12, fyRows.length || fyMonthsGone)), last_month: fyRows.length ? fyRows.map(r => r.month).sort().pop() : null, months, points,
              weekly_billed: weekly, yearly_billed_ex_gst: Math.round(weekly * 52 / 1.15),
              owed_current: owed?.cur || 0, owed_left: owed?.left_ || 0,
              passport_visits: fpVisits, passport_estimate: fpVisits ? L.passportPay(fpVisits, fpTiers).total : null,
@@ -1707,13 +1707,14 @@ function makeHub(L) {
     const spend = campaigns.filter(c => c.source === "meta").reduce((a, c) => a + (c.spend || 0), 0);
     const allSpend = campaigns.reduce((a, c) => a + (c.spend || 0), 0);
     const platformLeads = campaigns.reduce((a, c) => a + (c.leads || 0), 0);
+    const views = campaigns.reduce((a, c) => a + (c.landing_views || 0), 0);
     const socialJoins = joins.filter(j => SOCIAL.includes(j.source.toLowerCase())).reduce((a, j) => a + j.n, 0);
     const socialLeads = coreLeads.filter(j => SOCIAL.includes(j.source.toLowerCase())).reduce((a, j) => a + j.n, 0);
     const dim = new Date(Date.UTC(+month.slice(0, 4), +month.slice(5, 7), 0)).getUTCDate();
     const daysIn = month === today.slice(0, 7) ? +today.slice(8, 10) : dim;
     const last = await one(env, "SELECT max(day) d FROM marketing_days");
     return { month, budget, meta_spend: Math.round(spend * 100) / 100, all_spend: Math.round(allSpend * 100) / 100,
-             projected: daysIn ? Math.round(spend / daysIn * dim) : 0, platform_leads: platformLeads, social_leads: socialLeads, social_joins: socialJoins,
+             projected: daysIn ? Math.round(spend / daysIn * dim) : 0, platform_leads: platformLeads, landing_views: views, cost_per_view: views ? Math.round(allSpend / views * 100) / 100 : null, social_leads: socialLeads, social_joins: socialJoins,
              cpl: platformLeads ? Math.round(allSpend / platformLeads * 100) / 100 : null,
              cost_per_join: socialJoins ? Math.round(spend / socialJoins * 100) / 100 : null,
              campaigns, daily, web, core_leads: coreLeads, joins, trend: trend.map(t => ({ ...t, joins: (joinsTrend.find(j => j.month === t.month) || {}).n || 0 })),

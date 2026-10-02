@@ -347,7 +347,7 @@ export function makeHub(L) {
                                       WHERE v.at >= ? AND v.at < ?`, ym + "-01", ym + "-32")).n;
     const fpTiers = await setting(env, "fp_tiers", "");
     return { ym, fy, target, ytd: Math.round(ytd), ytd_net: Math.round(ytdNet), pace: pace && Math.round(pace), fy_months_gone: fyMonthsGone,
-             target_to_date: Math.round(target / 12 * Math.min(12, fyMonthsGone)), months, points,
+             target_to_date: Math.round(target / 12 * Math.min(12, fyRows.length || fyMonthsGone)), last_month: fyRows.length ? fyRows.map(r => r.month).sort().pop() : null, months, points,
              weekly_billed: weekly, yearly_billed_ex_gst: Math.round(weekly * 52 / 1.15),
              owed_current: owed?.cur || 0, owed_left: owed?.left_ || 0,
              passport_visits: fpVisits, passport_estimate: fpVisits ? L.passportPay(fpVisits, fpTiers).total : null,
@@ -408,13 +408,14 @@ export function makeHub(L) {
     const spend = campaigns.filter(c => c.source === "meta").reduce((a, c) => a + (c.spend || 0), 0);
     const allSpend = campaigns.reduce((a, c) => a + (c.spend || 0), 0);
     const platformLeads = campaigns.reduce((a, c) => a + (c.leads || 0), 0);
+    const views = campaigns.reduce((a, c) => a + (c.landing_views || 0), 0);
     const socialJoins = joins.filter(j => SOCIAL.includes(j.source.toLowerCase())).reduce((a, j) => a + j.n, 0);
     const socialLeads = coreLeads.filter(j => SOCIAL.includes(j.source.toLowerCase())).reduce((a, j) => a + j.n, 0);
     const dim = new Date(Date.UTC(+month.slice(0, 4), +month.slice(5, 7), 0)).getUTCDate();
     const daysIn = month === today.slice(0, 7) ? +today.slice(8, 10) : dim;
     const last = await one(env, "SELECT max(day) d FROM marketing_days");
     return { month, budget, meta_spend: Math.round(spend * 100) / 100, all_spend: Math.round(allSpend * 100) / 100,
-             projected: daysIn ? Math.round(spend / daysIn * dim) : 0, platform_leads: platformLeads, social_leads: socialLeads, social_joins: socialJoins,
+             projected: daysIn ? Math.round(spend / daysIn * dim) : 0, platform_leads: platformLeads, landing_views: views, cost_per_view: views ? Math.round(allSpend / views * 100) / 100 : null, social_leads: socialLeads, social_joins: socialJoins,
              cpl: platformLeads ? Math.round(allSpend / platformLeads * 100) / 100 : null,
              cost_per_join: socialJoins ? Math.round(spend / socialJoins * 100) / 100 : null,
              campaigns, daily, web, core_leads: coreLeads, joins, trend: trend.map(t => ({ ...t, joins: (joinsTrend.find(j => j.month === t.month) || {}).n || 0 })),
