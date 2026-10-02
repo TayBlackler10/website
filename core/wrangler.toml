@@ -10,7 +10,7 @@ crons = ["15 13 * * *"]
 [[d1_databases]]
 binding = "DB"
 database_name = "m2-core"
-database_id = "PASTE_ID_FROM_wrangler_d1_create"
+database_id = "9a0cdcf5-5ae4-4415-9db7-02df2bb7c425"
 
 [vars]
 GM_BASE = "https://m2trainingclub.gymmasteronline.com/portal/api"
