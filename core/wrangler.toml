@@ -1,0 +1,21 @@
+name = "m2-core"
+main = "src/worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# Nightly copy from GymMaster at 2:15am NZ daylight time (1:15am in winter).
+[triggers]
+crons = ["15 13 * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "m2-core"
+database_id = "PASTE_ID_FROM_wrangler_d1_create"
+
+[vars]
+GM_BASE = "https://m2trainingclub.gymmasteronline.com/portal/api"
+ACCESS_TEAM = "PASTE_TEAM_NAME"   # the part before .cloudflareaccess.com
+
+# Secrets, set with wrangler (never in this file, never in chat):
+#   npx wrangler secret put GM_STAFF_KEY   GymMaster staff API key
+#   npx wrangler secret put ACCESS_AUD     Application Audience (AUD) tag from Cloudflare Access

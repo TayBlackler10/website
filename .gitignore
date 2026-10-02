@@ -6,3 +6,6 @@ command-worker/crm.html
 # Member data exports
 *.csv
 core/data/
+core/.dev.vars
+core/.wrangler/
+node_modules/

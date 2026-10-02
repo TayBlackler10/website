@@ -1,0 +1,322 @@
+-- M2 Core database (Cloudflare D1, SQLite).
+-- One record per member, one set of rules. Money is never stored here beyond
+-- amounts owed and paid; bank and card details stay with Ezidebit.
+-- Dates are ISO text (YYYY-MM-DD or full ISO timestamps, NZ time unless noted).
+
+PRAGMA foreign_keys = ON;
+
+-- ---------- people ----------
+
+CREATE TABLE IF NOT EXISTS members (
+  id              INTEGER PRIMARY KEY,          -- M2 Core id
+  gm_id           INTEGER UNIQUE,               -- GymMaster member id while we sync
+  first_name      TEXT NOT NULL,
+  last_name       TEXT,
+  preferred_name  TEXT,
+  email           TEXT,
+  mobile          TEXT,                         -- stored as digits, NZ format
+  dob             TEXT,
+  gender          TEXT,
+  suburb          TEXT,
+  photo_url       TEXT,
+  emergency_name  TEXT,
+  emergency_phone TEXT,
+  goal            TEXT,                         -- main goal, picked at sign-up
+  lead_source     TEXT,                         -- required for new members
+  lead_campaign   TEXT,                         -- utm_campaign or ad name
+  referred_by     INTEGER REFERENCES members(id),
+  trainer_id      INTEGER REFERENCES staff(id),
+  key_tag         TEXT,
+  status          TEXT NOT NULL DEFAULT 'active',   -- active, frozen, cancelled, prospect, former
+  joined_on       TEXT,
+  total_visits_gm INTEGER DEFAULT 0,             -- lifetime visits carried over from GymMaster
+  marketing_email INTEGER DEFAULT 1,
+  marketing_sms   INTEGER DEFAULT 0,
+  app_installed   INTEGER DEFAULT 0,
+  terms_signed_on TEXT,
+  created_at      TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS members_email  ON members(email);
+CREATE INDEX IF NOT EXISTS members_mobile ON members(mobile);
+CREATE INDEX IF NOT EXISTS members_status ON members(status);
+
+-- Flags drive the rules: Passport is excluded from offers, gifted time never
+-- goes to collections, corporate is never sold online, blocked stops entry.
+CREATE TABLE IF NOT EXISTS member_flags (
+  member_id  INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+  flag       TEXT NOT NULL,   -- passport, gifted_time, corporate, staff, trainer, do_not_contact, blocked, student
+  detail     TEXT,            -- e.g. employer for corporate, reason for blocked
+  set_by     INTEGER REFERENCES staff(id),
+  set_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (member_id, flag)
+);
+
+-- Health details only with the member's consent, visible to their trainer and owners.
+CREATE TABLE IF NOT EXISTS member_health_notes (
+  member_id   INTEGER PRIMARY KEY REFERENCES members(id) ON DELETE CASCADE,
+  note        TEXT,
+  consent_on  TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS staff (
+  id          INTEGER PRIMARY KEY,
+  name        TEXT NOT NULL,
+  email       TEXT UNIQUE NOT NULL,             -- what they sign in with
+  role        TEXT NOT NULL,                    -- owner, manager, reception, trainer, coach
+  member_id   INTEGER REFERENCES members(id),   -- their own gym membership, if any
+  active      INTEGER NOT NULL DEFAULT 1,
+  list_order  INTEGER DEFAULT 100,              -- new trainers first for lead assignment
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ---------- plans and memberships ----------
+
+-- Every GymMaster membership type maps to one clean plan family.
+CREATE TABLE IF NOT EXISTS plans (
+  id              INTEGER PRIMARY KEY,
+  gm_type_name    TEXT,                         -- GymMaster membership type name, exact
+  gm_category     TEXT,                         -- GymMaster category, kept for history only
+  family          TEXT NOT NULL,                -- perform, classes, daily, recovery, transporter, passport, pass, pool, trial, other
+  frequency       TEXT,                         -- weekly, fortnightly, monthly, quarterly, upfront, in_person, yearly
+  flexi           INTEGER NOT NULL DEFAULT 0,
+  paid_in_full    INTEGER NOT NULL DEFAULT 0,
+  corporate       INTEGER NOT NULL DEFAULT 0,
+  employer        TEXT,
+  student         INTEGER NOT NULL DEFAULT 0,
+  legacy          INTEGER NOT NULL DEFAULT 0,   -- no longer sold
+  gm_join_id      INTEGER,                      -- join.html ?m= id for plans sold online
+  includes_classes  INTEGER NOT NULL DEFAULT 0,
+  includes_recovery INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (gm_type_name, gm_category)
+);
+
+CREATE TABLE IF NOT EXISTS memberships (
+  id                INTEGER PRIMARY KEY,
+  member_id         INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,
+  plan_id           INTEGER NOT NULL REFERENCES plans(id),
+  price             REAL,                       -- per billing period, incl GST
+  weekly_value      REAL,                       -- price converted to a weekly figure
+  start_date        TEXT,
+  min_term_end      TEXT,                       -- lock-in end
+  end_date          TEXT,                       -- only paid in full and passes
+  status            TEXT NOT NULL DEFAULT 'current',  -- current, frozen, ended, cancelled
+  cancel_reason     TEXT,                       -- required when cancelled
+  freeze_from       TEXT,
+  freeze_to         TEXT,
+  freeze_reason     TEXT,
+  billed_by         TEXT NOT NULL DEFAULT 'ezidebit',  -- ezidebit, in_person, passport, none
+  gm_billing_note   TEXT,
+  discount_code     TEXT,
+  sold_by           TEXT,
+  created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS memberships_member ON memberships(member_id);
+CREATE INDEX IF NOT EXISTS memberships_status ON memberships(status);
+
+-- ---------- billing (Ezidebit stays the bank; this is our ledger) ----------
+
+CREATE TABLE IF NOT EXISTS billing_accounts (
+  member_id         INTEGER PRIMARY KEY REFERENCES members(id) ON DELETE CASCADE,
+  ezidebit_ref      TEXT,                       -- Ezidebit customer reference only
+  billed_by_system  TEXT NOT NULL DEFAULT 'gymmaster',  -- gymmaster or core. Never both.
+  next_debit_date   TEXT,
+  next_debit_amount REAL,
+  balance_owing     REAL NOT NULL DEFAULT 0,    -- drives the $250 block
+  free_weeks_credit INTEGER NOT NULL DEFAULT 0, -- Bring a Mate, anniversary
+  updated_at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+  id           INTEGER PRIMARY KEY,
+  member_id    INTEGER REFERENCES members(id),
+  amount       REAL NOT NULL,
+  kind         TEXT NOT NULL,     -- debit, failed_debit, retry, eftpos, pay_link, settlement, refund
+  status       TEXT NOT NULL,     -- paid, failed, pending
+  failure_reason TEXT,
+  occurred_at  TEXT NOT NULL,
+  source       TEXT,              -- ezidebit, pos, gymmaster_import
+  external_ref TEXT
+);
+CREATE INDEX IF NOT EXISTS payments_member ON payments(member_id, occurred_at);
+
+-- Collections: current members and former members with money owing.
+CREATE TABLE IF NOT EXISTS collections_cases (
+  id             INTEGER PRIMARY KEY,
+  member_id      INTEGER NOT NULL REFERENCES members(id),
+  opened_on      TEXT NOT NULL,
+  amount_owed    REAL NOT NULL,
+  is_former      INTEGER NOT NULL DEFAULT 0,
+  status         TEXT NOT NULL DEFAULT 'open',  -- open, promised, settled, referred, written_off, closed
+  settle_offer   REAL,                          -- 50% up to $1,500, 30% above
+  referred_on    TEXT,                          -- Marshall Freeman, never under $1,000
+  closed_on      TEXT
+);
+
+-- ---------- visits, classes, bookings ----------
+
+CREATE TABLE IF NOT EXISTS visits (
+  id          INTEGER PRIMARY KEY,
+  member_id   INTEGER NOT NULL REFERENCES members(id),
+  at          TEXT NOT NULL,              -- check-in time
+  door        TEXT,                       -- main, mens_recovery, womens_recovery
+  via         TEXT,                       -- key_tag, app, desk, gate_scan
+  gm_visit_id TEXT UNIQUE
+);
+CREATE INDEX IF NOT EXISTS visits_member_at ON visits(member_id, at);
+CREATE INDEX IF NOT EXISTS visits_at ON visits(at);
+
+CREATE TABLE IF NOT EXISTS classes (
+  id          INTEGER PRIMARY KEY,
+  name        TEXT NOT NULL,              -- HYROX Strength, HYROX Threshold, HYROX Teams, Strength Club, Hatha yoga, Yin yoga
+  starts_at   TEXT NOT NULL,
+  ends_at     TEXT,
+  coach_id    INTEGER REFERENCES staff(id),
+  capacity    INTEGER NOT NULL DEFAULT 20,
+  gm_class_id TEXT UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id          INTEGER PRIMARY KEY,
+  class_id    INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+  member_id   INTEGER NOT NULL REFERENCES members(id),
+  status      TEXT NOT NULL DEFAULT 'booked',  -- booked, waitlist, attended, no_show, cancelled, late_cancel
+  waitlist_pos INTEGER,
+  booked_by   TEXT,                            -- app, staff:<id>
+  booked_at   TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (class_id, member_id)
+);
+
+-- ---------- leads and work ----------
+
+CREATE TABLE IF NOT EXISTS leads (
+  id           INTEGER PRIMARY KEY,
+  member_id    INTEGER REFERENCES members(id),    -- set once they exist as a member or prospect
+  name         TEXT,
+  email        TEXT,
+  mobile       TEXT,
+  kind         TEXT NOT NULL,     -- trial, free_pt, unfinished_signup, bring_a_mate, app_upgrade, website_form, meta_form
+  source       TEXT,              -- meta, google, instagram, referral, walk_in, website
+  campaign     TEXT,
+  stage        TEXT NOT NULL DEFAULT 'new',   -- new, contacted, trial, joined, lost
+  assigned_to  INTEGER REFERENCES staff(id),
+  goal         TEXT,
+  notes        TEXT,
+  created_at   TEXT NOT NULL DEFAULT (datetime('now')),
+  contacted_at TEXT,
+  closed_at    TEXT
+);
+CREATE INDEX IF NOT EXISTS leads_stage ON leads(stage, created_at);
+
+-- Jobs on the Today list, and what happened when someone did them.
+CREATE TABLE IF NOT EXISTS tasks (
+  id           INTEGER PRIMARY KEY,
+  kind         TEXT NOT NULL,     -- trial_ending, missing_billing, failed_payment, at_risk, free_pt_confirm, perform_no_pt, weekly_next_step
+  member_id    INTEGER REFERENCES members(id),
+  lead_id      INTEGER REFERENCES leads(id),
+  owner_role   TEXT NOT NULL,     -- reception, manager, trainer
+  assigned_to  INTEGER REFERENCES staff(id),
+  value_at_stake REAL,            -- weekly dollars, used to rank the list
+  due_on       TEXT NOT NULL,
+  outcome      TEXT,              -- joined, joining_at_desk, call_back, no_answer, not_interested, paid, rebooked, done
+  outcome_note TEXT,
+  done_by      INTEGER REFERENCES staff(id),
+  done_at      TEXT
+);
+CREATE INDEX IF NOT EXISTS tasks_due ON tasks(due_on, outcome);
+
+-- Every action has a name on it.
+CREATE TABLE IF NOT EXISTS activity (
+  id          INTEGER PRIMARY KEY,
+  member_id   INTEGER REFERENCES members(id),
+  staff_id    INTEGER REFERENCES staff(id),
+  kind        TEXT NOT NULL,      -- note, call, sale, refund, freeze, cancel, plan_change, block, unblock, email, sms, push
+  detail      TEXT,
+  at          TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS activity_member ON activity(member_id, at);
+
+-- ---------- messages and their results ----------
+
+CREATE TABLE IF NOT EXISTS automations (
+  id          INTEGER PRIMARY KEY,
+  key         TEXT UNIQUE NOT NULL,   -- trial_ending, trial_comeback, passport_winback, we_miss_you, new_member_checkin, failed_payment, daily_to_perform, no_show
+  name        TEXT NOT NULL,
+  goal        TEXT NOT NULL,          -- joined, visited, paid, upgraded, booked_pt, attended
+  goal_window_days INTEGER NOT NULL,
+  holdout_pct INTEGER NOT NULL DEFAULT 10,
+  active      INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS message_sends (
+  id            INTEGER PRIMARY KEY,
+  automation_id INTEGER REFERENCES automations(id),
+  member_id     INTEGER REFERENCES members(id),
+  channel       TEXT NOT NULL,        -- email, sms, push
+  held_out      INTEGER NOT NULL DEFAULT 0,   -- in the comparison group, not sent
+  sent_at       TEXT NOT NULL,
+  goal_met_at   TEXT                  -- filled when they did the thing
+);
+CREATE INDEX IF NOT EXISTS sends_auto ON message_sends(automation_id, sent_at);
+
+-- ---------- point of sale ----------
+
+CREATE TABLE IF NOT EXISTS products (
+  id        INTEGER PRIMARY KEY,
+  category  TEXT NOT NULL,     -- key_tags_visits, kyro, supplements, dr_hydrate, drinks, towel_hire, staff_uniform
+  name      TEXT NOT NULL,
+  price     REAL NOT NULL,     -- incl GST
+  active    INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS sales (
+  id         INTEGER PRIMARY KEY,
+  member_id  INTEGER REFERENCES members(id),
+  staff_id   INTEGER REFERENCES staff(id),
+  total      REAL NOT NULL,
+  paid_by    TEXT NOT NULL,    -- eftpos, next_debit, cash
+  at         TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS sale_lines (
+  sale_id    INTEGER NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
+  product_id INTEGER REFERENCES products(id),
+  label      TEXT NOT NULL,
+  qty        INTEGER NOT NULL DEFAULT 1,
+  price      REAL NOT NULL
+);
+
+-- ---------- sync bookkeeping ----------
+
+CREATE TABLE IF NOT EXISTS sync_log (
+  id          INTEGER PRIMARY KEY,
+  source      TEXT NOT NULL,     -- gymmaster_members, gymmaster_csv, ezidebit, xero
+  started_at  TEXT NOT NULL,
+  finished_at TEXT,
+  rows_in     INTEGER DEFAULT 0,
+  rows_changed INTEGER DEFAULT 0,
+  ok          INTEGER,
+  error       TEXT
+);
+
+CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+INSERT OR IGNORE INTO settings(key, value) VALUES
+  ('block_at_balance', '250'),
+  ('settle_pct_upto_1500', '50'),
+  ('settle_pct_over_1500', '30'),
+  ('referral_min_amount', '1000'),
+  ('class_capacity', '20'),
+  ('late_cancel_hours', '12'),
+  ('no_show_after_minutes', '10');
+
+INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VALUES
+  ('trial_ending',       'Trial ending',          'joined',    7,  0),
+  ('trial_comeback',     'Trial come-back',       'joined',    14, 0),
+  ('passport_winback',   'Fitness Passport win-back', 'visited', 7, 0),
+  ('we_miss_you',        'We miss you',           'visited',   7,  0),
+  ('new_member_checkin', 'New member check-in',   'visited',   7,  0),
+  ('failed_payment',     'Failed payment',        'paid',      7,  0),
+  ('daily_to_perform',   'Daily to Perform',      'upgraded',  14, 0),
+  ('no_show',            'Class no-show',         'attended',  14, 0);
