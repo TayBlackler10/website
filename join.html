@@ -846,7 +846,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   }
 
   function submit(){
-    var src = [qs.get('utm_source') || qs.get('src'), val('heard')].filter(Boolean).join(', ');
+    var attr = {}; try { attr = JSON.parse(sessionStorage.getItem('m2_attr') || '{}') || {}; } catch(e){}
+    var adSource = qs.get('utm_source') || attr.utm_source || ((qs.get('fbclid') || attr.fbclid) ? 'facebook' : '') || qs.get('src');
+    var adCampaign = qs.get('utm_campaign') || attr.utm_campaign || '';
+    var src = [adSource, adCampaign, val('heard')].filter(Boolean).join(', ');
     var payload = {
       m2_check: form.elements.m2_check.value,
       elapsed: Math.round((Date.now() - STARTED) / 1000),
