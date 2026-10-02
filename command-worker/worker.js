@@ -1,5 +1,6 @@
 // M2 Command Centre worker
-// Password-protected home for the Command Centre and the PT admin board,
+// Password-protected home for the Command Centre, the PT admin board and the
+// M2 Staff CRM prototype (/crm),
 // plus live feeds for GymMaster, Xero, GA4 and PT leads, and a nightly
 // month-end snapshot. Separate from m2-gymmaster so a bug here can never
 // take down the existing GymMaster / Meta feed.
@@ -36,6 +37,7 @@ export default {
       if (path === "/" || path === "/index.html") return page(env, "page:command");
       if (path === "/pt") return livePage(env, "https://m2club.co.nz/M2_PT.html", "page:pt");
       if (path === "/billing") return page(env, "page:billing");
+      if (path === "/crm") return page(env, "page:crm");
       if (path === "/api/gm" || path === "/api/gm/") return gmProxy(url, env);
       if (path === "/api/pt") return ptProxy(req, env);
       if (path === "/api/xero") return json(await xeroSummary(env, url.searchParams.has("fresh")));

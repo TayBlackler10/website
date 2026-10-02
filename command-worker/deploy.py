@@ -68,6 +68,8 @@ kv_put("page:command", open(os.path.join(HERE, "command.html"), encoding="utf-8"
 kv_put("page:pt", open(f"{SITE}/M2_PT.html", encoding="utf-8").read())
 if os.path.exists(os.path.join(HERE, "billing.html")):
     kv_put("page:billing", open(os.path.join(HERE, "billing.html"), encoding="utf-8").read())
+if os.path.exists(os.path.join(HERE, "crm.html")):
+    kv_put("page:crm", open(os.path.join(HERE, "crm.html"), encoding="utf-8").read())
 
 sub = call("GET", f"{base}/workers/subdomain")["result"]["subdomain"]
 print(f"LIVE https://{NAME}.{sub}.workers.dev  (KV {ns_id})")

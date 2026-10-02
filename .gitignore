@@ -1,0 +1,8 @@
+# Private pages and secrets for the m2-command worker. Never commit these.
+command-worker/.secrets
+command-worker/command.html
+command-worker/billing.html
+command-worker/crm.html
+# Member data exports
+*.csv
+core/data/
