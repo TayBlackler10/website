@@ -15,6 +15,7 @@
 // up in the staff table to get the person's role.
 
 import { APP_HTML } from "./ui.js";
+import { SCHEMA, STAFF_SEED } from "./schema_sql.js";
 
 const TZ = "Pacific/Auckland";
 
@@ -37,8 +38,7 @@ export default {
       if (url.pathname === "/billing-done") return html(BILLING_DONE_HTML);
       // Public: website forms post leads here with the shared intake key.
       if (url.pathname === "/api/intake") return intake(req, env);
-      // One-off data load during setup. Only works while the IMPORT_KEY secret exists; delete it after.
-      if (url.pathname === "/admin/import" && req.method === "POST") return adminImport(req, env);
+      await ensureSchema(env);
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -72,6 +72,7 @@ export default {
       if (tg) return json(await whoHasTag(env, can, decodeURIComponent(tg[1])));
       const m = url.pathname.match(/^\/api\/members\/(\d+)$/);
       if (m) return json(await memberDetail(env, who, can, +m[1]));
+      if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
         return json(await syncMembers(env));
       }
@@ -948,20 +949,79 @@ async function applyBlockRule(env) {
   ]);
 }
 
-/* ---------------- setup import ---------------- */
-// Loads the GymMaster export into D1 during setup. Locked by the IMPORT_KEY secret,
-// which is deleted straight after, so this route answers 404 the rest of the time.
-async function adminImport(req, env) {
-  const key = req.headers.get("X-M2-Import") || "";
-  if (!env.IMPORT_KEY || key.length !== env.IMPORT_KEY.length || key !== env.IMPORT_KEY) return new Response("Not found", { status: 404 });
-  const b = await req.json();
-  const list = Array.isArray(b.statements) ? b.statements.filter(x => typeof x === "string" && x.trim()) : [];
-  let done = 0;
-  for (let i = 0; i < list.length; i += 100) {
-    await env.DB.batch(list.slice(i, i + 100).map(x => env.DB.prepare(x)));
-    done += Math.min(100, list.length - i);
+/* ---------------- first run: the database sets itself up ---------------- */
+// Every table uses CREATE ... IF NOT EXISTS and every seed uses INSERT OR IGNORE,
+// so running it again is harmless. Checked once per worker start.
+let schemaReady = false;
+async function ensureSchema(env) {
+  if (schemaReady) return;
+  const have = await env.DB.prepare("SELECT count(*) n FROM sqlite_master WHERE type = 'table' AND name IN ('staff', 'member_photos', 'settings')").first();
+  if (!have || have.n < 3) {
+    const all = SCHEMA.concat(STAFF_SEED);
+    for (let i = 0; i < all.length; i += 40) await env.DB.batch(all.slice(i, i + 40).map(x => env.DB.prepare(x)));
   }
-  return json({ ok: true, done });
+  schemaReady = true;
+}
+
+/* ---------------- importing a GymMaster export ---------------- */
+// Owners upload GymMaster's "Current Memberships" CSV on the Import page. The browser reads
+// it and sends rows here in small batches; member data goes straight from the file to the
+// database. Safe to run again: members are updated in place, imported memberships replaced.
+const IMPORT_SQL = {
+  plans: `INSERT INTO plans(gm_type_name, gm_category, family, frequency, flexi, paid_in_full, corporate, employer, student, legacy, includes_classes, includes_recovery)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(gm_type_name, gm_category) DO UPDATE SET family = excluded.family, frequency = excluded.frequency, flexi = excluded.flexi,
+            paid_in_full = excluded.paid_in_full, corporate = excluded.corporate, employer = excluded.employer, student = excluded.student,
+            legacy = excluded.legacy, includes_classes = excluded.includes_classes, includes_recovery = excluded.includes_recovery`,
+  members: `INSERT INTO members(id, gm_id, first_name, last_name, passport_number, fp_id, fp_id_in_gm, email, mobile, gender, lead_source, status, joined_on, total_visits_gm)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
+            ON CONFLICT(id) DO UPDATE SET first_name = excluded.first_name, last_name = excluded.last_name,
+              passport_number = coalesce(excluded.passport_number, members.passport_number),
+              fp_id = coalesce(excluded.fp_id, members.fp_id), fp_id_in_gm = CASE WHEN excluded.fp_id IS NOT NULL THEN 1 ELSE members.fp_id_in_gm END,
+              email = coalesce(excluded.email, members.email), mobile = coalesce(excluded.mobile, members.mobile),
+              gender = coalesce(excluded.gender, members.gender), lead_source = coalesce(members.lead_source, excluded.lead_source),
+              status = 'active', joined_on = coalesce(members.joined_on, excluded.joined_on), total_visits_gm = excluded.total_visits_gm,
+              updated_at = datetime('now')`,
+  memberships: `INSERT INTO memberships(member_id, plan_id, price, weekly_value, start_date, min_term_end, end_date, status, billed_by, gm_billing_note, discount_code, sold_by)
+                SELECT ?, p.id, ?, ?, ?, ?, ?, 'current', ?, ?, ?, ? FROM plans p WHERE p.gm_type_name = ? AND p.gm_category = ?`,
+  billing: `INSERT OR IGNORE INTO billing_accounts(member_id, billed_by_system) VALUES (?, 'gymmaster')`,
+  flags: `INSERT OR IGNORE INTO member_flags(member_id, flag, detail) VALUES (?, ?, ?)`,
+  trials: `INSERT INTO leads(member_id, name, email, mobile, kind, source, stage, created_at, notes) VALUES (?, ?, ?, ?, 'trial', ?, ?, ?, 'gymmaster_import')`,
+};
+const IMPORT_COLS = { plans: 12, members: 13, memberships: 12, billing: 1, flags: 3, trials: 7 };
+
+async function importRows(env, who, can, b) {
+  if (!can.settings) return { ok: false, error: "Only Taylor and Tim can import." };
+  const db = env.DB;
+  if (b.step === "start") {
+    // Clear what the last import loaded, keeping everything staff have done in the Core.
+    await db.batch([
+      db.prepare(`DELETE FROM memberships WHERE plan_id IN (SELECT id FROM plans WHERE coalesce(gm_category,'') <> 'Sold in M2 Core')`),
+      db.prepare(`DELETE FROM member_flags WHERE flag IN ('passport','corporate','student') AND set_by IS NULL`),
+      b.history ? db.prepare(`DELETE FROM leads WHERE notes = 'gymmaster_import'`) : db.prepare("SELECT 1"),
+    ]);
+    const log = await db.prepare("INSERT INTO sync_log(source, started_at) VALUES ('gymmaster_csv', datetime('now')) RETURNING id").first();
+    return { ok: true, log: log.id };
+  }
+  if (b.step === "rows") {
+    const sql = IMPORT_SQL[b.table], n = IMPORT_COLS[b.table];
+    if (!sql || !Array.isArray(b.rows) || b.rows.length > 200) return { ok: false, error: "Bad import batch" };
+    const stmts = [];
+    for (const r of b.rows) {
+      if (!Array.isArray(r) || r.length !== n) return { ok: false, error: "Bad row in " + b.table };
+      stmts.push(db.prepare(sql).bind(...r.map(v => (v === undefined || v === "") ? null : v)));
+    }
+    if (stmts.length) await db.batch(stmts);
+    return { ok: true, done: stmts.length };
+  }
+  if (b.step === "finish") {
+    const stmts = [db.prepare("UPDATE sync_log SET finished_at = datetime('now'), rows_in = ?, rows_changed = ?, ok = 1 WHERE id = ?").bind(+b.rowsIn || 0, +b.rowsChanged || 0, +b.log || 0)];
+    if (b.fpLoaded) stmts.push(db.prepare("UPDATE settings SET value = '1' WHERE key = 'fp_ids_loaded'"));
+    await db.batch(stmts);
+    const n = await db.prepare("SELECT count(*) n FROM members WHERE status = 'active'").first();
+    return { ok: true, members: n.n };
+  }
+  return { ok: false, error: "Unknown step" };
 }
 
 /* ---------------- member photos ---------------- */

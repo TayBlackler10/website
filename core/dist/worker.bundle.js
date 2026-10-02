@@ -132,6 +132,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
+<button class="nav" data-go="import" id="navImport" hidden>Import from GymMaster</button>
 </nav>
 <div class="me"><div class="av" id="meAv"></div><div><span id="meName"></span><small id="meRole"></small></div></div>
 </aside>
@@ -204,6 +205,20 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <label class="sr" for="lookTag">Key tag number</label>
 <input id="lookTag" class="tagbox" autocomplete="off" placeholder="Scan tag">
 <div id="lookRes"></div>
+</section>
+</section>
+
+<!-- IMPORT -->
+<section data-view="import" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Import from GymMaster<span class="dot">.</span></h1></div>
+<section class="card" style="max-width:760px">
+<p style="margin:0">In GymMaster run <b>Report &amp; Till → Current Memberships</b> for today, with the <b>Fitness Passport ID</b> column added, and export it as CSV. Pick it below. Run it again any time: members are updated, nothing staff did in the Core is lost.</p>
+<label class="fld">Current members (CSV, required)<input type="file" id="impCur" accept=".csv,text/csv"></label>
+<label class="fld">Trial history (optional: the same report from 1 Jan 2024 to today)<input type="file" id="impHist" accept=".csv,text/csv"></label>
+<div id="impSum" class="muted"></div>
+<div class="err" id="impErr"></div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn dark" id="impGo" disabled>Import</button><span class="muted" id="impProg"></span></div>
+<div class="list" id="impDone"></div>
 </section>
 </section>
 
@@ -326,7 +341,7 @@ function show(v){
  $$("[data-view]").forEach(function(s){s.hidden=s.dataset.view!==v});
  $$(".nav").forEach(function(b){b.classList.toggle("on",b.dataset.go===v)});
  window.scrollTo(0,0);
- if(v==="today")loadToday();
+ if(v==="today"){loadToday();if(ME&&ME.can.business)loadBiz()}
  if(v==="leads")loadLeads();
  if(v==="add")startAdd();
  if(v==="tag")setTimeout(function(){$("#lookTag").focus()},50);
@@ -343,6 +358,7 @@ get("/api/me").then(function(me){
  $("#hello").innerHTML="Morning, "+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  var h=new Date().getHours();if(h>=12)$("#hello").innerHTML=(h<17?"Afternoon, ":"Evening, ")+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  if(me.can.members===true)$("#navFp").hidden=false;
+ if(me.can.settings)$("#navImport").hidden=false;
  if(me.can.add){$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
  loadToday();
  if(me.can.business)loadBiz();
@@ -582,6 +598,102 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-phot
 var PHOTO=null;
 $("#aPhotoBtn").addEventListener("click",function(){openCam(($("#first").value+" "+$("#last").value).trim(),function(url){PHOTO=url;$("#aFace").innerHTML='<img src="'+url+'" alt="New member photo">';$("#aPhotoBtn").textContent="Retake photo";$("#aNoPhoto").checked=false})});
 
+/* ---------- import from GymMaster ---------- */
+// Same rules as scripts/import_gymmaster_csv.py, run in the browser so the file goes
+// straight from this computer into the Core.
+function parseCSV(t){
+ t=t.replace(/^﻿/,"");var rows=[],row=[],f="",q=false;
+ for(var i=0;i<t.length;i++){var c=t[i];
+  if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c==='"')q=true;else if(c===","){row.push(f);f=""}else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;row.push(f);f="";if(row.length>1||row[0]!=="")rows.push(row);row=[]}else f+=c}
+ if(f!==""||row.length){row.push(f);rows.push(row)}
+ var h=rows.shift()||[];return rows.map(function(r){var o={};h.forEach(function(k,j){o[k.trim()]=(r[j]||"").trim()});return o});
+}
+function impNum(v){var n=parseFloat(String(v||"").replace(/[^0-9.\-]/g,""));return isNaN(n)?null:n}
+function impMobile(v){var d=String(v||"").replace(/\D/g,"");if(d.indexOf("64")===0)d="0"+d.slice(2);else if(d.charAt(0)==="2"&&d.length>=8&&d.length<=10)d="0"+d;return d||null}
+function impPassport(last){last=String(last||"").trim();var m=last.match(/^(.*?)[\s-]*\(?\s*(?:FP|ID:?)?\s*(\d{6,8})\s*\)?\s*$/i);if(!m)return[last,null];return[m[1].replace(/^[\s-]+|[\s-]+$/g,"")||null,m[2]]}
+var EMPLOYERS=["woods","smartfit","hectre","bnb group","red bull","msd","auckland council"];
+function impClassify(name,cat,pd){
+ var n=String(name||"").toLowerCase().replace(/\s+/g," "),c=String(cat||"").toLowerCase(),d=String(pd||"").toLowerCase(),fam="other";
+ if(n.indexOf("fitness passport")>=0)fam="passport";
+ else if(n.indexOf("trip pass")>=0||n.indexOf("group fitness pass")>=0)fam="pass";
+ else if(n.indexOf("trial")>=0||n.indexOf("day pass")>=0||n.indexOf("hour pass")>=0||/days (for|on us)|days\. \d|free class|bring a friend/.test(n))fam="trial";
+ else if(c.indexOf("challenge")>=0||/\b\d?wc\b/.test(n))fam="challenge";
+ else if(n==="staff"||n==="personal trainer rent"||c.indexOf("staff")>=0)fam="staff";
+ else if(n.indexOf("transporter")>=0||n.indexOf("transpoter")>=0)fam="transporter";
+ else if(n.indexOf("swimming pool")>=0)fam="pool";
+ else if(n.indexOf("recovery")>=0)fam="recovery";
+ else if(n.indexOf("perform")>=0||n.indexOf("gateway")>=0)fam="perform";
+ else if(n.indexOf("classes")>=0||n.indexOf("group fitness")>=0)fam="classes";
+ else if(n.indexOf("daily")>=0||n.indexOf("entry")>=0)fam="daily";
+ var p={family:fam,flexi:n.indexOf("flexi")>=0?1:0,frequency:null};
+ p.includes_classes=["perform","classes","transporter","passport","pass","trial"].indexOf(fam)>=0?1:0;
+ p.includes_recovery=["perform","recovery","transporter","pass","trial"].indexOf(fam)>=0?1:0;
+ p.paid_in_full=(/paid in full|pif|lifetime/.test(n)||(d.indexOf("fixed term")>=0&&fam!=="pass"&&fam!=="trial"))?1:0;
+ if(fam==="passport")p.frequency="yearly";else if(p.paid_in_full||fam==="pass")p.frequency="upfront";
+ else{var F=[["fortnightly",["fortnight","fornight"]],["monthly",["month"]],["quarterly",["quarter"]],["weekly",["week"]]];
+  for(var i=0;i<F.length;i++){if(F[i][1].some(function(k){return n.indexOf(k)>=0||d.indexOf(k)>=0})){p.frequency=F[i][0];break}}}
+ var emp=EMPLOYERS.filter(function(e){return n.indexOf(e)>=0})[0]||null;
+ p.corporate=(c.indexOf("corporate")>=0||emp||n.indexOf("% off")>=0||n.indexOf("student")>=0)?1:0;
+ p.employer=emp?emp.replace(/\b\w/g,function(x){return x.toUpperCase()}):null;
+ p.student=n.indexOf("student")>=0?1:0;
+ p.legacy=(["old","old corporate memberships","discontinued","promotions"].indexOf(c)>=0||/^(entry|flexi - entry|flexi - gateway|gateway)/.test(n)||n.indexOf("transpoter")>=0)?1:0;
+ return p;
+}
+var IMP={cur:null,hist:null};
+function impRead(input,key){var f=input.files&&input.files[0];if(!f){IMP[key]=null;impSummary();return}
+ var r=new FileReader();r.onload=function(){try{IMP[key]=parseCSV(String(r.result))}catch(e){IMP[key]=null;$("#impErr").textContent="Couldn't read "+f.name}impSummary()};r.readAsText(f)}
+function impSummary(){
+ var c=IMP.cur,h=IMP.hist;$("#impErr").textContent="";
+ if(c&&c.length&&!("Member ID" in c[0])){$("#impErr").textContent="That file isn't a GymMaster Current Memberships export (no Member ID column).";$("#impGo").disabled=true;return}
+ var fp=c&&c.length&&("Fitness Passport ID" in c[0]);
+ $("#impSum").textContent=c?(c.length+" rows of current members"+(fp?", with Fitness Passport IDs":", no Fitness Passport ID column")+(h?". "+h.length+" rows of history.":".")):"";
+ $("#impGo").disabled=!(c&&c.length);
+}
+$("#impCur").addEventListener("change",function(e){impRead(e.target,"cur")});
+$("#impHist").addEventListener("change",function(e){impRead(e.target,"hist")});
+function impBuild(){
+ var cur=IMP.cur,hist=IMP.hist||[],plans={},planRows=[],members=[],mships=[],billing=[],flags=[],trials=[],seen={},fpCol=cur.length&&("Fitness Passport ID" in cur[0]);
+ cur.concat(hist).forEach(function(r){var k=(r["Membership Type Name"]||"")+"\u0001"+(r["Membership Type Category Name"]||"");
+  if(!plans[k]){var p=impClassify(r["Membership Type Name"],r["Membership Type Category Name"],r["Price Description"]);plans[k]=p;
+   planRows.push([r["Membership Type Name"]||"",r["Membership Type Category Name"]||"",p.family,p.frequency,p.flexi,p.paid_in_full,p.corporate,p.employer,p.student,p.legacy,p.includes_classes,p.includes_recovery])}});
+ var WK={weekly:1,fortnightly:2,monthly:52/12,quarterly:13};
+ cur.forEach(function(r){var id=parseInt(r["Member ID"],10);if(!id||seen[id])return;seen[id]=1;
+  var k=(r["Membership Type Name"]||"")+"\u0001"+(r["Membership Type Category Name"]||""),p=plans[k];
+  var sp=impPassport(r["Member Last Name"]),first=(r["Member First Name"]||"").trim(),last=sp[0];
+  if(!last&&first.indexOf(" ")>0){last=first.slice(first.lastIndexOf(" ")+1);first=first.slice(0,first.lastIndexOf(" "))}
+  var fpd=fpCol?String(r["Fitness Passport ID"]||"").replace(/\D/g,""):"";var fp=(fpd.length>=5&&fpd.length<=12)?fpd:null;
+  var price=impNum(r["Membership Type Price"]),wv=(price!=null&&WK[p.frequency])?Math.round(price/WK[p.frequency]*100)/100:null;
+  var pd=String(r["Price Description"]||"").toLowerCase(),by=p.family==="passport"?"passport":(pd.indexOf("in person")>=0?"in_person":"ezidebit");
+  members.push([id,id,first||"Unknown",last||null,sp[1],fp,fp?1:0,(r["Member Email"]||"").toLowerCase()||null,impMobile(r["Member Cell"]),r["Member Gender"]||null,r["Member Source Promotion"]||null,r["Membership Start Date"]||null,parseInt(r["Member Total Visit"],10)||0]);
+  mships.push([id,price,wv,r["Membership Start Date"]||null,r["Membership Minimum Term End Date"]||null,r["Membership End Date"]||null,by,r["Member Billing Comment"]||null,r["Discount Code Used"]||null,r["Sales Rep"]||null,r["Membership Type Name"]||"",r["Membership Type Category Name"]||""]);
+  if(by==="ezidebit")billing.push([id]);
+  if(p.family==="passport")flags.push([id,"passport",null]);
+  if(p.corporate)flags.push([id,"corporate",p.employer]);
+  if(p.student)flags.push([id,"student",null]);
+ });
+ hist.forEach(function(r){if((r["Membership Type Category Name"]||"")!=="Trials & Limited Passes")return;if(String(r["Membership Type Name"]||"").toLowerCase().indexOf("trip pass")>=0)return;
+  var id=parseInt(r["Member ID"],10),here=!!seen[id];
+  trials.push([here?id:null,((r["Member First Name"]||"")+" "+(r["Member Last Name"]||"")).trim(),(r["Member Email"]||"").toLowerCase()||null,impMobile(r["Member Cell"]),r["Member Source Promotion"]||null,here?"joined":"lost",r["Membership Start Date"]||null])});
+ return {fpCol:fpCol,parts:[["plans",planRows],["members",members],["memberships",mships],["billing",billing],["flags",flags],["trials",trials]]};
+}
+$("#impGo").addEventListener("click",function(){
+ var b=$("#impGo");b.disabled=true;$("#impErr").textContent="";$("#impDone").innerHTML="";
+ var data;try{data=impBuild()}catch(e){$("#impErr").textContent="Couldn't read the file: "+e.message;b.disabled=false;return}
+ var total=data.parts.reduce(function(a,p){return a+p[1].length},0),sent=0,log=null;
+ function fail(m){$("#impErr").textContent=m+" Nothing is broken: fix it and press Import again.";b.disabled=false}
+ post("/api/import",{step:"start",history:!!IMP.hist}).then(function(r){if(!r.ok)return fail(r.error||"Couldn't start.");log=r.log;
+  var queue=[];data.parts.forEach(function(p){for(var i=0;i<p[1].length;i+=150)queue.push([p[0],p[1].slice(i,i+150)])});
+  (function next(){
+   if(!queue.length){post("/api/import",{step:"finish",log:log,rowsIn:IMP.cur.length+(IMP.hist?IMP.hist.length:0),rowsChanged:sent,fpLoaded:data.fpCol}).then(function(f){
+     $("#impProg").textContent="";b.disabled=false;
+     $("#impDone").innerHTML='<div class="ok">Done. '+(f.members||0).toLocaleString("en-NZ")+' current members in the Core.</div>'+data.parts.map(function(p){return '<div class="r"><span>'+esc(p[0])+'</span><span class="pill">'+p[1].length.toLocaleString("en-NZ")+'</span></div>'}).join("")});return}
+   var q=queue.shift();
+   post("/api/import",{step:"rows",table:q[0],rows:q[1]}).then(function(r){if(!r.ok)return fail(r.error||"A batch failed.");sent+=q[1].length;$("#impProg").textContent="Importing... "+Math.round(sent/total*100)+"%";next()}).catch(function(e){fail(String(e))});
+  })();
+ }).catch(function(e){fail(String(e))});
+});
+
 /* ---------- fitness passport ---------- */
 function loadPassport(){
  var mi=$("#fpMonth");if(!mi.value){var n=new Date();mi.value=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")}
@@ -708,6 +820,59 @@ function resetAdd(){
 }
 </script></body></html>`;
 
+// schema_sql.js (bundled)
+// Generated by scripts/gen_schema.py from schema.sql and seed_staff.sql. Do not edit by hand.
+const SCHEMA = [
+"PRAGMA foreign_keys = ON;",
+"CREATE TABLE IF NOT EXISTS members (\n  id              INTEGER PRIMARY KEY,         \n  gm_id           INTEGER UNIQUE,              \n  first_name      TEXT NOT NULL,\n  last_name       TEXT,\n  preferred_name  TEXT,\n  email           TEXT,\n  mobile          TEXT,                        \n  dob             TEXT,\n  gender          TEXT,\n  suburb          TEXT,\n  photo_url       TEXT,\n  emergency_name  TEXT,\n  emergency_phone TEXT,\n  goal            TEXT,                        \n  lead_source     TEXT,                        \n  lead_campaign   TEXT,                        \n  referred_by     INTEGER REFERENCES members(id),\n  trainer_id      INTEGER REFERENCES staff(id),\n  key_tag         TEXT,\n  passport_number TEXT,                        \n  fp_id           TEXT,                        \n  fp_id_in_gm     INTEGER NOT NULL DEFAULT 0,  \n  status          TEXT NOT NULL DEFAULT 'active',  \n  joined_on       TEXT,\n  total_visits_gm INTEGER DEFAULT 0,            \n  marketing_email INTEGER DEFAULT 1,\n  marketing_sms   INTEGER DEFAULT 0,\n  app_installed   INTEGER DEFAULT 0,\n  terms_signed_on TEXT,\n  created_at      TEXT NOT NULL DEFAULT (datetime('now')),\n  updated_at      TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS members_email  ON members(email);",
+"CREATE INDEX IF NOT EXISTS members_mobile ON members(mobile);",
+"CREATE INDEX IF NOT EXISTS members_status ON members(status);",
+"CREATE UNIQUE INDEX IF NOT EXISTS members_key_tag ON members(key_tag) WHERE key_tag IS NOT NULL;",
+"CREATE INDEX IF NOT EXISTS members_fp_id ON members(fp_id);",
+"CREATE TABLE IF NOT EXISTS key_tags (\n  id           INTEGER PRIMARY KEY,\n  tag          TEXT NOT NULL,\n  member_id    INTEGER NOT NULL REFERENCES members(id),\n  status       TEXT NOT NULL DEFAULT 'active',  \n  assigned_at  TEXT NOT NULL DEFAULT (datetime('now')),\n  assigned_by  INTEGER REFERENCES staff(id),\n  ended_at     TEXT,\n  in_gymmaster INTEGER NOT NULL DEFAULT 0         \n);",
+"CREATE INDEX IF NOT EXISTS key_tags_tag ON key_tags(tag);",
+"CREATE TABLE IF NOT EXISTS member_flags (\n  member_id  INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,\n  flag       TEXT NOT NULL,  \n  detail     TEXT,           \n  set_by     INTEGER REFERENCES staff(id),\n  set_at     TEXT NOT NULL DEFAULT (datetime('now')),\n  PRIMARY KEY (member_id, flag)\n);",
+"CREATE TABLE IF NOT EXISTS member_photos (\n  member_id  INTEGER PRIMARY KEY REFERENCES members(id),\n  jpeg       TEXT NOT NULL,\n  taken_at   TEXT NOT NULL DEFAULT (datetime('now')),\n  taken_by   INTEGER REFERENCES staff(id)\n);",
+"CREATE TABLE IF NOT EXISTS member_health_notes (\n  member_id   INTEGER PRIMARY KEY REFERENCES members(id) ON DELETE CASCADE,\n  note        TEXT,\n  consent_on  TEXT NOT NULL\n);",
+"CREATE TABLE IF NOT EXISTS staff (\n  id          INTEGER PRIMARY KEY,\n  name        TEXT NOT NULL,\n  email       TEXT UNIQUE NOT NULL,            \n  role        TEXT NOT NULL,                   \n  member_id   INTEGER REFERENCES members(id),  \n  active      INTEGER NOT NULL DEFAULT 1,\n  list_order  INTEGER DEFAULT 100,             \n  created_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS plans (\n  id              INTEGER PRIMARY KEY,\n  gm_type_name    TEXT,                        \n  gm_category     TEXT,                        \n  family          TEXT NOT NULL,               \n  frequency       TEXT,                        \n  flexi           INTEGER NOT NULL DEFAULT 0,\n  paid_in_full    INTEGER NOT NULL DEFAULT 0,\n  corporate       INTEGER NOT NULL DEFAULT 0,\n  employer        TEXT,\n  student         INTEGER NOT NULL DEFAULT 0,\n  legacy          INTEGER NOT NULL DEFAULT 0,  \n  gm_join_id      INTEGER,                     \n  includes_classes  INTEGER NOT NULL DEFAULT 0,\n  includes_recovery INTEGER NOT NULL DEFAULT 0,\n  UNIQUE (gm_type_name, gm_category)\n);",
+"CREATE TABLE IF NOT EXISTS memberships (\n  id                INTEGER PRIMARY KEY,\n  member_id         INTEGER NOT NULL REFERENCES members(id) ON DELETE CASCADE,\n  plan_id           INTEGER NOT NULL REFERENCES plans(id),\n  price             REAL,                      \n  weekly_value      REAL,                      \n  start_date        TEXT,\n  min_term_end      TEXT,                      \n  end_date          TEXT,                      \n  status            TEXT NOT NULL DEFAULT 'current', \n  cancel_reason     TEXT,                      \n  freeze_from       TEXT,\n  freeze_to         TEXT,\n  freeze_reason     TEXT,\n  billed_by         TEXT NOT NULL DEFAULT 'ezidebit', \n  gm_billing_note   TEXT,\n  discount_code     TEXT,\n  sold_by           TEXT,\n  created_at        TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS memberships_member ON memberships(member_id);",
+"CREATE INDEX IF NOT EXISTS memberships_status ON memberships(status);",
+"CREATE TABLE IF NOT EXISTS billing_accounts (\n  member_id         INTEGER PRIMARY KEY REFERENCES members(id) ON DELETE CASCADE,\n  ezidebit_ref      TEXT,                      \n  billed_by_system  TEXT NOT NULL DEFAULT 'gymmaster', \n  next_debit_date   TEXT,\n  next_debit_amount REAL,\n  balance_owing     REAL NOT NULL DEFAULT 0,   \n  free_weeks_credit INTEGER NOT NULL DEFAULT 0,\n  updated_at        TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS payments (\n  id           INTEGER PRIMARY KEY,\n  member_id    INTEGER REFERENCES members(id),\n  amount       REAL NOT NULL,\n  kind         TEXT NOT NULL,    \n  status       TEXT NOT NULL,    \n  failure_reason TEXT,\n  occurred_at  TEXT NOT NULL,\n  source       TEXT,             \n  external_ref TEXT\n);",
+"CREATE INDEX IF NOT EXISTS payments_member ON payments(member_id, occurred_at);",
+"CREATE TABLE IF NOT EXISTS collections_cases (\n  id             INTEGER PRIMARY KEY,\n  member_id      INTEGER NOT NULL REFERENCES members(id),\n  opened_on      TEXT NOT NULL,\n  amount_owed    REAL NOT NULL,\n  is_former      INTEGER NOT NULL DEFAULT 0,\n  status         TEXT NOT NULL DEFAULT 'open', \n  settle_offer   REAL,                         \n  referred_on    TEXT,                         \n  closed_on      TEXT\n);",
+"CREATE TABLE IF NOT EXISTS visits (\n  id          INTEGER PRIMARY KEY,\n  member_id   INTEGER NOT NULL REFERENCES members(id),\n  at          TEXT NOT NULL,             \n  door        TEXT,                      \n  via         TEXT,                      \n  gm_visit_id TEXT UNIQUE,\n  fp_id       TEXT,                      \n  fp_status   TEXT                       \n);",
+"CREATE INDEX IF NOT EXISTS visits_member_at ON visits(member_id, at);",
+"CREATE INDEX IF NOT EXISTS visits_at ON visits(at);",
+"CREATE TABLE IF NOT EXISTS classes (\n  id          INTEGER PRIMARY KEY,\n  name        TEXT NOT NULL,             \n  starts_at   TEXT NOT NULL,\n  ends_at     TEXT,\n  coach_id    INTEGER REFERENCES staff(id),\n  capacity    INTEGER NOT NULL DEFAULT 20,\n  gm_class_id TEXT UNIQUE\n);",
+"CREATE TABLE IF NOT EXISTS bookings (\n  id          INTEGER PRIMARY KEY,\n  class_id    INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,\n  member_id   INTEGER NOT NULL REFERENCES members(id),\n  status      TEXT NOT NULL DEFAULT 'booked', \n  waitlist_pos INTEGER,\n  booked_by   TEXT,                           \n  booked_at   TEXT NOT NULL DEFAULT (datetime('now')),\n  UNIQUE (class_id, member_id)\n);",
+"CREATE TABLE IF NOT EXISTS leads (\n  id           INTEGER PRIMARY KEY,\n  member_id    INTEGER REFERENCES members(id),   \n  name         TEXT,\n  email        TEXT,\n  mobile       TEXT,\n  kind         TEXT NOT NULL,    \n  source       TEXT,             \n  campaign     TEXT,\n  stage        TEXT NOT NULL DEFAULT 'new',  \n  assigned_to  INTEGER REFERENCES staff(id),\n  goal         TEXT,\n  notes        TEXT,\n  created_at   TEXT NOT NULL DEFAULT (datetime('now')),\n  contacted_at TEXT,\n  closed_at    TEXT\n);",
+"CREATE INDEX IF NOT EXISTS leads_stage ON leads(stage, created_at);",
+"CREATE INDEX IF NOT EXISTS leads_email ON leads(email);",
+"CREATE INDEX IF NOT EXISTS leads_mobile ON leads(mobile);",
+"CREATE TABLE IF NOT EXISTS tasks (\n  id           INTEGER PRIMARY KEY,\n  kind         TEXT NOT NULL,    \n  member_id    INTEGER REFERENCES members(id),\n  lead_id      INTEGER REFERENCES leads(id),\n  owner_role   TEXT NOT NULL,    \n  assigned_to  INTEGER REFERENCES staff(id),\n  value_at_stake REAL,           \n  due_on       TEXT NOT NULL,\n  outcome      TEXT,             \n  outcome_note TEXT,\n  done_by      INTEGER REFERENCES staff(id),\n  done_at      TEXT\n);",
+"CREATE INDEX IF NOT EXISTS tasks_due ON tasks(due_on, outcome);",
+"CREATE TABLE IF NOT EXISTS activity (\n  id          INTEGER PRIMARY KEY,\n  member_id   INTEGER REFERENCES members(id),\n  lead_id     INTEGER REFERENCES leads(id),\n  staff_id    INTEGER REFERENCES staff(id),\n  kind        TEXT NOT NULL,     \n  detail      TEXT,\n  at          TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS activity_member ON activity(member_id, at);",
+"CREATE INDEX IF NOT EXISTS activity_lead ON activity(lead_id, at);",
+"CREATE TABLE IF NOT EXISTS automations (\n  id          INTEGER PRIMARY KEY,\n  key         TEXT UNIQUE NOT NULL,  \n  name        TEXT NOT NULL,\n  goal        TEXT NOT NULL,         \n  goal_window_days INTEGER NOT NULL,\n  holdout_pct INTEGER NOT NULL DEFAULT 10,\n  active      INTEGER NOT NULL DEFAULT 0\n);",
+"CREATE TABLE IF NOT EXISTS message_sends (\n  id            INTEGER PRIMARY KEY,\n  automation_id INTEGER REFERENCES automations(id),\n  member_id     INTEGER REFERENCES members(id),\n  channel       TEXT NOT NULL,       \n  held_out      INTEGER NOT NULL DEFAULT 0,  \n  sent_at       TEXT NOT NULL,\n  goal_met_at   TEXT                 \n);",
+"CREATE INDEX IF NOT EXISTS sends_auto ON message_sends(automation_id, sent_at);",
+"CREATE TABLE IF NOT EXISTS products (\n  id        INTEGER PRIMARY KEY,\n  category  TEXT NOT NULL,    \n  name      TEXT NOT NULL,\n  price     REAL NOT NULL,    \n  active    INTEGER NOT NULL DEFAULT 1\n);",
+"CREATE TABLE IF NOT EXISTS sales (\n  id         INTEGER PRIMARY KEY,\n  member_id  INTEGER REFERENCES members(id),\n  staff_id   INTEGER REFERENCES staff(id),\n  total      REAL NOT NULL,\n  paid_by    TEXT NOT NULL,   \n  at         TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS sale_lines (\n  sale_id    INTEGER NOT NULL REFERENCES sales(id) ON DELETE CASCADE,\n  product_id INTEGER REFERENCES products(id),\n  label      TEXT NOT NULL,\n  qty        INTEGER NOT NULL DEFAULT 1,\n  price      REAL NOT NULL\n);",
+"CREATE TABLE IF NOT EXISTS sync_log (\n  id          INTEGER PRIMARY KEY,\n  source      TEXT NOT NULL,    \n  started_at  TEXT NOT NULL,\n  finished_at TEXT,\n  rows_in     INTEGER DEFAULT 0,\n  rows_changed INTEGER DEFAULT 0,\n  ok          INTEGER,\n  error       TEXT\n);",
+"CREATE TABLE IF NOT EXISTS settings (\n  key   TEXT PRIMARY KEY,\n  value TEXT NOT NULL\n);",
+"INSERT OR IGNORE INTO settings(key, value) VALUES\n  ('block_at_balance', '250'),\n  ('settle_pct_upto_1500', '50'),\n  ('settle_pct_over_1500', '30'),\n  ('referral_min_amount', '1000'),\n  ('class_capacity', '20'),\n  ('late_cancel_hours', '12'),\n  ('no_show_after_minutes', '10'),\n  ('fp_tiers', '458:7.39,919:8.21,1380:9.12,1841:10.03,0:11.04'),\n  ('fp_ids_loaded', '0');",
+"INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VALUES\n  ('trial_ending',       'Trial ending',          'joined',    7,  0),\n  ('trial_comeback',     'Trial come-back',       'joined',    14, 0),\n  ('passport_winback',   'Fitness Passport win-back', 'visited', 7, 0),\n  ('we_miss_you',        'We miss you',           'visited',   7,  0),\n  ('new_member_checkin', 'New member check-in',   'visited',   7,  0),\n  ('failed_payment',     'Failed payment',        'paid',      7,  0),\n  ('daily_to_perform',   'Daily to Perform',      'upgraded',  14, 0),\n  ('no_show',            'Class no-show',         'attended',  14, 0);"
+];
+const STAFF_SEED = [
+"INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2);"
+];
+
 
 const TZ = "Pacific/Auckland";
 
@@ -730,8 +895,7 @@ export default {
       if (url.pathname === "/billing-done") return html(BILLING_DONE_HTML);
       // Public: website forms post leads here with the shared intake key.
       if (url.pathname === "/api/intake") return intake(req, env);
-      // One-off data load during setup. Only works while the IMPORT_KEY secret exists; delete it after.
-      if (url.pathname === "/admin/import" && req.method === "POST") return adminImport(req, env);
+      await ensureSchema(env);
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -765,6 +929,7 @@ export default {
       if (tg) return json(await whoHasTag(env, can, decodeURIComponent(tg[1])));
       const m = url.pathname.match(/^\/api\/members\/(\d+)$/);
       if (m) return json(await memberDetail(env, who, can, +m[1]));
+      if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
       if (url.pathname === "/api/sync-now" && can.settings && req.method === "POST") {
         return json(await syncMembers(env));
       }
@@ -1641,20 +1806,79 @@ async function applyBlockRule(env) {
   ]);
 }
 
-/* ---------------- setup import ---------------- */
-// Loads the GymMaster export into D1 during setup. Locked by the IMPORT_KEY secret,
-// which is deleted straight after, so this route answers 404 the rest of the time.
-async function adminImport(req, env) {
-  const key = req.headers.get("X-M2-Import") || "";
-  if (!env.IMPORT_KEY || key.length !== env.IMPORT_KEY.length || key !== env.IMPORT_KEY) return new Response("Not found", { status: 404 });
-  const b = await req.json();
-  const list = Array.isArray(b.statements) ? b.statements.filter(x => typeof x === "string" && x.trim()) : [];
-  let done = 0;
-  for (let i = 0; i < list.length; i += 100) {
-    await env.DB.batch(list.slice(i, i + 100).map(x => env.DB.prepare(x)));
-    done += Math.min(100, list.length - i);
+/* ---------------- first run: the database sets itself up ---------------- */
+// Every table uses CREATE ... IF NOT EXISTS and every seed uses INSERT OR IGNORE,
+// so running it again is harmless. Checked once per worker start.
+let schemaReady = false;
+async function ensureSchema(env) {
+  if (schemaReady) return;
+  const have = await env.DB.prepare("SELECT count(*) n FROM sqlite_master WHERE type = 'table' AND name IN ('staff', 'member_photos', 'settings')").first();
+  if (!have || have.n < 3) {
+    const all = SCHEMA.concat(STAFF_SEED);
+    for (let i = 0; i < all.length; i += 40) await env.DB.batch(all.slice(i, i + 40).map(x => env.DB.prepare(x)));
   }
-  return json({ ok: true, done });
+  schemaReady = true;
+}
+
+/* ---------------- importing a GymMaster export ---------------- */
+// Owners upload GymMaster's "Current Memberships" CSV on the Import page. The browser reads
+// it and sends rows here in small batches; member data goes straight from the file to the
+// database. Safe to run again: members are updated in place, imported memberships replaced.
+const IMPORT_SQL = {
+  plans: `INSERT INTO plans(gm_type_name, gm_category, family, frequency, flexi, paid_in_full, corporate, employer, student, legacy, includes_classes, includes_recovery)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(gm_type_name, gm_category) DO UPDATE SET family = excluded.family, frequency = excluded.frequency, flexi = excluded.flexi,
+            paid_in_full = excluded.paid_in_full, corporate = excluded.corporate, employer = excluded.employer, student = excluded.student,
+            legacy = excluded.legacy, includes_classes = excluded.includes_classes, includes_recovery = excluded.includes_recovery`,
+  members: `INSERT INTO members(id, gm_id, first_name, last_name, passport_number, fp_id, fp_id_in_gm, email, mobile, gender, lead_source, status, joined_on, total_visits_gm)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
+            ON CONFLICT(id) DO UPDATE SET first_name = excluded.first_name, last_name = excluded.last_name,
+              passport_number = coalesce(excluded.passport_number, members.passport_number),
+              fp_id = coalesce(excluded.fp_id, members.fp_id), fp_id_in_gm = CASE WHEN excluded.fp_id IS NOT NULL THEN 1 ELSE members.fp_id_in_gm END,
+              email = coalesce(excluded.email, members.email), mobile = coalesce(excluded.mobile, members.mobile),
+              gender = coalesce(excluded.gender, members.gender), lead_source = coalesce(members.lead_source, excluded.lead_source),
+              status = 'active', joined_on = coalesce(members.joined_on, excluded.joined_on), total_visits_gm = excluded.total_visits_gm,
+              updated_at = datetime('now')`,
+  memberships: `INSERT INTO memberships(member_id, plan_id, price, weekly_value, start_date, min_term_end, end_date, status, billed_by, gm_billing_note, discount_code, sold_by)
+                SELECT ?, p.id, ?, ?, ?, ?, ?, 'current', ?, ?, ?, ? FROM plans p WHERE p.gm_type_name = ? AND p.gm_category = ?`,
+  billing: `INSERT OR IGNORE INTO billing_accounts(member_id, billed_by_system) VALUES (?, 'gymmaster')`,
+  flags: `INSERT OR IGNORE INTO member_flags(member_id, flag, detail) VALUES (?, ?, ?)`,
+  trials: `INSERT INTO leads(member_id, name, email, mobile, kind, source, stage, created_at, notes) VALUES (?, ?, ?, ?, 'trial', ?, ?, ?, 'gymmaster_import')`,
+};
+const IMPORT_COLS = { plans: 12, members: 13, memberships: 12, billing: 1, flags: 3, trials: 7 };
+
+async function importRows(env, who, can, b) {
+  if (!can.settings) return { ok: false, error: "Only Taylor and Tim can import." };
+  const db = env.DB;
+  if (b.step === "start") {
+    // Clear what the last import loaded, keeping everything staff have done in the Core.
+    await db.batch([
+      db.prepare(`DELETE FROM memberships WHERE plan_id IN (SELECT id FROM plans WHERE coalesce(gm_category,'') <> 'Sold in M2 Core')`),
+      db.prepare(`DELETE FROM member_flags WHERE flag IN ('passport','corporate','student') AND set_by IS NULL`),
+      b.history ? db.prepare(`DELETE FROM leads WHERE notes = 'gymmaster_import'`) : db.prepare("SELECT 1"),
+    ]);
+    const log = await db.prepare("INSERT INTO sync_log(source, started_at) VALUES ('gymmaster_csv', datetime('now')) RETURNING id").first();
+    return { ok: true, log: log.id };
+  }
+  if (b.step === "rows") {
+    const sql = IMPORT_SQL[b.table], n = IMPORT_COLS[b.table];
+    if (!sql || !Array.isArray(b.rows) || b.rows.length > 200) return { ok: false, error: "Bad import batch" };
+    const stmts = [];
+    for (const r of b.rows) {
+      if (!Array.isArray(r) || r.length !== n) return { ok: false, error: "Bad row in " + b.table };
+      stmts.push(db.prepare(sql).bind(...r.map(v => (v === undefined || v === "") ? null : v)));
+    }
+    if (stmts.length) await db.batch(stmts);
+    return { ok: true, done: stmts.length };
+  }
+  if (b.step === "finish") {
+    const stmts = [db.prepare("UPDATE sync_log SET finished_at = datetime('now'), rows_in = ?, rows_changed = ?, ok = 1 WHERE id = ?").bind(+b.rowsIn || 0, +b.rowsChanged || 0, +b.log || 0)];
+    if (b.fpLoaded) stmts.push(db.prepare("UPDATE settings SET value = '1' WHERE key = 'fp_ids_loaded'"));
+    await db.batch(stmts);
+    const n = await db.prepare("SELECT count(*) n FROM members WHERE status = 'active'").first();
+    return { ok: true, members: n.n };
+  }
+  return { ok: false, error: "Unknown step" };
 }
 
 /* ---------------- member photos ---------------- */

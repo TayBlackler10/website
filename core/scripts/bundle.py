@@ -8,5 +8,9 @@ imp = 'import { APP_HTML } from "./ui.js";'
 assert imp in w
 u = u.replace("export const APP_HTML", "const APP_HTML", 1)
 os.makedirs(os.path.join(here, "dist"), exist_ok=True)
+sc = open(os.path.join(here, "src/schema_sql.js")).read().replace("export const ", "const ")
+imp2 = 'import { SCHEMA, STAFF_SEED } from "./schema_sql.js";'
+assert imp2 in w
+w = w.replace(imp2, "// schema_sql.js (bundled)\n" + sc, 1)
 open(os.path.join(here, "dist/worker.bundle.js"), "w").write(w.replace(imp, "// ui.js (bundled)\n" + u, 1))
 print("dist/worker.bundle.js written")
