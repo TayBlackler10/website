@@ -14,7 +14,8 @@ database_id = "9a0cdcf5-5ae4-4415-9db7-02df2bb7c425"
 
 [vars]
 GM_BASE = "https://m2trainingclub.gymmasteronline.com/portal/api"
-ACCESS_TEAM = "PASTE_TEAM_NAME"   # the part before .cloudflareaccess.com
+ACCESS_TEAM = "taylor-3e5"
+ACCESS_AUD = "adc7385733432fc29a0046959fdad0c0b909df6be50faf285b05bcab1b43338b"   # Access application tag (not secret, it is in every sign-in token)
 GM_SITE = "https://m2trainingclub.gymmasteronline.com"
 COMPANY_ID = "4"
 ALLOWED_ORIGINS = "https://m2club.co.nz,https://www.m2club.co.nz"
