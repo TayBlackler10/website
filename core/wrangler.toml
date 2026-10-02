@@ -29,6 +29,7 @@ ALLOWED_ORIGINS = "https://m2club.co.nz,https://www.m2club.co.nz"
 BILLING_MODE = "gymmaster"
 EZIDEBIT_EDDR_BASE = ""    # Ezidebit eDDR form address for NZ, confirm with Ezidebit
 EZIDEBIT_PUBLIC_KEY = ""   # Ezidebit public key (not secret), from Ezidebit
+LAP_SIZE = "10"        # members checked per 15 minutes (balance and visits). Raise to 150 on the Workers Paid plan.
 FP_MEMBERSHIP_ID = "844596" # GymMaster membership type "Fitness Passport" (1,234 members, 3 Oct 2026)
 
 # Secrets, set with wrangler (never in this file, never in chat):

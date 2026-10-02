@@ -143,9 +143,31 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .line svg{width:100%;height:170px;display:block}
 .navlab{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E66;padding:14px 12px 4px}
 .tbl td.r,.tbl th.r{text-align:right;font-variant-numeric:tabular-nums}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.mcard{display:grid;grid-template-columns:116px minmax(0,1fr);background:#fff;border:0;border-radius:18px;overflow:hidden;text-align:left;cursor:pointer;padding:0;min-height:146px;color:inherit}
+.mcard:hover{box-shadow:0 0 0 2px var(--ink)}
+.mph{background:var(--tile);display:grid;place-items:center;overflow:hidden;min-height:100%}.mph img{width:100%;height:100%;object-fit:cover;display:block}
+.mph i{font:800 32px Archivo,Arial,sans-serif;color:var(--soft);font-style:normal}
+.mb{padding:13px 14px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}.mb b{font-size:16px;line-height:1.25}.mb>span{font-size:13px;overflow:hidden;text-overflow:ellipsis}
+.mft{margin-top:auto;padding-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+.wall.list{grid-template-columns:1fr;gap:6px}.wall.list .mcard{grid-template-columns:52px minmax(0,1fr);min-height:52px;border-radius:12px}
+.wall.list .mph i{font-size:16px}.wall.list .mb{flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 12px}.wall.list .mft{margin:0 0 0 auto;padding:0}
+.mtool{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.mtool select{height:48px;border:1px solid var(--line);border-radius:999px;padding:0 14px;background:#fff}
+.seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px;height:48px;align-items:center}.seg button{border:0;background:none;border-radius:999px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600}.seg button.on{background:var(--ink);color:var(--lime)}
+.prof{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}.pcol{display:flex;flex-direction:column;gap:18px;min-width:0}
+.face.xl{width:150px;height:150px;border-radius:24px;font-size:46px}
+.row3{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:start}
+.vis{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 2px;border-top:1px solid var(--line);cursor:pointer}
+.vis:hover{background:var(--tile)}
+.termsbox{border:1px solid var(--line);border-radius:12px;max-height:300px;overflow:auto;padding:14px 16px;font-size:13px;line-height:1.55;background:#FCFCFA}
+.termsbox h3{font-size:15px;margin:0 0 6px}.termsbox ul{padding-left:18px}
+.funnel{display:flex;flex-direction:column;gap:6px}.funnel div{display:grid;grid-template-columns:170px minmax(0,1fr) 90px;gap:10px;align-items:center;font-size:13.5px}
+.funnel i{display:block;height:26px;border-radius:8px;background:var(--ink)}.funnel div:nth-child(n+4) i{background:var(--olive)}.funnel b{text-align:right;font-variant-numeric:tabular-nums}
+.delta{font-size:12px;font-weight:600}.delta.up{color:#3C4400}.delta.down{color:var(--red)}
+.tips{display:flex;flex-direction:column;gap:8px}.tips div{background:var(--tile);border-radius:12px;padding:10px 14px;font-size:14px}
 [hidden]{display:none!important}a.btn,label.btn{text-decoration:none;display:inline-flex;align-items:center}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-@media (max-width:900px){.navlab{display:none}.hb{grid-template-columns:minmax(0,110px) minmax(0,1fr) 50px}.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:column;align-items:stretch;gap:10px;padding:12px}nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;min-width:0;max-width:100%}aside{min-width:0;max-width:100vw}.nav{width:auto;white-space:nowrap;padding:8px 12px}.me{display:none}.row2{grid-template-columns:1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px 14px 40px}}
+@media (max-width:900px){.prof,.row3{grid-template-columns:1fr}.wall{grid-template-columns:1fr}.funnel div{grid-template-columns:110px minmax(0,1fr) 70px}.navlab{display:none}.hb{grid-template-columns:minmax(0,110px) minmax(0,1fr) 50px}.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:column;align-items:stretch;gap:10px;padding:12px}nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;min-width:0;max-width:100%}aside{min-width:0;max-width:100vw}.nav{width:auto;white-space:nowrap;padding:8px 12px}.me{display:none}.row2{grid-template-columns:1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px 14px 40px}}
 @media (prefers-reduced-motion:no-preference){.card{animation:none}}
 </style></head><body>
 <div class="app">
@@ -153,10 +175,10 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <img src="https://m2club.co.nz/assets/img/m2-logo-lime.png" alt="M2 Training Club">
 <nav aria-label="Main">
 <button class="nav on" data-go="today">Today<span class="ct" id="ctToday" hidden></span></button>
+<button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
 <button class="nav" data-go="members">Members</button>
 <button class="nav" data-go="leads">Leads<span class="ct" id="ctLeads" hidden></span></button>
 <button class="nav" data-go="classes">Classes</button>
-<button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
 <button class="nav" data-go="collections" id="navCol" hidden>Money owed</button>
@@ -195,16 +217,29 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card" id="recentCard" hidden><h2>Joined lately</h2><div class="list" id="recent"></div></section>
 </div>
 </div>
+<div class="row3" style="margin-top:18px">
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>Recent visits</h2><span class="muted" id="rvCount"></span></div><div id="rvList"><div class="muted">Loading...</div></div></section>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Today's classes</h2><div id="tdClasses"><div class="muted">Loading...</div></div></section>
+<section class="card"><h2>Birthdays today</h2><div id="tdBday"></div></section>
+</div>
+</div>
 </section>
 
 <!-- MEMBERS -->
 <section data-view="members" hidden>
-<div style="margin-bottom:16px"><div class="eyebrow">Everyone in one place</div><h1>Members<span class="dot">.</span></h1></div>
-<label class="search" for="q"><span class="sr">Search members</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B5B55" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" autocomplete="off" placeholder="Name, email, mobile or key tag"></label>
-<div class="row2" style="margin-top:16px">
-<section class="card"><div class="list" id="results"><div class="muted">Start typing to find someone.</div></div></section>
-<div id="profile" style="display:flex;flex-direction:column;gap:18px;min-width:0"></div>
+<div id="mList">
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px"><div style="margin-right:auto"><div class="eyebrow">Everyone in GymMaster and the Core</div><h1>Members<span class="dot">.</span></h1></div><span class="muted" id="mCount"></span></div>
+<div class="mtool">
+<label class="search" for="q" style="flex:1;min-width:220px"><span class="sr">Search members</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B5B55" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" autocomplete="off" placeholder="Name, email, mobile or member number"></label>
+<label class="sr" for="mSort">Sort</label><select id="mSort"><option value="updated">Last updated</option><option value="name">Name A to Z</option><option value="joined">Newest members</option><option value="visits">Most visits this month</option><option value="newest">Newest in GymMaster</option></select>
+<div class="seg" role="group" aria-label="Layout"><button class="on" data-mv="grid">Cards</button><button data-mv="list">List</button></div>
 </div>
+<div class="chips" id="mTabs" style="margin:14px 0 16px"></div>
+<div id="mWall" class="wall"><div class="muted">Loading...</div></div>
+<div style="text-align:center;margin-top:16px"><button class="btn line" id="mMore" hidden>Show more</button></div>
+</div>
+<div id="mProf" hidden><button class="btn line sm" id="mBack" style="margin-bottom:14px">All members</button><div id="profile" class="prof"></div></div>
 </section>
 
 <!-- LEADS -->
@@ -213,6 +248,15 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div style="margin-right:auto"><div class="eyebrow">Every source, one inbox</div><h1>Leads<span class="dot">.</span></h1></div>
 <button class="btn line" id="newLeadBtn" hidden>Add a lead</button>
 </div>
+<section class="card dark" style="margin-bottom:14px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">Last 30 days</span><span class="muted" style="color:var(--soft)" id="lsNote"></span><button class="btn sm" id="lsRefresh" hidden style="margin-left:auto">Pull in from GymMaster</button></div><div class="tiles" id="lsTiles"></div></section>
+<div class="row3" style="margin-bottom:14px;grid-template-columns:repeat(3,minmax(0,1fr))">
+<section class="card"><h2>By type</h2><div id="lsKind"></div></section>
+<section class="card"><h2>By source</h2><div id="lsSource"></div></section>
+<section class="card"><h2>Leads by week</h2><div id="lsWeeks"></div></section>
+</div>
+<div class="mtool" style="margin-bottom:12px"><div class="seg" role="group" aria-label="Layout"><button class="on" data-lv="board">Board</button><button data-lv="list">List</button></div>
+<label class="sr" for="lStage">Stage</label><select id="lStage" hidden><option value="">Open, plus closed in 30 days</option><option value="new">New</option><option value="contacted">Contacted</option><option value="trial">On trial</option><option value="joined">Joined</option><option value="cold">Gone cold</option><option value="lost">Not for them</option></select>
+<label class="search" for="lQ" style="flex:1;min-width:200px;height:48px"><span class="sr">Search leads</span><input id="lQ" autocomplete="off" placeholder="Search leads"></label></div>
 <div class="chips" id="leadKinds" style="margin-bottom:14px"></div>
 <section class="card" id="newLeadCard" hidden style="margin-bottom:14px">
 <h2>Add a lead</h2>
@@ -230,6 +274,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 </section>
 <div class="row2" style="grid-template-columns:minmax(0,1fr)">
 <div class="board" id="board"><div class="muted">Loading...</div></div>
+<section class="card" id="leadList" hidden><div style="overflow-x:auto" id="leadTbl"></div></section>
 </div>
 <section class="card" id="leadPanel" hidden style="margin-top:14px"></section>
 </section>
@@ -280,9 +325,18 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div style="margin-right:auto"><div class="eyebrow">Live from GymMaster, the same as the M2 App</div><h1>Classes<span class="dot">.</span></h1></div>
 <button class="btn line sm" id="clsPrev">Last week</button><button class="btn line sm" id="clsNow">This week</button><button class="btn line sm" id="clsNext">Next week</button>
 </div>
+<section class="card dark" style="margin-bottom:18px"><div class="tiles" id="clsTiles"></div></section>
 <div class="row2">
 <section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="clsTitle">This week</h2><span class="muted" id="clsCount"></span></div><div id="clsWeek"><div class="muted">Loading...</div></div></section>
 <section class="card" id="clsPanel"><h2>Pick a class</h2><p class="muted" style="margin:0">See who's booked with their photos, and book people in or cancel them. Members who owe $250 or more can't be booked until it's paid.</p></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>How full each class runs</h2><span class="muted" id="csNote"></span></div><div id="csName"></div></section>
+<section class="card"><h2>By coach</h2><div id="csCoach"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>By time of day</h2><div id="csHour"></div></section>
+<section class="card"><h2>Bookings by week</h2><div id="csWeek"></div><h3 style="margin-top:8px">By day</h3><div id="csDay"></div></section>
 </div>
 </section>
 
@@ -330,6 +384,18 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card"><h2>5 Days for $5</h2><div style="overflow-x:auto" id="grTrials"></div></section>
 <section class="card"><h2>Leads, last 90 days</h2><div id="grLeads"></div></section>
 </div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Who trains here</h2><div class="row2" style="gap:14px"><div><h3>Age</h3><div id="grAge"></div></div><div><h3>Gender</h3><div id="grGender"></div></div></div></section>
+<section class="card"><h2>Where they live</h2><div id="grSuburbs"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>How long they've been with us</h2><div id="grTenure"></div></section>
+<section class="card"><h2>Weekly billing by membership</h2><div id="grRevenue"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Are they using it</h2><p class="muted" style="margin:0" id="grUsageNote"></p><div style="overflow-x:auto" id="grUsage"></div></section>
+<section class="card"><h2>Joins by membership, last 6 months</h2><div style="overflow-x:auto" id="grJoinFam"></div></section>
+</div>
 </section>
 
 <!-- MARKETING -->
@@ -349,6 +415,14 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card"><h2>Website visits by channel</h2><div style="overflow-x:auto" id="mkWeb"></div></section>
 </div>
 <section class="card" style="margin-top:18px"><h2>Leads in the Core by source</h2><div id="mkLeads"></div></section>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>From ad to member</h2><p class="muted" style="margin:0">This month. Website visits are paid channels only; leads and joins are the ones who said Instagram or Facebook.</p><div class="funnel" id="mkFunnel"></div></section>
+<section class="card"><h2>Worth knowing</h2><div class="tips" id="mkTips"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>This month against last</h2><div style="overflow-x:auto" id="mkVs"></div></section>
+<section class="card"><h2>Best days for ads</h2><p class="muted" style="margin:0">Cost per website visit by day of the week, last 8 weeks</p><div id="mkWeekday"></div></section>
+</div>
 </section>
 
 <!-- SETTINGS -->
@@ -396,6 +470,15 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 </div>
 <section class="card"><h2>Every Passport visit</h2><div class="list" id="fpRows"><div class="muted">Loading...</div></div></section>
 </div>
+<section class="card dark" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">This month from GymMaster's visit counts</span><span class="muted" style="color:var(--soft)" id="fpNowNote"></span></div><div class="tiles" id="fpNowTiles"></div></section>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Visits and pay by month</h2><div id="fpMonthsChart"></div><div style="overflow-x:auto" id="fpMonthsTbl"></div></section>
+<section class="card"><h2>How often Passport members train</h2><p class="muted" style="margin:0" id="fpFreqNote"></p><div id="fpFreq"></div><h3 style="margin-top:10px">New Passport members by month</h3><div id="fpJoins"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Stopped coming</h2><p class="muted" style="margin:0" id="fpSleepNote"></p><div class="list" id="fpSleep"></div></section>
+<section class="card"><h2>Most visits last month</h2><div class="list" id="fpTop"></div></section>
+</div>
 </section>
 
 <!-- ADD MEMBER -->
@@ -430,7 +513,9 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 </section>
 <section class="card">
 <h2><span class="stepn">3</span>Terms and signature</h2>
-<p class="muted" style="margin:0">Talk them through the membership terms, then they sign below.</p>
+<div class="termsbox" id="aTerms"><div class="muted">Pick a membership to see its contract.</div></div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a class="btn line sm" id="aPdf" target="_blank" rel="noopener" hidden>Open the contract as a PDF</a><span class="muted">Let them read it on screen or as a PDF, then sign. A signed copy is kept on their profile.</span></div>
+<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="aRead"> They've read the contract</label>
 <canvas id="sig" aria-label="Signature pad"></canvas>
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="agreed"> They've agreed to the terms</label><button class="btn line sm" id="sigClear" style="margin-left:auto">Clear signature</button></div>
 <div class="err" id="aErr"></div>
@@ -493,7 +578,7 @@ function nm(r){return ((r.first_name||"")+" "+(r.last_name||"")).trim()||r.name|
 var ME=null, VIEW="today";
 var OUT_LABEL={joined:"Joined",joining_at_desk:"Joining at the desk",call_back:"Call back",no_answer:"No answer",not_interested:"Not for them",paid:"Paid",billing_in:"Bank details in",tag_given:"Tag given",fp_in_gm:"It's in GymMaster",done:"Done"};
 var JOB_OUTS={new_lead:["joined","call_back","no_answer","not_interested"],missing_billing:["billing_in","call_back","no_answer"],trial_ending:["joined","joining_at_desk","call_back","no_answer","not_interested"],blocked:["paid","call_back","no_answer"],call_back:["joined","paid","call_back","no_answer","not_interested","done"],no_tag:["tag_given","done"],fp_id_gm:["fp_in_gm"],fp_missing:["call_back","no_answer"],no_photo:["done"]};
-var KIND={trial:"5 Days for $5",free_pt:"Free PT",unfinished_signup:"Unfinished sign-up",bring_a_mate:"Bring a Mate",app_upgrade:"App upgrade",website_form:"Enquiry",meta_form:"Meta form",walk_in:"Walk in"};
+var KIND={prospect:"GymMaster prospect",trial:"5 Days for $5",free_pt:"Free PT",unfinished_signup:"Unfinished sign-up",bring_a_mate:"Bring a Mate",app_upgrade:"App upgrade",website_form:"Enquiry",meta_form:"Meta form",walk_in:"Walk in"};
 
 function show(v){
  VIEW=v;
@@ -504,16 +589,16 @@ function show(v){
  if(v==="leads")loadLeads();
  if(v==="add")startAdd();
  if(v==="tag")setTimeout(function(){$("#lookTag").focus()},50);
- if(v==="passport")loadPassport();
+ if(v==="passport"){loadPassport();loadFpMore()}
  if(v==="reports")loadReport();
  if(v==="staff")loadStaff();
  if(v==="settings")loadSettings();
- if(v==="classes")loadClasses(CLS.week);
+ if(v==="classes"){loadClasses(CLS.week);loadClassStats()}
  if(v==="collections")loadCol();
  if(v==="money")loadMoney();
  if(v==="growth")loadGrowth();
- if(v==="marketing")loadMkt();
- if(v==="members")setTimeout(function(){$("#q").focus()},50);
+ if(v==="marketing"){loadMkt();loadMktMore()}
+ if(v==="members"){$("#mProf").hidden=true;$("#mList").hidden=false;loadWall(false);setTimeout(function(){$("#q").focus()},50)}
 }
 document.addEventListener("click",function(e){var b=e.target.closest("[data-go]");if(b){e.preventDefault();show(b.dataset.go)}});
 
@@ -553,6 +638,7 @@ function loadToday(){
  get("/api/today").then(function(d){
   TODAY=d;
   $("#todayDate").textContent=new Date().toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"long"});
+  loadTodayMore();
   var total=d.jobs.reduce(function(a,j){return a+j.count},0);
   $("#ctToday").hidden=!total;$("#ctToday").textContent=total;
   $("#doneToday").textContent=(d.done_today?d.done_today+" done today. ":"")+(d.joined_today?d.joined_today+" joined today.":"");
@@ -564,6 +650,30 @@ function loadToday(){
  });
 }
 $("#jobs").addEventListener("click",function(e){var b=e.target.closest("[data-job]");if(b)openJob(b.dataset.job)});
+function face(id,name,has){var ini=initials(name);return '<div class="face sm">'+(has?'<img loading="lazy" src="/api/members/'+id+'/photo" alt="" data-ini="'+esc(ini)+'">':esc(ini))+'</div>'}
+function ago(s){var t=new Date(String(s).replace(" ","T")+(String(s).length>16?"":":00"));var m=Math.round((Date.now()-t.getTime())/60000);if(isNaN(m))return "";if(m<1)return "just now";if(m<60)return m+" min ago";if(m<1440)return Math.round(m/60)+" h ago";return day(s)}
+function loadTodayMore(){
+ get("/api/visits/recent").then(function(d){
+  if(d.error){$("#rvList").innerHTML='<div class="muted">'+esc(d.error)+'</div>';return}
+  $("#tdBday").innerHTML=(d.birthdays||[]).map(function(b){return '<div class="vis" data-member="'+b.id+'">'+face(b.id,nm(b),b.has_photo)+'<span><b>'+esc(nm(b))+'</b></span><span class="pill ok">Happy birthday</span></div>'}).join("")||'<div class="muted">No birthdays today.</div>';
+  if(d.rows.length){
+   $("#rvCount").textContent=d.today+" in today";
+   $("#rvList").innerHTML=d.rows.slice(0,15).map(function(v){var f=v.flags||[];return '<div class="vis" data-member="'+v.id+'">'+face(v.id,nm(v),v.has_photo)+'<span><b>'+esc(nm(v))+'</b> <span class="muted">'+esc(v.plan||"")+(v.door?", "+esc(v.door):"")+'</span>'+(f.indexOf("blocked")>=0?' <span class="pill warn">Owes money</span>':"")+'</span><span class="muted">'+esc(ago(v.at))+'</span></div>'}).join("");
+   return;
+  }
+  // Until GymMaster's live visitor log is connected: who has trained most this month.
+  get("/api/members/browse?tab=visited&sort=visits&limit=12").then(function(b){
+   $("#rvCount").textContent=d.live?"No check-ins yet today":"Most visits this month";
+   $("#rvList").innerHTML=(!d.live?'<div class="muted" style="margin-bottom:6px">'+(ME.can.settings?"Live check-ins appear here once GymMaster's Report API key is added (Settings, Connections). Until then, this month's regulars:":"This month's regulars:")+'</div>':"")+
+    ((b.rows||[]).map(function(v){return '<div class="vis" data-member="'+v.id+'">'+face(v.id,nm(v),v.has_photo)+'<span><b>'+esc(nm(v))+'</b> <span class="muted">'+esc(v.plan||"")+'</span></span><span class="pill">'+v.visits_month+' visits</span></div>'}).join("")||'<div class="muted">Visit counts are still being copied from GymMaster.</div>');
+  });
+ });
+ get("/api/classes").then(function(d){
+  if(d.error){$("#tdClasses").innerHTML='<div class="muted">'+esc(d.error)+'</div>';return}
+  var td=(d.classes||[]).filter(function(c){return c.day===d.today});
+  $("#tdClasses").innerHTML=td.map(function(c){var full=c.max&&c.booked>=c.max;return '<div class="vis" data-go="classes"><b>'+esc(c.start)+'</b><span><b>'+esc(c.name)+'</b> <span class="muted">'+esc(c.coach||"")+'</span><div class="fill"><i class="'+(full?"full":"")+'" style="width:'+(c.max?Math.round(c.booked/c.max*100):0)+'%"></i></div></span><span class="pill'+(full?" dark":"")+'">'+c.booked+'/'+c.max+'</span></div>'}).join("")||'<div class="muted">No classes today.</div>';
+ });
+}
 function openJob(kind){
  var j=(TODAY.jobs||[]).find(function(x){return x.kind===kind});var p=$("#jobPanel");
  if(!j){p.hidden=true;p.dataset.kind="";return}
@@ -616,17 +726,50 @@ function send(it,kind,o,note,when,box){
 function alertIn(box,msg){var d=document.createElement("div");d.className="err";d.textContent=msg;box.appendChild(d)}
 
 /* ---------- members ---------- */
+var MW={tab:"current",sort:"updated",view:"grid",offset:0,q:""};
 var qt;
-$("#q").addEventListener("input",function(e){clearTimeout(qt);qt=setTimeout(function(){search(e.target.value)},250)});
-function search(v){
- if(v.trim().length<2){$("#results").innerHTML='<div class="muted">Start typing to find someone.</div>';return}
- get("/api/members?q="+encodeURIComponent(v)).then(function(d){
-  $("#results").innerHTML=(d.results||[]).map(function(m){return '<div class="r" data-member="'+m.id+'"><span><b>'+esc(nm(m))+'</b> <span class="muted">'+esc(m.plan||"")+'</span></span><span class="pill'+(m.family==="perform"?" dark":"")+'">'+esc(m.family||m.status)+'</span></div>'}).join("")||'<div class="muted">No one found.</div>';
+$("#q").addEventListener("input",function(e){clearTimeout(qt);qt=setTimeout(function(){MW.q=e.target.value.trim();loadWall(false)},280)});
+function search(v){MW.q=v;loadWall(false)}
+$("#mSort").addEventListener("change",function(e){MW.sort=e.target.value;loadWall(false)});
+$$("[data-mv]").forEach(function(b){b.addEventListener("click",function(){MW.view=b.dataset.mv;$$("[data-mv]").forEach(function(x){x.classList.toggle("on",x===b)});$("#mWall").classList.toggle("list",MW.view==="list")})});
+$("#mTabs").addEventListener("click",function(e){var b=e.target.closest("[data-mt]");if(!b)return;MW.tab=b.dataset.mt;loadWall(false)});
+$("#mMore").addEventListener("click",function(){loadWall(true)});
+$("#mBack").addEventListener("click",function(){$("#mProf").hidden=true;$("#mList").hidden=false;window.scrollTo(0,MW.scroll||0)});
+var MTABS=[["current","Current members"],["visited","Visited this month"],["passport","Fitness Passport"],["owing","Owing"],["prospects","Prospects"],["expired","Expired"],["everyone","Everyone"]];
+var MCOUNT={};
+function mcard(m){
+ var fl=m.flags||[],pills=[];
+ if(m.status==="active"&&m.gm_status==="Hold")pills.push('<span class="pill">On hold</span>');
+ if(m.status==="former")pills.push('<span class="pill">Left</span>');
+ if(m.status==="prospect")pills.push('<span class="pill">Prospect</span>');
+ if(fl.indexOf("passport")>=0)pills.push('<span class="pill">Passport</span>');
+ if(fl.indexOf("gifted_time")>=0)pills.push('<span class="pill">Gifted time</span>');
+ if(m.owing>0)pills.push('<span class="pill warn">Owes '+money(m.owing)+'</span>');
+ if(m.visits_month)pills.push('<span class="pill ok">'+m.visits_month+' visit'+(m.visits_month===1?"":"s")+' this month</span>');
+ var ini=initials(nm(m));
+ return '<button class="mcard" data-member="'+m.id+'"><span class="mph">'+(m.has_photo?'<img loading="lazy" src="/api/members/'+m.id+'/photo" alt="" data-ini="'+esc(ini)+'">':'<i>'+esc(ini)+'</i>')+'</span><span class="mb"><b>'+esc(nm(m))+'</b><span class="muted">#'+m.id+(m.joined_on&&m.status!=="prospect"?", joined "+esc(day(m.joined_on)):"")+'</span><span>'+esc(m.plan||(m.status==="prospect"?"Created "+day(m.created):""))+'</span><span class="mft">'+pills.join("")+'</span></span></button>';
+}
+function loadWall(more){
+ if(!more){MW.offset=0}
+ var u="/api/members/browse?tab="+MW.tab+"&sort="+MW.sort+"&offset="+MW.offset+"&limit=48"+(MW.q?"&q="+encodeURIComponent(MW.q):"");
+ if(!more)$("#mWall").innerHTML='<div class="muted">Loading...</div>';
+ get(u).then(function(d){
+  if(d.error){$("#mWall").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  if(d.counts&&d.counts.everyone!=null)MCOUNT=d.counts;
+  $("#mTabs").innerHTML=MTABS.map(function(t){var n=MCOUNT[t[0]];return '<button class="chip'+(t[0]===MW.tab?" on":"")+'" data-mt="'+t[0]+'">'+t[1]+(n!=null?" "+Number(n).toLocaleString("en-NZ"):"")+'</button>'}).join("");
+  var html=d.rows.map(mcard).join("");
+  if(more)$("#mWall").insertAdjacentHTML("beforeend",html);else $("#mWall").innerHTML=html||'<div class="muted">No one here.</div>';
+  MW.offset=d.offset+d.rows.length;
+  $("#mMore").hidden=MW.offset>=d.total;$("#mMore").textContent="Show more ("+(d.total-MW.offset).toLocaleString("en-NZ")+" left)";
+  $("#mCount").textContent=d.total.toLocaleString("en-NZ")+" people";
  });
 }
+document.addEventListener("error",function(e){var t=e.target;if(t&&t.tagName==="IMG"&&t.dataset&&t.dataset.ini!==undefined){var i=document.createElement("i");i.textContent=t.dataset.ini;t.parentNode.replaceChild(i,t)}},true);
 document.addEventListener("click",function(e){var r=e.target.closest("[data-member]");if(!r)return;e.preventDefault();openMember(+r.dataset.member)});
 function openMember(id){
  if(VIEW!=="members"){VIEW="members";$$("[data-view]").forEach(function(s){s.hidden=s.dataset.view!=="members"});$$(".nav").forEach(function(b){b.classList.toggle("on",b.dataset.go==="members")})}
+ else MW.scroll=window.scrollY;
+ $("#mList").hidden=true;$("#mProf").hidden=false;window.scrollTo(0,0);
  $("#profile").innerHTML='<section class="card"><div class="muted">Loading...</div></section>';
  get("/api/members/"+id).then(function(d){renderMember(d,id)});
 }
@@ -635,25 +778,26 @@ function renderMember(d,id){
  if(d.error){P.innerHTML='<section class="card"><div class="err">'+esc(d.error)+'</div></section>';return}
  var m=d.member,ms=d.memberships.filter(function(x){return x.status==="current"})[0]||d.memberships[0]||{};
  var isFp=ms.family==="passport"||d.flags.some(function(f){return f.flag==="passport"});
- var flags=d.flags.filter(function(f){return !(f.flag==="passport"&&ms.family==="passport")}).map(function(f){return '<span class="pill'+(f.flag==="blocked"?" warn":f.flag==="passport"?"":" ")+'">'+esc(f.flag.replace(/_/g," ")+(f.detail?": "+f.detail:""))+'</span>'}).join(" ");
+ var flags=d.flags.filter(function(f){return !(f.flag==="passport"&&ms.family==="passport")}).map(function(f){return '<span class="pill'+(f.flag==="blocked"?" warn":"")+'">'+esc(f.flag.replace(/_/g," ")+(f.detail?": "+f.detail:""))+'</span>'}).join(" ");
  var vis=d.visits||[],weeks=[];for(var w=11;w>=0;w--){var s=0;vis.forEach(function(v){var age=(Date.now()-new Date(v.day+"T00:00:00").getTime())/864e5;if(age>=w*7&&age<(w+1)*7)s+=v.n});weeks.push(s)}
  var mx=Math.max.apply(null,weeks.concat([1]));
+ var st={active:"Current member",former:"Left M2",prospect:"Prospect",frozen:"On hold"}[m.status]||m.status;
+ var ini=initials(nm(m)),hasPh=d.photo_at||m.photo_url;
  var bill=d.billing?'<section class="card"><h2>Billing</h2>'+(d.billing.balance_owing>0?'<div class="warnbox">Owes <b>'+money(d.billing.balance_owing)+'</b></div>':'<div class="muted">Nothing owing.</div>')+
    '<dl class="kv"><dt>Plan</dt><dd>'+esc(ms.plan||"-")+(ms.price?", "+money(ms.price)+" "+esc(ms.frequency||""):"")+'</dd><dt>Billed by</dt><dd>'+esc(d.billing.billed_by_system==="core"?"M2 Core":"GymMaster")+'</dd>'+(d.billing.free_weeks_credit?'<dt>Free weeks</dt><dd>'+d.billing.free_weeks_credit+' to apply</dd>':"")+(ms.min_term_end?'<dt>Lock-in ends</dt><dd>'+esc(day(ms.min_term_end))+'</dd>':"")+(ms.end_date?'<dt>Ends</dt><dd>'+esc(day(ms.end_date))+'</dd>':"")+'</dl>'+
    (ME.can.add?'<button class="btn line sm" data-bill="'+id+'" style="align-self:flex-start">Enter or update bank details</button>':"")+'</section>':"";
  var tagRows=d.tags.map(function(t){return '<div><span>'+esc(day(t.assigned_at))+'</span><span>'+esc(t.tag)+' <span class="pill'+(t.status==="active"?" ok":"")+'">'+esc(t.status)+'</span></span></div>'}).join("");
- P.innerHTML=
-  '<section class="card"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div class="face" id="pFace">'+(d.photo_at?'<img src="/api/members/'+id+'/photo?t='+encodeURIComponent(d.photo_at)+'" alt="Photo of '+esc(nm(m))+'">':esc(initials(nm(m))))+'</div><div style="margin-right:auto;min-width:0"><h2 style="font-size:26px">'+esc(nm(m))+'</h2><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill dark">'+esc(ms.plan||m.status)+'</span>'+flags+'</div></div></div>'+
-  '<dl class="kv"><dt>Member since</dt><dd>'+esc(day(m.joined_on))+'</dd><dt>Mobile</dt><dd>'+(m.mobile?'<a href="tel:'+esc(m.mobile)+'">'+esc(m.mobile)+'</a>':'<span class="muted">None</span>')+'</dd><dt>Email</dt><dd>'+esc(m.email||"None")+'</dd><dt>Goal</dt><dd>'+esc(m.goal||"Not recorded")+'</dd><dt>Came from</dt><dd>'+esc(m.lead_source||"Not recorded")+'</dd>'+(d.referrer?'<dt>Brought by</dt><dd><a href="#" data-member="'+d.referrer.id+'">'+esc(nm(d.referrer))+'</a></dd>':"")+(d.trainer?'<dt>Trainer</dt><dd>'+esc(d.trainer.name)+'</dd>':"")+(isFp?'<dt>Fitness Passport ID</dt><dd>'+(m.fp_id?esc(m.fp_id)+(m.fp_id_in_gm?"":' <span class="pill warn">Not in GymMaster yet</span>'):'<span class="pill warn">Missing. Passport can\'t pay for their visits</span>')+'</dd>':"")+(m.passport_number&&m.passport_number!==m.fp_id?'<dt>Old number in surname</dt><dd>'+esc(m.passport_number)+'</dd>':"")+'<dt>Visits, all time</dt><dd>'+esc(m.total_visits_gm||0)+'</dd>'+(d.last_visit?'<dt>Last visit</dt><dd>'+esc(day(d.last_visit))+'</dd>':"")+'<dt>Key tag</dt><dd>'+esc(m.key_tag||"None")+'</dd></dl>'+
-  (ME.can.add?'<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn '+(d.photo_at?"line":"dark")+' sm" data-photo="'+id+'" data-name="'+esc(nm(m))+'">'+(d.photo_at?"Retake photo":"Take photo")+'</button><button class="btn line sm" data-edit="'+id+'">Edit details</button><button class="btn line sm" data-tagfor="'+id+'">'+(m.key_tag?"Replace key tag":"Give key tag")+'</button><button class="btn line sm" data-flagfor="'+id+'">Flags</button></div>':"")+
-  '<div id="editBox"></div></section>'+
-  '<section class="card dark"><div class="next"><div><div class="eyebrow">Best next step</div><div style="font-size:16px;margin-top:4px">'+esc(d.next_step.text)+'</div></div></div></section>'+
-  '<div id="liveBox"><section class="card"><h2>Live from GymMaster</h2><div class="muted">Checking GymMaster...</div></section></div>'+
-  (vis.length?'<section class="card"><h2>Visits</h2><div class="bars">'+weeks.map(function(n,i){return '<i class="'+(i===11?"last":"")+'" style="height:'+Math.max(4,Math.round(n/mx*100))+'%" title="'+n+' visits"></i>'}).join("")+'</div><div class="muted">Last 12 weeks</div></section>':"")+
-  bill+
-  '<section class="card"><h2>Notes and history</h2><div style="display:flex;gap:8px"><label class="sr" for="noteIn">Add a note</label><input id="noteIn" class="fld" style="flex:1;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px" placeholder="Add a note, like what they said at the desk"><button class="btn dark sm" data-note="'+id+'" style="height:44px">Save</button></div>'+
-  '<div class="hist">'+(d.activity.map(function(a){return '<div><span>'+esc(day(a.at))+'</span><span>'+esc(a.detail)+(a.staff?' <span class="muted">'+esc(a.staff)+'</span>':"")+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>')+'</div></section>'+
-  (tagRows?'<section class="card"><h2>Key tags</h2><div class="hist">'+tagRows+'</div></section>':"");
+ var head='<section class="card"><div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap"><div class="face xl" id="pFace">'+(hasPh?'<img src="/api/members/'+id+'/photo?t='+encodeURIComponent(d.photo_at||"gm")+'" alt="Photo of '+esc(nm(m))+'" data-ini="'+esc(ini)+'">':esc(ini))+'</div>'+
+  '<div style="flex:1;min-width:200px"><div class="eyebrow">#'+id+', '+esc(st)+'</div><h2 style="font-size:28px;margin-top:2px">'+esc(nm(m))+'</h2><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><span class="pill dark">'+esc(ms.plan||st)+'</span>'+flags+'</div>'+
+  (ME.can.add?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn '+(hasPh?"line":"dark")+' sm" data-photo="'+id+'" data-name="'+esc(nm(m))+'">'+(d.photo_at?"Retake photo":"Take photo")+'</button><button class="btn line sm" data-edit="'+id+'">Edit details</button><button class="btn line sm" data-tagfor="'+id+'">'+(m.key_tag?"Replace key tag":"Give key tag")+'</button><button class="btn line sm" data-flagfor="'+id+'">Flags</button><a class="btn line sm" href="'+esc((window.GM_SITE||"https://m2trainingclub.gymmasteronline.com")+"/member/view/"+id)+'" target="_blank" rel="noopener">Open in GymMaster</a></div>':"")+'</div></div>'+
+  '<dl class="kv"><dt>Member since</dt><dd>'+esc(day(m.joined_on)||"-")+'</dd><dt>Mobile</dt><dd>'+(m.mobile?'<a href="tel:'+esc(m.mobile)+'">'+esc(m.mobile)+'</a>':'<span class="muted">None</span>')+'</dd><dt>Email</dt><dd>'+esc(m.email||"None")+'</dd><dt>Goal</dt><dd>'+esc(m.goal||"Not recorded")+'</dd><dt>Came from</dt><dd>'+esc(m.lead_source||"Not recorded")+'</dd>'+(d.referrer?'<dt>Brought by</dt><dd><a href="#" data-member="'+d.referrer.id+'">'+esc(nm(d.referrer))+'</a></dd>':"")+(d.trainer?'<dt>Trainer</dt><dd>'+esc(d.trainer.name)+'</dd>':"")+(isFp?'<dt>Fitness Passport ID</dt><dd>'+(m.fp_id?esc(m.fp_id)+(m.fp_id_in_gm?"":' <span class="pill warn">Not in GymMaster yet</span>'):'<span class="pill warn">Missing. Passport can\'t pay for their visits</span>')+'</dd>':"")+(m.passport_number&&m.passport_number!==m.fp_id?'<dt>Old number in surname</dt><dd>'+esc(m.passport_number)+'</dd>':"")+'<dt>Visits, all time</dt><dd>'+esc(m.total_visits_gm||0)+'</dd>'+(d.last_visit?'<dt>Last visit</dt><dd>'+esc(day(d.last_visit))+'</dd>':"")+'<dt>Key tag</dt><dd>'+esc(m.key_tag||"None")+'</dd></dl>'+
+  '<div id="editBox"></div></section>';
+ var next='<section class="card dark"><div class="next"><div><div class="eyebrow">Best next step</div><div style="font-size:16px;margin-top:4px">'+esc(d.next_step.text)+'</div></div></div></section>';
+ var visits=vis.length?'<section class="card"><h2>Visits</h2><div class="bars">'+weeks.map(function(n,i){return '<i class="'+(i===11?"last":"")+'" style="height:'+Math.max(4,Math.round(n/mx*100))+'%" title="'+n+' visits"></i>'}).join("")+'</div><div class="muted">Last 12 weeks</div></section>':"";
+ var notes='<section class="card"><h2>Notes and history</h2><div style="display:flex;gap:8px"><label class="sr" for="noteIn">Add a note</label><input id="noteIn" class="fld" style="flex:1;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px" placeholder="Add a note, like what they said at the desk"><button class="btn dark sm" data-note="'+id+'" style="height:44px">Save</button></div>'+
+  '<div class="hist">'+(d.activity.map(function(a){return '<div><span>'+esc(day(a.at))+'</span><span>'+esc(a.detail)+(a.staff?' <span class="muted">'+esc(a.staff)+'</span>':"")+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>')+'</div></section>';
+ P.innerHTML='<div class="pcol">'+head+next+'<div id="gmBox"></div>'+(tagRows?'<section class="card"><h2>Key tags</h2><div class="hist">'+tagRows+'</div></section>':"")+'</div>'+
+  '<div class="pcol"><div id="liveBox"><section class="card"><h2>Live from GymMaster</h2><div class="muted">Checking GymMaster...</div></section></div>'+visits+bill+notes+'</div>';
  loadLive(id);
 }
 document.addEventListener("click",function(e){
@@ -672,8 +816,33 @@ function fillSelect(el,list,val){el.innerHTML='<option value="">Pick one</option
 
 /* ---------- leads ---------- */
 var LEADS=null,LKIND="",STAFF=[];
+var LV={view:"board",stage:"",q:""};
+$$("[data-lv]").forEach(function(b){b.addEventListener("click",function(){LV.view=b.dataset.lv;$$("[data-lv]").forEach(function(x){x.classList.toggle("on",x===b)});$("#lStage").hidden=LV.view!=="list";loadLeads()})});
+$("#lStage").addEventListener("change",function(e){LV.stage=e.target.value;loadLeads()});
+var lqt;$("#lQ").addEventListener("input",function(e){clearTimeout(lqt);lqt=setTimeout(function(){LV.q=e.target.value.trim();if(LV.q&&LV.view==="board"){$$("[data-lv]")[1].click();return}loadLeads()},280)});
+$("#lsRefresh").addEventListener("click",function(){var b=$("#lsRefresh");b.disabled=true;b.textContent="Pulling in...";post("/api/leads/rebuild",{}).then(function(r){b.disabled=false;b.textContent="Pull in from GymMaster";loadLeads()})});
+var STG={new:"New",contacted:"Contacted",trial:"On trial",joined:"Joined",cold:"Gone cold",lost:"Not for them"};
+function loadLeadStats(){
+ get("/api/leads/stats").then(function(d){
+  if(d.error)return;
+  var t=d.total||{n:0,joined:0,touched:0},w=(d.stages||[]).filter(function(x){return x.stage==="new"}).reduce(function(a,x){return a+x.n},0);
+  $("#lsTiles").innerHTML=tile(t.n,"Leads")+tile(w,"Waiting for a first contact")+tile(t.n?Math.round(t.touched/t.n*100)+"%":"-","Contacted")+tile(t.joined,"Joined")+tile(t.n?Math.round(t.joined/t.n*100)+"%":"-","Became members")+tile(d.response_hours!=null?(d.response_hours<48?d.response_hours+" h":Math.round(d.response_hours/24)+" days"):"-","Average time to first contact");
+  $("#lsNote").textContent=d.pt_connected?"":"Free PT form leads join once the PT key is added.";
+  $("#lsRefresh").hidden=!ME.can.settings;
+  $("#lsKind").innerHTML=hbars((d.by||[]).map(function(x){return [x.label+(x.joined?" ("+x.joined+" joined)":""),x.n]}));
+  $("#lsSource").innerHTML=hbars((d.sources||[]).map(function(x){return [x.source,x.n]}));
+  $("#lsWeeks").innerHTML=(d.weeks||[]).length?bars(d.weeks.map(function(x){return {label:day(x.day),vals:[x.n,x.joined||0]}}),[{name:"Leads",cls:""},{name:"Joined",cls:"s2"}]):'<div class="muted">Nothing yet.</div>';
+ });
+}
 function loadLeads(){
- get("/api/leads"+(LKIND?"?kind="+LKIND:"")).then(function(d){
+ loadLeadStats();
+ var qs=[];if(LKIND)qs.push("kind="+LKIND);if(LV.view==="list"){if(LV.stage)qs.push("stage="+LV.stage);if(LV.q)qs.push("q="+encodeURIComponent(LV.q));qs.push("days=90")}
+ $("#board").hidden=LV.view!=="board";$("#leadList").hidden=LV.view!=="list";
+ get("/api/leads"+(qs.length?"?"+qs.join("&"):"")).then(function(d){
+  if(LV.view==="list"){
+   var L=d.leads||[];
+   $("#leadTbl").innerHTML=L.length?'<table class="tbl"><thead><tr><th>Name</th><th>Type</th><th>Source</th><th>Stage</th><th>Came in</th><th>Assigned</th><th>Mobile</th></tr></thead><tbody>'+L.map(function(l){return '<tr data-lead="'+l.id+'" style="cursor:pointer"><td><b>'+esc(l.name||l.email||l.mobile||"No name")+'</b></td><td>'+esc(KIND[l.kind]||l.kind)+'</td><td>'+esc(l.source||"")+'</td><td><span class="pill'+(l.stage==="new"?" warn":l.stage==="joined"?" ok":"")+'">'+esc(STG[l.stage]||l.stage)+'</span></td><td>'+esc(day(l.created_at))+'</td><td>'+esc(l.assigned_name||"")+'</td><td>'+esc(l.mobile||"")+'</td></tr>'}).join("")+'</tbody></table>':'<div class="muted">No leads here.</div>';
+  }
   LEADS=d.leads||[];
   var open=LEADS.filter(function(l){return l.stage==="new"}).length;$("#ctLeads").hidden=!open;$("#ctLeads").textContent=open;
   var kinds=Object.keys(d.counts||{});
@@ -685,6 +854,7 @@ function loadLeads(){
 }
 $("#leadKinds").addEventListener("click",function(e){var b=e.target.closest("[data-k]");if(!b)return;LKIND=b.dataset.k;loadLeads()});
 $("#board").addEventListener("click",function(e){var b=e.target.closest("[data-lead]");if(b)openLead(+b.dataset.lead)});
+$("#leadTbl").addEventListener("click",function(e){var b=e.target.closest("[data-lead]");if(b)openLead(+b.dataset.lead)});
 function openLead(id){
  get("/api/leads/"+id).then(function(d){
   var p=$("#leadPanel");p.hidden=false;
@@ -820,6 +990,10 @@ function loadClasses(w){
   var mon=new Date(d.week+"T12:00:00");
   $("#clsTitle").textContent=(d.today>=d.week&&d.today<d.next?"This week":"Week of "+mon.toLocaleDateString("en-NZ",{day:"numeric",month:"long"}));
   $("#clsCount").textContent=d.classes.length+" classes, "+d.classes.reduce(function(a,c){return a+c.booked},0)+" booked";
+  var bk=0,sp=0,fu=0,wl=0,qu=0,top=null;d.classes.forEach(function(c){bk+=c.booked;sp+=c.max;if(c.max&&c.booked>=c.max)fu++;wl+=c.waitlist||0;if(c.day>=d.today&&c.max&&c.booked/c.max<0.25)qu++;if(!top||c.booked>top.booked)top=c});
+  var types={};d.classes.forEach(function(c){var t=types[c.name]=types[c.name]||{b:0,s:0};t.b+=c.booked;t.s+=c.max});
+  var best=Object.keys(types).sort(function(a,b){return types[b].b/Math.max(types[b].s,1)-types[a].b/Math.max(types[a].s,1)})[0];
+  $("#clsTiles").innerHTML=tile(d.classes.length,"Classes this week")+tile(bk,"Spots booked")+tile(sp?Math.round(bk/sp*100)+"%":"-","How full, on average")+tile(fu,"Full classes")+tile(wl,"On waitlists")+tile(qu,"Coming up under a quarter full")+(best?tile(best,"Fullest class type"):"");
   var by={};d.classes.forEach(function(c){(by[c.day]=by[c.day]||[]).push(c)});
   $("#clsWeek").innerHTML=Object.keys(by).sort().map(function(dy){
    var dd=new Date(dy+"T12:00:00");
@@ -829,6 +1003,16 @@ function loadClasses(w){
  });
 }
 $("#clsPrev").addEventListener("click",function(){if(CLS.data)loadClasses(CLS.data.prev)});
+function pctRows(list){return hbars(list.map(function(x){return [x.k+" ("+x.classes+")",x.fill||0]}),function(v){return v+"%"})}
+function loadClassStats(){
+ get("/api/classes/stats").then(function(d){
+  if(!d.tracked){$("#csNote").textContent="Builds up as classes run.";}
+  else $("#csNote").textContent=d.tracked+" classes tracked since "+day(d.since);
+  $("#csName").innerHTML=pctRows(d.byName||[]);$("#csCoach").innerHTML=pctRows(d.byCoach||[]);$("#csHour").innerHTML=pctRows(d.byHour||[]);
+  $("#csDay").innerHTML=pctRows((d.byDay||[]).map(function(x){return {k:x.k.slice(2),classes:x.classes,fill:x.fill}}));
+  $("#csWeek").innerHTML=(d.byWeek||[]).length?bars(d.byWeek.map(function(w){return {label:day(w.k),vals:[w.booked||0,w.spots||0]}}),[{name:"Booked",cls:""},{name:"Spots",cls:"s1"}]):'<div class="muted">Nothing yet.</div>';
+ });
+}
 $("#clsNext").addEventListener("click",function(){if(CLS.data)loadClasses(CLS.data.next)});
 $("#clsNow").addEventListener("click",function(){loadClasses(null)});
 $("#clsWeek").addEventListener("click",function(e){var b=e.target.closest("[data-cls]");if(!b)return;var c=CLS.data.classes.find(function(x){return String(x.id)===b.dataset.cls});CLS.cur=c;$$(".cls").forEach(function(x){x.classList.toggle("on",x===b)});openClass(c)});
@@ -867,7 +1051,18 @@ function loadLive(id){
   if(d.bookings&&d.bookings.length)h+='<h3>Booked in</h3><div class="hist">'+d.bookings.map(function(b){return '<div><span>'+esc(day(b.day))+" "+esc(b.time)+'</span><span>'+esc(b.name)+(b.waitlist?' <span class="pill warn">Waitlist</span>':"")+'</span></div>'}).join("")+'</div>';
   if(d.visits&&d.visits.length){h+='<h3>Visits by month</h3>'+bars(d.visits.map(function(v){return {label:MON[(v.month-1+12)%12]||v.month,vals:[v.visits]}}),[{name:"Visits",cls:""}],function(x){return x+" visits"})}
   if(d.history&&d.history.length)h+='<h3>Account</h3><div style="overflow-x:auto">'+table([["When","when"],["What","note"],["Charged","debit",1],["Paid",function(r){return r.credit||""},1],["Balance","total",1]],d.history)+'</div>';
-  B.innerHTML=h+'</section>';
+  B.innerHTML=h+'</section>'+(d.contracts&&d.contracts.length?'<section class="card"><h2>Signed contracts</h2><div class="hist">'+d.contracts.map(function(c){return '<div><span>'+esc(day(c.signed_at))+'</span><span>'+esc(c.plan||"Membership")+(c.staff?' <span class="muted">with '+esc(c.staff)+'</span>':"")+' <a href="/api/members/'+id+'/contracts/'+c.id+'" target="_blank" rel="noopener">View or save as PDF</a></span></div>'}).join("")+'</div></section>':"");
+  var p=d.profile,G=$("#gmBox");
+  if(p&&G){
+   var age=p.dob?Math.floor((Date.now()-new Date(p.dob+"T00:00:00").getTime())/31557600000):null;
+   var t=p.totals||{};
+   G.innerHTML='<section class="card"><h2>From their GymMaster profile</h2><div class="tiles">'+tile((t.visits||0).toLocaleString("en-NZ"),"Visits")+tile(t.classes||0,"Classes")+tile(t.bookings||0,"Bookings")+(p.streak?tile(p.streak,"Week streak"):"")+'</div>'+
+    '<dl class="kv">'+(age!=null?'<dt>Age</dt><dd>'+age+' ('+esc(day(p.dob))+')</dd>':"")+(p.address?'<dt>Address</dt><dd>'+esc(p.address)+'</dd>':"")+(p.occupation?'<dt>Work</dt><dd>'+esc(p.occupation)+'</dd>':"")+
+    (p.emergency&&p.emergency.length?'<dt>Emergency</dt><dd>'+p.emergency.map(function(e){return esc([e.name,e.relationship&&"("+e.relationship+")"].filter(Boolean).join(" "))+(e.phone?' <a href="tel:'+esc(e.phone)+'">'+esc(e.phone)+'</a>':"")}).join("<br>")+'</dd>':'<dt>Emergency</dt><dd><span class="pill warn">None on file</span></dd>')+
+    (p.medical?'<dt>Medical</dt><dd>'+esc(p.medical)+'</dd>':"")+(p.has_billing!==undefined?'<dt>Bank or card</dt><dd>'+(p.has_billing?'<span class="pill ok">On file</span>':'<span class="pill warn">None on file</span>')+'</dd>':"")+
+    (p.tag?'<dt>Tag in GymMaster</dt><dd>'+esc(p.tag)+'</dd>':"")+(p.staff?'<dt>Added by</dt><dd>'+esc(p.staff)+(p.created?", "+esc(day(p.created)):"")+'</dd>':"")+
+    (p.linked&&p.linked.length?'<dt>Linked</dt><dd>'+p.linked.map(function(x){return '<a href="#" data-member="'+x.id+'">'+esc(x.name||("#"+x.id))+'</a>'}).join(", ")+'</dd>':"")+'</dl></section>';
+  }
  });
 }
 
@@ -955,6 +1150,22 @@ function loadGrowth(){
   $("#grTrials").innerHTML=d.trials.length?table([["Month",function(x){return MON[+x.month.slice(5,7)-1]+" "+x.month.slice(0,4)}],["Trials","n",1],["Joined","joined",1],["Joined %",function(x){return x.n?Math.round((x.joined||0)/x.n*100)+"%":""},1]],d.trials.slice().reverse()):'<div class="muted">No trials yet.</div>';
   $("#grLeads").innerHTML=hbars(d.leads.map(function(x){return [(KIND[x.kind]||x.kind)+(x.joined?" ("+x.joined+" joined)":""),x.n]}));
  });
+ get("/api/growth/more").then(function(d){
+  if(d.error)return;
+  var n=function(v){return Number(v||0).toLocaleString("en-NZ")};
+  $("#grAge").innerHTML=hbars(d.age.map(function(x){return [x.band,x.n]}),n);
+  $("#grGender").innerHTML=hbars(d.gender.map(function(x){return [x.g,x.n]}),n);
+  $("#grSuburbs").innerHTML=hbars(d.suburbs.map(function(x){return [x.s,x.n]}),n);
+  var order=["Under 3 months","3 to 6 months","6 to 12 months","1 to 2 years","2 years plus","Unknown"];
+  $("#grTenure").innerHTML=hbars(d.tenure.slice().sort(function(a,b){return order.indexOf(a.band)-order.indexOf(b.band)}).map(function(x){return [x.band,x.n]}),n);
+  var F={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",transporter:"Transporter",passport:"Fitness Passport",pass:"Visit pass",pool:"Pool",trial:"Trial",staff:"Staff",other:"Other",challenge:"Challenge"};
+  $("#grRevenue").innerHTML=hbars(d.revenue.map(function(x){return [(F[x.family]||x.family)+" ("+x.n+")",x.weekly]}),whole$);
+  $("#grUsageNote").textContent="Visits in "+MON[+d.last_ym.slice(5,7)-1]+", for members whose counts have been copied from GymMaster.";
+  $("#grUsage").innerHTML=d.usage.length?table([["",function(x){return x.who}],["None",function(x){return n(x.none)+" ("+Math.round(x.none/x.n*100)+"%)"},1],["1 to 4",function(x){return n(x.light)},1],["5 to 11",function(x){return n(x.regular)},1],["12 plus",function(x){return n(x.keen)},1]],d.usage):'<div class="muted">Visit counts are still being copied.</div>';
+  var fams={},ms={};d.joins_by_family.forEach(function(x){fams[x.family]=1;(ms[x.month]=ms[x.month]||{})[x.family]=x.n});
+  var fk=Object.keys(fams).sort(),mk=Object.keys(ms).sort();
+  $("#grJoinFam").innerHTML=mk.length?table([["Month",function(m){return MON[+m.slice(5,7)-1]}]].concat(fk.map(function(f){return [F[f]||f,function(m){return ms[m][f]||""},1]})),mk):'<div class="muted">Nothing yet.</div>';
+ });
 }
 
 /* ---------- marketing (owners) ---------- */
@@ -976,7 +1187,29 @@ function loadMkt(){
   $("#mkLeads").innerHTML=hbars(d.core_leads.map(function(x){return [x.source+(x.joined?" ("+x.joined+" joined)":""),x.n]}));
  });
 }
-$("#mkMonth").addEventListener("change",loadMkt);
+$("#mkMonth").addEventListener("change",function(){loadMkt();loadMktMore()});
+function dl(a,b,inv){if(!b)return "";var c=Math.round((a-b)/b*100);if(!isFinite(c))return "";var good=inv?c<0:c>0;return ' <span class="delta '+(c===0?"":good?"up":"down")+'">'+(c>0?"+":"")+c+'%</span>'}
+function loadMktMore(){
+ var m=$("#mkMonth").value;
+ get("/api/marketing/more"+(m?"?month="+m:"")).then(function(d){
+  if(d.error)return;
+  var a=d.now||{},b=d.before||{},pw=d.paid_web||{},l=d.leads||{},j=d.joins||{};
+  var steps=[["Seen the ads",a.impressions||0],["Clicked",a.clicks||0],["Reached the website",a.views||0],["Website visits from paid",pw.sessions||0],["Leads from Instagram or Facebook",l.social||0],["Joined from Instagram or Facebook",j.social||0]];
+  var top=Math.max(1,steps[0][1]);
+  $("#mkFunnel").innerHTML=steps.map(function(s){return '<div><span>'+esc(s[0])+'</span><span><i style="width:'+Math.max(1.5,Math.sqrt(s[1]/top)*100)+'%"></i></span><b>'+Number(s[1]).toLocaleString("en-NZ")+'</b></div>'}).join("");
+  $("#mkTips").innerHTML=(d.tips||[]).map(function(t){return '<div>'+esc(t)+'</div>'}).join("")||'<div>Not enough data this month yet.</div>';
+  var rows=[["Ad spend",money(a.spend),money(b.spend),dl(a.spend,b.spend,true)],["Website visits from ads",(a.views||0).toLocaleString("en-NZ"),(b.views||0).toLocaleString("en-NZ"),dl(a.views,b.views)],
+   ["Cost per website visit",a.views?money(a.spend/a.views):"-",b.views?money(b.spend/b.views):"-",a.views&&b.views?dl(a.spend/a.views,b.spend/b.views,true):""],
+   ["Click rate",a.impressions?(a.clicks/a.impressions*100).toFixed(2)+"%":"-",b.impressions?(b.clicks/b.impressions*100).toFixed(2)+"%":"-",""],
+   ["All website visits",((d.web||{}).sessions||0).toLocaleString("en-NZ"),((d.web_prev||{}).sessions||0).toLocaleString("en-NZ"),dl((d.web||{}).sessions,(d.web_prev||{}).sessions)],
+   ["Leads in the Core",l.n||0,(d.leads_prev||{}).n||0,dl(l.n,(d.leads_prev||{}).n)],["New members",j.n||0,(d.joins_prev||{}).n||0,dl(j.n,(d.joins_prev||{}).n)]];
+  $("#mkVs").innerHTML='<table class="tbl"><thead><tr><th></th><th class="r">'+esc(ml(d.month))+'</th><th class="r">'+esc(ml(d.prev))+'</th><th class="r">Change</th></tr></thead><tbody>'+rows.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td class="r">'+esc(r[1])+'</td><td class="r">'+esc(r[2])+'</td><td class="r">'+r[3]+'</td></tr>'}).join("")+'</tbody></table>';
+  var WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  $("#mkWeekday").innerHTML=hbars((d.weekday||[]).map(function(x){return [WD[+x.d],x.views?x.spend/x.views:0]}),function(v){return "$"+v.toFixed(2)});
+  if(d.campaigns&&d.campaigns.length){var tot=d.campaigns.reduce(function(s,c){return s+c.spend},0);
+   $("#mkCamps").innerHTML=table([["Campaign","campaign"],["Spend",function(x){return money(x.spend)},1],["Share",function(x){return Math.round(x.spend/tot*100)+"%"},1],["Seen by",function(x){return (x.impressions||0).toLocaleString("en-NZ")},1],["Click rate",function(x){return x.impressions?(x.clicks/x.impressions*100).toFixed(2)+"%":"-"},1],["Per click",function(x){return x.clicks?money(x.spend/x.clicks):"-"},1],["Website visits",function(x){return (x.views||0).toLocaleString("en-NZ")},1],["Per visit",function(x){return x.views?money(x.spend/x.views):"-"},1]],d.campaigns)}
+ });
+}
 
 /* ---------- settings ---------- */
 var FAMS={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",transporter:"Transporter",passport:"Fitness Passport",pass:"Visit pass",pool:"Pool",trial:"Trial",challenge:"Challenge",staff:"Staff",other:"Other"};
@@ -1130,6 +1363,28 @@ function loadPassport(){
  });
 }
 $("#fpMonth").addEventListener("change",loadPassport);
+function loadFpMore(){
+ get("/api/passport/insights").then(function(d){
+  if(d.error)return;
+  var tm=d.this_month,cv=d.cover||{n:0,swept:0};
+  var t=[[tm.visits.toLocaleString("en-NZ"),"Passport visits so far this month"],[tm.pace.toLocaleString("en-NZ"),"Heading for, at this pace"]];
+  if(d.money){t.push([money(d.money.pace.total),"Pay at this pace (incl GST)"],[money(d.money.pace.rate),"Rate per visit at that level"],[d.money.pace.visits_to_next_tier==null?"Top rate":d.money.pace.visits_to_next_tier.toLocaleString("en-NZ"),"More visits for the next rate"])}
+  t.push([(d.sleeper_count||0).toLocaleString("en-NZ"),"Passport members with no visits last month"]);
+  $("#fpNowTiles").innerHTML=t.map(function(x){return tile(x[0],x[1])}).join("");
+  $("#fpNowNote").textContent=cv.n?("Counts copied for "+(cv.swept||0)+" of "+cv.n+" Passport members so far. The Core refreshes them through the day."):"";
+  var months=d.months||[],mm={};months.forEach(function(m){mm[m.month]=m});(d.sweep||[]).forEach(function(s){mm[s.month]=mm[s.month]||{month:s.month};mm[s.month].swept=s.visits});
+  var keys=Object.keys(mm).sort().slice(-12),est={};if(d.money)d.money.months.forEach(function(x){est[x.month]=x});
+  $("#fpMonthsChart").innerHTML=keys.length?bars(keys.map(function(k){var x=mm[k];return {label:ml(k),vals:[x.visits||x.swept||0]}}),[{name:"Visits",cls:""}],function(v){return v+" visits"}):'<div class="muted">Nothing yet.</div>';
+  $("#fpMonthsTbl").innerHTML=keys.length?table([["Month",function(x){return MON[+x.month.slice(5,7)-1]+" "+x.month.slice(0,4)}],["Visits",function(x){return (x.visits||x.swept||0).toLocaleString("en-NZ")},1],["New members",function(x){return x.signups==null?"":x.signups},1]].concat(d.money?[["Pay from tiers",function(x){var e=est[x.month];return e&&e.estimate?money(e.estimate):""},1],["Paid",function(x){return x.paid?money(x.paid):""},1]]:[]),keys.slice().reverse().map(function(k){return mm[k]})):"";
+  var f=d.freq||[],tot=f.reduce(function(a,x){return a+x.n},0);
+  $("#fpFreqNote").textContent=tot?("Visits in "+MON[+d.last_ym.slice(5,7)-1]+" by "+tot.toLocaleString("en-NZ")+" Passport members with counts copied. More visits means Passport pays more per visit for everyone."):"Visit counts are still being copied from GymMaster.";
+  $("#fpFreq").innerHTML=hbars(f.map(function(x){return [x.band+" visits",x.n]}),function(n){return n.toLocaleString("en-NZ")});
+  $("#fpJoins").innerHTML=(d.joins||[]).length?bars(d.joins.slice(-12).map(function(x){return {label:ml(x.month),vals:[x.n]}}),[{name:"New",cls:""}]):'<div class="muted">Nothing yet.</div>';
+  $("#fpSleepNote").textContent=(d.sleeper_count||0)+" Passport members didn't come in last month and haven't been in this month. Every visit they make earns M2 money: a quick text or call brings some back.";
+  $("#fpSleep").innerHTML=(d.sleepers||[]).slice(0,40).map(function(r){return '<div class="r" data-member="'+r.id+'"><span><b>'+esc(nm(r))+'</b> <span class="muted">'+(r.last_month?"last came in "+ml(r.last_month):"no visits in a year")+'</span></span>'+(r.mobile?'<a class="pill" href="tel:'+esc(r.mobile)+'">'+esc(r.mobile)+'</a>':"")+'</div>'}).join("")||'<div class="muted">Nobody yet, or counts are still being copied.</div>';
+  $("#fpTop").innerHTML=(d.top||[]).map(function(r){return '<div class="r" data-member="'+r.id+'"><span><b>'+esc(nm(r))+'</b></span><span class="pill ok">'+r.visits+' visits</span></div>'}).join("")||'<div class="muted">Nothing yet.</div>';
+ });
+}
 $("#fpNoId").addEventListener("click",function(e){
  var b=e.target.closest("[data-fpadd]");if(!b)return;e.stopPropagation();
  var box=b.closest(".person");
@@ -1164,7 +1419,17 @@ $("#fam").addEventListener("click",function(e){var b=e.target.closest("[data-f]"
 function fpToggle(){var on=$("#passport").checked||pick.fam==="passport";$("#fpWrap").hidden=!on;$("#mateWrap").hidden=on;if(on){mate=null;$("#mateSel").textContent=""}}
 $("#freq").addEventListener("click",function(e){var b=e.target.closest("[data-q]");if(!b)return;pick.freq=b.dataset.q;sel=null;drawPlans()});
 $("#flexi").addEventListener("change",function(){sel=null;drawPlans()});
-$("#plans").addEventListener("click",function(e){var b=e.target.closest("[data-p]");if(!b)return;sel=PL.find(function(p){return p.id===+b.dataset.p});drawPlans()});
+$("#plans").addEventListener("click",function(e){var b=e.target.closest("[data-p]");if(!b)return;sel=PL.find(function(p){return p.id===+b.dataset.p});drawPlans();loadTerms()});
+function loadTerms(){
+ if(!sel){return}
+ $("#aRead").checked=false;$("#aTerms").innerHTML='<div class="muted">Loading the contract from GymMaster...</div>';
+ var price=sel.price+" "+(sel.priceDescription||"");
+ $("#aPdf").href="/contract?plan="+sel.id+"&name="+encodeURIComponent(sel.name)+"&price="+encodeURIComponent(price);$("#aPdf").hidden=false;
+ get("/api/agreement?plan="+sel.id).then(function(d){
+  if(!d.ok||!d.agreements.length){$("#aTerms").innerHTML='<div>The M2 Training Club membership terms and conditions apply. GymMaster has no separate contract for '+esc(sel.name)+'.</div>';return}
+  $("#aTerms").innerHTML='<p><b>'+esc(sel.name)+'</b>, '+esc(price)+'</p>'+d.agreements.map(function(a){return '<h3>'+esc(a.name)+'</h3>'+a.body+(a.points.length?'<ul>'+a.points.map(function(p){return '<li>'+esc(p)+'</li>'}).join("")+'</ul>':"")}).join("");
+ });
+}
 $("#passport").addEventListener("change",fpToggle);
 var mt;$("#mate").addEventListener("input",function(e){clearTimeout(mt);mt=setTimeout(function(){
  if(e.target.value.length<2){$("#mateRes").innerHTML="";return}
@@ -1182,10 +1447,11 @@ $("#sigClear").addEventListener("click",sizeSig);
 function saveMember(force){
  $("#aErr").textContent="";$("#aAnyway").hidden=true;
  if(!sel){$("#aErr").textContent="Pick a membership first.";return}
+ if(!$("#aRead").checked){$("#aErr").textContent="They need to read the contract first. Tick \"They've read the contract\".";return}
  if(!signed){$("#aErr").textContent="They need to sign first.";return}
  if(!PHOTO&&!$("#aNoPhoto").checked){$("#aErr").textContent="Take their photo, or tick \"Not today\".";return}
  if(($("#passport").checked||sel.family==="passport")&&!$("#fpid").value.trim()){$("#aErr").textContent="Add their Fitness Passport ID. Passport can't pay us for their visits without it.";$("#fpid").focus();return}
- var body={planId:sel.id,planName:sel.name,first:$("#first").value,last:$("#last").value,email:$("#email").value,mobile:$("#mobile").value,dob:$("#dob").value,gender:$("#gender").value,goal:$("#goal").value,source:$("#source").value,emergencyName:$("#ename").value,emergencyPhone:$("#ephone").value,passport:$("#passport").checked||sel.family==="passport",fpId:$("#fpid").value,referredBy:mate,agreed:$("#agreed").checked,signature:cv.toDataURL("image/png"),confirmDuplicate:!!force};
+ var body={planId:sel.id,planName:sel.name,planPrice:sel.price+" "+(sel.priceDescription||""),first:$("#first").value,last:$("#last").value,email:$("#email").value,mobile:$("#mobile").value,dob:$("#dob").value,gender:$("#gender").value,goal:$("#goal").value,source:$("#source").value,emergencyName:$("#ename").value,emergencyPhone:$("#ephone").value,passport:$("#passport").checked||sel.family==="passport",fpId:$("#fpid").value,referredBy:mate,agreed:$("#agreed").checked||$("#aRead").checked,signature:cv.toDataURL("image/png"),confirmDuplicate:!!force};
  $("#aSave").disabled=true;$("#aSave").textContent="Adding...";
  post("/api/members",body).then(function(d){
   $("#aSave").disabled=false;$("#aSave").textContent="Add member";
@@ -1266,6 +1532,16 @@ const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS member_snapshots (\n  day           TEXT PRIMARY KEY,\n  members       INTEGER,\n  passport      INTEGER,\n  perform       INTEGER,\n  daily         INTEGER,\n  classes       INTEGER,\n  recovery      INTEGER,\n  other         INTEGER,\n  weekly_billed REAL,\n  owed          REAL\n);",
 "CREATE TABLE IF NOT EXISTS marketing_days (\n  day         TEXT NOT NULL,\n  source      TEXT NOT NULL,               \n  campaign    TEXT NOT NULL,\n  spend       REAL,\n  impressions INTEGER,\n  clicks      INTEGER,\n  leads       INTEGER,\n  landing_views INTEGER,\n  PRIMARY KEY (day, source, campaign)\n);",
 "CREATE TABLE IF NOT EXISTS web_days (\n  day         TEXT NOT NULL,\n  channel     TEXT NOT NULL,\n  sessions    INTEGER,\n  conversions INTEGER,\n  PRIMARY KEY (day, channel)\n);",
+"CREATE TABLE IF NOT EXISTS member_gm (\n  member_id   INTEGER PRIMARY KEY,\n  gm_status   TEXT,                \n  is_prospect INTEGER NOT NULL DEFAULT 0,\n  created     TEXT,\n  goal        TEXT,\n  company     TEXT,\n  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS member_gm_status ON member_gm(gm_status);",
+"CREATE TABLE IF NOT EXISTS member_visit_months (\n  member_id INTEGER NOT NULL,\n  month     TEXT NOT NULL,         \n  visits    INTEGER NOT NULL,\n  PRIMARY KEY (member_id, month)\n);",
+"CREATE INDEX IF NOT EXISTS member_visit_months_month ON member_visit_months(month);",
+"CREATE TABLE IF NOT EXISTS class_counts (\n  gm_class_id INTEGER PRIMARY KEY,\n  day         TEXT NOT NULL,\n  start       TEXT,\n  name        TEXT,\n  coach       TEXT,\n  booked      INTEGER,\n  max         INTEGER,\n  waitlist    INTEGER,\n  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS class_counts_day ON class_counts(day);",
+"CREATE TABLE IF NOT EXISTS passport_months (\n  month   TEXT PRIMARY KEY,\n  visits  INTEGER,\n  signups INTEGER,\n  paid    REAL,                    \n  source  TEXT\n);",
+"CREATE TABLE IF NOT EXISTS member_agreements (\n  id         INTEGER PRIMARY KEY,\n  member_id  INTEGER NOT NULL,\n  plan       TEXT,\n  body       TEXT,\n  signature  TEXT,\n  signed_at  TEXT NOT NULL DEFAULT (datetime('now')),\n  staff_id   INTEGER\n);",
+"CREATE INDEX IF NOT EXISTS member_agreements_member ON member_agreements(member_id);",
+"CREATE TABLE IF NOT EXISTS roster_chunks (\n  id   INTEGER PRIMARY KEY,\n  json TEXT NOT NULL\n);",
 "CREATE TABLE IF NOT EXISTS visits (\n  id          INTEGER PRIMARY KEY,\n  member_id   INTEGER NOT NULL REFERENCES members(id),\n  at          TEXT NOT NULL,             \n  door        TEXT,                      \n  via         TEXT,                      \n  gm_visit_id TEXT UNIQUE,\n  fp_id       TEXT,                      \n  fp_status   TEXT                       \n);",
 "CREATE INDEX IF NOT EXISTS visits_member_at ON visits(member_id, at);",
 "CREATE INDEX IF NOT EXISTS visits_at ON visits(at);",
@@ -1294,7 +1570,7 @@ const SCHEMA = [
 const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2);"
 ];
-const SCHEMA_VERSION = "4a482677fa91";
+const SCHEMA_VERSION = "aacfacf5e5c2";
 
 // hub.js (bundled)
 // M2 Core: the joined-up parts.
@@ -1474,7 +1750,8 @@ function makeHub(L) {
   async function refreshBalances(env) {
     if (!env.GM_STAFF_KEY || !env.GM_API_KEY) return { ok: false, error: "GymMaster keys missing" };
     const cursor = +(await setting(env, "balance_cursor", 0));
-    const lap = (await all(env, "SELECT id FROM members WHERE status = 'active' AND id > ? ORDER BY id LIMIT 15", cursor)).map(r => r.id);
+    const size = Math.max(1, +(env.LAP_SIZE || 10));
+    const lap = (await all(env, "SELECT id FROM members WHERE status = 'active' AND id > ? ORDER BY id LIMIT ?", cursor, size)).map(r => r.id);
     const owing = (await all(env, "SELECT member_id id FROM balance_checks WHERE owing > 0 ORDER BY checked_at LIMIT 5")).map(r => r.id);
     const ids = [...new Set(lap.concat(owing))];
     let done = 0, failed = 0;
@@ -1488,9 +1765,25 @@ function makeHub(L) {
       }));
     }
     await env.DB.prepare("INSERT INTO settings(key, value) VALUES ('balance_cursor', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")
-      .bind(String(lap.length < 15 ? 0 : lap[lap.length - 1])).run();
+      .bind(String(lap.length < size ? 0 : lap[lap.length - 1])).run();
     await applyBlockRule(env);
-    return { ok: true, done, failed };
+    return { ok: true, done, failed, lap };
+  }
+
+  // Owners can run the same check across the whole club from the browser, 10 members a call.
+  async function sweepStep(env, after, visitsFn) {
+    const ids = (await all(env, "SELECT id FROM members WHERE status = 'active' AND id > ? ORDER BY id LIMIT 10", +after || 0)).map(r => r.id);
+    let done = 0;
+    await Promise.all(ids.map(async id => {
+      try {
+        const b = await gmCall(env, "v1", "/member/outstandingbalance", { member: id });
+        if (b.owingamount !== undefined) { await saveBalance(env, id, b); done++; }
+      } catch {}
+    }));
+    const v = await visitsFn(env, ids);
+    const left = (await one(env, "SELECT count(*) n FROM members WHERE status = 'active' AND id > ?", ids.length ? ids[ids.length - 1] : 1e12)).n;
+    if (!left) await applyBlockRule(env);
+    return { ok: true, done, visits: v, next: ids.length ? ids[ids.length - 1] : null, left };
   }
 
   /* ---------------- daily snapshot ---------------- */
@@ -1597,6 +1890,10 @@ function makeHub(L) {
       sql: `INSERT INTO marketing_days(day, source, campaign, spend, impressions, clicks, leads, landing_views) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(day, source, campaign) DO UPDATE SET spend = excluded.spend, impressions = excluded.impressions, clicks = excluded.clicks,
               leads = excluded.leads, landing_views = excluded.landing_views` },
+    passport_months: { cols: ["month", "visits", "signups", "paid", "source"], key: r => /^\d{4}-\d{2}$/.test(r.month),
+      sql: `INSERT INTO passport_months(month, visits, signups, paid, source) VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(month) DO UPDATE SET visits = coalesce(excluded.visits, passport_months.visits), signups = coalesce(excluded.signups, passport_months.signups),
+              paid = coalesce(excluded.paid, passport_months.paid), source = excluded.source` },
     web_days: { cols: ["day", "channel", "sessions", "conversions"], key: r => /^\d{4}-\d{2}-\d{2}$/.test(r.day) && r.channel,
       sql: `INSERT INTO web_days(day, channel, sessions, conversions) VALUES (?, ?, ?, ?)
             ON CONFLICT(day, channel) DO UPDATE SET sessions = excluded.sessions, conversions = excluded.conversions` },
@@ -1721,12 +2018,14 @@ function makeHub(L) {
              data_to: last?.d || null };
   }
 
-  return { classesWeek, classDetail, bookMember, cancelBooking, memberLive, refreshBalances, takeSnapshot, collections, collectionAction, pushData, money, growth, marketing };
+  return { sweepStep, classesWeek, classDetail, bookMember, cancelBooking, memberLive, refreshBalances, takeSnapshot, collections, collectionAction, pushData, money, growth, marketing };
 }
 
+import { makeHub2 } from "./hub2.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
+const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -1783,16 +2082,46 @@ export default {
       if (m) return json(await memberDetail(env, who, can, +m[1]));
       if (url.pathname === "/api/staff-admin") return json(req.method === "POST" ? await saveStaff(env, who, can, await req.json()) : await staffAdmin(env, can));
       if (url.pathname === "/api/report") return await report(env, can, url.searchParams);
+      if (url.pathname === "/api/gm-report-probe" && can.settings) return json(await gmReportProbe(env, url.searchParams));
       if (url.pathname === "/api/gm-probe") return json(await gmProbe(env, can, url.searchParams));
       if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
-      if (url.pathname === "/api/classes") return json(await H.classesWeek(env, who, can, url.searchParams));
+      if (url.pathname === "/api/classes") {
+        const w = await H.classesWeek(env, who, can, url.searchParams);
+        if (w.classes) { const job = H2.saveClassCounts(env, w.classes).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job; }
+        return json(w);
+      }
+      if (url.pathname === "/api/classes/stats") return json(await H2.classStats(env, can));
+      if (url.pathname === "/api/members/browse") return json(await H2.browse(env, who, can, url.searchParams));
+      if (url.pathname === "/api/visits/recent") return json(await H2.recentVisits(env, who, can));
+      if (url.pathname === "/api/leads/stats") return json(await H2.leadStats(env, who, can));
+      if (url.pathname === "/api/passport/insights") return json(await H2.passportInsights(env, can));
+      if (url.pathname === "/api/growth/more") return json(await H2.growthMore(env, can));
+      if (url.pathname === "/api/marketing/more") return json(await H2.marketingMore(env, can, url.searchParams.get("month")));
+      if (url.pathname === "/api/agreement") return json(await H2.agreement(env, url.searchParams.get("plan")));
+      if (url.pathname === "/contract") return new Response(await H2.contractPreview(env, url.searchParams.get("plan"), url.searchParams.get("name"), url.searchParams.get("price")),
+        { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+      const ct = url.pathname.match(/^\/api\/members\/(\d+)\/contracts\/(\d+)$/);
+      if (ct) return await H2.contractView(env, can, +ct[1], +ct[2]);
+      if (can.settings && req.method === "POST") {
+        if (url.pathname === "/api/roster/start") return json(await H2.rosterStart(env));
+        if (url.pathname === "/api/roster/apply") return json(await H2.rosterApply(env, (await req.json()).chunk));
+        if (url.pathname === "/api/roster/finish") return json(await H2.rosterFinish(env));
+        if (url.pathname === "/api/leads/rebuild") return json(await H2.rebuildLeads(env));
+        if (url.pathname === "/api/visits/pull") return json(await H2.pullVisits(env, (await req.json().catch(() => ({}))).day));
+        if (url.pathname === "/api/sweep") return json(await H.sweepStep(env, (await req.json()).after, H2.sweepVisits));
+      }
       const cl = url.pathname.match(/^\/api\/classes\/(\d+)(?:\/(book|cancel))?$/);
       if (cl && cl[2] === "book" && req.method === "POST") return json(await H.bookMember(env, who, can, cl[1], await req.json()));
       if (cl && cl[2] === "cancel" && req.method === "POST") return json(await H.cancelBooking(env, who, can, cl[1], await req.json()));
       if (cl && !cl[2]) return json(await H.classDetail(env, who, can, cl[1]));
       const lv = url.pathname.match(/^\/api\/members\/(\d+)\/live$/);
-      if (lv) return json(await H.memberLive(env, who, can, +lv[1]));
+      if (lv) {
+        const [live, prof, contracts] = await Promise.all([H.memberLive(env, who, can, +lv[1]), H2.gmProfile(env, +lv[1]).catch(() => null), H2.contractList(env, can, +lv[1])]);
+        if (!live.error && prof) { live.profile = prof; if (!can.balances) delete live.profile.has_billing; }
+        live.contracts = contracts;
+        return json(live);
+      }
       if (url.pathname === "/api/collections") return json(req.method === "POST" ? await H.collectionAction(env, who, can, await req.json()) : await H.collections(env, can));
       if (url.pathname === "/api/money") return json(await H.money(env, can));
       if (url.pathname === "/api/growth") return json(await H.growth(env, can));
@@ -1813,10 +2142,24 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
       await ensureSchema(env);
-      if (event.cron === "*/15 * * * *") { console.log("balances", JSON.stringify(await H.refreshBalances(env))); return; }
+      if (event.cron === "*/15 * * * *") {
+        const b = await H.refreshBalances(env);
+        const v = b.lap ? await H2.sweepVisits(env, b.lap) : 0;
+        const p = env.GM_REPORT_KEY ? await H2.pullVisits(env).catch(e => ({ error: String(e) })) : null;
+        console.log("quarter", JSON.stringify({ done: b.done, failed: b.failed, visits: v, checkins: p }));
+        return;
+      }
       console.log("nightly", event.cron, JSON.stringify(await syncMembers(env)));
       await applyBlockRule(env);
       console.log("snapshot", JSON.stringify(await H.takeSnapshot(env)));
+      console.log("leads", JSON.stringify(await H2.rebuildLeads(env).catch(e => String(e))));
+      try {
+        const t = nzDateTime(new Date()).slice(0, 10);
+        for (const wk of [t, nzDateTime(new Date(Date.now() + 7 * 86400_000)).slice(0, 10)]) {
+          const w = await H.classesWeek(env, { id: 0 }, CAN.owner, new URLSearchParams({ week: wk }));
+          if (w.classes) await H2.saveClassCounts(env, w.classes);
+        }
+      } catch (e) { console.log("classes", String(e)); }
     })());
   },
 };
@@ -2174,6 +2517,8 @@ async function addMember(env, who, can, b) {
       .bind(id, f.first + " " + f.last, f.email, f.mobile, f.source, f.campaign || null, f.goal, id));
   }
   await db.batch(stmts);
+  try { await H2.saveSignedContract(env, who, id, f.planId, b.planName || plan.family, b.planPrice || (lm && lm.price) || null, f.signature); }
+  catch (e) { warnings.push("Signed contract not saved: " + String(e.message || e)); }
   return { ok: true, id, needsBilling: billedBy === "ezidebit", warnings, gymmasterUrl: (env.GM_SITE || "") + "/member/view/" + id,
            fpId: f.passport ? f.fpId : null };
 }
@@ -2356,7 +2701,7 @@ async function today(env, who, can) {
 
 function leadKindLabel(k) {
   return ({ trial: "Trial", free_pt: "Free PT", unfinished_signup: "Started signing up online", bring_a_mate: "Bring a Mate",
-            app_upgrade: "Upgrade request in the app", website_form: "Website enquiry", meta_form: "Meta ad form", walk_in: "Walk in" })[k] || k;
+            app_upgrade: "Upgrade request in the app", prospect: "Prospect in GymMaster", website_form: "Website enquiry", meta_form: "Meta ad form", walk_in: "Walk in" })[k] || k;
 }
 
 // One tap after a call or a job. Moves the lead along and logs who did what.
@@ -2422,11 +2767,15 @@ async function listLeads(env, who, can, q) {
   if (can.members === "own") { where.push("l.assigned_to = ?"); binds.push(who.id); }
   const kind = q.get("kind"); if (kind) { where.push("l.kind = ?"); binds.push(kind); }
   const days = Math.min(+(q.get("days") || 30), 365);
-  where.push("(l.stage NOT IN ('joined','lost') OR l.closed_at >= datetime('now', ?))"); binds.push(`-${days} days`);
+  const stage = q.get("stage");
+  if (stage) { where.push("l.stage = ?"); binds.push(stage); }
+  else where.push("((l.stage NOT IN ('joined','lost','cold')) OR coalesce(l.closed_at, l.created_at) >= datetime('now', ?))"), binds.push(`-${days} days`);
+  const s = String(q.get("q") || "").trim().toLowerCase();
+  if (s.length >= 2) { where.push("(lower(coalesce(l.name,'')) LIKE ? OR lower(coalesce(l.email,'')) LIKE ? OR coalesce(l.mobile,'') LIKE ?)"); binds.push("%" + s + "%", "%" + s + "%", "%" + s.replace(/\D/g, "") + "%"); }
   const rows = (await env.DB.prepare(`SELECT l.id, l.member_id, l.name, l.email, l.mobile, l.kind, l.source, l.campaign, l.stage, l.goal,
-                                        l.created_at, l.contacted_at, l.assigned_to, s.name assigned_name
+                                        l.created_at, l.contacted_at, l.assigned_to, s.name assigned_name, l.notes
                                       FROM leads l LEFT JOIN staff s ON s.id = l.assigned_to
-                                      WHERE ${where.join(" AND ")} ORDER BY l.created_at DESC LIMIT 400`).bind(...binds).all()).results;
+                                      WHERE ${where.join(" AND ")} ORDER BY l.created_at DESC LIMIT 600`).bind(...binds).all()).results;
   const counts = {};
   for (const r of rows) counts[r.kind] = (counts[r.kind] || 0) + 1;
   return { leads: rows, counts };
@@ -2442,7 +2791,7 @@ async function leadDetail(env, who, can, id) {
   return { lead: l, activity };
 }
 
-const LEAD_KINDS = ["trial", "free_pt", "unfinished_signup", "bring_a_mate", "app_upgrade", "website_form", "meta_form", "walk_in"];
+const LEAD_KINDS = ["prospect", "trial", "free_pt", "unfinished_signup", "bring_a_mate", "app_upgrade", "website_form", "meta_form", "walk_in"];
 
 async function addLead(env, who, can, b) {
   if (!can.add) return { ok: false, error: "No access" };
@@ -2462,7 +2811,7 @@ async function updateLead(env, who, can, id, b) {
     stmts.push(db.prepare("INSERT INTO activity(lead_id, member_id, staff_id, kind, detail) VALUES (?, ?, ?, 'note', ?)")
       .bind(id, l.member_id, who.id, "Assigned to " + (b.assigned_name || "nobody")));
   }
-  if (b.stage && ["new", "contacted", "trial", "joined", "lost"].includes(b.stage)) {
+  if (b.stage && ["new", "contacted", "trial", "joined", "lost", "cold"].includes(b.stage)) {
     stmts.push(db.prepare(`UPDATE leads SET stage = ?, closed_at = CASE WHEN ? IN ('joined','lost') THEN datetime('now') ELSE NULL END WHERE id = ?`)
       .bind(b.stage, b.stage, id));
   }
@@ -2659,13 +3008,8 @@ async function syncMembers(env) {
     // Look back a day past the last good run so nothing slips between runs.
     const since = last && last.t ? new Date(new Date(last.t).getTime() - 86400_000) : new Date(Date.now() - 7 * 86400_000);
     const when = nzDateTime(since);
-    const u = new URL(env.GM_BASE + "/v1/members");
-    u.searchParams.set("api_key", env.GM_STAFF_KEY);
-    u.searchParams.set("when", when);
-    const r = await fetch(u.toString());
-    const d = await r.json();
-    if (d.error) throw new Error("GymMaster: " + d.error);
-    const list = d.result || [];
+    const n = await H2.rosterDelta(env, when);
+    const list = [];
     const stmts = [];
     for (const g of list) {
       const id = +g.id;
@@ -2688,8 +3032,8 @@ async function syncMembers(env) {
     }
     for (let i = 0; i < stmts.length; i += 50) await db.batch(stmts.slice(i, i + 50));
     await db.prepare("UPDATE sync_log SET finished_at = ?, rows_in = ?, rows_changed = ?, ok = 1 WHERE id = ?")
-      .bind(new Date().toISOString(), list.length, stmts.length, log.id).run();
-    return { ok: true, rows: stmts.length, since: when };
+      .bind(new Date().toISOString(), n, n, log.id).run();
+    return { ok: true, rows: n, since: when };
   } catch (e) {
     await db.prepare("UPDATE sync_log SET finished_at = ?, ok = 0, error = ? WHERE id = ?")
       .bind(new Date().toISOString(), String(e.message || e).slice(0, 500), log.id).run();
@@ -2779,7 +3123,7 @@ async function gmMemberToken(env, memberId) {
 
 // Owner-only window into GymMaster's raw replies, for building and fixing the data feeds.
 const PROBE_PATHS = ["/booking/classes/schedule", "/booking/classes/filter_options", "/booking/classes", "/member/outstandingbalance", "/member/memberships",
-  "/member/bookings", "/member/bookings/past", "/member/visits/monthly", "/member/accounthistory", "/member/profile", "/settings", "/companies", "/memberships"];
+  "/member/bookings", "/member/bookings/past", "/member/visits/monthly", "/member/visits", "/member/accounthistory", "/member/profile", "/settings", "/companies", "/memberships", "/members", "/prospects", "/visits"];
 async function gmProbe(env, can, q) {
   if (!can.settings) return { error: "Owners only" };
   const v = q.get("v") === "v2" ? "v2" : "v1", path = q.get("path") || "";
@@ -2791,6 +3135,24 @@ async function gmProbe(env, can, q) {
     const d = await gmCall(env, v, path, { auth: q.get("auth") === "high" ? "high" : "low", member: q.get("member") ? +q.get("member") : null, params });
     return { ok: true, data: d };
   } catch (e) { return { ok: false, error: String(e.message || e) }; }
+}
+
+// Owner-only: does the GymMaster Report API answer with the keys we already have?
+async function gmReportProbe(env, q) {
+  const out = {};
+  const path = q.get("path") || "/api/v2/report/standard_report/list?predefined_only=true";
+  if (!/^\/api\/v2\/report\//.test(path)) return { error: "Report paths only" };
+  for (const [name, key] of [["low", env.GM_API_KEY], ["high", env.GM_STAFF_KEY], ["report", env.GM_REPORT_KEY]]) {
+    if (!key) { out[name] = "not set"; continue; }
+    try {
+      const init = { headers: { "X-GM-API-KEY": key, "Content-Type": "application/json" } };
+      if (q.get("body")) { init.method = "POST"; init.body = q.get("body"); }
+      const r = await fetch(env.GM_SITE + path, init);
+      const t = await r.text();
+      out[name] = { status: r.status, body: t.slice(0, +(q.get("n") || 1500)) };
+    } catch (e) { out[name] = String(e.message || e); }
+  }
+  return out;
 }
 
 /* ---------------- settings (owners) ---------------- */
@@ -2826,6 +3188,8 @@ async function settingsView(env, can) {
     { name: "Xero", status: "Pushed in by Claude", detail: "Profit and loss by month, cash and bills land on Money. Ask Claude to refresh them any time." },
     { name: "Meta ads and Google Analytics", status: "Pushed in by Claude", detail: "Spend, leads and website visits by day land on Marketing." },
     { name: "Live balances", status: env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Every 15 minutes the Core checks 20 members' balances in GymMaster, so the $250 block and Collections stay true." },
+    { name: "Live check-ins", status: env.GM_REPORT_KEY ? "Connected" : "Needs the Report API key", detail: "GymMaster's visitor log every 15 minutes, for Recent visits on Today and exact Passport counts. Add it as secret GM_REPORT_KEY." },
+    { name: "PT lead form", status: env.PT_ADMIN_KEY ? "Connected" : "Needs PT_ADMIN_KEY", detail: "Free PT requests from the website sheet appear in Leads. Add the PT admin key as secret PT_ADMIN_KEY." },
     { name: "Website forms", status: env.INTAKE_KEY ? "Connected" : "Not connected yet", detail: "Leads from the website land in Leads once the intake key is set." },
     { name: "Sign-in", status: env.ACCESS_TEAM ? "Cloudflare Access, email codes" : "Not set", detail: "Who can sign in is managed in Staff and access." },
   ];
@@ -3035,7 +3399,11 @@ async function memberPhoto(env, who, can, id) {
     if (!m || m.trainer_id !== who.id) return new Response("No access", { status: 403 });
   }
   const p = await env.DB.prepare("SELECT jpeg FROM member_photos WHERE member_id = ?").bind(id).first();
-  if (!p) return new Response("No photo", { status: 404 });
+  if (!p) {
+    const m = await env.DB.prepare("SELECT photo_url FROM members WHERE id = ?").bind(id).first();
+    const r = m && m.photo_url ? await H2.gmPhoto(env, m.photo_url).catch(() => null) : null;
+    return r || new Response("No photo", { status: 404 });
+  }
   const bin = atob(p.jpeg.split(",")[1]);
   const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
   return new Response(bytes, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "private, max-age=60" } });

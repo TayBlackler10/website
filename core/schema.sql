@@ -244,6 +244,64 @@ CREATE TABLE IF NOT EXISTS web_days (
   PRIMARY KEY (day, channel)
 );
 
+
+-- ---------- from GymMaster, kept alongside the member ----------
+CREATE TABLE IF NOT EXISTS member_gm (
+  member_id   INTEGER PRIMARY KEY,
+  gm_status   TEXT,                 -- Current, Hold, Expired, Recently Expired, Gifted Time, Concession Pack
+  is_prospect INTEGER NOT NULL DEFAULT 0,
+  created     TEXT,
+  goal        TEXT,
+  company     TEXT,
+  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS member_gm_status ON member_gm(gm_status);
+
+CREATE TABLE IF NOT EXISTS member_visit_months (
+  member_id INTEGER NOT NULL,
+  month     TEXT NOT NULL,          -- 2026-09
+  visits    INTEGER NOT NULL,
+  PRIMARY KEY (member_id, month)
+);
+CREATE INDEX IF NOT EXISTS member_visit_months_month ON member_visit_months(month);
+
+CREATE TABLE IF NOT EXISTS class_counts (
+  gm_class_id INTEGER PRIMARY KEY,
+  day         TEXT NOT NULL,
+  start       TEXT,
+  name        TEXT,
+  coach       TEXT,
+  booked      INTEGER,
+  max         INTEGER,
+  waitlist    INTEGER,
+  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS class_counts_day ON class_counts(day);
+
+CREATE TABLE IF NOT EXISTS passport_months (
+  month   TEXT PRIMARY KEY,
+  visits  INTEGER,
+  signups INTEGER,
+  paid    REAL,                     -- what Passport paid for this month's visits (ex GST)
+  source  TEXT
+);
+
+CREATE TABLE IF NOT EXISTS member_agreements (
+  id         INTEGER PRIMARY KEY,
+  member_id  INTEGER NOT NULL,
+  plan       TEXT,
+  body       TEXT,
+  signature  TEXT,
+  signed_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  staff_id   INTEGER
+);
+CREATE INDEX IF NOT EXISTS member_agreements_member ON member_agreements(member_id);
+
+CREATE TABLE IF NOT EXISTS roster_chunks (
+  id   INTEGER PRIMARY KEY,
+  json TEXT NOT NULL
+);
+
 -- ---------- visits, classes, bookings ----------
 
 CREATE TABLE IF NOT EXISTS visits (

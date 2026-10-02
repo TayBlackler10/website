@@ -17,9 +17,11 @@
 import { APP_HTML } from "./ui.js";
 import { SCHEMA, STAFF_SEED, SCHEMA_VERSION } from "./schema_sql.js";
 import { makeHub } from "./hub.js";
+import { makeHub2 } from "./hub2.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
+const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -80,13 +82,42 @@ export default {
       if (url.pathname === "/api/gm-probe") return json(await gmProbe(env, can, url.searchParams));
       if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
-      if (url.pathname === "/api/classes") return json(await H.classesWeek(env, who, can, url.searchParams));
+      if (url.pathname === "/api/classes") {
+        const w = await H.classesWeek(env, who, can, url.searchParams);
+        if (w.classes) { const job = H2.saveClassCounts(env, w.classes).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job; }
+        return json(w);
+      }
+      if (url.pathname === "/api/classes/stats") return json(await H2.classStats(env, can));
+      if (url.pathname === "/api/members/browse") return json(await H2.browse(env, who, can, url.searchParams));
+      if (url.pathname === "/api/visits/recent") return json(await H2.recentVisits(env, who, can));
+      if (url.pathname === "/api/leads/stats") return json(await H2.leadStats(env, who, can));
+      if (url.pathname === "/api/passport/insights") return json(await H2.passportInsights(env, can));
+      if (url.pathname === "/api/growth/more") return json(await H2.growthMore(env, can));
+      if (url.pathname === "/api/marketing/more") return json(await H2.marketingMore(env, can, url.searchParams.get("month")));
+      if (url.pathname === "/api/agreement") return json(await H2.agreement(env, url.searchParams.get("plan")));
+      if (url.pathname === "/contract") return new Response(await H2.contractPreview(env, url.searchParams.get("plan"), url.searchParams.get("name"), url.searchParams.get("price")),
+        { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+      const ct = url.pathname.match(/^\/api\/members\/(\d+)\/contracts\/(\d+)$/);
+      if (ct) return await H2.contractView(env, can, +ct[1], +ct[2]);
+      if (can.settings && req.method === "POST") {
+        if (url.pathname === "/api/roster/start") return json(await H2.rosterStart(env));
+        if (url.pathname === "/api/roster/apply") return json(await H2.rosterApply(env, (await req.json()).chunk));
+        if (url.pathname === "/api/roster/finish") return json(await H2.rosterFinish(env));
+        if (url.pathname === "/api/leads/rebuild") return json(await H2.rebuildLeads(env));
+        if (url.pathname === "/api/visits/pull") return json(await H2.pullVisits(env, (await req.json().catch(() => ({}))).day));
+        if (url.pathname === "/api/sweep") return json(await H.sweepStep(env, (await req.json()).after, H2.sweepVisits));
+      }
       const cl = url.pathname.match(/^\/api\/classes\/(\d+)(?:\/(book|cancel))?$/);
       if (cl && cl[2] === "book" && req.method === "POST") return json(await H.bookMember(env, who, can, cl[1], await req.json()));
       if (cl && cl[2] === "cancel" && req.method === "POST") return json(await H.cancelBooking(env, who, can, cl[1], await req.json()));
       if (cl && !cl[2]) return json(await H.classDetail(env, who, can, cl[1]));
       const lv = url.pathname.match(/^\/api\/members\/(\d+)\/live$/);
-      if (lv) return json(await H.memberLive(env, who, can, +lv[1]));
+      if (lv) {
+        const [live, prof, contracts] = await Promise.all([H.memberLive(env, who, can, +lv[1]), H2.gmProfile(env, +lv[1]).catch(() => null), H2.contractList(env, can, +lv[1])]);
+        if (!live.error && prof) { live.profile = prof; if (!can.balances) delete live.profile.has_billing; }
+        live.contracts = contracts;
+        return json(live);
+      }
       if (url.pathname === "/api/collections") return json(req.method === "POST" ? await H.collectionAction(env, who, can, await req.json()) : await H.collections(env, can));
       if (url.pathname === "/api/money") return json(await H.money(env, can));
       if (url.pathname === "/api/growth") return json(await H.growth(env, can));
@@ -107,10 +138,24 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
       await ensureSchema(env);
-      if (event.cron === "*/15 * * * *") { console.log("balances", JSON.stringify(await H.refreshBalances(env))); return; }
+      if (event.cron === "*/15 * * * *") {
+        const b = await H.refreshBalances(env);
+        const v = b.lap ? await H2.sweepVisits(env, b.lap) : 0;
+        const p = env.GM_REPORT_KEY ? await H2.pullVisits(env).catch(e => ({ error: String(e) })) : null;
+        console.log("quarter", JSON.stringify({ done: b.done, failed: b.failed, visits: v, checkins: p }));
+        return;
+      }
       console.log("nightly", event.cron, JSON.stringify(await syncMembers(env)));
       await applyBlockRule(env);
       console.log("snapshot", JSON.stringify(await H.takeSnapshot(env)));
+      console.log("leads", JSON.stringify(await H2.rebuildLeads(env).catch(e => String(e))));
+      try {
+        const t = nzDateTime(new Date()).slice(0, 10);
+        for (const wk of [t, nzDateTime(new Date(Date.now() + 7 * 86400_000)).slice(0, 10)]) {
+          const w = await H.classesWeek(env, { id: 0 }, CAN.owner, new URLSearchParams({ week: wk }));
+          if (w.classes) await H2.saveClassCounts(env, w.classes);
+        }
+      } catch (e) { console.log("classes", String(e)); }
     })());
   },
 };
@@ -468,6 +513,8 @@ async function addMember(env, who, can, b) {
       .bind(id, f.first + " " + f.last, f.email, f.mobile, f.source, f.campaign || null, f.goal, id));
   }
   await db.batch(stmts);
+  try { await H2.saveSignedContract(env, who, id, f.planId, b.planName || plan.family, b.planPrice || (lm && lm.price) || null, f.signature); }
+  catch (e) { warnings.push("Signed contract not saved: " + String(e.message || e)); }
   return { ok: true, id, needsBilling: billedBy === "ezidebit", warnings, gymmasterUrl: (env.GM_SITE || "") + "/member/view/" + id,
            fpId: f.passport ? f.fpId : null };
 }
@@ -650,7 +697,7 @@ async function today(env, who, can) {
 
 function leadKindLabel(k) {
   return ({ trial: "Trial", free_pt: "Free PT", unfinished_signup: "Started signing up online", bring_a_mate: "Bring a Mate",
-            app_upgrade: "Upgrade request in the app", website_form: "Website enquiry", meta_form: "Meta ad form", walk_in: "Walk in" })[k] || k;
+            app_upgrade: "Upgrade request in the app", prospect: "Prospect in GymMaster", website_form: "Website enquiry", meta_form: "Meta ad form", walk_in: "Walk in" })[k] || k;
 }
 
 // One tap after a call or a job. Moves the lead along and logs who did what.
@@ -716,11 +763,15 @@ async function listLeads(env, who, can, q) {
   if (can.members === "own") { where.push("l.assigned_to = ?"); binds.push(who.id); }
   const kind = q.get("kind"); if (kind) { where.push("l.kind = ?"); binds.push(kind); }
   const days = Math.min(+(q.get("days") || 30), 365);
-  where.push("(l.stage NOT IN ('joined','lost') OR l.closed_at >= datetime('now', ?))"); binds.push(`-${days} days`);
+  const stage = q.get("stage");
+  if (stage) { where.push("l.stage = ?"); binds.push(stage); }
+  else where.push("((l.stage NOT IN ('joined','lost','cold')) OR coalesce(l.closed_at, l.created_at) >= datetime('now', ?))"), binds.push(`-${days} days`);
+  const s = String(q.get("q") || "").trim().toLowerCase();
+  if (s.length >= 2) { where.push("(lower(coalesce(l.name,'')) LIKE ? OR lower(coalesce(l.email,'')) LIKE ? OR coalesce(l.mobile,'') LIKE ?)"); binds.push("%" + s + "%", "%" + s + "%", "%" + s.replace(/\D/g, "") + "%"); }
   const rows = (await env.DB.prepare(`SELECT l.id, l.member_id, l.name, l.email, l.mobile, l.kind, l.source, l.campaign, l.stage, l.goal,
-                                        l.created_at, l.contacted_at, l.assigned_to, s.name assigned_name
+                                        l.created_at, l.contacted_at, l.assigned_to, s.name assigned_name, l.notes
                                       FROM leads l LEFT JOIN staff s ON s.id = l.assigned_to
-                                      WHERE ${where.join(" AND ")} ORDER BY l.created_at DESC LIMIT 400`).bind(...binds).all()).results;
+                                      WHERE ${where.join(" AND ")} ORDER BY l.created_at DESC LIMIT 600`).bind(...binds).all()).results;
   const counts = {};
   for (const r of rows) counts[r.kind] = (counts[r.kind] || 0) + 1;
   return { leads: rows, counts };
@@ -736,7 +787,7 @@ async function leadDetail(env, who, can, id) {
   return { lead: l, activity };
 }
 
-const LEAD_KINDS = ["trial", "free_pt", "unfinished_signup", "bring_a_mate", "app_upgrade", "website_form", "meta_form", "walk_in"];
+const LEAD_KINDS = ["prospect", "trial", "free_pt", "unfinished_signup", "bring_a_mate", "app_upgrade", "website_form", "meta_form", "walk_in"];
 
 async function addLead(env, who, can, b) {
   if (!can.add) return { ok: false, error: "No access" };
@@ -756,7 +807,7 @@ async function updateLead(env, who, can, id, b) {
     stmts.push(db.prepare("INSERT INTO activity(lead_id, member_id, staff_id, kind, detail) VALUES (?, ?, ?, 'note', ?)")
       .bind(id, l.member_id, who.id, "Assigned to " + (b.assigned_name || "nobody")));
   }
-  if (b.stage && ["new", "contacted", "trial", "joined", "lost"].includes(b.stage)) {
+  if (b.stage && ["new", "contacted", "trial", "joined", "lost", "cold"].includes(b.stage)) {
     stmts.push(db.prepare(`UPDATE leads SET stage = ?, closed_at = CASE WHEN ? IN ('joined','lost') THEN datetime('now') ELSE NULL END WHERE id = ?`)
       .bind(b.stage, b.stage, id));
   }
@@ -953,13 +1004,8 @@ async function syncMembers(env) {
     // Look back a day past the last good run so nothing slips between runs.
     const since = last && last.t ? new Date(new Date(last.t).getTime() - 86400_000) : new Date(Date.now() - 7 * 86400_000);
     const when = nzDateTime(since);
-    const u = new URL(env.GM_BASE + "/v1/members");
-    u.searchParams.set("api_key", env.GM_STAFF_KEY);
-    u.searchParams.set("when", when);
-    const r = await fetch(u.toString());
-    const d = await r.json();
-    if (d.error) throw new Error("GymMaster: " + d.error);
-    const list = d.result || [];
+    const n = await H2.rosterDelta(env, when);
+    const list = [];
     const stmts = [];
     for (const g of list) {
       const id = +g.id;
@@ -982,8 +1028,8 @@ async function syncMembers(env) {
     }
     for (let i = 0; i < stmts.length; i += 50) await db.batch(stmts.slice(i, i + 50));
     await db.prepare("UPDATE sync_log SET finished_at = ?, rows_in = ?, rows_changed = ?, ok = 1 WHERE id = ?")
-      .bind(new Date().toISOString(), list.length, stmts.length, log.id).run();
-    return { ok: true, rows: stmts.length, since: when };
+      .bind(new Date().toISOString(), n, n, log.id).run();
+    return { ok: true, rows: n, since: when };
   } catch (e) {
     await db.prepare("UPDATE sync_log SET finished_at = ?, ok = 0, error = ? WHERE id = ?")
       .bind(new Date().toISOString(), String(e.message || e).slice(0, 500), log.id).run();
@@ -1138,6 +1184,8 @@ async function settingsView(env, can) {
     { name: "Xero", status: "Pushed in by Claude", detail: "Profit and loss by month, cash and bills land on Money. Ask Claude to refresh them any time." },
     { name: "Meta ads and Google Analytics", status: "Pushed in by Claude", detail: "Spend, leads and website visits by day land on Marketing." },
     { name: "Live balances", status: env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Every 15 minutes the Core checks 20 members' balances in GymMaster, so the $250 block and Collections stay true." },
+    { name: "Live check-ins", status: env.GM_REPORT_KEY ? "Connected" : "Needs the Report API key", detail: "GymMaster's visitor log every 15 minutes, for Recent visits on Today and exact Passport counts. Add it as secret GM_REPORT_KEY." },
+    { name: "PT lead form", status: env.PT_ADMIN_KEY ? "Connected" : "Needs PT_ADMIN_KEY", detail: "Free PT requests from the website sheet appear in Leads. Add the PT admin key as secret PT_ADMIN_KEY." },
     { name: "Website forms", status: env.INTAKE_KEY ? "Connected" : "Not connected yet", detail: "Leads from the website land in Leads once the intake key is set." },
     { name: "Sign-in", status: env.ACCESS_TEAM ? "Cloudflare Access, email codes" : "Not set", detail: "Who can sign in is managed in Staff and access." },
   ];
@@ -1347,7 +1395,11 @@ async function memberPhoto(env, who, can, id) {
     if (!m || m.trainer_id !== who.id) return new Response("No access", { status: 403 });
   }
   const p = await env.DB.prepare("SELECT jpeg FROM member_photos WHERE member_id = ?").bind(id).first();
-  if (!p) return new Response("No photo", { status: 404 });
+  if (!p) {
+    const m = await env.DB.prepare("SELECT photo_url FROM members WHERE id = ?").bind(id).first();
+    const r = m && m.photo_url ? await H2.gmPhoto(env, m.photo_url).catch(() => null) : null;
+    return r || new Response("No photo", { status: 404 });
+  }
   const bin = atob(p.jpeg.split(",")[1]);
   const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
   return new Response(bytes, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "private, max-age=60" } });

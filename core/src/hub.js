@@ -175,7 +175,8 @@ export function makeHub(L) {
   async function refreshBalances(env) {
     if (!env.GM_STAFF_KEY || !env.GM_API_KEY) return { ok: false, error: "GymMaster keys missing" };
     const cursor = +(await setting(env, "balance_cursor", 0));
-    const lap = (await all(env, "SELECT id FROM members WHERE status = 'active' AND id > ? ORDER BY id LIMIT 15", cursor)).map(r => r.id);
+    const size = Math.max(1, +(env.LAP_SIZE || 10));
+    const lap = (await all(env, "SELECT id FROM members WHERE status = 'active' AND id > ? ORDER BY id LIMIT ?", cursor, size)).map(r => r.id);
     const owing = (await all(env, "SELECT member_id id FROM balance_checks WHERE owing > 0 ORDER BY checked_at LIMIT 5")).map(r => r.id);
     const ids = [...new Set(lap.concat(owing))];
     let done = 0, failed = 0;
@@ -189,9 +190,25 @@ export function makeHub(L) {
       }));
     }
     await env.DB.prepare("INSERT INTO settings(key, value) VALUES ('balance_cursor', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")
-      .bind(String(lap.length < 15 ? 0 : lap[lap.length - 1])).run();
+      .bind(String(lap.length < size ? 0 : lap[lap.length - 1])).run();
     await applyBlockRule(env);
-    return { ok: true, done, failed };
+    return { ok: true, done, failed, lap };
+  }
+
+  // Owners can run the same check across the whole club from the browser, 10 members a call.
+  async function sweepStep(env, after, visitsFn) {
+    const ids = (await all(env, "SELECT id FROM members WHERE status = 'active' AND id > ? ORDER BY id LIMIT 10", +after || 0)).map(r => r.id);
+    let done = 0;
+    await Promise.all(ids.map(async id => {
+      try {
+        const b = await gmCall(env, "v1", "/member/outstandingbalance", { member: id });
+        if (b.owingamount !== undefined) { await saveBalance(env, id, b); done++; }
+      } catch {}
+    }));
+    const v = await visitsFn(env, ids);
+    const left = (await one(env, "SELECT count(*) n FROM members WHERE status = 'active' AND id > ?", ids.length ? ids[ids.length - 1] : 1e12)).n;
+    if (!left) await applyBlockRule(env);
+    return { ok: true, done, visits: v, next: ids.length ? ids[ids.length - 1] : null, left };
   }
 
   /* ---------------- daily snapshot ---------------- */
@@ -298,6 +315,10 @@ export function makeHub(L) {
       sql: `INSERT INTO marketing_days(day, source, campaign, spend, impressions, clicks, leads, landing_views) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(day, source, campaign) DO UPDATE SET spend = excluded.spend, impressions = excluded.impressions, clicks = excluded.clicks,
               leads = excluded.leads, landing_views = excluded.landing_views` },
+    passport_months: { cols: ["month", "visits", "signups", "paid", "source"], key: r => /^\d{4}-\d{2}$/.test(r.month),
+      sql: `INSERT INTO passport_months(month, visits, signups, paid, source) VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(month) DO UPDATE SET visits = coalesce(excluded.visits, passport_months.visits), signups = coalesce(excluded.signups, passport_months.signups),
+              paid = coalesce(excluded.paid, passport_months.paid), source = excluded.source` },
     web_days: { cols: ["day", "channel", "sessions", "conversions"], key: r => /^\d{4}-\d{2}-\d{2}$/.test(r.day) && r.channel,
       sql: `INSERT INTO web_days(day, channel, sessions, conversions) VALUES (?, ?, ?, ?)
             ON CONFLICT(day, channel) DO UPDATE SET sessions = excluded.sessions, conversions = excluded.conversions` },
@@ -422,5 +443,5 @@ export function makeHub(L) {
              data_to: last?.d || null };
   }
 
-  return { classesWeek, classDetail, bookMember, cancelBooking, memberLive, refreshBalances, takeSnapshot, collections, collectionAction, pushData, money, growth, marketing };
+  return { sweepStep, classesWeek, classDetail, bookMember, cancelBooking, memberLive, refreshBalances, takeSnapshot, collections, collectionAction, pushData, money, growth, marketing };
 }

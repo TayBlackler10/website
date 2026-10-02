@@ -27,6 +27,16 @@ export const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS member_snapshots (\n  day           TEXT PRIMARY KEY,\n  members       INTEGER,\n  passport      INTEGER,\n  perform       INTEGER,\n  daily         INTEGER,\n  classes       INTEGER,\n  recovery      INTEGER,\n  other         INTEGER,\n  weekly_billed REAL,\n  owed          REAL\n);",
 "CREATE TABLE IF NOT EXISTS marketing_days (\n  day         TEXT NOT NULL,\n  source      TEXT NOT NULL,               \n  campaign    TEXT NOT NULL,\n  spend       REAL,\n  impressions INTEGER,\n  clicks      INTEGER,\n  leads       INTEGER,\n  landing_views INTEGER,\n  PRIMARY KEY (day, source, campaign)\n);",
 "CREATE TABLE IF NOT EXISTS web_days (\n  day         TEXT NOT NULL,\n  channel     TEXT NOT NULL,\n  sessions    INTEGER,\n  conversions INTEGER,\n  PRIMARY KEY (day, channel)\n);",
+"CREATE TABLE IF NOT EXISTS member_gm (\n  member_id   INTEGER PRIMARY KEY,\n  gm_status   TEXT,                \n  is_prospect INTEGER NOT NULL DEFAULT 0,\n  created     TEXT,\n  goal        TEXT,\n  company     TEXT,\n  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS member_gm_status ON member_gm(gm_status);",
+"CREATE TABLE IF NOT EXISTS member_visit_months (\n  member_id INTEGER NOT NULL,\n  month     TEXT NOT NULL,         \n  visits    INTEGER NOT NULL,\n  PRIMARY KEY (member_id, month)\n);",
+"CREATE INDEX IF NOT EXISTS member_visit_months_month ON member_visit_months(month);",
+"CREATE TABLE IF NOT EXISTS class_counts (\n  gm_class_id INTEGER PRIMARY KEY,\n  day         TEXT NOT NULL,\n  start       TEXT,\n  name        TEXT,\n  coach       TEXT,\n  booked      INTEGER,\n  max         INTEGER,\n  waitlist    INTEGER,\n  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS class_counts_day ON class_counts(day);",
+"CREATE TABLE IF NOT EXISTS passport_months (\n  month   TEXT PRIMARY KEY,\n  visits  INTEGER,\n  signups INTEGER,\n  paid    REAL,                    \n  source  TEXT\n);",
+"CREATE TABLE IF NOT EXISTS member_agreements (\n  id         INTEGER PRIMARY KEY,\n  member_id  INTEGER NOT NULL,\n  plan       TEXT,\n  body       TEXT,\n  signature  TEXT,\n  signed_at  TEXT NOT NULL DEFAULT (datetime('now')),\n  staff_id   INTEGER\n);",
+"CREATE INDEX IF NOT EXISTS member_agreements_member ON member_agreements(member_id);",
+"CREATE TABLE IF NOT EXISTS roster_chunks (\n  id   INTEGER PRIMARY KEY,\n  json TEXT NOT NULL\n);",
 "CREATE TABLE IF NOT EXISTS visits (\n  id          INTEGER PRIMARY KEY,\n  member_id   INTEGER NOT NULL REFERENCES members(id),\n  at          TEXT NOT NULL,             \n  door        TEXT,                      \n  via         TEXT,                      \n  gm_visit_id TEXT UNIQUE,\n  fp_id       TEXT,                      \n  fp_status   TEXT                       \n);",
 "CREATE INDEX IF NOT EXISTS visits_member_at ON visits(member_id, at);",
 "CREATE INDEX IF NOT EXISTS visits_at ON visits(at);",
@@ -55,4 +65,4 @@ export const SCHEMA = [
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2);"
 ];
-export const SCHEMA_VERSION = "4a482677fa91";
+export const SCHEMA_VERSION = "aacfacf5e5c2";
