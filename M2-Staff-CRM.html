@@ -1,0 +1,1068 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>M2 Staff CRM</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap">
+<style>body{margin:0;background:#F3F3F0}[hidden]{display:none!important}#app[hidden]{display:none!important}
+a{color:#5E6B00}a:hover{color:#0A0A0A}
+.nav{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;color:#B9B9B0;text-decoration:none;font-size:14px;font-weight:500;cursor:pointer}
+.nav:hover{background:#1A1A18;color:#fff}.nav.on{background:#DFFF00!important;color:#0A0A0A!important;font-weight:600}.nav.on span{background:#0A0A0A!important;color:#DFFF00!important}
+aside{position:sticky;top:0;height:100vh;box-sizing:border-box}
+button{cursor:pointer;transition:transform .08s}button:active{transform:scale(.97)}
+.done{opacity:.45}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#0A0A0A;color:#DFFF00;padding:12px 20px;border-radius:999px;font:600 14px 'DM Sans',sans-serif;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}#toast.show{opacity:1}
+#answer{background:#fff;border-radius:24px;padding:20px 24px;display:flex;flex-direction:column;gap:10px}.ct td{padding:12px 8px;border-top:1px solid #E2E2DC}
+.ct th{padding:12px 8px;font-weight:600;text-align:left}
+.er{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:18px 0;border-top:1px solid #E2E2DC}
+.er h3{margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px;letter-spacing:-.01em}
+.er .sub{color:#5B5B55;font-size:14px}
+.er .pc{font-family:Archivo,Arial,sans-serif;font-weight:900;font-size:30px;text-align:right;line-height:1}
+.er .bar{grid-column:1/-1;height:8px;background:#E9E9E3;border-radius:999px;margin-top:8px}
+.grp{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600;padding-top:14px}
+.pl td,.pl th{padding:9px 10px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pl td:first-child,.pl th:first-child{text-align:left}
+</style></head><body>
+<div id="app" style="min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;color:#0A0A0A;background:#F3F3F0;font-size:14px;line-height:1.5"><aside style="background:#0A0A0A;padding:24px 16px;display:flex;flex-direction:column;gap:28px">
+<img src="data:image/png;base64,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" alt="M2 Training Club" style="height:20px;width:auto;align-self:flex-start;margin-left:14px">
+<nav style="display:flex;flex-direction:column;gap:2px">
+<a class="nav" href="#main" data-go="Main"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>Today</a>
+<a class="nav" href="#member" data-go="Member"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Members</a>
+<a class="nav" href="#leads" data-go="Leads"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4z"/></svg>Leads<span style="margin-left:auto;background:#DFFF00;color:#0A0A0A;border-radius:999px;font-size:12px;padding:0 8px;font-weight:600">23</span></a>
+<a class="nav" href="#classes" data-go="Classes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Classes</a>
+<a class="nav" href="#collections" data-go="Collections"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>Collections</a>
+<a class="nav" href="#passport" data-go="Passport"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Fitness Passport</a>
+<a class="nav" href="#pos" data-go="POS"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16l-1 13H5zM9 7a3 3 0 0 1 6 0"/></svg>Point of sale</a>
+<a class="nav" href="#messages" data-go="Messages"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg>Messages</a>
+<a class="nav" href="#reports" data-go="Reports"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Reports</a>
+</nav>
+<div style="display:flex;flex-direction:column;gap:2px">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E66;padding:0 14px 6px">Owners</div>
+<a class="nav" href="#money" data-go="Money"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Money</a>
+<a class="nav" href="#staff" data-go="Staff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M16 4.5a3.5 3.5 0 0 1 0 7M22 20c0-2.5-1.5-4.3-4-5"/></svg>Staff and access</a>
+</div>
+<div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:#1A1A18">
+<div style="width:34px;height:34px;border-radius:50%;background:#DFFF00;color:#0A0A0A;display:grid;place-items:center;font-weight:600">TB</div>
+<div style="display:flex;flex-direction:column"><span style="color:#fff;font-weight:600">Taylor Blackler</span><span style="color:#8C8C84;font-size:12px">Owner, full access</span></div>
+</div>
+</aside><div style="min-width:0"><main data-view="Main" style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:24px;min-width:0">
+
+<header style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Friday 2 October</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Morning, Taylor<span style="color:#5E6B00">.</span></h1>
+</div>
+<label for="ask" style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:0 8px 0 18px;height:48px;width:440px;max-width:100%;box-shadow:0 1px 0 #E2E2DC">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>
+<input id="ask" type="text" placeholder="Ask M2: who on Perform hasn't been in for 14 days?" style="border:0;outline:0;flex:1;font:inherit;font-size:14px;background:transparent;min-width:0">
+<span style="font-size:12px;color:#8C8C84;border:1px solid #E2E2DC;border-radius:6px;padding:1px 6px">/</span>
+</label>
+<button type="button" style="height:48px;padding:0 22px;border:0;border-radius:999px;background:#DFFF00;color:#0A0A0A;font:inherit;font-weight:600;cursor:pointer">Check in member</button>
+</header>
+
+<section style="background:#0A0A0A;color:#fff;border-radius:24px;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:10px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#DFFF00;font-weight:600">The business</span>
+<span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#B9B9B0;border:1px solid #333330;border-radius:999px;padding:2px 10px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Only you and Tim see this</span>
+<span style="margin-left:auto;font-size:12px;color:#8C8C84">Live from GymMaster, Xero and Fitness Passport</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px">
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="color:#B9B9B0;font-size:13px">Members</span>
+<span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;color:#DFFF00;font-variant-numeric:tabular-nums">1,923</span>
+<span style="color:#8C8C84;font-size:12px">+48 a month this year</span>
+</div>
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="color:#B9B9B0;font-size:13px">FY27 revenue to date</span>
+<span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;font-variant-numeric:tabular-nums">$658,691</span>
+<span style="color:#DFFF00;font-size:12px">6.6% ahead of target</span>
+</div>
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="color:#B9B9B0;font-size:13px">Passport payout, Oct</span>
+<span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;font-variant-numeric:tabular-nums">$43,774</span>
+<span style="color:#8C8C84;font-size:12px">4,327 visits in Sep</span>
+</div>
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="color:#B9B9B0;font-size:13px">Owed to M2</span>
+<span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;font-variant-numeric:tabular-nums">$4,347</span>
+<span style="color:#8C8C84;font-size:12px">24 members in collections</span>
+</div>
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px">
+<span style="color:#B9B9B0;font-size:13px">Trials to members, Sep</span>
+<span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:30px;letter-spacing:-.02em;font-variant-numeric:tabular-nums">38%</span>
+<span style="color:#8C8C84;font-size:12px">93 joins from 248 trials</span>
+</div>
+</div>
+</section>
+
+<div style="display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start">
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Do this today</h2>
+<span style="color:#5B5B55;font-size:13px">Ranked by money at stake</span>
+<span style="margin-left:auto;font-size:13px;color:#5B5B55">6 jobs, 41 people</span>
+</div>
+
+<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:14px;align-items:center;background:#F1F1EC;border-radius:16px;padding:14px 16px">
+<span style="width:30px;height:30px;border-radius:50%;background:#0A0A0A;color:#DFFF00;display:grid;place-items:center;font-weight:600;font-size:13px">1</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">6 trials finish today without joining</span><span style="color:#5B5B55;font-size:13px">5 Days for $5. Two came in 4 times, best chance to convert.</span></div>
+<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#5B5B55;background:#fff;border-radius:999px;padding:3px 10px">Reception</span><a href="#calls" data-go="Calls" style="height:36px;padding:0 16px;border-radius:999px;background:#0A0A0A;color:#DFFF00;font-weight:600;font-size:13px;display:inline-flex;align-items:center;text-decoration:none">Start calls</a></div>
+</div>
+
+<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:14px;align-items:center;background:#F1F1EC;border-radius:16px;padding:14px 16px">
+<span style="width:30px;height:30px;border-radius:50%;background:#0A0A0A;color:#DFFF00;display:grid;place-items:center;font-weight:600;font-size:13px">2</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">3 new members have no billing set up</span><span style="color:#5B5B55;font-size:13px">Joined online, skipped the Ezidebit form. Text them the link.</span></div>
+<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#5B5B55;background:#fff;border-radius:999px;padding:3px 10px">Reception</span><button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px;cursor:pointer">Send link</button></div>
+</div>
+
+<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:14px;align-items:center;background:#F1F1EC;border-radius:16px;padding:14px 16px">
+<span style="width:30px;height:30px;border-radius:50%;background:#0A0A0A;color:#DFFF00;display:grid;place-items:center;font-weight:600;font-size:13px">3</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">4 failed payments past 7 days</span><span style="color:#5B5B55;font-size:13px">$486 between them. Gifted-time members already left out.</span></div>
+<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#5B5B55;background:#fff;border-radius:999px;padding:3px 10px">Bekka</span><button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px;cursor:pointer">Open list</button></div>
+</div>
+
+<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:14px;align-items:center;background:#F1F1EC;border-radius:16px;padding:14px 16px">
+<span style="width:30px;height:30px;border-radius:50%;background:#0A0A0A;color:#DFFF00;display:grid;place-items:center;font-weight:600;font-size:13px">4</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">12 paying members dropped to red</span><span style="color:#5B5B55;font-size:13px">Visits fell well below their usual. A call now beats a cancel next month.</span></div>
+<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#5B5B55;background:#fff;border-radius:999px;padding:3px 10px">Bekka</span><button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px;cursor:pointer">Start calls</button></div>
+</div>
+
+<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:14px;align-items:center;background:#F1F1EC;border-radius:16px;padding:14px 16px">
+<span style="width:30px;height:30px;border-radius:50%;background:#0A0A0A;color:#DFFF00;display:grid;place-items:center;font-weight:600;font-size:13px">5</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">5 free PT bookings to confirm</span><span style="color:#5B5B55;font-size:13px">Auto-assigned, new trainers first. Matthew 2, Eden 2, Joe 1.</span></div>
+<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#5B5B55;background:#fff;border-radius:999px;padding:3px 10px">Trainers</span><button type="button" style="height:36px;padding:0 16px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;color:#0A0A0A;font:inherit;font-weight:600;font-size:13px;cursor:pointer">Review</button></div>
+</div>
+
+<div style="display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:14px;align-items:center;background:#F1F1EC;border-radius:16px;padding:14px 16px">
+<span style="width:30px;height:30px;border-radius:50%;background:#0A0A0A;color:#DFFF00;display:grid;place-items:center;font-weight:600;font-size:13px">6</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">11 Perform members never had their free PT</span><span style="color:#5B5B55;font-size:13px">Best PT upsell group. Message drafted, ready to send.</span></div>
+<div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:#5B5B55;background:#fff;border-radius:999px;padding:3px 10px">Reception</span><button type="button" style="height:36px;padding:0 16px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;color:#0A0A0A;font:inherit;font-weight:600;font-size:13px;cursor:pointer">Review</button></div>
+</div>
+</section>
+
+<div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:10px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">In the club</h2>
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:#5E6B00"></span>84 now</span>
+<span style="margin-left:auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8C8C84">Sample names</span>
+</div>
+<div style="display:flex;flex-direction:column">
+<a href="#member" data-go="Member" style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #E2E2DC;text-decoration:none;color:#0A0A0A">
+<span style="width:40px;height:40px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-weight:600;color:#5B5B55">SK</span>
+<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">Sophie Kerr</span><span style="font-size:12px;color:#5B5B55">Main door, 6:42am. Perform</span></span>
+<span style="font-size:12px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:3px 10px;font-weight:600">Owes $54.50</span>
+</a>
+<div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #E2E2DC">
+<span style="width:40px;height:40px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-weight:600;color:#5B5B55">MR</span>
+<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">Manu Rewiti</span><span style="font-size:12px;color:#5B5B55">App door, 6:39am. Trial day 4 of 5</span></span>
+<span style="font-size:12px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:3px 10px;font-weight:600">Ready to join</span>
+</div>
+<div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #E2E2DC">
+<span style="width:40px;height:40px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-weight:600;color:#5B5B55">AL</span>
+<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">Anna Lee</span><span style="font-size:12px;color:#5B5B55">Main door, 6:31am. Fitness Passport</span></span>
+<span style="font-size:12px;background:#F1F1EC;color:#5B5B55;border-radius:999px;padding:3px 10px;font-weight:600">No offers</span>
+</div>
+<div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0">
+<span style="width:40px;height:40px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-weight:600;color:#5B5B55">JT</span>
+<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:600">James Tupou</span><span style="font-size:12px;color:#5B5B55">Main door, 6:20am. Back after 19 days</span></span>
+<span style="font-size:12px;background:#F1F1EC;color:#5B5B55;border-radius:999px;padding:3px 10px;font-weight:600">Say hi</span>
+</div>
+</div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Classes today</h2>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;font-size:13px"><span><b style="font-weight:600">6:00am</b> HYROX Strength, Dave</span><span style="font-variant-numeric:tabular-nums">18 of 20</span></div>
+<div style="height:8px;background:#F1F1EC;border-radius:999px"><div style="width:90%;height:8px;background:#0A0A0A;border-radius:999px"></div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;font-size:13px"><span><b style="font-weight:600">12:10pm</b> Strength Club, Te</span><span style="font-variant-numeric:tabular-nums">9 of 20</span></div>
+<div style="height:8px;background:#F1F1EC;border-radius:999px"><div style="width:45%;height:8px;background:#0A0A0A;border-radius:999px"></div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;font-size:13px"><span><b style="font-weight:600">5:30pm</b> HYROX Threshold, Bekka</span><span style="font-variant-numeric:tabular-nums">Full, 4 waiting</span></div>
+<div style="height:8px;background:#F1F1EC;border-radius:999px"><div style="width:100%;height:8px;background:#5E6B00;border-radius:999px"></div></div>
+</div>
+<p style="margin:0;font-size:12px;color:#5B5B55">Class times are placeholders until the timetable is connected.</p>
+</section>
+
+</div>
+</div>
+</main>
+<main data-view="Member" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#5B5B55"><a href="#main" data-go="Main" style="text-decoration:none">Members</a><span>/</span><span>Sophie Kerr</span><span style="margin-left:auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8C8C84">Sample member</span></div>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+<div style="width:80px;height:80px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px;color:#5B5B55">SK</div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-right:auto">
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:32px;letter-spacing:-.02em">Sophie Kerr</h1>
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+<span style="font-size:12px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:3px 10px;font-weight:600">Perform, weekly</span>
+<span style="font-size:12px;background:#F1F1EC;color:#0A0A0A;border-radius:999px;padding:3px 10px;font-weight:600">Member 19 months</span>
+<span style="font-size:12px;background:#F1F1EC;color:#0A0A0A;border-radius:999px;padding:3px 10px;font-weight:600">HYROX Auckland ticket</span>
+<span style="font-size:12px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:3px 10px;font-weight:600">No free PT yet</span>
+<span style="font-size:12px;background:#F1F1EC;color:#5B5B55;border-radius:999px;padding:3px 10px;font-weight:600">Came from Meta, HYROX plan</span>
+</div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button type="button" style="height:44px;padding:0 20px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600;cursor:pointer">Message</button>
+<button type="button" style="height:44px;padding:0 20px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600;cursor:pointer">Freeze</button>
+<button type="button" style="height:44px;padding:0 20px;border:0;border-radius:999px;background:#DFFF00;color:#0A0A0A;font:inherit;font-weight:600;cursor:pointer">Check in</button>
+</div>
+</section>
+
+<section style="background:#0A0A0A;color:#fff;border-radius:24px;padding:22px 24px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center">
+<span style="width:44px;height:44px;border-radius:50%;background:#DFFF00;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg></span>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#DFFF00;font-weight:600">Best next step</span><span style="font-size:16px">Book her free PT with Matthew. She trains 4 times a week for HYROX in February and hasn't met a coach in 19 months. Then sort the failed $54.50 at the desk.</span></div>
+<button type="button" style="height:44px;padding:0 20px;border:0;border-radius:999px;background:#DFFF00;color:#0A0A0A;font:inherit;font-weight:600;cursor:pointer">Book PT</button>
+</section>
+
+<div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;align-items:start">
+
+<div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:12px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Visits</h2>
+<span style="color:#5B5B55;font-size:13px">Last 12 weeks</span>
+<span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600"><span style="width:10px;height:10px;border-radius:50%;background:#5E6B00"></span>Healthy, usual 4 a week</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;align-items:end;height:140px;border-bottom:1px solid #E2E2DC">
+<div style="height:57%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:71%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:57%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:71%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:43%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:57%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:71%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:86%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:57%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:71%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:57%;background:#E2E2DC;border-radius:6px 6px 0 0"></div>
+<div style="height:71%;background:#0A0A0A;border-radius:6px 6px 0 0"></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:12px;color:#5B5B55">This week</div><div style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px">5</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:12px;color:#5B5B55">Last visit</div><div style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px">Today</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:12px;color:#5B5B55">Classes booked</div><div style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px">2</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:12px;color:#5B5B55">No-shows, 90 days</div><div style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px">0</div></div>
+</div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:4px">
+<h2 style="margin:0 0 10px;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">History</h2>
+<div style="display:grid;grid-template-columns:90px minmax(0,1fr);gap:14px;padding:10px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55;font-size:13px">29 Sep</span><span>Weekly debit of $54.50 failed, insufficient funds. Auto-retry booked for Friday.</span></div>
+<div style="display:grid;grid-template-columns:90px minmax(0,1fr);gap:14px;padding:10px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55;font-size:13px">21 Sep</span><span>Referred a mate through Bring a Mate. Mate joined on Perform, 4 weeks free credited to both.</span></div>
+<div style="display:grid;grid-template-columns:90px minmax(0,1fr);gap:14px;padding:10px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55;font-size:13px">2 Sep</span><span>Bekka: chatted at the desk, training for HYROX Auckland in February.</span></div>
+<div style="display:grid;grid-template-columns:90px minmax(0,1fr);gap:14px;padding:10px 0"><span style="color:#5B5B55;font-size:13px">14 Mar 25</span><span>Joined online from the HYROX Free Training Plan ad.</span></div>
+</section>
+
+</div>
+
+<div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Billing</h2>
+<div style="background:#FFF1CC;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+<div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-size:12px;color:#6B4A00">Owing</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px;color:#4A3300">$54.50</span></div>
+<button type="button" style="height:40px;padding:0 16px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px;cursor:pointer">Text pay link</button>
+</div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Plan</span><span style="font-weight:600">$49.50 a week, Perform</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Next debit</span><span style="font-weight:600">Mon 5 Oct, $49.50</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Lock-in ends</span><span style="font-weight:600">Ended, rolling</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:#5B5B55">Paid in 19 months</span><span style="font-weight:600">$4,059</span></div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Details</h2>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Mobile</span><span>[MOBILE]</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Key tag</span><span>[TAG NUMBER]</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Goal</span><span>HYROX race prep</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Trainer</span><span>Not assigned</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">Marketing email</span><span>Yes</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E2E2DC"><span style="color:#5B5B55">M2 App</span><span>Installed</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:#5B5B55">Referrals</span><span>1 joined</span></div>
+</section>
+
+</div>
+</div>
+</main>
+<main data-view="Leads" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Every source, one inbox</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Leads<span style="color:#5E6B00">.</span></h1>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px">All 23</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">5 Days for $5 · 9</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Free PT · 5</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Unfinished sign-ups · 4</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Bring a Mate · 3</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">App upgrades · 2</button>
+</div>
+</header>
+
+<section style="background:#fff;border-radius:24px;padding:20px 24px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#5B5B55">New this week</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">61</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#5B5B55">Contacted within a day</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">88%</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#5B5B55">Best source this month</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">HYROX ads</span></div>
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;color:#5B5B55">Ad cost per new member</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">$[CPA]</span></div>
+</section>
+
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start">
+
+<section style="background:#E9E9E3;border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;padding:4px 6px"><span style="font-weight:600">New</span><span style="color:#5B5B55">8</span></div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Ella Martin</span><span style="font-size:12px;color:#A33A00;font-weight:600">2h</span></div>
+<span style="font-size:13px;color:#5B5B55">Stopped at bank details on Perform weekly.</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">Unfinished sign-up</span><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">Meta, HYROX plan</span></div>
+</div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Ravi Singh</span><span style="font-size:12px;color:#5B5B55;font-weight:600">4h</span></div>
+<span style="font-size:13px;color:#5B5B55">Booked a free PT, goal is strength. Assigned to Joe.</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">Free PT</span><span style="font-size:11px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:2px 8px;font-weight:600">Member</span></div>
+</div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Grace Wu</span><span style="font-size:12px;color:#5B5B55;font-weight:600">6h</span></div>
+<span style="font-size:13px;color:#5B5B55">Mate of Sophie Kerr. Wants to start Monday.</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">Bring a Mate</span></div>
+</div>
+</section>
+
+<section style="background:#E9E9E3;border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;padding:4px 6px"><span style="font-weight:600">Contacted</span><span style="color:#5B5B55">6</span></div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Tom Baker</span><span style="font-size:12px;color:#5B5B55;font-weight:600">1d</span></div>
+<span style="font-size:13px;color:#5B5B55">Called, no answer. Text sent. Try again 5pm.</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">Website form</span></div>
+</div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Mia Fale</span><span style="font-size:12px;color:#5B5B55;font-weight:600">1d</span></div>
+<span style="font-size:13px;color:#5B5B55">Tapped upgrade to Perform in the app. Wants recovery.</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">App upgrade</span><span style="font-size:11px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:2px 8px;font-weight:600">Daily member</span></div>
+</div>
+</section>
+
+<section style="background:#E9E9E3;border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;padding:4px 6px"><span style="font-weight:600">On trial</span><span style="color:#5B5B55">9</span></div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Manu Rewiti</span><span style="font-size:12px;color:#5B5B55;font-weight:600">Day 4</span></div>
+<span style="font-size:13px;color:#5B5B55">4 visits, 2 HYROX classes. In the club now.</span>
+<div style="height:6px;background:#F1F1EC;border-radius:999px"><div style="width:80%;height:6px;background:#5E6B00;border-radius:999px"></div></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">5 Days for $5</span><span style="font-size:11px;background:#DFFF00;border-radius:999px;padding:2px 8px;font-weight:600">Hot</span></div>
+</div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Kate O'Neill</span><span style="font-size:12px;color:#5B5B55;font-weight:600">Day 2</span></div>
+<span style="font-size:13px;color:#5B5B55">1 visit. Hasn't been back since sign-up.</span>
+<div style="height:6px;background:#F1F1EC;border-radius:999px"><div style="width:20%;height:6px;background:#B9B9B0;border-radius:999px"></div></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">5 Days for $5</span><span style="font-size:11px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:2px 8px;font-weight:600">Nudge</span></div>
+</div>
+</section>
+
+<section style="background:#E9E9E3;border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;padding:4px 6px"><span style="font-weight:600">Joined this week</span><span style="color:#5B5B55">21</span></div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Liam Ross</span><span style="font-size:12px;color:#5E6B00;font-weight:600">Joined</span></div>
+<span style="font-size:13px;color:#5B5B55">Perform weekly. Billing set up online.</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">Meta, 5 Days $5 colour</span></div>
+</div>
+<div style="background:#fff;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Nina Patel</span><span style="font-size:12px;color:#5E6B00;font-weight:600">Joined</span></div>
+<span style="font-size:13px;color:#5B5B55">Classes fortnightly. Free PT booked with Eden.</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-size:11px;background:#F1F1EC;border-radius:999px;padding:2px 8px;font-weight:600">Google search</span></div>
+</div>
+</section>
+
+</div>
+<p style="margin:0;font-size:12px;color:#8C8C84">Names and lead counts are samples. Sources, offers and trainer order are M2's real setup.</p>
+</main>
+<main data-view="Classes" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Week of 28 September</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Classes<span style="color:#5E6B00">.</span></h1>
+</div>
+<div style="display:flex;gap:24px">
+<div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5B5B55">Spots filled</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">78%</span></div>
+<div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5B5B55">No-shows</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">14</span></div>
+<div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5B5B55">On waitlists</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">22</span></div>
+</div>
+</header>
+
+<div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start">
+
+<section style="background:#fff;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;font-size:12px;font-weight:600;color:#5B5B55;text-align:center">
+<span>Mon 28</span><span>Tue 29</span><span>Wed 30</span><span>Thu 1</span><span style="color:#0A0A0A;background:#DFFF00;border-radius:999px">Fri 2</span><span>Sat 3</span><span>Sun 4</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">6:00am</div><div style="font-weight:600;font-size:13px">HYROX Strength</div><div style="font-size:11px;color:#5B5B55">20/20</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">5:30pm</div><div style="font-weight:600;font-size:13px">HYROX Threshold</div><div style="font-size:11px;color:#5B5B55">17/20</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">6:30pm</div><div style="font-weight:600;font-size:13px">Hatha yoga</div><div style="font-size:11px;color:#5B5B55">12/20</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">6:00am</div><div style="font-weight:600;font-size:13px">Strength Club</div><div style="font-size:11px;color:#5B5B55">14/20</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">5:30pm</div><div style="font-weight:600;font-size:13px">HYROX Teams</div><div style="font-size:11px;color:#5B5B55">20/20</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">6:00am</div><div style="font-weight:600;font-size:13px">HYROX Strength</div><div style="font-size:11px;color:#5B5B55">19/20</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">6:30pm</div><div style="font-weight:600;font-size:13px">Yin yoga</div><div style="font-size:11px;color:#5B5B55">10/20</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">12:10pm</div><div style="font-weight:600;font-size:13px">Strength Club</div><div style="font-size:11px;color:#5B5B55">8/20</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">5:30pm</div><div style="font-weight:600;font-size:13px">HYROX Threshold</div><div style="font-size:11px;color:#5B5B55">20/20</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">6:00am</div><div style="font-weight:600;font-size:13px">HYROX Strength</div><div style="font-size:11px;color:#5B5B55">18/20</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">12:10pm</div><div style="font-weight:600;font-size:13px">Strength Club</div><div style="font-size:11px;color:#5B5B55">9/20</div></div>
+<div style="background:#0A0A0A;color:#fff;border-radius:12px;padding:10px"><div style="font-size:11px;color:#DFFF00">5:30pm</div><div style="font-weight:600;font-size:13px">HYROX Threshold</div><div style="font-size:11px;color:#B9B9B0">20/20, 4 waiting</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">8:00am</div><div style="font-weight:600;font-size:13px">HYROX Teams</div><div style="font-size:11px;color:#5B5B55">16/20</div></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:11px;color:#5B5B55">8:00am</div><div style="font-weight:600;font-size:13px">Strength Club</div><div style="font-size:11px;color:#5B5B55">11/20</div></div>
+</div>
+</div>
+<p style="margin:0;font-size:12px;color:#8C8C84">Yoga times are real (Rhea, Mon and Wed 6:30pm). Other times and numbers are placeholders until the live timetable is connected.</p>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:column;gap:2px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Today 5:30pm, Bekka</span>
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">HYROX Threshold</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:12px;color:#5B5B55">Booked</div><div style="font-weight:800;font-family:Archivo,Arial,sans-serif;font-size:20px">20</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:12px;color:#5B5B55">Waitlist</div><div style="font-weight:800;font-family:Archivo,Arial,sans-serif;font-size:20px">4</div></div>
+<div style="background:#F1F1EC;border-radius:12px;padding:10px"><div style="font-size:12px;color:#5B5B55">Late cancels</div><div style="font-weight:800;font-family:Archivo,Arial,sans-serif;font-size:20px">1</div></div>
+</div>
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #E2E2DC"><span>Sophie Kerr</span><span style="font-size:12px;color:#5B5B55">Perform</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #E2E2DC"><span>Manu Rewiti</span><span style="font-size:12px;background:#DFFF00;border-radius:999px;padding:1px 8px;font-weight:600">Trial, day 4</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #E2E2DC"><span>Anna Lee</span><span style="font-size:12px;color:#5B5B55">Passport</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #E2E2DC"><span>Liam Ross</span><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:1px 8px;font-weight:600">First class</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0"><span style="color:#5B5B55">+16 more</span><span style="font-size:12px;color:#5B5B55">Sample names</span></div>
+</div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;font-size:13px;color:#5B5B55">Gate scans check people in automatically. Anyone not scanned 10 minutes after start is marked a no-show and their spot goes to the waitlist. Walk-ins are blocked at 20.</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#F7FBD9;border-radius:14px;padding:12px 14px">
+<label for="bookin" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Book someone in</label>
+<div style="display:flex;gap:8px">
+<input id="bookin" type="text" placeholder="Name, phone or tag" style="flex:1;min-width:0;height:40px;border:1px solid #E2E2DC;border-radius:999px;padding:0 14px;font:inherit;background:#fff">
+<button type="button" style="height:40px;padding:0 16px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600">Book in</button>
+</div>
+<span style="font-size:12px;color:#5B5B55">Class is full, so they go to the top of the waitlist. Staff can override the cap of 20 if you allow it.</span>
+</div>
+<div style="display:flex;gap:8px">
+<button type="button" style="flex:1;height:44px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600">Message the waitlist</button>
+<button type="button" style="flex:1;height:44px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600">Mark attendance</button>
+</div>
+</section>
+</div>
+</main>
+<main data-view="Collections" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Bekka's list</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Collections<span style="color:#5E6B00">.</span></h1>
+</div>
+<div style="display:flex;align-items:center;gap:10px;background:#0A0A0A;color:#fff;border-radius:999px;padding:8px 16px">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+<span style="font-size:13px">Total owed <b style="color:#DFFF00;font-weight:600">$4,347.38</b> across 24. Bekka doesn't see this line.</span>
+</div>
+</header>
+
+<section style="background:#fff;border-radius:24px;padding:20px 24px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px">
+<div style="background:#0A0A0A;color:#fff;border-radius:14px;padding:12px 14px"><div style="font-size:13px;font-weight:600;color:#DFFF00">$250 or more</div><div style="font-size:12px;color:#B9B9B0">Blocked at the doors and in the app until paid</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:13px;font-weight:600">Up to $1,500</div><div style="font-size:12px;color:#5B5B55">Offer to settle at 50%</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:13px;font-weight:600">Over $1,500</div><div style="font-size:12px;color:#5B5B55">Offer to settle at 30%</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:13px;font-weight:600">Under $1,000</div><div style="font-size:12px;color:#5B5B55">Never sent to Marshall Freeman</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:13px;font-weight:600">Gifted time</div><div style="font-size:12px;color:#5B5B55">Left out automatically</div></div>
+</section>
+
+<div role="tablist" style="display:flex;gap:6px">
+<button type="button" role="tab" data-tabbtn="current" style="height:40px;padding:0 18px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600">Current members · 18</button>
+<button type="button" role="tab" data-tabbtn="former" style="height:40px;padding:0 18px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600">Left with money owing · 6</button>
+</div>
+
+<section data-tab="current" style="background:#fff;border-radius:24px;padding:12px 24px 20px;overflow-x:auto">
+<table class="ct" style="width:100%;border-collapse:collapse;min-width:900px;font-size:14px">
+<thead><tr style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#5B5B55"><th>Member</th><th>Owes</th><th>Overdue</th><th>Door access</th><th>Last contact</th><th>Next step</th><th></th></tr></thead>
+<tbody>
+<tr><td style="font-weight:600">Chris Ngata</td><td style="font-variant-numeric:tabular-nums">$436.00</td><td>41 days</td><td><span style="font-size:12px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:3px 10px;font-weight:600">Blocked</span></td><td>Text 25 Sep, read</td><td>Offer $218 to settle</td><td style="text-align:right"><button type="button" style="height:34px;padding:0 14px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-size:13px;font-weight:600">Call</button></td></tr>
+<tr><td style="font-weight:600">Hannah Brook</td><td style="font-variant-numeric:tabular-nums">$218.00</td><td>22 days</td><td><span style="font-size:12px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:3px 10px;font-weight:600">$32 to block</span></td><td>Promised to pay Friday</td><td>Check payment, then remind</td><td style="text-align:right"><button type="button" style="height:34px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Remind</button></td></tr>
+<tr><td style="font-weight:600">Sam Fifita</td><td style="font-variant-numeric:tabular-nums">$109.00</td><td>9 days</td><td><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:3px 10px;font-weight:600">Open</span></td><td>Auto text 24 Sep</td><td>Card expired, send update link</td><td style="text-align:right"><button type="button" style="height:34px;padding:0 14px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-size:13px;font-weight:600">Send link</button></td></tr>
+<tr><td style="font-weight:600">Sophie Kerr</td><td style="font-variant-numeric:tabular-nums">$54.50</td><td>3 days</td><td><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:3px 10px;font-weight:600">Open</span></td><td>In the club today</td><td>Ask at the desk</td><td style="text-align:right"><button type="button" style="height:34px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Flag desk</button></td></tr>
+</tbody>
+</table>
+<div style="margin-top:14px;background:#F1F1EC;border-radius:14px;padding:12px 14px;font-size:13px">When a blocked member scans in, the door stays shut and the app tells them how much they owe with a link to pay. The moment they pay, access comes back on its own.</div>
+</section>
+
+<section data-tab="former" hidden style="background:#fff;border-radius:24px;padding:12px 24px 20px;overflow-x:auto">
+<table class="ct" style="width:100%;border-collapse:collapse;min-width:900px;font-size:14px">
+<thead><tr style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#5B5B55"><th>Former member</th><th>Owes</th><th>Left</th><th>Tries</th><th>Last contact</th><th>Next step</th><th></th></tr></thead>
+<tbody>
+<tr style="background:#F7FBD9"><td style="font-weight:600">Kiri Moana</td><td>$0 <span style="color:#5B5B55;font-size:12px">was $320</span></td><td>July</td><td>4</td><td>Paid $160 on 30 Sep</td><td><span style="font-size:12px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:3px 10px;font-weight:600">Settled at 50%</span></td><td style="text-align:right"><button type="button" style="height:34px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Close</button></td></tr>
+<tr style="background:#FFF6DD"><td style="font-weight:600">Jordan Harris</td><td>$1,240.00</td><td>June</td><td>6</td><td>No reply since 12 Aug</td><td><span style="font-size:12px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:3px 10px;font-weight:600">Ready to refer</span></td><td style="text-align:right"><button type="button" style="height:34px;padding:0 14px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-size:13px;font-weight:600">Refer</button></td></tr>
+<tr><td style="font-weight:600">Alex Turner</td><td>$612.00</td><td>August</td><td>3</td><td>Email 20 Sep</td><td>Offer $306 to settle</td><td style="text-align:right"><button type="button" style="height:34px;padding:0 14px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-size:13px;font-weight:600">Call</button></td></tr>
+</tbody>
+</table>
+</section>
+<p style="margin:0;font-size:12px;color:#8C8C84">Sample people. Rules, the $250 block and the $4,347.38 total are real.</p>
+</main>
+<main data-view="Passport" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Paid per visit, tiers reset monthly</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Fitness Passport<span style="color:#5E6B00">.</span></h1>
+</div>
+<div style="display:flex;gap:24px">
+<div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5B5B55">Passport members</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">1,231</span></div>
+<div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5B5B55">Share of members</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">64%</span></div>
+<div style="display:flex;flex-direction:column"><span style="font-size:12px;color:#5B5B55">Sep payout</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">$43,774</span></div>
+</div>
+</header>
+
+<section style="background:#0A0A0A;color:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#DFFF00;font-weight:600">October so far</span>
+<span style="margin-left:auto;font-size:13px;color:#B9B9B0">On pace for about 4,400 visits, top tier by the 13th</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:14px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:900;font-size:52px;color:#DFFF00;line-height:1">286</span><span style="color:#E4E4DE">visits in 2 days</span></div>
+<div style="display:grid;grid-template-columns:458fr 461fr 461fr 461fr 600fr;gap:4px">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:14px;border-radius:999px 0 0 999px;background:#1A1A18;overflow:hidden"><div style="width:62%;height:14px;background:#DFFF00"></div></div><span style="font-size:12px;color:#B9B9B0">To 458<br><b style="color:#fff;font-weight:600">$7.39</b></span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:14px;background:#1A1A18"></div><span style="font-size:12px;color:#B9B9B0">To 919<br><b style="color:#fff;font-weight:600">$8.21</b></span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:14px;background:#1A1A18"></div><span style="font-size:12px;color:#B9B9B0">To 1,380<br><b style="color:#fff;font-weight:600">$9.12</b></span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:14px;background:#1A1A18"></div><span style="font-size:12px;color:#B9B9B0">To 1,841<br><b style="color:#fff;font-weight:600">$10.03</b></span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="height:14px;border-radius:0 999px 999px 0;background:#1A1A18"></div><span style="font-size:12px;color:#B9B9B0">1,842 and up<br><b style="color:#DFFF00;font-weight:600">$11.04</b></span></div>
+</div>
+<span style="font-size:12px;color:#8C8C84">October figures are an example. The live count comes from door and app check-ins.</span>
+</section>
+
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start">
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Visits by month</h2><span style="color:#5B5B55;font-size:13px">2026, almost doubled since January</span></div>
+<div style="display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;align-items:end;height:150px;border-bottom:1px solid #E2E2DC">
+<div style="height:50%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:61%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:59%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:64%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:64%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:72%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:83%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:90%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:100%;background:#5E6B00;border-radius:6px 6px 0 0"></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;font-size:11px;color:#5B5B55;text-align:center;font-variant-numeric:tabular-nums"><span>2,177</span><span>2,653</span><span>2,544</span><span>2,772</span><span>2,788</span><span>3,131</span><span>3,600</span><span>3,908</span><span style="color:#0A0A0A;font-weight:600">4,327</span></div>
+<div style="display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;font-size:11px;color:#5B5B55;text-align:center"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">New Passport sign-ups</h2><span style="color:#5B5B55;font-size:13px">2026</span></div>
+<div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;align-items:end;height:150px;border-bottom:1px solid #E2E2DC">
+<div style="height:42%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:60%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:40%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:65%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:77%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:62%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:94%;background:#E2E2DC;border-radius:6px 6px 0 0"></div><div style="height:100%;background:#0A0A0A;border-radius:6px 6px 0 0"></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;font-size:11px;color:#5B5B55;text-align:center;font-variant-numeric:tabular-nums"><span>32</span><span>46</span><span>31</span><span>50</span><span>59</span><span>48</span><span>72</span><span style="color:#0A0A0A;font-weight:600">77</span></div>
+<div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;font-size:11px;color:#5B5B55;text-align:center"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div>
+</section>
+</div>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Get them in more often</h2><span style="color:#5B5B55;font-size:13px">Passport members are excluded from deals, so the lever is visits</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px">584</span><span style="font-weight:600">Didn't visit in September</span><span style="font-size:13px;color:#5B5B55">Win-back email after 2 weeks away, then a call.</span><button type="button" style="margin-top:6px;height:38px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px">See the list</button></div>
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px">[COUNT]</span><span style="font-weight:600">Coming once a week</span><span style="font-size:13px;color:#5B5B55">The easiest second visit. Free PT session to build a routine.</span><button type="button" style="margin-top:6px;height:38px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600;font-size:13px">See the list</button></div>
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px">Hospital</span><span style="font-weight:600">Staff get Passport through work</span><span style="font-size:13px;color:#5B5B55">The "come more often" campaign is designed and ready to switch on.</span><button type="button" style="margin-top:6px;height:38px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600;font-size:13px">Review campaign</button></div>
+</div>
+</section>
+</main>
+<main data-view="POS" hidden style="padding:28px 36px 48px;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;align-items:start;min-width:0">
+
+<div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Front desk</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Point of sale<span style="color:#5E6B00">.</span></h1>
+</div>
+<label for="prodsearch" style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:0 16px;height:44px;width:320px;max-width:100%">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B5B55" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+<input id="prodsearch" type="text" placeholder="Search or scan a barcode" style="border:0;outline:0;background:transparent;font:inherit;flex:1;min-width:0">
+</label>
+</header>
+
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px">Key tags and visits · 6</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Kyro · 9</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Supplements · 15</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Dr Hydrate · 2</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Drinks · 1</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Towel hire · 1</button>
+<button type="button" style="height:36px;padding:0 14px;border:0;border-radius:999px;background:#fff;font:inherit;font-weight:600;font-size:13px">Staff uniform · 2</button>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+<button type="button" style="background:#fff;border:0;border-radius:18px;padding:18px;text-align:left;font:inherit;display:flex;flex-direction:column;gap:6px;min-height:110px"><span style="font-weight:600;font-size:15px">Key tag, new member</span><span style="margin-top:auto;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px">$25.00</span></button>
+<button type="button" style="background:#fff;border:0;border-radius:18px;padding:18px;text-align:left;font:inherit;display:flex;flex-direction:column;gap:6px;min-height:110px"><span style="font-weight:600;font-size:15px">Key tag, replacement</span><span style="margin-top:auto;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px">$10.00</span></button>
+<button type="button" style="background:#fff;border:0;border-radius:18px;padding:18px;text-align:left;font:inherit;display:flex;flex-direction:column;gap:6px;min-height:110px"><span style="font-weight:600;font-size:15px">Casual visit</span><span style="margin-top:auto;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px">$25.00</span></button>
+<button type="button" style="background:#fff;border:0;border-radius:18px;padding:18px;text-align:left;font:inherit;display:flex;flex-direction:column;gap:6px;min-height:110px"><span style="font-weight:600;font-size:15px">Casual pool pass, Daily member</span><span style="margin-top:auto;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px">$10.00</span></button>
+<button type="button" style="background:#fff;border:0;border-radius:18px;padding:18px;text-align:left;font:inherit;display:flex;flex-direction:column;gap:6px;min-height:110px"><span style="font-weight:600;font-size:15px">Pool and spa, Woods access</span><span style="margin-top:auto;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px">$5.00</span></button>
+<button type="button" style="background:#fff;border:0;border-radius:18px;padding:18px;text-align:left;font:inherit;display:flex;flex-direction:column;gap:6px;min-height:110px"><span style="font-weight:600;font-size:15px">Tanita body scan</span><span style="margin-top:auto;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px">$30.00</span></button>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+<button type="button" style="background:#F1F1EC;border:1px dashed #B9B9B0;border-radius:18px;padding:16px;text-align:left;font:inherit;font-weight:600">General sale, any amount</button>
+<button type="button" style="background:#F1F1EC;border:1px dashed #B9B9B0;border-radius:18px;padding:16px;text-align:left;font:inherit;font-weight:600">Gift voucher</button>
+</div>
+<p style="margin:0;font-size:12px;color:#8C8C84">Your real GymMaster products, shown GST inclusive. PT isn't sold here because trainers set and take their own payments.</p>
+</div>
+
+<section style="background:#fff;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:14px">
+<label for="possearch" style="display:flex;align-items:center;gap:8px;background:#F1F1EC;border-radius:999px;padding:0 16px;height:44px">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B5B55" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+<input id="possearch" type="text" value="Sophie Kerr" style="border:0;outline:0;background:transparent;font:inherit;flex:1;min-width:0">
+</label>
+<div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="font-size:12px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:2px 10px;font-weight:600">Perform</span><span style="color:#6B4A00;font-weight:600">Owes $54.50</span><span style="margin-left:auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8C8C84">Sample</span></div>
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E2E2DC"><span>Kyro Whey Protein, chocolate</span><span style="font-variant-numeric:tabular-nums">$89.99</span></div>
+<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E2E2DC"><span>Overdue weekly debit</span><span style="font-variant-numeric:tabular-nums">$54.50</span></div>
+<div style="display:flex;justify-content:space-between;padding:12px 0"><span style="font-weight:600">Total</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">$144.49</span></div>
+</div>
+<div style="background:#F7FBD9;border-radius:14px;padding:12px 14px;font-size:13px">She owes $54.50, so it's added to the sale. One tap clears it.</div>
+<button type="button" style="height:52px;border:0;border-radius:999px;background:#DFFF00;color:#0A0A0A;font:inherit;font-weight:600;font-size:15px">Take payment on Eftpos</button>
+<button type="button" style="height:44px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600">Add to next debit</button>
+</section>
+
+</main>
+<main data-view="Messages" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;flex-direction:column;gap:2px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Email, text and app in one place</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Messages<span style="color:#5E6B00">.</span></h1>
+</header>
+
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:start">
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Automations</h2><span style="color:#5B5B55;font-size:13px">Sent for you, in Taylor's voice</span><a href="#emailresults" data-go="EmailResults" style="margin-left:auto;font-size:13px;font-weight:600">See results</a></div>
+<div style="display:flex;align-items:center;gap:12px;background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-weight:600">Trial welcome</span><span style="font-size:12px;color:#5B5B55">Straight after a 5 Days for $5 sign-up</span></div><span style="font-size:12px;background:#fff;border-radius:999px;padding:3px 10px;font-weight:600">Draft</span></div>
+<div style="display:flex;align-items:center;gap:12px;background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-weight:600">Trial: book your free PT</span><span style="font-size:12px;color:#5B5B55">Day 2 of a trial</span></div><span style="font-size:12px;background:#fff;border-radius:999px;padding:3px 10px;font-weight:600">Draft</span></div>
+<div style="display:flex;align-items:center;gap:12px;background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-weight:600">Trial: what's next</span><span style="font-size:12px;color:#5B5B55">Last day, with the join link</span></div><span style="font-size:12px;background:#fff;border-radius:999px;padding:3px 10px;font-weight:600">Draft</span></div>
+<div style="display:flex;align-items:center;gap:12px;background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-weight:600">Welcome weeks 1, 2 and 6</span><span style="font-size:12px;color:#5B5B55">New members settling in</span></div><span style="font-size:12px;background:#fff;border-radius:999px;padding:3px 10px;font-weight:600">Draft</span></div>
+<div style="display:flex;align-items:center;gap:12px;background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-weight:600">Daily to Perform upgrade</span><span style="font-size:12px;color:#5B5B55">Test sent, waiting on your reply</span></div><span style="font-size:12px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:3px 10px;font-weight:600">Testing</span></div>
+<div style="display:flex;align-items:center;gap:12px;background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-weight:600">Passport win-back</span><span style="font-size:12px;color:#5B5B55">2 weeks without a visit</span></div><span style="font-size:12px;background:#fff;border-radius:999px;padding:3px 10px;font-weight:600">Draft</span></div>
+<div style="display:flex;align-items:center;gap:12px;background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="display:flex;flex-direction:column;margin-right:auto"><span style="font-weight:600">Class no-show</span><span style="font-size:12px;color:#5B5B55">Off until a week of checking</span></div><span style="font-size:12px;background:#0A0A0A;color:#B9B9B0;border-radius:999px;padding:3px 10px;font-weight:600">Off</span></div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Replies</h2><span style="color:#5B5B55;font-size:13px">3 need an answer</span><span style="margin-left:auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8C8C84">Sample</span></div>
+<div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px;border-radius:14px;background:#F7FBD9">
+<span style="width:40px;height:40px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-weight:600;color:#5B5B55">MR</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">Manu Rewiti <span style="font-weight:400;color:#5B5B55;font-size:12px">Text, reply to trial what's next</span></span><span style="color:#5B5B55">Keen to sign up. Can I do fortnightly instead of weekly?</span></div>
+<span style="font-size:12px;color:#5B5B55">8 min</span>
+</div>
+<div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px;border-radius:14px">
+<span style="width:40px;height:40px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-weight:600;color:#5B5B55">HB</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">Hannah Brook <span style="font-weight:400;color:#5B5B55;font-size:12px">Email</span></span><span style="color:#5B5B55">Sorry about the missed payment, I'll sort it Friday when I get paid.</span></div>
+<span style="font-size:12px;color:#5B5B55">1h</span>
+</div>
+<div style="display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px;border-radius:14px">
+<span style="width:40px;height:40px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-weight:600;color:#5B5B55">AL</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600">Anna Lee <span style="font-weight:400;color:#5B5B55;font-size:12px">App</span></span><span style="color:#5B5B55">Is the ice bath open over Labour weekend?</span></div>
+<span style="font-size:12px;color:#5B5B55">3h</span>
+</div>
+<div style="border-top:1px solid #E2E2DC;padding-top:14px;display:flex;flex-direction:column;gap:10px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Suggested reply to Manu</span>
+<div style="background:#F1F1EC;border-radius:14px;padding:14px;white-space:pre-line">Hey Manu, great to hear mate. Fortnightly is no worries, it's the same price, just billed every two weeks. I'll set it up at the desk when you come in tomorrow, or you can join here and pick fortnightly.
+
+Kind Regards, Taylor Blackler, CEO, M2 Training Club</div>
+<div style="display:flex;gap:8px"><button type="button" style="height:40px;padding:0 18px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600">Send</button><button type="button" style="height:40px;padding:0 18px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600">Edit</button></div>
+</div>
+</section>
+</div>
+</main>
+<main data-view="EmailResults" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<a href="#messages" data-go="Messages" style="font-size:13px;text-decoration:none">Messages</a>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Email results<span style="color:#5E6B00">.</span></h1>
+</div>
+<span style="display:inline-flex;align-items:center;gap:8px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:#DFFF00"></span>Live, last 30 days</span>
+</header>
+
+<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px">
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:2px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:34px">656</span><span style="color:#5B5B55">emails sent</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:2px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:34px">29</span><span style="color:#5B5B55">members back in the gym</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:2px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:34px">39</span><span style="color:#5B5B55">failed payments recovered</span></section>
+<section style="background:#0A0A0A;color:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:2px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:34px;color:#DFFF00">14</span><span style="color:#B9B9B0">sent today</span></section>
+<section style="background:#0A0A0A;color:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:2px"><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:34px;color:#DFFF00">3</span><span style="color:#B9B9B0">results today</span></section>
+</div>
+
+<div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start">
+
+<section style="background:#fff;border-radius:24px;padding:10px 28px 22px">
+<div class="grp">Win-back</div>
+<div class="er"><div><h3>Fitness Passport</h3><div class="sub">14 days away · 85 sent · 25 came back</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="pc">29%</span><span style="font-size:12px;background:#F7FBD9;color:#3C4400;border-radius:999px;padding:3px 12px;font-weight:600">Working</span></div><div class="bar"><div style="width:29%;height:8px;background:#DFFF00;border-radius:999px"></div></div></div>
+<div class="er"><div><h3>We miss you</h3><div class="sub">30 days away · 23 sent · 4 came back</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="pc">17%</span><span style="font-size:12px;background:#F7FBD9;color:#3C4400;border-radius:999px;padding:3px 12px;font-weight:600">Working</span></div><div class="bar"><div style="width:17%;height:8px;background:#DFFF00;border-radius:999px"></div></div></div>
+<div class="er"><div><h3>New member check-in</h3><div class="sub">12 days in · 0 sent</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="pc">-</span><span style="font-size:12px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:3px 12px;font-weight:600">Not sending</span></div><div class="bar"></div></div>
+<div class="grp">Money</div>
+<div class="er"><div><h3>Failed payment</h3><div class="sub">Billing failed · 57 sent · 39 now paid up</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="pc">68%</span><span style="font-size:12px;background:#DFFF00;color:#0A0A0A;border-radius:999px;padding:3px 12px;font-weight:600">Strong</span></div><div class="bar"><div style="width:68%;height:8px;background:#DFFF00;border-radius:999px"></div></div></div>
+<div class="grp">Trials</div>
+<div class="er"><div><h3>Trial ending</h3><div class="sub">Last day of trial · 35 sent · 0 joined</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="pc">0%</span><span style="font-size:12px;background:#FCE7E2;color:#8A2A12;border-radius:999px;padding:3px 12px;font-weight:600">Needs work</span></div><div class="bar"></div></div>
+<div class="er"><div><h3>Trial come-back</h3><div class="sub">After the trial · 27 sent · 0 joined</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="pc">0%</span><span style="font-size:12px;background:#FCE7E2;color:#8A2A12;border-radius:999px;padding:3px 12px;font-weight:600">Needs work</span></div><div class="bar"></div></div>
+<p style="margin:16px 0 0;font-size:12px;color:#8C8C84">Figures are your real September email results from GymMaster. In the Core they update the moment something happens.</p>
+</section>
+
+<div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+<section style="background:#fff;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:4px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px;letter-spacing:-.02em">Happening now</h2><span style="margin-left:auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8C8C84">Sample</span></div>
+<div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid #E2E2DC"><span style="font-size:12px;color:#5B5B55">6:52am</span><span><b style="font-weight:600">Sam F.</b> paid $109 after the failed payment email</span></div>
+<div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid #E2E2DC"><span style="font-size:12px;color:#5B5B55">6:41am</span><span><b style="font-weight:600">Anna L.</b> scanned in, 3 days after the Passport win-back</span></div>
+<div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid #E2E2DC"><span style="font-size:12px;color:#5B5B55">6:30am</span><span>Trial ending sent to 6 people</span></div>
+<div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid #E2E2DC"><span style="font-size:12px;color:#5B5B55">6:30am</span><span>Failed payment sent to 4 people</span></div>
+<div style="display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid #E2E2DC"><span style="font-size:12px;color:#5B5B55">Yday</span><span><b style="font-weight:600">James T.</b> came back after 19 days, We miss you</span></div>
+</section>
+
+<section style="background:#FFF6DD;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:600">Two things to fix now</span>
+<span style="font-size:13px;color:#4A3300"><b style="font-weight:600">Trials at 0% is almost certainly a tracking gap.</b> 93 people joined in September, but the join page creates a new member record, so GymMaster doesn't link the join back to the trial email. The Core matches them by phone and email.</span>
+<span style="font-size:13px;color:#4A3300"><b style="font-weight:600">New member check-in sent nothing.</b> The automation is switched off or its rule never triggers. Worth checking in GymMaster this week.</span>
+</section>
+</div>
+</div>
+</main>
+<main data-view="Reports" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;flex-direction:column;gap:2px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Everything GymMaster did, and what it didn't</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Reports<span style="color:#5E6B00">.</span></h1>
+</header>
+
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Net growth</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px">+48 a month</span><span style="font-size:12px;color:#5B5B55">2026 average</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Monthly churn</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px">0.96%</span><span style="font-size:12px;color:#5B5B55">Last closed month</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Members visiting</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px">1,233</span><span style="font-size:12px;color:#5B5B55">of 1,923 current</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Lead source recorded</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:26px;color:#A33A00">21%</span><span style="font-size:12px;color:#5B5B55">Goes to 100% with the Core</span></section>
+</div>
+
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start">
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Membership mix</h2><span style="color:#5B5B55;font-size:13px">September</span></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:12px;align-items:center"><span>Fitness Passport</span><div style="height:12px;background:#F1F1EC;border-radius:999px"><div style="width:100%;height:12px;background:#5E6B00;border-radius:999px"></div></div><span style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">1,231</span></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:12px;align-items:center"><span>Daily and Entry</span><div style="height:12px;background:#F1F1EC;border-radius:999px"><div style="width:30.1%;height:12px;background:#0A0A0A;border-radius:999px"></div></div><span style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">371</span></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:12px;align-items:center"><span>Perform and Gateway</span><div style="height:12px;background:#F1F1EC;border-radius:999px"><div style="width:18.8%;height:12px;background:#0A0A0A;border-radius:999px"></div></div><span style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">231</span></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:12px;align-items:center"><span>Recovery</span><div style="height:12px;background:#F1F1EC;border-radius:999px"><div style="width:2.7%;height:12px;background:#0A0A0A;border-radius:999px"></div></div><span style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">33</span></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:12px;align-items:center"><span>Trip passes</span><div style="height:12px;background:#F1F1EC;border-radius:999px"><div style="width:2%;height:12px;background:#0A0A0A;border-radius:999px"></div></div><span style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">25</span></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:12px;align-items:center"><span>Transporter</span><div style="height:12px;background:#F1F1EC;border-radius:999px"><div style="width:1.3%;height:12px;background:#0A0A0A;border-radius:999px"></div></div><span style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">16</span></div>
+<div style="display:grid;grid-template-columns:150px minmax(0,1fr) 60px;gap:12px;align-items:center"><span>Classes</span><div style="height:12px;background:#F1F1EC;border-radius:999px"><div style="width:0.7%;height:12px;background:#0A0A0A;border-radius:999px"></div></div><span style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">9</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;font-size:13px">Daily outnumbers Perform 371 to 231. Every Daily member moved up is $22 more a week.</div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Busiest times</h2><span style="color:#5B5B55;font-size:13px">Pattern from notes, live once connected</span></div>
+<div style="display:grid;grid-template-columns:40px repeat(9,minmax(0,1fr));gap:4px;font-size:11px;color:#5B5B55;text-align:center">
+<span></span><span>5am</span><span>7am</span><span>9am</span><span>11am</span><span>1pm</span><span>3pm</span><span>5pm</span><span>7pm</span><span>9pm</span>
+<span style="text-align:left">Mon</span><span style="height:22px;border-radius:4px;background:#0A0A0A"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#F1F1EC;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#0A0A0A;border-radius:4px"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span>
+<span style="text-align:left">Tue</span><span style="height:22px;border-radius:4px;background:#0A0A0A"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#F1F1EC;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#0A0A0A;border-radius:4px"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span>
+<span style="text-align:left">Wed</span><span style="height:22px;border-radius:4px;background:#0A0A0A"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#F1F1EC;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#0A0A0A;border-radius:4px"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span>
+<span style="text-align:left">Thu</span><span style="height:22px;border-radius:4px;background:#0A0A0A"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#F1F1EC;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#0A0A0A;border-radius:4px"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span>
+<span style="text-align:left">Fri</span><span style="height:22px;border-radius:4px;background:#0A0A0A"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#F1F1EC;border-radius:4px"></span><span style="background:#5E6B00;border-radius:4px"></span><span style="background:#0A0A0A;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#F1F1EC;border-radius:4px"></span>
+<span style="text-align:left">Sat</span><span style="height:22px;border-radius:4px;background:#FFFFFF;border:1px dashed #E2E2DC"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#0A0A0A;border-radius:4px"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#FFFFFF;border:1px dashed #E2E2DC;border-radius:4px"></span><span style="background:#FFFFFF;border:1px dashed #E2E2DC;border-radius:4px"></span>
+<span style="text-align:left">Sun</span><span style="height:22px;border-radius:4px;background:#FFFFFF;border:1px dashed #E2E2DC"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#5B5B55;border-radius:4px"></span><span style="background:#B9B9B0;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#E2E2DC;border-radius:4px"></span><span style="background:#F1F1EC;border-radius:4px"></span><span style="background:#FFFFFF;border:1px dashed #E2E2DC;border-radius:4px"></span><span style="background:#FFFFFF;border:1px dashed #E2E2DC;border-radius:4px"></span>
+</div>
+<div style="display:flex;gap:14px;font-size:12px;color:#5B5B55;flex-wrap:wrap"><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#0A0A0A"></span>Busiest</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#5E6B00"></span>Friday 4pm peak</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:#F1F1EC"></span>Quiet</span><span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;border:1px dashed #B9B9B0"></span>Closed</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;font-size:13px">1pm to 3pm is quiet every weekday. A good slot for a new class or the Argosy office crowd.</div>
+</section>
+</div>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Your GymMaster favourites, rebuilt</h2><span style="color:#5B5B55;font-size:13px">Each one checked against GymMaster before we switch</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Current members</span><span style="font-size:12px;color:#5B5B55">Members list</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Current memberships</span><span style="font-size:12px;color:#5B5B55">Members list</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Expiring members</span><span style="font-size:12px;color:#5B5B55">Members list</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">New members</span><span style="font-size:12px;color:#5B5B55">Members list</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Linked members</span><span style="font-size:12px;color:#5B5B55">Members list</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Visitor log</span><span style="font-size:12px;color:#5B5B55">Visits</span></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">Visitor log, Fitness Passport</span><span style="font-size:12px;color:#5B5B55">Passport</span></div>
+<div style="background:#0A0A0A;color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">All payments</span><span style="font-size:12px;color:#DFFF00">Owners</span></div>
+<div style="background:#0A0A0A;color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px"><span style="font-weight:600">All sales</span><span style="font-size:12px;color:#DFFF00">Owners</span></div>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px">
+<div style="background:#F7FBD9;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-weight:600">The other 40 or so become one list with filters</span><span style="font-size:13px;color:#5B5B55">Current Members (Entry), (Gateway), (Transporter), under 18, Birthday list, No trainer, No booking in period and the rest are all the same member list filtered differently. In the Core you filter it once and save the view.</span></div>
+<div style="background:#F7FBD9;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-weight:600">Or just ask</span><span style="font-size:13px;color:#5B5B55">"Members turning 30 this month", "Gateway members with no visits in October". Ask M2 builds the list and you can save it as a report.</span></div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;font-size:13px">
+<span style="background:#F7FBD9;border-radius:999px;padding:6px 14px">Emailed automatically: Weekly Monday Numbers</span>
+<span style="background:#F7FBD9;border-radius:999px;padding:6px 14px">Member Opportunities on the 2nd</span>
+<span style="background:#F7FBD9;border-radius:999px;padding:6px 14px">Passport pace check around the 20th</span>
+</div>
+</section>
+
+</main>
+<main data-view="Money" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Taylor and Tim only</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Money<span style="color:#5E6B00">.</span></h1>
+</div>
+<span style="font-size:13px;color:#5B5B55">From Xero, excluding GST. Synced 1 Oct.</span>
+</header>
+
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
+<section style="background:#0A0A0A;color:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#B9B9B0">Revenue, Apr to Sep</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px;color:#DFFF00">$658,692</span><span style="font-size:12px;color:#B9B9B0">6.6% ahead of target</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Profit, Apr to Sep</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">$35,005</span><span style="font-size:12px;color:#5B5B55">5.3% of revenue</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">September result</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px;color:#A33A00">-$1,600</span><span style="font-size:12px;color:#5B5B55">Second small loss in a row</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Cash, 30 September</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">$5,061</span><span style="font-size:12px;color:#5B5B55">Payables $172,766</span></section>
+</div>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">Profit by month</h2><span style="color:#5B5B55;font-size:13px">FY2027 so far. Tap a month for the full P&amp;L.</span></div>
+<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px">
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px;font-weight:600;font-variant-numeric:tabular-nums">$1,606</span><div style="height:80px;width:100%;display:flex;align-items:flex-end;justify-content:center;border-bottom:1px solid #0A0A0A"><div style="width:56%;height:8px;background:#0A0A0A;border-radius:4px 4px 0 0"></div></div><div style="height:40px;width:100%"></div><span style="font-size:12px;color:#5B5B55">Apr</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px;font-weight:600;font-variant-numeric:tabular-nums">$15,543</span><div style="height:80px;width:100%;display:flex;align-items:flex-end;justify-content:center;border-bottom:1px solid #0A0A0A"><div style="width:56%;height:80px;background:#0A0A0A;border-radius:4px 4px 0 0"></div></div><div style="height:40px;width:100%"></div><span style="font-size:12px;color:#5B5B55">May</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px;font-weight:600;font-variant-numeric:tabular-nums">$8,673</span><div style="height:80px;width:100%;display:flex;align-items:flex-end;justify-content:center;border-bottom:1px solid #0A0A0A"><div style="width:56%;height:45px;background:#0A0A0A;border-radius:4px 4px 0 0"></div></div><div style="height:40px;width:100%"></div><span style="font-size:12px;color:#5B5B55">Jun</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px;font-weight:600;font-variant-numeric:tabular-nums">$12,514</span><div style="height:80px;width:100%;display:flex;align-items:flex-end;justify-content:center;border-bottom:1px solid #0A0A0A"><div style="width:56%;height:64px;background:#0A0A0A;border-radius:4px 4px 0 0"></div></div><div style="height:40px;width:100%"></div><span style="font-size:12px;color:#5B5B55">Jul</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px;font-weight:600;color:#A33A00;font-variant-numeric:tabular-nums">-$1,731</span><div style="height:80px;width:100%;border-bottom:1px solid #0A0A0A"></div><div style="height:40px;width:100%;display:flex;justify-content:center"><div style="width:56%;height:9px;background:#E8B54A;border-radius:0 0 4px 4px"></div></div><span style="font-size:12px;color:#5B5B55">Aug</span></div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="font-size:12px;font-weight:600;color:#A33A00;font-variant-numeric:tabular-nums">-$1,600</span><div style="height:80px;width:100%;border-bottom:1px solid #0A0A0A"></div><div style="height:40px;width:100%;display:flex;justify-content:center"><div style="width:56%;height:8px;background:#E8B54A;border-radius:0 0 4px 4px"></div></div><span style="font-size:12px;color:#0A0A0A;font-weight:600">Sep</span></div>
+</div>
+
+<div style="overflow-x:auto;background:#F1F1EC;border-radius:16px">
+<table class="pl" style="width:100%;border-collapse:collapse;min-width:760px;font-size:13px">
+<thead><tr style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#5B5B55"><th style="font-weight:600">Excluding GST</th><th style="font-weight:600">Apr</th><th style="font-weight:600">May</th><th style="font-weight:600">Jun</th><th style="font-weight:600">Jul</th><th style="font-weight:600">Aug</th><th style="font-weight:600">Sep</th></tr></thead>
+<tbody>
+<tr style="border-top:1px solid #E2E2DC"><td>Memberships</td><td>68,527</td><td>62,813</td><td>65,861</td><td>71,920</td><td>65,301</td><td>63,920</td></tr>
+<tr><td>Fitness Passport</td><td>21,694</td><td>21,819</td><td>24,503</td><td>18,176</td><td>31,201</td><td style="font-weight:600">33,754</td></tr>
+<tr><td>Paid in full</td><td>0</td><td>10,260</td><td>3,631</td><td>3,441</td><td>0</td><td>0</td></tr>
+<tr><td>Eftpos</td><td>5,097</td><td>3,808</td><td>6,825</td><td>9,252</td><td>8,565</td><td>7,977</td></tr>
+<tr><td>Sublease, PT rent and other</td><td>10,017</td><td>10,208</td><td>7,709</td><td>8,825</td><td>5,927</td><td>7,661</td></tr>
+<tr style="border-top:1px solid #B9B9B0;font-weight:600"><td>Revenue</td><td>105,335</td><td>108,908</td><td>108,529</td><td>111,614</td><td>110,994</td><td>113,312</td></tr>
+<tr style="border-top:1px solid #E2E2DC"><td>Rent</td><td>56,522</td><td>50,435</td><td>46,087</td><td>34,783</td><td>52,174</td><td>52,174</td></tr>
+<tr><td>Wages</td><td>23,278</td><td>20,825</td><td>18,550</td><td>31,772</td><td>23,681</td><td>24,955</td></tr>
+<tr><td>Power and heating</td><td>6,957</td><td>5,652</td><td>11,739</td><td>11,009</td><td>10,870</td><td style="font-weight:600;color:#A33A00">14,783</td></tr>
+<tr><td>Everything else</td><td>16,972</td><td>16,453</td><td>23,480</td><td>21,536</td><td>25,999</td><td>23,000</td></tr>
+<tr style="border-top:1px solid #B9B9B0;font-weight:600"><td>Costs</td><td>103,729</td><td>93,365</td><td>99,856</td><td>99,100</td><td>112,724</td><td>114,912</td></tr>
+<tr style="border-top:1px solid #0A0A0A;font-weight:600"><td>Profit</td><td>1,606</td><td>15,543</td><td>8,673</td><td>12,514</td><td style="color:#A33A00">-1,731</td><td style="color:#A33A00">-1,600</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">What the numbers are saying</h2>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">Revenue is up 7.6% since April, costs up 10.8%</span><span style="font-size:13px;color:#5B5B55">That gap is why August and September slipped into a small loss.</span></div>
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">Rent jumps around month to month</span><span style="font-size:13px;color:#5B5B55">$34,783 in July, $52,174 in August and September. Worth confirming the real monthly level with Flintoffs.</span></div>
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">Power more than doubled since May</span><span style="font-size:13px;color:#5B5B55">$5,652 to $14,783. Winter pool and spa heating is the likely cause. Watch it drop in summer.</span></div>
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">Passport is the fastest growing line</span><span style="font-size:13px;color:#5B5B55">$21,694 in April to $33,754 in September, up 56%. Now 30% of revenue.</span></div>
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">"CRM Software" averages $1,549 a month</span><span style="font-size:13px;color:#5B5B55">Nearly double GymMaster's $793.50, so other tools sit in there too. Part of the saving when the Core takes over.</span></div>
+<div style="background:#F1F1EC;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">Memberships are flat</span><span style="font-size:13px;color:#5B5B55">$63,920 in September vs $68,527 in April. Growth is coming from Passport, not paying members.</span></div>
+</div>
+</section>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Ezidebit, September</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">$71,065</span><span style="font-size:12px;color:#5B5B55">2,126 debits, 125 failed first time</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">In collections</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">$4,347</span><span style="font-size:12px;color:#5B5B55">24 people</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#5B5B55">Passport payout, October</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:24px">$43,774</span><span style="font-size:12px;color:#5B5B55">For 4,327 September visits</span></section>
+</div>
+
+</main>
+<main data-view="Staff" hidden style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Taylor and Tim only</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Staff and access<span style="color:#5E6B00">.</span></h1>
+</div>
+<button type="button" style="height:44px;padding:0 20px;border:0;border-radius:999px;background:#DFFF00;color:#0A0A0A;font:inherit;font-weight:600">Add staff member</button>
+</header>
+
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
+<section style="background:#0A0A0A;color:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#DFFF00;font-weight:600">Owner</span><span style="font-weight:600;font-size:16px">Everything</span><span style="font-size:13px;color:#B9B9B0">Business numbers, Xero, settings, prices and staff logins.</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Manager</span><span style="font-weight:600;font-size:16px">Runs the floor</span><span style="font-size:13px;color:#5B5B55">All of reception, plus collections, at-risk calls and reports without money.</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Reception</span><span style="font-weight:600;font-size:16px">Front desk</span><span style="font-size:13px;color:#5B5B55">Check-ins, sign-ups, trial calls, member balances, point of sale, classes.</span></section>
+<section style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Trainer or coach</span><span style="font-weight:600;font-size:16px">Their own people</span><span style="font-size:13px;color:#5B5B55">Their leads, their clients' visits and notes, rosters for classes they coach. No billing.</span></section>
+</div>
+
+<section style="background:#fff;border-radius:24px;padding:12px 24px 20px;overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;min-width:820px;font-size:14px">
+<thead><tr style="text-align:left;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#5B5B55">
+<th style="padding:12px 8px;font-weight:600">Name</th><th style="padding:12px 8px;font-weight:600">Role</th><th style="padding:12px 8px;font-weight:600">Signs in with</th><th style="padding:12px 8px;font-weight:600">Last active</th><th style="padding:12px 8px"></th>
+</tr></thead>
+<tbody>
+<tr style="border-top:1px solid #E2E2DC"><td style="padding:12px 8px;font-weight:600">Taylor Blackler</td><td style="padding:12px 8px"><span style="font-size:12px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:3px 10px;font-weight:600">Owner</span></td><td style="padding:12px 8px">Work email and phone code</td><td style="padding:12px 8px">Now</td><td style="padding:12px 8px;text-align:right;color:#5B5B55">You</td></tr>
+<tr style="border-top:1px solid #E2E2DC"><td style="padding:12px 8px;font-weight:600">Tim Fox</td><td style="padding:12px 8px"><span style="font-size:12px;background:#0A0A0A;color:#DFFF00;border-radius:999px;padding:3px 10px;font-weight:600">Owner</span></td><td style="padding:12px 8px">Work email and phone code</td><td style="padding:12px 8px">Today 9:12am</td><td style="padding:12px 8px;text-align:right"><button type="button" style="height:32px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Edit</button></td></tr>
+<tr style="border-top:1px solid #E2E2DC"><td style="padding:12px 8px;font-weight:600">Bekka Schulze</td><td style="padding:12px 8px"><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:3px 10px;font-weight:600">Manager</span></td><td style="padding:12px 8px">Work email and phone code</td><td style="padding:12px 8px">Today 6:02am</td><td style="padding:12px 8px;text-align:right"><button type="button" style="height:32px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Edit</button></td></tr>
+<tr style="border-top:1px solid #E2E2DC"><td style="padding:12px 8px;font-weight:600">[Reception staff]</td><td style="padding:12px 8px"><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:3px 10px;font-weight:600">Reception</span></td><td style="padding:12px 8px">Email and code at the desk</td><td style="padding:12px 8px">Each shift</td><td style="padding:12px 8px;text-align:right"><button type="button" style="height:32px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Edit</button></td></tr>
+<tr style="border-top:1px solid #E2E2DC"><td style="padding:12px 8px;font-weight:600">Matthew Painter</td><td style="padding:12px 8px"><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:3px 10px;font-weight:600">Trainer and coach</span></td><td style="padding:12px 8px">M2 App, coach mode</td><td style="padding:12px 8px">Yesterday</td><td style="padding:12px 8px;text-align:right"><a href="#coach" data-go="Coach" style="font-size:13px;font-weight:600;margin-right:10px">View as</a><button type="button" style="height:32px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Edit</button></td></tr>
+<tr style="border-top:1px solid #E2E2DC"><td style="padding:12px 8px;font-weight:600">Eden Rapana</td><td style="padding:12px 8px"><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:3px 10px;font-weight:600">Trainer</span></td><td style="padding:12px 8px">M2 App, coach mode</td><td style="padding:12px 8px">Today 7:40am</td><td style="padding:12px 8px;text-align:right"><button type="button" style="height:32px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Edit</button></td></tr>
+<tr style="border-top:1px solid #E2E2DC"><td style="padding:12px 8px;font-weight:600">Joe, Te, Dave, Madeliene, Rhea</td><td style="padding:12px 8px"><span style="font-size:12px;background:#F1F1EC;border-radius:999px;padding:3px 10px;font-weight:600">Trainers and coaches</span></td><td style="padding:12px 8px">M2 App, coach mode</td><td style="padding:12px 8px">Various</td><td style="padding:12px 8px;text-align:right"><button type="button" style="height:32px;padding:0 14px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-size:13px;font-weight:600">Edit</button></td></tr>
+</tbody>
+</table>
+</section>
+
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+<div style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">No shared passwords</span><span style="font-size:13px;color:#5B5B55">Each person signs in with their own email and a code. Leaving staff are switched off in one tap.</span></div>
+<div style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">Every action has a name on it</span><span style="font-size:13px;color:#5B5B55">Calls, sales, refunds, freezes and notes are logged against whoever did them.</span></div>
+<div style="background:#fff;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-weight:600">Gym access stays separate</span><span style="font-size:13px;color:#5B5B55">A staff member's membership opens the doors. Their login opens the CRM. Two different things.</span></div>
+</div>
+<p style="margin:0;font-size:12px;color:#8C8C84">Last active times are samples.</p>
+</main></div></div><section class="fullview" data-view="Coach" hidden><div style="min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr);font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;color:#0A0A0A;background:#F3F3F0;font-size:14px;line-height:1.5">
+
+<aside style="background:#0A0A0A;padding:24px 16px;display:flex;flex-direction:column;gap:28px">
+<img src="data:image/png;base64,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" alt="M2 Training Club" style="height:20px;width:auto;align-self:flex-start;margin-left:14px">
+<nav style="display:flex;flex-direction:column;gap:2px">
+<a class="nav" href="#coach" data-go="Coach" style="background:#DFFF00;color:#0A0A0A;font-weight:600">My week</a>
+<a class="nav" href="#">My leads<span style="margin-left:auto;background:#0A0A0A;color:#DFFF00;border-radius:999px;font-size:12px;padding:0 8px;font-weight:600">2</span></a>
+<a class="nav" href="#">My clients</a>
+<a class="nav" href="#">My classes</a>
+</nav>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+<div style="background:#1A1A18;border-radius:14px;padding:12px 14px;font-size:12px;color:#8C8C84">Viewing as Matthew. This is what a trainer sees. No billing, no business numbers. <a href="#staff" data-go="Staff" style="color:#DFFF00">Back to your view</a></div>
+<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:#1A1A18">
+<div style="width:34px;height:34px;border-radius:50%;background:#fff;color:#0A0A0A;display:grid;place-items:center;font-weight:600">MP</div>
+<div style="display:flex;flex-direction:column"><span style="color:#fff;font-weight:600">Matthew Painter</span><span style="color:#8C8C84;font-size:12px">Trainer and coach</span></div>
+</div>
+</div>
+</aside>
+
+<main style="padding:28px 36px 48px;display:flex;flex-direction:column;gap:20px;min-width:0">
+
+<header style="display:flex;flex-direction:column;gap:2px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Friday 2 October</span>
+<h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:-.02em">Morning, Matthew<span style="color:#5E6B00">.</span></h1>
+</header>
+
+<section style="background:#0A0A0A;color:#fff;border-radius:24px;padding:22px 24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#DFFF00;font-weight:600">My numbers, September</span><span style="margin-left:auto;font-size:12px;color:#8C8C84">Sample figures</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:2px"><span style="color:#B9B9B0;font-size:13px">Free PT leads</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">14</span><span style="color:#8C8C84;font-size:12px">New trainers get leads first</span></div>
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:2px"><span style="color:#B9B9B0;font-size:13px">Sessions held</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">11</span><span style="color:#8C8C84;font-size:12px">3 didn't book in</span></div>
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:2px"><span style="color:#B9B9B0;font-size:13px">Became your clients</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px;color:#DFFF00">4</span><span style="color:#8C8C84;font-size:12px">36% of sessions held</span></div>
+<div style="background:#1A1A18;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:2px"><span style="color:#B9B9B0;font-size:13px">Your class fill</span><span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:28px">84%</span><span style="color:#8C8C84;font-size:12px">Club average 78%</span></div>
+</div>
+</section>
+
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start">
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">New leads for you</h2>
+<div style="background:#F1F1EC;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between"><span style="font-weight:600">Liam Ross</span><span style="font-size:12px;color:#A33A00;font-weight:600">Call within 24h</span></div>
+<span style="font-size:13px;color:#5B5B55">New Perform member. Goal: HYROX in February. Free to train 6am weekdays.</span>
+<div style="display:flex;gap:8px;margin-top:4px"><button type="button" style="height:36px;padding:0 16px;border:0;border-radius:999px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600;font-size:13px">Book session</button><button type="button" style="height:36px;padding:0 16px;border:1px solid #0A0A0A;border-radius:999px;background:transparent;font:inherit;font-weight:600;font-size:13px">Pass back</button></div>
+</div>
+<div style="background:#F1F1EC;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between"><span style="font-weight:600">Nina Patel</span><span style="font-size:12px;color:#5B5B55;font-weight:600">Booked Tue 6am</span></div>
+<span style="font-size:13px;color:#5B5B55">Classes member. Goal: weight loss and running. First gym in 5 years.</span>
+</div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 style="margin:0;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em">My clients</h2><span style="color:#5B5B55;font-size:13px">Visits in the last 14 days</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 120px auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #E2E2DC"><span style="font-weight:600">Sophie Kerr</span><div style="height:8px;background:#F1F1EC;border-radius:999px"><div style="width:90%;height:8px;background:#0A0A0A;border-radius:999px"></div></div><span style="font-size:12px;font-weight:600">9</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 120px auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #E2E2DC"><span style="font-weight:600">Tom Baker</span><div style="height:8px;background:#F1F1EC;border-radius:999px"><div style="width:60%;height:8px;background:#0A0A0A;border-radius:999px"></div></div><span style="font-size:12px;font-weight:600">6</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 120px auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #E2E2DC"><span style="font-weight:600">Grace Wu</span><div style="height:8px;background:#F1F1EC;border-radius:999px"><div style="width:20%;height:8px;background:#B9B9B0;border-radius:999px"></div></div><span style="font-size:12px;background:#FFF1CC;color:#6B4A00;border-radius:999px;padding:1px 8px;font-weight:600">2, check in</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 120px auto;gap:12px;align-items:center;padding:10px 0"><span style="font-weight:600">Ravi Singh</span><div style="height:8px;background:#F1F1EC;border-radius:999px"><div style="width:50%;height:8px;background:#0A0A0A;border-radius:999px"></div></div><span style="font-size:12px;font-weight:600">5</span></div>
+<p style="margin:8px 0 0;font-size:12px;color:#8C8C84">Sample clients. Trainers see their own clients only, never billing.</p>
+</section>
+</div>
+</main>
+</div>
+</section>
+<section class="fullview" data-view="Calls" hidden><div style="min-height:100vh;font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;color:#0A0A0A;background:#F3F3F0;font-size:14px;line-height:1.5;display:flex;flex-direction:column">
+
+<div style="background:#0A0A0A;color:#fff;padding:16px 36px;display:flex;align-items:center;gap:16px">
+<a href="#main" data-go="Main" style="color:#B9B9B0;text-decoration:none;font-size:14px">Back to Today</a>
+<span style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:18px">Trials finishing today</span>
+<span style="font-size:13px;color:#B9B9B0">Call 3 of 6</span>
+<div style="flex:1;max-width:240px;height:6px;background:#1A1A18;border-radius:999px"><div style="width:33%;height:6px;background:#DFFF00;border-radius:999px"></div></div>
+<span style="margin-left:auto;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8C8C84">Sample people and results</span>
+</div>
+
+<main style="padding:28px 36px 48px;display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:20px;align-items:start">
+
+<section style="background:#fff;border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:6px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600;padding:0 6px 6px">Queue</span>
+<div style="display:flex;justify-content:space-between;padding:10px 12px;border-radius:12px;color:#5B5B55"><span>Kate O'Neill</span><span style="font-size:12px;font-weight:600;color:#5E6B00">Joined</span></div>
+<div style="display:flex;justify-content:space-between;padding:10px 12px;border-radius:12px;color:#5B5B55"><span>Ben Ito</span><span style="font-size:12px;font-weight:600">No answer</span></div>
+<div style="display:flex;justify-content:space-between;padding:10px 12px;border-radius:12px;background:#0A0A0A;color:#fff"><span style="font-weight:600">Manu Rewiti</span><span style="font-size:12px;color:#DFFF00;font-weight:600">Now</span></div>
+<div style="display:flex;justify-content:space-between;padding:10px 12px;border-radius:12px"><span>Ella Martin</span></div>
+<div style="display:flex;justify-content:space-between;padding:10px 12px;border-radius:12px"><span>Jack Hale</span></div>
+<div style="display:flex;justify-content:space-between;padding:10px 12px;border-radius:12px"><span>Priya Nair</span></div>
+</section>
+
+<section style="background:#fff;border-radius:24px;padding:26px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;align-items:center;gap:16px">
+<div style="width:64px;height:64px;border-radius:50%;background:#E2E2DC;display:grid;place-items:center;font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:22px;color:#5B5B55">MR</div>
+<div style="display:flex;flex-direction:column;gap:2px;margin-right:auto"><h1 style="margin:0;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:28px;letter-spacing:-.02em">Manu Rewiti</h1><span style="color:#5B5B55">5 Days for $5, finishes today. Came from the HYROX ad.</span></div>
+<button type="button" style="height:48px;padding:0 22px;border:0;border-radius:999px;background:#DFFF00;color:#0A0A0A;font:inherit;font-weight:600">Call [MOBILE]</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:12px;color:#5B5B55">Visits</div><div style="font-family:Archivo,Arial,sans-serif;font-weight:800;font-size:20px">4 of 5 days</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:12px;color:#5B5B55">Did</div><div style="font-weight:600">2 HYROX classes, sauna</div></div>
+<div style="background:#F1F1EC;border-radius:14px;padding:12px 14px"><div style="font-size:12px;color:#5B5B55">Best fit</div><div style="font-weight:600">Perform, $49.50 a week</div></div>
+</div>
+<div style="background:#F7FBD9;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">What to say</span><span>He's been in 4 days out of 5 and loved the HYROX classes. Perform covers classes and recovery, no joining fee and no key tag fee. Mention the free PT with Matthew to get him race-ready for February.</span></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<span style="font-weight:600">How did it go?</span>
+<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px">
+<button type="button" style="height:64px;border:0;border-radius:16px;background:#0A0A0A;color:#DFFF00;font:inherit;font-weight:600">Joined</button>
+<button type="button" style="height:64px;border:1px solid #E2E2DC;border-radius:16px;background:#fff;font:inherit;font-weight:600">Joining at the desk</button>
+<button type="button" style="height:64px;border:1px solid #E2E2DC;border-radius:16px;background:#fff;font:inherit;font-weight:600">Call back</button>
+<button type="button" style="height:64px;border:1px solid #E2E2DC;border-radius:16px;background:#fff;font:inherit;font-weight:600">No answer</button>
+<button type="button" style="height:64px;border:1px solid #E2E2DC;border-radius:16px;background:#fff;font:inherit;font-weight:600">Not for them</button>
+</div>
+<span style="font-size:12px;color:#5B5B55">No answer sends a text in your voice automatically. Not for them asks for a reason so we learn why.</span>
+</div>
+</section>
+
+<div style="display:flex;flex-direction:column;gap:20px">
+<section style="background:#fff;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">This session</span>
+<div style="display:flex;justify-content:space-between"><span>Calls made</span><span style="font-weight:600">2</span></div>
+<div style="display:flex;justify-content:space-between"><span>Joined</span><span style="font-weight:600">1</span></div>
+<div style="display:flex;justify-content:space-between"><span>New weekly revenue</span><span style="font-weight:600">$49.50</span></div>
+</section>
+<section style="background:#0A0A0A;color:#fff;border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px">
+<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#DFFF00;font-weight:600">This job, last 30 days</span>
+<span style="font-family:Archivo,Arial,sans-serif;font-weight:900;font-size:34px;color:#DFFF00;line-height:1">31%</span>
+<span style="font-size:13px;color:#B9B9B0">of trial calls turned into a member. Trials not called joined at 14%.</span>
+<span style="font-size:12px;color:#8C8C84">Owners see this. It's how you know which jobs are worth the time.</span>
+</section>
+</div>
+</main>
+</div>
+</section><div id="toast" role="status" aria-live="polite"></div><script>
+const views=[...document.querySelectorAll('[data-view]')],app=document.getElementById('app'),navs=[...document.querySelectorAll('aside a.nav')];
+function show(v){views.forEach(m=>m.hidden=m.dataset.view!==v);app.hidden=['Coach','Calls'].includes(v);navs.forEach(a=>a.classList.toggle('on',a.dataset.go===v));window.scrollTo(0,0)}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-go]');if(a){e.preventDefault();show(a.dataset.go)}});
+let t;function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(t);t=setTimeout(()=>el.classList.remove('show'),2200)}
+const msgs={'Check in member':'Scan a tag or search a name','Book PT':'Free PT booked with Matthew, Tue 6am','Text pay link':'Payment link texted','Message':'Message drafted in your voice','Freeze':'Freeze needs a reason and dates','Check in':'Checked in, main door','Message the waitlist':'Waitlist told a spot may open','Close':'Marked settled and closed','Refer':'Sent to Marshall Freeman','Call':'Calling, settlement offer on screen','Remind':'Reminder text sent','Send link':'Card update link sent','Flag desk':'Reception will ask at the desk','Take payment on Eftpos':'Sent $134.00 to the Eftpos terminal','Add to next debit':'Added to Monday\'s debit','Send':'Reply sent to Manu','Book in':'Added to the waitlist for HYROX Threshold','Mark attendance':'Gate scans already ticked 18 of 20','Joined':'Logged: joined Perform, $49.50 a week. Next call loading','Joining at the desk':'Logged. Reception will see him flagged when he scans in','Call back':'Pick a time to call back','No answer':'Logged. Text sent in your voice','Not for them':'What was the reason?','Book session':'Session booked, Liam gets a confirmation','Pass back':'Lead goes to the next trainer in line','See the list':'Opens the member list','Review campaign':'Opens the campaign for approval','Add staff member':'Name, email and role, then they get a sign-in code','Edit':'Edit the reply, then send'};
+document.querySelectorAll('[data-tabbtn]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tabbtn]').forEach(x=>{const on=x===b;x.style.background=on?'#0A0A0A':'#fff';x.style.color=on?'#DFFF00':'#0A0A0A'});document.querySelectorAll('[data-tab]').forEach(t=>t.hidden=t.dataset.tab!==b.dataset.tabbtn)}));
+document.querySelectorAll('button:not([data-tabbtn])').forEach(b=>{
+ const row=b.closest('div[style*="grid-template-columns:30px"]');
+ if(row){b.dataset.orig=b.textContent;b.addEventListener('click',()=>{row.classList.toggle('done');b.textContent=row.classList.contains('done')?'Done':b.dataset.orig});return}
+ const vv=b.closest('[data-view]'),v=vv&&vv.dataset.view;
+ if(b.closest('header')&&v==='Leads'){b.addEventListener('click',()=>filterLeads(b));return}
+ if(v==='POS'&&b.parentElement.style.gridTemplateColumns){b.addEventListener('click',()=>toast('Added: '+(b.firstElementChild?b.firstElementChild.textContent:b.textContent.trim())));return}
+ if(['Leads','POS'].includes(v)&&b.style.height==='36px'){b.addEventListener('click',()=>{[...b.parentElement.children].forEach(x=>{x.style.background='#fff';x.style.color='#0A0A0A'});b.style.background='#0A0A0A';b.style.color='#DFFF00'});return}
+ b.addEventListener('click',()=>toast(msgs[b.textContent.trim()]||b.textContent.trim()));
+});
+function filterLeads(btn){[...btn.parentElement.children].forEach(x=>{x.style.background='#fff';x.style.color='#0A0A0A'});btn.style.background='#0A0A0A';btn.style.color='#DFFF00';
+ const k=btn.textContent.split('·')[0].trim().toLowerCase(),map={'5 days for $5':'5 days for $5','free pt':'free pt','unfinished sign-ups':'unfinished','bring a mate':'bring a mate','app upgrades':'app upgrade'};
+ document.querySelectorAll('main[data-view=Leads] section[style*="#E9E9E3"] > div[style*="background:#fff"]').forEach(c=>c.hidden=!(k.startsWith('all')||c.textContent.toLowerCase().includes(map[k]||k)))}
+const ask=document.getElementById('ask'),answers=[
+ [/perform.*(14|two weeks)|haven.?t been in/i,'<b>17 Perform members</b> haven\'t been in for 14 days or more. 11 are in their first 3 months, the highest cancel risk. Add them to Bekka\'s call list?'],
+ [/passport/i,'<b>4,327 Passport visits in September</b>, paying $43,774. 584 Passport members didn\'t visit at all. The "come more often" push is ready.'],
+ [/trial|convert/i,'<b>93 joins from 248 trials</b> in September (38%). Trials who came 3 or more times joined at about double the rate, so the day 2 nudge matters most.'],
+ [/owe|debt|failed|collection/i,'<b>24 members owe $4,347.38</b>. 4 are past 7 days and on Bekka\'s list today. Gifted-time members are left out.'],
+ [/daily|upgrade|perform/i,'<b>371 Daily members vs 231 on Perform.</b> 46 Daily members came 4 or more times a week in September, the best upgrade targets.'],
+ [/busy|quiet|class/i,'Weekdays are busiest at 5am and 4 to 6pm, Friday 4pm is the peak. 1 to 3pm is quiet every weekday.']];
+ask.addEventListener('keydown',e=>{if(e.key!=='Enter'||!ask.value.trim())return;const a=answers.find(([r])=>r.test(ask.value));
+ let box=document.getElementById('answer');if(!box){box=document.createElement('section');box.id='answer';document.querySelector('main[data-view=Main] header').after(box)}
+ box.innerHTML='<span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5E6B00;font-weight:600">Ask M2</span><div style="font-size:15px">'+(a?a[1]:'In the real system this answers from the live Core. This preview knows about inactive members, Passport, trials, money owed, upgrades and busy times.')+'</div><span style="font-size:12px;color:#8C8C84">Sample answer in this preview</span>'});
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();show('Main');ask.focus()}});
+show('Main');</script></body></html>
