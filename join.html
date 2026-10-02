@@ -191,6 +191,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .actions{display:flex;gap:12px;align-items:center;margin-top:28px}
   .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:600;font-size:15px;background:var(--black);color:var(--lime);padding:15px 28px;border-radius:999px;transition:transform .1s,opacity .15s;display:inline-block;text-align:center}
   .btn:active{transform:scale(.98)}
+  .billbox{background:var(--soft);border-radius:14px;padding:18px;margin:22px 0 4px}
+  .billbox b{color:var(--ink)}
+  .billbox > b{display:block;font-size:16px;margin-bottom:6px}
+  .billbox p{font-size:14px;margin-bottom:14px}
+  .billbox small{display:block;font-size:13px;color:var(--muted);margin-top:12px}
   .btn[disabled]{opacity:.55;cursor:default}
   .btn.full{flex:1}
   .back{appearance:none;border:0;background:none;cursor:pointer;font:inherit;color:var(--muted);font-size:15px;padding:15px 8px}
@@ -445,6 +450,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
         <h1 id="doneTitle">Welcome to M2.</h1>
         <div class="intro"><p id="doneLead">You're all signed up.</p></div>
         <ol class="next" id="doneNext"></ol>
+        <div class="billbox" id="billWrap" hidden>
+          <b>Add your bank or card details now</b>
+          <p>Save time at the desk. Sign in with the email and password you just made, then tap <b>Account</b> and <b>Update Billing Info</b>. Payments run through Ezidebit and nothing comes out today.</p>
+          <a class="btn" id="billBtn" href="https://m2trainingclub.gymmasteronline.com/portal/login" target="_blank" rel="noopener" data-track="add_billing_click">Add payment details</a>
+          <small>Rather do it in person? No worries, we'll do it at reception.</small>
+        </div>
         <div id="ptWrap" hidden style="margin:22px 0 26px"><a class="btn" id="ptBtn" href="/free-pt.html">Book my free PT session</a></div>
         <div class="intro"><p>Any questions, just reply to any of our emails or give reception a call. See you soon.</p></div>
         <div class="sig">
@@ -1036,12 +1047,18 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     ] : [
       '<b>Come in and see us at reception.</b> We\'ll get your key tag sorted so you can get in.',
       free ? '<b>Your trial starts today,</b> so make the most of it. Classes, pool, sauna and ice bath are all yours.'
-           : '<b>Bring your bank or card details.</b> We\'ll pop them in for your payments while you\'re at the desk. Nothing comes out today.',
+           : '<b>Add your bank or card details.</b> Do it now with the button below, or bring them to reception and we\'ll pop them in. Nothing comes out today.',
       '<b>Open the <a href="/m2-app.html" style="color:inherit">M2 app</a></b> and sign in with the email and password you just made. That\'s where you check in, open the doors and see your trial.'
     ];
     var ptOn = !/recovery/i.test(chosen.name) && !/24 hour/i.test(chosen.name);
     if (ptOn) steps.push('<b>Book your free PT session.</b> Tell us a bit about your goals and we\'ll match you with the right coach.');
     $('doneNext').innerHTML = steps.map(function(s){ return '<li>' + s + '</li>'; }).join('');
+    if (!chosen._fp && chosen.priceValue > 0) {
+      $('billWrap').hidden = false;
+      $('billBtn').addEventListener('click', function(){
+        try { if (window.gtag) gtag('event', 'add_billing_click', {membership: chosen.name}); } catch(e){}
+      });
+    }
     if (ptOn) {
       var ptUrl = '/free-pt.html?' + new URLSearchParams({name: (val('firstname') + ' ' + val('surname')).trim(), email: val('email'), phone: formatPhone(val('phone')), utm_source: 'join'}).toString();
       $('ptBtn').href = ptUrl;
