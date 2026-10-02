@@ -336,6 +336,8 @@
   <div class="wrap">
     <a href="#outerwear">Outerwear</a>
     <a href="#base-layer">Long sleeves</a>
+    <a href="#lululemon">Lululemon tops</a>
+    <a href="#halfzip">1/4 zips</a>
     <a href="#shorts">Shorts</a>
     <a href="#leggings">Leggings</a>
     <a href="#socks">Socks</a>
@@ -358,11 +360,33 @@
 <section class="section" id="base-layer">
   <div class="wrap">
     <div class="section-head">
-      <div><span class="eyebrow">Layer up</span><h2>Long sleeve base layer</h2></div>
-      <span class="badge grey">Unbranded</span>
+      <div><span class="eyebrow">M2 print</span><h2>Long sleeve base layer</h2></div>
+      <span class="badge">Branded</span>
     </div>
-    <p class="section-sub">Worn under your short sleeve uniform top. No print, just an extra layer for cold mornings.</p>
+    <p class="section-sub">Worn under your short sleeve uniform top, printed with the M2 Training Club mark in white.</p>
     <div class="grid" id="grid-baselayer"></div>
+  </div>
+</section>
+
+<section class="section" id="lululemon">
+  <div class="wrap">
+    <div class="section-head">
+      <div><span class="eyebrow">M2 print</span><h2>Lululemon tops</h2></div>
+      <span class="badge">Branded</span>
+    </div>
+    <p class="section-sub">Short sleeve Lululemon training tops, printed with the M2 Training Club mark in white.</p>
+    <div class="grid" id="grid-lululemon"></div>
+  </div>
+</section>
+
+<section class="section" id="halfzip">
+  <div class="wrap">
+    <div class="section-head">
+      <div><span class="eyebrow">M2 print</span><h2>1/4 zips</h2></div>
+      <span class="badge">Branded</span>
+    </div>
+    <p class="section-sub">AS Colour Stencil half zip crews, printed with the M2 Training Club mark in white.</p>
+    <div class="grid" id="grid-halfzip"></div>
   </div>
 </section>
 
@@ -408,8 +432,8 @@
     <div class="faq">
       <details open><summary>How do I pay?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Build your cart, then tap checkout. It takes you to a secure Stripe checkout for your whole order, and you pay by card. Once it's paid you'll see a confirmation page, and an email with your order lands within about 10 minutes.</div></details>
       <details><summary>Where do my sizes and role go?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">When you check out, your name, role and full order (sizes and colours included) are logged automatically. You don't need to add anything at Stripe, just pay.</div></details>
-      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests and jackets get the M2 mark, printed in white for everyone. Long sleeves, shorts, leggings and socks are plain LSKD with no print.</div></details>
-      <details><summary>When do I get it?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Unbranded pieces come through as normal LSKD orders. Branded pieces go to print in batches. We'll message you when it's ready to collect at reception, 8 Nugent Street, Grafton.</div></details>
+      <details><summary>What's branded and what's not?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Puffer vests, jackets, long sleeves, Lululemon tops and 1/4 zips get the M2 mark, printed in white for everyone. Shorts, leggings and socks are plain LSKD with no print.</div></details>
+      <details><summary>When do I get it?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Unbranded pieces come through as normal store orders. Branded pieces go to print in batches. We'll message you when it's ready to collect at reception, 8 Nugent Street, Grafton.</div></details>
       <details><summary>How do I pick my size?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Tap Size guide under any product. Shorts and leggings open LSKD's fit guide, everything else opens the product page where the size chart sits. If you're between sizes, ask reception, some of the team have tried them on.</div></details>
       <details><summary>Wrong size or need to change something?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">Let reception know as soon as you can, before anything goes to print.</div></details>
       <details><summary>Can I get a refund?<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></summary><div class="ans">No refunds or returns once an order is placed. These are staff discount prices, so all sales are final.</div></details>
@@ -484,18 +508,50 @@
       grid: 'grid-outerwear'
     },
     {
-      id: 'long-sleeve', name: 'AeroFLX+ Seamless Long Sleeve Tee', price: 45, branded: false,
+      id: 'long-sleeve', name: 'AeroFLX+ Seamless Long Sleeve Tee', price: 45, branded: true,
       tags: ['Black/Black', "Women's"], variantLabel: 'Size', variants: ['XS','S','M','L','XL','2XL','3XL'],
       img: '/assets/img/uniform/long-sleeve.jpg', w: 700, h: 975,
       lskd: 'https://www.lskd.co/products/womens-aeroflx-seamless-long-sleeve-tee-black-marl',
       grid: 'grid-baselayer'
     },
     {
-      id: 'long-sleeve-mens', name: 'AeroFLX+ Seamless Long Sleeve Tee', price: 45, branded: false,
+      id: 'long-sleeve-mens', name: 'AeroFLX+ Seamless Long Sleeve Tee', price: 45, branded: true,
       tags: ['Black/Black', "Men's"], variantLabel: 'Size', variants: ['S','M','L','XL','2XL','3XL'],
       img: '/assets/img/uniform/long-sleeve-mens.jpg', w: 700, h: 925,
       lskd: 'https://www.lskd.co/products/aeroflx-seamless-long-sleeve-tee-set-in-sleeve-black-black',
       grid: 'grid-baselayer'
+    },
+    {
+      id: 'lulu-shirt-mens', name: 'Zeroed In Short Sleeve Shirt', price: 67, branded: true,
+      tags: ['Black', "Men's"], variantLabel: 'Size', variants: ['XS','S','M','L','XL','2XL'],
+      img: '/assets/img/uniform/lulu-shirt-mens.jpg', w: 700, h: 844,
+      lskd: 'https://www.lululemon.co.nz/en-nz/p/zeroed-in-short-sleeve-shirt/prod11680098.html',
+      viewLabel: 'View on Lululemon',
+      grid: 'grid-lululemon'
+    },
+    {
+      id: 'lulu-shirt-womens', name: 'Swiftly Tech Short Sleeve Shirt 2.0', price: 81, branded: true,
+      tags: ['Black', "Women's"], variantLabel: 'Size', variants: ['0','2','4','6','8','10','12','14','16','18','20'],
+      img: '/assets/img/uniform/lulu-shirt-womens.jpg', w: 700, h: 1310,
+      lskd: 'https://www.lululemon.co.nz/en-nz/p/swiftly-tech-short-sleeve-shirt-2.0-waist-length/prod9820343.html',
+      viewLabel: 'View on Lululemon',
+      grid: 'grid-lululemon'
+    },
+    {
+      id: 'halfzip-mens', name: 'Stencil Half Zip Crew', price: 65, branded: true,
+      tags: ['Black', "Men's"], variantLabel: 'Size', variants: ['S','M','L','XL','2XL','3XL','4XL','5XL'],
+      img: '/assets/img/uniform/halfzip-mens.jpg', w: 700, h: 679,
+      lskd: 'https://www.ascolour.co.nz/stencil-half-zip-crew-5125/',
+      viewLabel: 'View on AS Colour',
+      grid: 'grid-halfzip'
+    },
+    {
+      id: 'halfzip-womens', name: 'Stencil Half Zip Crew', price: 65, branded: true,
+      tags: ['Black', "Women's"], variantLabel: 'Size', variants: ['XS','S','M','L','XL','2XL'],
+      img: '/assets/img/uniform/halfzip-womens.jpg', w: 700, h: 594,
+      lskd: 'https://www.ascolour.co.nz/wos-stencil-half-zip-crew-4125/',
+      viewLabel: 'View on AS Colour',
+      grid: 'grid-halfzip'
     },
     {
       id: 'fusion-short', name: 'Fusion Ultra High Rise 6" Short Pockets', price: 40, branded: false,
@@ -725,7 +781,7 @@
       viewLink.href = p.lskd;
       viewLink.target = '_blank';
       viewLink.rel = 'noopener';
-      viewLink.textContent = 'View on LSKD \u2192';
+      viewLink.textContent = (p.viewLabel || 'View on LSKD') + ' \u2192';
 
       const links = document.createElement('div');
       links.className = 'links';
@@ -735,7 +791,7 @@
       sizeLink.target = '_blank';
       sizeLink.rel = 'noopener';
       sizeLink.textContent = 'Size guide';
-      viewLink.textContent = 'View on LSKD';
+      viewLink.textContent = p.viewLabel || 'View on LSKD';
       links.appendChild(sizeLink);
       links.appendChild(viewLink);
       cta.appendChild(addBtn);
