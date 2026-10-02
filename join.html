@@ -103,6 +103,17 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .seg button{border:0;background:none;font:inherit;font-size:15px;font-weight:500;color:var(--muted);padding:10px;border-radius:999px;cursor:pointer;transition:all .15s}
   .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
   @media (max-width:480px){.seg button{font-size:13px;padding:10px 4px;line-height:1.2}}
+  .selfie{display:flex;gap:16px;align-items:center;background:var(--soft);border-radius:14px;padding:16px;margin-top:8px}
+  .selfie .ph{flex:0 0 76px;width:76px;height:76px;border-radius:50%;background:#E3E3DE center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .selfie .ph svg{width:30px;height:30px}
+  .selfie .tx{flex:1;min-width:0}
+  .selfie .tx b{display:block;color:var(--ink);font-size:15px;font-weight:600;margin-bottom:2px}
+  .selfie .tx p{font-size:13px;color:var(--muted);margin-bottom:10px}
+  .selfie .acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .selfie .acts button{font:inherit;font-size:14px;font-weight:600;border-radius:999px;cursor:pointer;padding:9px 16px}
+  .selfie .snap{background:var(--black);color:var(--lime);border:0}
+  .selfie .skip{background:none;border:0;color:var(--muted);padding:9px 4px!important;font-weight:500!important}
+  .selfie.has .skip{display:none}
   .fpbox{background:var(--soft);border-radius:14px;padding:18px 18px 4px;margin-bottom:6px}
   .fpbox p{font-size:15px;margin-bottom:12px;color:var(--body)}
   .fpbox ul{margin:0 0 14px 18px;font-size:14px;color:var(--body)}
@@ -371,6 +382,18 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
                 <button type="button" id="pwToggle">Show</button>
               </div>
               <div class="msg">At least 6 characters.</div>
+            </div>
+            <div class="selfie" id="selfie">
+              <div class="ph" id="selfiePh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+              <div class="tx">
+                <b id="selfieTitle">Take a selfie for your profile</b>
+                <p id="selfieText">So the team knows your face at the desk. Optional, you can skip it.</p>
+                <div class="acts">
+                  <button type="button" class="snap" id="selfieBtn">Take a selfie</button>
+                  <button type="button" class="skip" id="selfieSkip">Skip</button>
+                </div>
+              </div>
+              <input type="file" id="selfieInput" accept="image/*" capture="user" hidden>
             </div>
           </section>
 
@@ -805,6 +828,38 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     p.type = show ? 'text' : 'password'; this.textContent = show ? 'Hide' : 'Show';
   });
 
+  /* ---------- selfie ---------- */
+  // Phones and iPads: opens the front camera. Computers: opens a file picker, or skip.
+  var selfieData = '', selfieSkipped = false;
+  var touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+  if (!touch) { $('selfieBtn').textContent = 'Add a photo'; $('selfieTitle').textContent = 'Add a photo for your profile'; }
+  $('selfieBtn').addEventListener('click', function(){ $('selfieInput').click(); });
+  $('selfieSkip').addEventListener('click', function(){
+    selfieSkipped = true; selfieData = '';
+    $('selfieText').textContent = 'No worries, we\'ll take one at reception.';
+    this.hidden = true; $('selfieBtn').textContent = touch ? 'Take a selfie' : 'Add a photo';
+  });
+  $('selfieInput').addEventListener('change', function(){
+    var file = this.files && this.files[0]; if (!file) return;
+    var img = new Image(), url = URL.createObjectURL(file);
+    img.onload = function(){
+      // Square crop from the centre, 600px, JPEG. Keeps the upload small.
+      var side = Math.min(img.naturalWidth, img.naturalHeight), size = Math.min(600, side);
+      var c = document.createElement('canvas'); c.width = c.height = size;
+      c.getContext('2d').drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, size, size);
+      selfieData = c.toDataURL('image/jpeg', 0.85);
+      URL.revokeObjectURL(url);
+      $('selfiePh').style.backgroundImage = 'url(' + selfieData + ')'; $('selfiePh').innerHTML = '';
+      $('selfie').classList.add('has');
+      $('selfieTitle').textContent = 'Looking good';
+      $('selfieText').textContent = 'This goes on your M2 profile.';
+      $('selfieBtn').textContent = 'Retake';
+    };
+    img.onerror = function(){ $('selfieText').textContent = 'That photo didn\'t load. Try again, or skip it.'; };
+    img.src = url;
+    this.value = '';
+  });
+
   /* ---------- terms ---------- */
   function loadTerms(){
     if (!chosen || loadedTermsFor === chosen.id) return;
@@ -914,7 +969,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       signature: signatureData(),
       source: src,
       code: chosen._fp ? '' : promoCode,
-      fpId: chosen._fp ? fpClean(val('fpid')) : ''
+      fpId: chosen._fp ? fpClean(val('fpid')) : '',
+      photo: selfieData
     };
     nextBtn.disabled = true; nextBtn.textContent = 'Signing you up...';
     errEl.style.display = 'none';

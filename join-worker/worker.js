@@ -256,6 +256,13 @@ async function signup(env, b) {
     }
   }
 
+  // Profile photo (selfie from the join page). GymMaster shows it at the desk.
+  let photoSaved = false;
+  if (token && typeof b.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(b.photo) && b.photo.length < 2_000_000) {
+    photoSaved = await savePhoto(env, token, b.photo);
+    if (!photoSaved) warnings.push("photo: not saved");
+  }
+
   // Fitness Passport ID: Passport pays M2 per visit on this number. GymMaster's online
   // sign-up has no field for it, so hand it to M2 Core, which lists it on reception's
   // Today screen until someone types it into GymMaster (Additional Details).
@@ -304,7 +311,25 @@ async function signup(env, b) {
     } catch (e) { /* never fail a signup because the notification didn't send */ }
   }
 
-  return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, passport: isPassport, fpSaved, warnings };
+  return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, passport: isPassport, fpSaved, photoSaved, warnings };
+}
+
+// GymMaster takes the photo on the member's profile. The docs say it accepts a file or a
+// base64 string, so try the plain base64 first, then a real file upload.
+async function savePhoto(env, token, dataUrl) {
+  const b64 = dataUrl.split(",")[1];
+  let r = await gmPost(env, "/v1/member/profile", { token, memberphoto: b64 });
+  if (!r.error) return true;
+  try {
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const fd = new FormData();
+    fd.set("api_key", env.GM_API_KEY);
+    fd.set("token", token);
+    fd.set("memberphoto", new Blob([bytes], { type: dataUrl.slice(5, dataUrl.indexOf(";")) }), "selfie.jpg");
+    const res = await fetch(env.GM_BASE + "/v1/member/profile", { method: "POST", body: fd });
+    const j = await res.json().catch(() => ({}));
+    return res.ok && !j.error;
+  } catch (e) { return false; }
 }
 
 function friendly(err) {
