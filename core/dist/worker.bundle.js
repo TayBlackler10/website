@@ -1813,10 +1813,10 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
       await ensureSchema(env);
-      if (event.cron === "*/15 * * * *") { await H.refreshBalances(env); return; }
-      await syncMembers(env);
+      if (event.cron === "*/15 * * * *") { console.log("balances", JSON.stringify(await H.refreshBalances(env))); return; }
+      console.log("nightly", event.cron, JSON.stringify(await syncMembers(env)));
       await applyBlockRule(env);
-      await H.takeSnapshot(env);
+      console.log("snapshot", JSON.stringify(await H.takeSnapshot(env)));
     })());
   },
 };
