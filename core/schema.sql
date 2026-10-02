@@ -70,6 +70,15 @@ CREATE TABLE IF NOT EXISTS member_flags (
   PRIMARY KEY (member_id, flag)
 );
 
+-- Member photo, so staff can put a name to a face. Taken at the desk with the USB camera.
+-- A small JPEG (480 x 480), kept as a data URL. One per member, the newest wins.
+CREATE TABLE IF NOT EXISTS member_photos (
+  member_id  INTEGER PRIMARY KEY REFERENCES members(id),
+  jpeg       TEXT NOT NULL,
+  taken_at   TEXT NOT NULL DEFAULT (datetime('now')),
+  taken_by   INTEGER REFERENCES staff(id)
+);
+
 -- Health details only with the member's consent, visible to their trainer and owners.
 CREATE TABLE IF NOT EXISTS member_health_notes (
   member_id   INTEGER PRIMARY KEY REFERENCES members(id) ON DELETE CASCADE,

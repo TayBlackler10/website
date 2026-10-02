@@ -59,6 +59,9 @@ export default {
       if (url.pathname === "/api/passport.csv") return passportCsv(env, can, url.searchParams.get("month"));
       if (url.pathname === "/api/members" && req.method === "POST") return json(await addMember(env, who, can, await req.json()));
       if (url.pathname === "/api/members") return json(await searchMembers(env, who, can, url.searchParams.get("q") || ""));
+      const ph = url.pathname.match(/^\/api\/members\/(\d+)\/photo$/);
+      if (ph && req.method === "POST") return json(await savePhoto(env, who, can, +ph[1], await req.json()));
+      if (ph) return memberPhoto(env, who, can, +ph[1]);
       const kt = url.pathname.match(/^\/api\/members\/(\d+)\/key-tag$/);
       if (kt && req.method === "POST") return json(await assignKeyTag(env, who, can, +kt[1], await req.json()));
       const bl = url.pathname.match(/^\/api\/members\/(\d+)\/billing-link$/);
@@ -199,7 +202,9 @@ async function memberDetail(env, who, can, id) {
   const leads = await all("SELECT id, kind, stage, created_at FROM leads WHERE member_id = ? ORDER BY created_at DESC LIMIT 5", id);
   const referrer = m.referred_by ? await db.prepare("SELECT id, first_name, last_name FROM members WHERE id = ?").bind(m.referred_by).first() : null;
   const trainer = m.trainer_id ? await db.prepare("SELECT id, name FROM staff WHERE id = ?").bind(m.trainer_id).first() : null;
-  const out = { member: m, memberships, flags, visits, last_visit: lastVisit && lastVisit.at, activity, tags, leads, referrer, trainer };
+  const photo = await db.prepare("SELECT taken_at FROM member_photos WHERE member_id = ?").bind(id).first();
+  const out = { member: m, memberships, flags, visits, last_visit: lastVisit && lastVisit.at, activity, tags, leads, referrer, trainer,
+                photo_at: photo ? photo.taken_at : null };
   if (can.balances) {
     out.billing = await db.prepare("SELECT balance_owing, next_debit_date, next_debit_amount, billed_by_system, free_weeks_credit FROM billing_accounts WHERE member_id = ?").bind(id).first();
   } else {
@@ -222,6 +227,7 @@ function nextStep(d, can) {
     return { text: "New member. Check their bank details are in.", action: "billing" };
   }
   if (!m.key_tag && ms && ms.family !== "passport" && (d.tags.length || d.activity.some(a => a.kind === "sale"))) return { text: "No key tag on record. Scan one next time they're in.", action: "tag" };
+  if (!d.photo_at && d.activity.some(a => a.kind === "sale")) return { text: "No photo yet. Take one next time they're at the desk, so everyone knows the face.", action: "photo" };
   if (!m.lead_source) return { text: "We don't know how they found us. Ask, and record it.", action: "details" };
   if (ms && ms.family === "perform" && !d.leads.some(l => l.kind === "free_pt") && !m.trainer_id) return { text: "Perform member who hasn't had their free PT. Book one.", action: "pt" };
   if (ms && ms.family === "daily" && (m.total_visits_gm || 0) >= 100) return { text: "Trains a lot on Daily. Perform adds classes and recovery for $22 more a week.", action: "upgrade" };
@@ -512,6 +518,7 @@ const JOBS = {
   fp_id_gm:        { label: "Passport IDs to type into GymMaster", one: "Passport ID to type into GymMaster", owner: "reception", order: 2.2 },
   fp_missing:      { label: "Passport members with no Passport ID", one: "Passport member with no Passport ID", owner: "reception", order: 2.4 },
   no_tag:          { label: "Paying members with no key tag",   one: "paying member with no key tag",  owner: "reception", order: 6 },
+  no_photo:        { label: "New members with no photo",        one: "new member with no photo",       owner: "reception", order: 7 },
 };
 const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "fp_in_gm", "done"];
 
@@ -587,6 +594,18 @@ async function today(env, who, can) {
                                  AND EXISTS (SELECT 1 FROM activity a WHERE a.member_id = m.id AND a.kind = 'sale')
                                ORDER BY m.joined_on DESC`, nzToday))
       .map(r => ({ ...r, detail: "Joined recently on " + r.plan + ". Give them a tag when they're in." })));
+  }
+
+  if (!own) {
+    // Added in the Core in the last 30 days without a photo.
+    push("no_photo", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, m.joined_on
+                                 FROM members m
+                                 WHERE m.status = 'active' AND m.joined_on >= date(?, '-30 days')
+                                   AND EXISTS (SELECT 1 FROM activity a WHERE a.member_id = m.id AND a.kind = 'sale')
+                                   AND NOT EXISTS (SELECT 1 FROM member_photos p WHERE p.member_id = m.id)
+                                   AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = 'no_photo' AND t.member_id = m.id AND t.outcome IS NOT NULL)
+                                 ORDER BY m.joined_on DESC`, nzToday))
+      .map(r => ({ ...r, need_photo: true, detail: "Joined " + r.joined_on + ". Take their photo next time they're in." })));
   }
 
   jobs.sort((a, b) => a.order - b.order);
@@ -925,6 +944,38 @@ async function applyBlockRule(env) {
     db.prepare(`DELETE FROM member_flags WHERE flag = 'blocked' AND member_id IN
                 (SELECT member_id FROM billing_accounts WHERE balance_owing < ?)`).bind(limit),
   ]);
+}
+
+/* ---------------- member photos ---------------- */
+// Taken in the browser from the reception USB camera (or a phone or tablet camera),
+// cropped square and shrunk to about 40 KB before it's sent.
+
+async function savePhoto(env, who, can, id, b) {
+  if (!can.add) return { ok: false, error: "Only reception, the manager and owners can take photos." };
+  const jpeg = String(b.jpeg || "");
+  if (!/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(jpeg)) return { ok: false, error: "That photo didn't come through. Take it again." };
+  if (jpeg.length > 600_000) return { ok: false, error: "That photo is too big. Take it again." };
+  const m = await env.DB.prepare("SELECT id FROM members WHERE id = ?").bind(id).first();
+  if (!m) return { ok: false, error: "Member not found" };
+  await env.DB.batch([
+    env.DB.prepare(`INSERT INTO member_photos(member_id, jpeg, taken_by) VALUES (?, ?, ?)
+                    ON CONFLICT(member_id) DO UPDATE SET jpeg = excluded.jpeg, taken_at = datetime('now'), taken_by = excluded.taken_by`).bind(id, jpeg, who.id),
+    env.DB.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', 'Photo taken')").bind(id, who.id),
+  ]);
+  return { ok: true };
+}
+
+async function memberPhoto(env, who, can, id) {
+  if (!can.members) return new Response("No access", { status: 403 });
+  if (can.members === "own") {
+    const m = await env.DB.prepare("SELECT trainer_id FROM members WHERE id = ?").bind(id).first();
+    if (!m || m.trainer_id !== who.id) return new Response("No access", { status: 403 });
+  }
+  const p = await env.DB.prepare("SELECT jpeg FROM member_photos WHERE member_id = ?").bind(id).first();
+  if (!p) return new Response("No photo", { status: 404 });
+  const bin = atob(p.jpeg.split(",")[1]);
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return new Response(bytes, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "private, max-age=60" } });
 }
 
 /* ---------------- Fitness Passport ---------------- */
