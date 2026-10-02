@@ -245,6 +245,7 @@ def footer(meta):
                '<li><a href="/contact.html">Contact us</a></li>'
                '<li><a href="/gym-auckland-cbd.html">Getting here</a></li>'
                '<li><a href="/gym-near-auckland-hospital.html">Near Auckland Hospital</a></li>'
+               '<li><a href="/gym-newmarket.html">Near Newmarket</a></li>'
                '<li><a href="https://www.instagram.com/m2trainingclub/" rel="noopener">Instagram</a></li>'
                '<li><a href="https://www.facebook.com/m2trainingclub" rel="noopener">Facebook</a></li></ul></div>')
     year = datetime.date.today().year
