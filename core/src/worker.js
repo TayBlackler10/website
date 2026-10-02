@@ -55,6 +55,8 @@ export default {
       const mn = url.pathname.match(/^\/api\/members\/(\d+)\/(notes|flags|details)$/);
       if (mn && req.method === "POST") return json(await updateMember(env, who, can, +mn[1], mn[2], await req.json()));
       if (url.pathname === "/api/plans") return json(await sellablePlans(env, can));
+      if (url.pathname === "/api/passport") return json(await passportReport(env, can, url.searchParams.get("month")));
+      if (url.pathname === "/api/passport.csv") return passportCsv(env, can, url.searchParams.get("month"));
       if (url.pathname === "/api/members" && req.method === "POST") return json(await addMember(env, who, can, await req.json()));
       if (url.pathname === "/api/members") return json(await searchMembers(env, who, can, url.searchParams.get("q") || ""));
       const kt = url.pathname.match(/^\/api\/members\/(\d+)\/key-tag$/);
@@ -213,6 +215,9 @@ function nextStep(d, can) {
   const flag = f => d.flags.some(x => x.flag === f);
   if (flag("blocked") && can.balances) return { text: `Owes $${(d.billing && d.billing.balance_owing || 0).toFixed(2)}. Blocked at the doors, in the app and from classes until it's paid.`, action: "billing" };
   if (d.billing && d.billing.balance_owing > 0 && can.balances) return { text: `Owes $${d.billing.balance_owing.toFixed(2)}. Ask about it next time they're in.`, action: "billing" };
+  const isPassport = flag("passport") || (ms && ms.family === "passport");
+  if (isPassport && !m.fp_id) return { text: "No Fitness Passport ID. Passport only pays us for visits it can match to this number. Ask for their Passport card or app and add it.", action: "fp" };
+  if (isPassport && !m.fp_id_in_gm) return { text: `Type Fitness Passport ID ${m.fp_id} into GymMaster (Additional Details). GymMaster reports their visits to Passport.`, action: "fp_gm" };
   if (ms && ms.billed_by === "ezidebit" && d.activity.every(a => !/bank details/i.test(a.detail || "")) && m.joined_on && m.joined_on >= isoDaysAgo(14)) {
     return { text: "New member. Check their bank details are in.", action: "billing" };
   }
@@ -273,7 +278,27 @@ async function sellablePlans(env, can) {
     return { ...p, name: String(m.name || "").trim(), price: m.price, priceDescription: m.pricedescription,
              signupFee: parseFloat(String(m.signupfee || "0").replace(/[^0-9.]/g, "")) || 0 };
   });
+  for (const id of passportTypeIds(env, live)) {
+    const m = live.get(id);
+    plans.push({ id, family: "passport", frequency: "yearly", flexi: false, sort: 99, name: m ? String(m.name || "").trim() : "Fitness Passport",
+                 price: "Paid by Fitness Passport", priceDescription: "", signupFee: 0 });
+  }
   return { plans, goals: GOALS, sources: SOURCES };
+}
+
+// The GymMaster membership type(s) for Fitness Passport. Found by name in the live
+// list, or set FP_MEMBERSHIP_ID in wrangler.toml if GymMaster doesn't list it.
+function passportTypeIds(env, live) {
+  const ids = new Set();
+  if (env.FP_MEMBERSHIP_ID) ids.add(Number(env.FP_MEMBERSHIP_ID));
+  for (const [id, m] of live) if (/fitness\s*passport/i.test(String(m.name || ""))) ids.add(id);
+  return [...ids].filter(Boolean);
+}
+
+// Fitness Passport IDs are the number on the member's Passport card or app.
+function cleanFpId(v) {
+  const d = String(v ?? "").replace(/\D/g, "");
+  return d.length >= 5 && d.length <= 12 ? d : "";
 }
 
 async function addMember(env, who, can, b) {
@@ -286,6 +311,7 @@ async function addMember(env, who, can, b) {
     campaign: clean(b.campaign), planId: Number(b.planId), referredBy: b.referredBy ? Number(b.referredBy) : null,
     passport: !!b.passport, signature: typeof b.signature === "string" ? b.signature : "",
     emergencyName: clean(b.emergencyName), emergencyPhone: normMobile(b.emergencyPhone),
+    fpId: cleanFpId(b.fpId), fpIdRaw: clean(b.fpId),
   };
   const missing = [["first", "first name"], ["last", "last name"], ["email", "email"], ["mobile", "mobile"], ["dob", "date of birth"],
                    ["goal", "goal"], ["source", "where they heard about us"]].filter(([k]) => !f[k]).map(([, l]) => l);
@@ -295,8 +321,22 @@ async function addMember(env, who, can, b) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f.dob)) return { ok: false, error: "Check the date of birth." };
   if (!b.agreed) return { ok: false, error: "The member needs to agree to the terms and sign." };
 
-  const plan = SELLABLE.find(p => p.id === f.planId);
+  if (!env.GM_API_KEY) return { ok: false, error: "GM_API_KEY is not set, so members can't be added yet." };
+  const liveList = await gmMember(env, "GET", "/v1/memberships");
+  const liveMap = new Map((liveList.result || []).map(m => [Number(m.id), m]));
+  let plan = SELLABLE.find(p => p.id === f.planId);
+  if (!plan && passportTypeIds(env, liveMap).includes(f.planId)) plan = { id: f.planId, family: "passport", frequency: "yearly", flexi: false };
   if (!plan) return { ok: false, error: "That membership can't be sold here." };
+  if (plan.family === "passport") f.passport = true;
+  // Passport pays M2 per visit, matched on this ID. No ID, no money, so it's compulsory.
+  if (f.passport && !f.fpId) {
+    return { ok: false, error: f.fpIdRaw ? "That Fitness Passport ID doesn't look right. It's the number on their Passport card or app."
+                                         : "Fitness Passport ID is compulsory for Passport members. It's on their Passport card or app. Without it Passport can't pay us for their visits." };
+  }
+  if (f.fpId) {
+    const taken = await db.prepare("SELECT id, first_name, last_name FROM members WHERE fp_id = ? LIMIT 1").bind(f.fpId).first();
+    if (taken) return { ok: false, error: `Fitness Passport ID ${f.fpId} is already on ${taken.first_name} ${taken.last_name || ""}. Check the card: every person has their own.` };
+  }
   // Fitness Passport members are excluded from every offer, trials included.
   if (f.passport && plan.family === "trial") return { ok: false, error: "Fitness Passport members can't take M2 trials or offers." };
 
@@ -316,7 +356,6 @@ async function addMember(env, who, can, b) {
   }
 
   // 1. GymMaster first, while it runs billing and doors.
-  if (!env.GM_API_KEY) return { ok: false, error: "GM_API_KEY is not set, so members can't be added yet." };
   const ex = await gmMember(env, "GET", "/v2/member/exists", { email: f.email });
   if (ex && ex.result && ex.result.id && !b.confirmDuplicate) {
     return { ok: false, duplicate: { id: ex.result.id }, canOverride: true,
@@ -330,8 +369,7 @@ async function addMember(env, who, can, b) {
   });
   if (res.error || !res.memberid) return { ok: false, error: "GymMaster said: " + (res.error || "no member id came back") };
   const id = Number(res.memberid);
-  const live = await gmMember(env, "GET", "/v1/memberships");
-  const lm = (live.result || []).find(m => Number(m.id) === f.planId);
+  const lm = liveMap.get(f.planId);
   const price = lm ? (parseFloat(String(lm.price || "").replace(/[^0-9.]/g, "")) || null) : null;
   const WK = { weekly: 1, fortnightly: 2, monthly: 52 / 12, quarterly: 13 };
   const weekly = price && WK[plan.frequency] ? Math.round(price / WK[plan.frequency] * 100) / 100 : null;
@@ -352,24 +390,30 @@ async function addMember(env, who, can, b) {
     const p = await db.prepare(`INSERT INTO plans(gm_type_name, gm_category, family, frequency, flexi, paid_in_full, gm_join_id,
                                 includes_classes, includes_recovery) VALUES (?, 'Sold in M2 Core', ?, ?, ?, ?, ?, ?, ?) RETURNING id`)
       .bind(b.planName || ("Membership " + f.planId), plan.family, plan.frequency, plan.flexi ? 1 : 0, plan.frequency === "upfront" && plan.family !== "trial" ? 1 : 0,
-            f.planId, ["perform", "classes", "trial"].includes(plan.family) ? 1 : 0, ["perform", "recovery", "trial"].includes(plan.family) ? 1 : 0).first();
+            f.planId, ["perform", "classes", "trial", "passport"].includes(plan.family) ? 1 : 0, ["perform", "recovery", "trial", "passport"].includes(plan.family) ? 1 : 0).first();
     planDbId = p.id;
   }
-  const billedBy = plan.family === "trial" ? "none" : "ezidebit";
+  const billedBy = plan.family === "trial" ? "none" : plan.family === "passport" ? "passport" : "ezidebit";
   const stmts = [
     db.prepare(`INSERT INTO members(id, gm_id, first_name, last_name, email, mobile, dob, gender, goal, lead_source, lead_campaign,
-                referred_by, emergency_name, emergency_phone, status, joined_on, terms_signed_on)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
-                ON CONFLICT(id) DO UPDATE SET goal = excluded.goal, lead_source = excluded.lead_source, status = 'active', updated_at = datetime('now')`)
-      .bind(id, id, f.first, f.last, f.email, f.mobile, f.dob, f.gender || null, f.goal, f.source, f.campaign || null, f.referredBy,
-            f.emergencyName || null, f.emergencyPhone || null, today, today),
+                referred_by, emergency_name, emergency_phone, status, joined_on, terms_signed_on, fp_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET goal = excluded.goal, lead_source = excluded.lead_source, fp_id = coalesce(excluded.fp_id, members.fp_id),
+                  status = 'active', updated_at = datetime('now')`)
+      .bind(id, id, f.first, f.last, f.email, f.mobile, f.dob, f.gender || null, f.goal, f.source, f.campaign || null, f.passport ? null : f.referredBy,
+            f.emergencyName || null, f.emergencyPhone || null, today, today, f.fpId || null),
     db.prepare("INSERT INTO memberships(member_id, plan_id, price, weekly_value, start_date, status, billed_by, sold_by) VALUES (?, ?, ?, ?, ?, 'current', ?, ?)")
       .bind(id, planDbId, price, weekly, today, billedBy, who.name),
     db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'sale', ?)")
       .bind(id, who.id, "Added at reception: " + (b.planName || plan.family) + (f.referredBy ? ", Bring a Mate" : "")),
   ];
   if (billedBy === "ezidebit") stmts.push(db.prepare("INSERT OR IGNORE INTO billing_accounts(member_id, billed_by_system) VALUES (?, 'gymmaster')").bind(id));
-  if (f.passport) stmts.push(db.prepare("INSERT OR IGNORE INTO member_flags(member_id, flag, set_by) VALUES (?, 'passport', ?)").bind(id, who.id));
+  if (f.passport) {
+    stmts.push(db.prepare("INSERT OR IGNORE INTO member_flags(member_id, flag, set_by) VALUES (?, 'passport', ?)").bind(id, who.id));
+    // GymMaster's sign-up doesn't take the Passport ID, and GymMaster is what reports visits to
+    // Passport, so reception types it in there. Stays on Today until it's done.
+    stmts.push(db.prepare("INSERT INTO tasks(kind, member_id, owner_role, due_on) VALUES ('fp_id_gm', ?, 'reception', ?)").bind(id, today));
+  }
   if (f.referredBy && !f.passport) {
     // Bring a Mate: both get 4 weeks free. Applied in GymMaster at the desk until billing moves.
     stmts.push(db.prepare("UPDATE billing_accounts SET free_weeks_credit = free_weeks_credit + 4 WHERE member_id IN (?, ?)").bind(id, f.referredBy));
@@ -391,7 +435,8 @@ async function addMember(env, who, can, b) {
       .bind(id, f.first + " " + f.last, f.email, f.mobile, f.source, f.campaign || null, f.goal, id));
   }
   await db.batch(stmts);
-  return { ok: true, id, needsBilling: billedBy === "ezidebit", warnings, gymmasterUrl: (env.GM_SITE || "") + "/member/view/" + id };
+  return { ok: true, id, needsBilling: billedBy === "ezidebit", warnings, gymmasterUrl: (env.GM_SITE || "") + "/member/view/" + id,
+           fpId: f.passport ? f.fpId : null };
 }
 
 // Where reception enters bank details for a member.
@@ -464,9 +509,11 @@ const JOBS = {
   trial_ending:    { label: "Trials finishing",                 one: "trial finishing",                owner: "reception", order: 3 },
   blocked:         { label: "Blocked for money owing",          one: "member blocked for money owing", owner: "manager",   order: 4 },
   call_back:       { label: "Call backs due",                   one: "call back due",                  owner: "reception", order: 5 },
+  fp_id_gm:        { label: "Passport IDs to type into GymMaster", one: "Passport ID to type into GymMaster", owner: "reception", order: 2.2 },
+  fp_missing:      { label: "Passport members with no Passport ID", one: "Passport member with no Passport ID", owner: "reception", order: 2.4 },
   no_tag:          { label: "Paying members with no key tag",   one: "paying member with no key tag",  owner: "reception", order: 6 },
 };
-const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "done"];
+const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "fp_in_gm", "done"];
 
 async function today(env, who, can) {
   const db = env.DB;
@@ -505,6 +552,24 @@ async function today(env, who, can) {
                                   FROM tasks t LEFT JOIN members m ON m.id = t.member_id LEFT JOIN leads l ON l.id = t.lead_id
                                   WHERE t.kind = 'call_back' AND t.outcome IS NULL AND t.due_on <= ? ORDER BY t.due_on`, nzToday))
       .map(r => ({ ...r, detail: r.outcome_note || "Promised a call back" })));
+  }
+
+  if (!own) {
+    // Passport pays per visit, matched on the Fitness Passport ID. These two lists stop visits going unpaid.
+    push("fp_id_gm", (await all(`SELECT t.id task_id, t.member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, m.fp_id, t.due_on
+                                 FROM tasks t JOIN members m ON m.id = t.member_id
+                                 WHERE t.kind = 'fp_id_gm' AND t.outcome IS NULL ORDER BY t.due_on`))
+      .map(r => ({ ...r, gm_url: (env.GM_SITE || "") + "/member/view/" + r.member_id,
+                   detail: r.fp_id ? `Type ${r.fp_id} into GymMaster: their profile, Additional Details, Fitness Passport ID.` : "Get their Passport ID first, then type it into GymMaster." })));
+    const loaded = (await one("SELECT value FROM settings WHERE key = 'fp_ids_loaded'"))?.value === "1";
+    push("fp_missing", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile,
+                                     (SELECT count(*) FROM visits v WHERE v.member_id = m.id AND v.at >= date('now','-30 days')) recent
+                                   FROM members m JOIN member_flags f ON f.member_id = m.id AND f.flag = 'passport'
+                                   WHERE m.status = 'active' AND (m.fp_id IS NULL OR m.fp_id = '')
+                                     ${loaded ? "" : "AND EXISTS (SELECT 1 FROM activity a WHERE a.member_id = m.id AND a.kind = 'sale')"}
+                                   ORDER BY recent DESC, m.joined_on DESC LIMIT 200`))
+      .map(r => ({ ...r, need_fp: true,
+                   detail: (r.recent ? r.recent + " visits in the last 30 days that Passport can't pay for. " : "") + "Ask for their Passport card or app and add the ID." })));
   }
 
   if (can.collections) {
@@ -561,6 +626,11 @@ async function recordOutcome(env, who, can, b) {
   if (b.task_id) {
     stmts.push(db.prepare("UPDATE tasks SET outcome = ?, outcome_note = coalesce(?, outcome_note), done_by = ?, done_at = datetime('now') WHERE id = ? AND outcome IS NULL")
       .bind(outcome, note, who.id, Number(b.task_id)));
+  } else if (memberId && ["missing_billing", "fp_id_gm"].includes(kind)
+             && await db.prepare("SELECT 1 FROM tasks WHERE kind = ? AND member_id = ? AND outcome IS NULL").bind(kind, memberId).first()) {
+    // Ticked off from the add member screen: close the open task rather than adding another.
+    stmts.push(db.prepare("UPDATE tasks SET outcome = ?, outcome_note = coalesce(?, outcome_note), done_by = ?, done_at = datetime('now') WHERE kind = ? AND member_id = ? AND outcome IS NULL")
+      .bind(outcome, note, who.id, kind, memberId));
   } else {
     stmts.push(db.prepare(`INSERT INTO tasks(kind, member_id, lead_id, owner_role, assigned_to, due_on, outcome, outcome_note, done_by, done_at)
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`)
@@ -572,6 +642,9 @@ async function recordOutcome(env, who, can, b) {
                            contacted_at = coalesce(contacted_at, datetime('now')),
                            closed_at = CASE WHEN ? IN ('joined','lost') THEN datetime('now') ELSE closed_at END WHERE id = ?`)
       .bind(stage, stage, leadId));
+  }
+  if (kind === "fp_id_gm" && (outcome === "fp_in_gm" || outcome === "done") && memberId) {
+    stmts.push(db.prepare("UPDATE members SET fp_id_in_gm = 1, updated_at = datetime('now') WHERE id = ? AND fp_id IS NOT NULL").bind(memberId));
   }
   if (outcome === "call_back") {
     const when = /^\d{4}-\d{2}-\d{2}$/.test(b.call_back_on || "") ? b.call_back_on : nzDateTime(new Date(Date.now() + 86400_000)).slice(0, 10);
@@ -751,6 +824,16 @@ async function updateMember(env, who, can, id, what, b) {
     const fields = { email: v => String(v).trim().toLowerCase(), mobile: normMobile, goal: v => String(v).trim(), lead_source: v => String(v).trim(),
                      preferred_name: v => String(v).trim(), emergency_name: v => String(v).trim(), emergency_phone: normMobile };
     const sets = [], binds = [], changed = [];
+    let fpChanged = false;
+    if (b.fp_id !== undefined) {
+      const fp = cleanFpId(b.fp_id);
+      if (String(b.fp_id).trim() && !fp) return { ok: false, error: "That Fitness Passport ID doesn't look right. It's the number on their Passport card or app." };
+      if (fp && fp !== m.fp_id) {
+        const taken = await db.prepare("SELECT first_name, last_name FROM members WHERE fp_id = ? AND id <> ? LIMIT 1").bind(fp, id).first();
+        if (taken) return { ok: false, error: `Fitness Passport ID ${fp} is already on ${taken.first_name} ${taken.last_name || ""}. Check the card.` };
+        sets.push("fp_id = ?", "fp_id_in_gm = 0"); binds.push(fp); changed.push("Fitness Passport ID"); fpChanged = true;
+      }
+    }
     for (const [k, fn] of Object.entries(fields)) {
       if (b[k] === undefined) continue;
       const v = fn(b[k]) || null;
@@ -759,11 +842,21 @@ async function updateMember(env, who, can, id, what, b) {
       sets.push(k + " = ?"); binds.push(v); changed.push(k.replace(/_/g, " "));
     }
     if (!sets.length) return { ok: true, unchanged: true };
-    await db.batch([
+    const batch = [
       db.prepare(`UPDATE members SET ${sets.join(", ")}, updated_at = datetime('now') WHERE id = ?`).bind(...binds, id),
       db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', ?)").bind(id, who.id, "Updated " + changed.join(", ")),
-    ]);
-    return { ok: true, note: changed.includes("email") || changed.includes("mobile") ? "Change it in GymMaster too, so emails and texts still reach them." : null };
+    ];
+    if (fpChanged) {
+      // Close any older reminder for this person, then one fresh reminder to put it in GymMaster.
+      batch.push(db.prepare("UPDATE tasks SET outcome = 'done', outcome_note = 'Replaced by a newer Passport ID', done_by = ?, done_at = datetime('now') WHERE kind = 'fp_id_gm' AND member_id = ? AND outcome IS NULL").bind(who.id, id));
+      batch.push(db.prepare("INSERT INTO tasks(kind, member_id, owner_role, due_on) VALUES ('fp_id_gm', ?, 'reception', date('now'))").bind(id));
+      batch.push(db.prepare("INSERT OR IGNORE INTO member_flags(member_id, flag, set_by) VALUES (?, 'passport', ?)").bind(id, who.id));
+    }
+    await db.batch(batch);
+    const notes = [];
+    if (changed.includes("email") || changed.includes("mobile")) notes.push("Change it in GymMaster too, so emails and texts still reach them.");
+    if (fpChanged) notes.push("Now type the Passport ID into GymMaster (Additional Details). It's on Today until it's done.");
+    return { ok: true, note: notes.join(" ") || null };
   }
   return { ok: false, error: "Unknown change" };
 }
@@ -795,12 +888,17 @@ async function syncMembers(env) {
       const last = g.surname ?? g.lastname ?? g.last_name ?? "";
       const email = (g.email || "").toLowerCase() || null;
       const mobile = normMobile(g.cellphone ?? g.mobile ?? g.phone ?? "");
-      stmts.push(db.prepare(`INSERT INTO members(id, gm_id, first_name, last_name, email, mobile, joined_on, status)
-                             VALUES (?, ?, ?, ?, ?, ?, ?, 'prospect')
+      // GymMaster's name for the Fitness Passport ID field: confirm on the first real sync.
+      const fp = cleanFpId(g.fitnesspassportid ?? g.fitness_passport_id ?? g.fitnesspassport_id ?? g.fpid ?? "") || null;
+      stmts.push(db.prepare(`INSERT INTO members(id, gm_id, first_name, last_name, email, mobile, joined_on, status, fp_id, fp_id_in_gm)
+                             VALUES (?, ?, ?, ?, ?, ?, ?, 'prospect', ?, ?)
                              ON CONFLICT(id) DO UPDATE SET first_name = excluded.first_name, last_name = excluded.last_name,
                                email = coalesce(excluded.email, members.email), mobile = coalesce(excluded.mobile, members.mobile),
+                               -- GymMaster is what Passport is paid from, so its ID wins while it runs the doors.
+                               fp_id_in_gm = CASE WHEN excluded.fp_id IS NOT NULL THEN 1 ELSE members.fp_id_in_gm END,
+                               fp_id = coalesce(excluded.fp_id, members.fp_id),
                                updated_at = datetime('now')`)
-        .bind(id, id, first || "Unknown", last, email, mobile, g.joindate || null));
+        .bind(id, id, first || "Unknown", last, email, mobile, g.joindate || null, fp, fp ? 1 : 0));
     }
     for (let i = 0; i < stmts.length; i += 50) await db.batch(stmts.slice(i, i + 50));
     await db.prepare("UPDATE sync_log SET finished_at = ?, rows_in = ?, rows_changed = ?, ok = 1 WHERE id = ?")
@@ -827,6 +925,86 @@ async function applyBlockRule(env) {
     db.prepare(`DELETE FROM member_flags WHERE flag = 'blocked' AND member_id IN
                 (SELECT member_id FROM billing_accounts WHERE balance_owing < ?)`).bind(limit),
   ]);
+}
+
+/* ---------------- Fitness Passport ---------------- */
+// Passport pays M2 per visit on monthly tiers that reset each month, matched on each
+// member's Fitness Passport ID. While GymMaster runs the doors it reports the visits to
+// Passport itself (Settings > Integrations > Fitness Passport, with M2's site and device
+// tokens). This page is M2's own check: every Passport visit, the ID it will be paid on,
+// the visits that can't be paid because the ID is missing, and (owners only) the money.
+
+function monthRange(month) {
+  const now = nzDateTime(new Date());
+  const m = /^\d{4}-\d{2}$/.test(month || "") ? month : now.slice(0, 7);
+  const [y, mo] = m.split("-").map(Number);
+  const next = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, "0")}`;
+  return { month: m, from: m + "-01", to: next + "-01" };
+}
+
+// Graduated, like tax brackets: visit 1 to 458 at the first rate, 459 to 919 at the next, and so on.
+function passportPay(visits, tiersText) {
+  const tiers = String(tiersText || "").split(",").map(t => t.split(":")).map(([upTo, rate]) => ({ upTo: Number(upTo) || Infinity, rate: Number(rate) }));
+  let total = 0, from = 0, rate = tiers[0] ? tiers[0].rate : 0, nextAt = null;
+  for (const t of tiers) {
+    total += Math.max(0, Math.min(visits, t.upTo) - from) * t.rate;
+    if (visits > from || from === 0) { rate = t.rate; nextAt = t.upTo === Infinity ? null : t.upTo + 1; }
+    from = t.upTo;
+    if (visits <= t.upTo) break;
+  }
+  return { total: Math.round(total * 100) / 100, rate, next_tier_at: nextAt,
+           visits_to_next_tier: nextAt ? nextAt - visits : null, tiers: tiers.map(t => ({ up_to: t.upTo === Infinity ? null : t.upTo, rate: t.rate })) };
+}
+
+async function passportRows(env, from, to) {
+  return (await env.DB.prepare(`SELECT m.id member_id, m.first_name, m.last_name, coalesce(v.fp_id, m.fp_id) fp_id, m.fp_id_in_gm,
+                                  count(*) visits, min(v.at) first_visit, max(v.at) last_visit
+                                FROM visits v JOIN members m ON m.id = v.member_id
+                                WHERE v.at >= ? AND v.at < ?
+                                  AND EXISTS (SELECT 1 FROM member_flags f WHERE f.member_id = m.id AND f.flag = 'passport')
+                                GROUP BY m.id ORDER BY visits DESC, m.first_name`).bind(from, to).all()).results;
+}
+
+async function passportReport(env, can, month) {
+  if (can.members !== true) return { error: "No access" };
+  const db = env.DB;
+  const r = monthRange(month);
+  const rows = await passportRows(env, r.from, r.to);
+  const visits = rows.reduce((a, x) => a + x.visits, 0);
+  const noId = rows.filter(x => !x.fp_id);
+  const noIdVisits = noId.reduce((a, x) => a + x.visits, 0);
+  const members = (await db.prepare(`SELECT count(*) n, sum(CASE WHEN coalesce(m.fp_id,'') = '' THEN 1 ELSE 0 END) no_id,
+                                       sum(CASE WHEN coalesce(m.fp_id,'') <> '' AND m.fp_id_in_gm = 0 THEN 1 ELSE 0 END) not_in_gm
+                                     FROM members m JOIN member_flags f ON f.member_id = m.id AND f.flag = 'passport'
+                                     WHERE m.status = 'active'`).first());
+  const dupes = (await db.prepare(`SELECT m.fp_id, group_concat(m.first_name || ' ' || coalesce(m.last_name,''), ', ') names, count(*) n
+                                   FROM members m WHERE coalesce(m.fp_id,'') <> '' GROUP BY m.fp_id HAVING count(*) > 1`).all()).results;
+  const history = (await db.prepare(`SELECT substr(v.at,1,7) month, count(*) visits FROM visits v
+                                     WHERE v.at >= date(?, '-5 months') AND v.at < ?
+                                       AND EXISTS (SELECT 1 FROM member_flags f WHERE f.member_id = v.member_id AND f.flag = 'passport')
+                                     GROUP BY month ORDER BY month`).bind(r.from, r.to).all()).results;
+  const idsLoaded = (await db.prepare("SELECT value FROM settings WHERE key = 'fp_ids_loaded'").first())?.value === "1";
+  const out = { month: r.month, visits, members_visiting: rows.length, visits_no_id: noIdVisits, rows, no_id: noId,
+                passport_members: members.n, members_no_id: idsLoaded ? members.no_id : null, members_not_in_gm: members.not_in_gm,
+                duplicate_ids: dupes, history, ids_loaded: idsLoaded };
+  if (can.business) {
+    const tiers = (await db.prepare("SELECT value FROM settings WHERE key = 'fp_tiers'").first())?.value;
+    const pay = passportPay(visits, tiers);
+    out.money = { ...pay, at_risk: Math.round((pay.total - passportPay(visits - noIdVisits, tiers).total) * 100) / 100,
+                  history: history.map(h => ({ ...h, estimate: passportPay(h.visits, tiers).total })) };
+  }
+  return out;
+}
+
+async function passportCsv(env, can, month) {
+  if (can.members !== true) return new Response("No access", { status: 403 });
+  const r = monthRange(month);
+  const rows = await passportRows(env, r.from, r.to);
+  const cell = v => { const t = String(v ?? ""); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+  const lines = [["Fitness Passport ID", "First name", "Last name", "M2 member ID", "Visits", "First visit", "Last visit"].join(",")]
+    .concat(rows.map(x => [x.fp_id || "MISSING", x.first_name, x.last_name, x.member_id, x.visits, x.first_visit, x.last_visit].map(cell).join(",")));
+  return new Response(lines.join("\r\n") + "\r\n", { headers: { "Content-Type": "text/csv; charset=utf-8",
+    "Content-Disposition": `attachment; filename="m2-fitness-passport-${r.month}.csv"`, "Cache-Control": "no-store" } });
 }
 
 /* ---------------- helpers ---------------- */

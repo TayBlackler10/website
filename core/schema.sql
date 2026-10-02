@@ -27,7 +27,9 @@ CREATE TABLE IF NOT EXISTS members (
   referred_by     INTEGER REFERENCES members(id),
   trainer_id      INTEGER REFERENCES staff(id),
   key_tag         TEXT,
-  passport_number TEXT,                         -- Fitness Passport member number (GymMaster kept it in the surname)
+  passport_number TEXT,                         -- old Passport number GymMaster staff typed into the surname. Kept for reference only
+  fp_id           TEXT,                         -- Fitness Passport ID (GymMaster: Additional Details). Passport pays on this, so it's compulsory for Passport members
+  fp_id_in_gm     INTEGER NOT NULL DEFAULT 0,   -- 1 once the same ID is in GymMaster, which reports visits to Passport while it runs the doors
   status          TEXT NOT NULL DEFAULT 'active',   -- active, frozen, cancelled, prospect, former
   joined_on       TEXT,
   total_visits_gm INTEGER DEFAULT 0,             -- lifetime visits carried over from GymMaster
@@ -42,6 +44,7 @@ CREATE INDEX IF NOT EXISTS members_email  ON members(email);
 CREATE INDEX IF NOT EXISTS members_mobile ON members(mobile);
 CREATE INDEX IF NOT EXISTS members_status ON members(status);
 CREATE UNIQUE INDEX IF NOT EXISTS members_key_tag ON members(key_tag) WHERE key_tag IS NOT NULL;
+CREATE INDEX IF NOT EXISTS members_fp_id ON members(fp_id);
 
 -- Every key tag ever handed out, so a found tag can be traced and a lost one never opens a door.
 CREATE TABLE IF NOT EXISTS key_tags (
@@ -176,7 +179,9 @@ CREATE TABLE IF NOT EXISTS visits (
   at          TEXT NOT NULL,              -- check-in time
   door        TEXT,                       -- main, mens_recovery, womens_recovery
   via         TEXT,                       -- key_tag, app, desk, gate_scan
-  gm_visit_id TEXT UNIQUE
+  gm_visit_id TEXT UNIQUE,
+  fp_id       TEXT,                       -- Passport members: the Fitness Passport ID at the time of the visit
+  fp_status   TEXT                        -- Passport members: NULL (GymMaster reports it), sent, failed or no_id once the Core reports visits itself
 );
 CREATE INDEX IF NOT EXISTS visits_member_at ON visits(member_id, at);
 CREATE INDEX IF NOT EXISTS visits_at ON visits(at);
@@ -328,7 +333,11 @@ INSERT OR IGNORE INTO settings(key, value) VALUES
   ('referral_min_amount', '1000'),
   ('class_capacity', '20'),
   ('late_cancel_hours', '12'),
-  ('no_show_after_minutes', '10');
+  ('no_show_after_minutes', '10'),
+  -- Fitness Passport pays per visit on monthly tiers that reset each month: up to visit N at $X. The last tier has no top.
+  ('fp_tiers', '458:7.39,919:8.21,1380:9.12,1841:10.03,0:11.04'),
+  -- 1 once a GymMaster export with the Fitness Passport ID column has been imported, so missing IDs are real gaps.
+  ('fp_ids_loaded', '0');
 
 INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VALUES
   ('trial_ending',       'Trial ending',          'joined',    7,  0),

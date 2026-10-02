@@ -24,9 +24,12 @@ ALLOWED_ORIGINS = "https://m2club.co.nz,https://www.m2club.co.nz"
 BILLING_MODE = "gymmaster"
 EZIDEBIT_EDDR_BASE = ""    # Ezidebit eDDR form address for NZ, confirm with Ezidebit
 EZIDEBIT_PUBLIC_KEY = ""   # Ezidebit public key (not secret), from Ezidebit
+FP_MEMBERSHIP_ID = ""      # GymMaster membership type id for Fitness Passport, only if add member can't find it by name
 
 # Secrets, set with wrangler (never in this file, never in chat):
 #   npx wrangler secret put GM_STAFF_KEY   GymMaster staff API key (nightly copy)
 #   npx wrangler secret put GM_API_KEY     GymMaster low permission API key (Add member, same one m2-join uses)
 #   npx wrangler secret put INTAKE_KEY     Shared key for website forms posting leads (any long random string)
+# Later, only when the Core reports Passport visits itself (after GymMaster):
+#   npx wrangler secret put FP_SITE_TOKEN    and    FP_DEVICE_TOKEN   (from Fitness Passport, same as in GymMaster)
 #   npx wrangler secret put ACCESS_AUD     Application Audience (AUD) tag from Cloudflare Access

@@ -80,6 +80,18 @@ The member is created in GymMaster first (same signup the join page uses), then 
 
 Built-in checks: no duplicate people (email or mobile), Fitness Passport members can't take trials or use Bring a Mate, Bring a Mate gives both people 4 weeks credit, and anyone with billing gets a "missing billing" job on Today until it's done.
 
+## Fitness Passport
+
+Passport pays M2 per visit, matched on each member's **Fitness Passport ID**. No ID, no money for that visit.
+
+- **Add member.** Pick Fitness Passport (or tick the Passport box) and the Fitness Passport ID is compulsory. The same ID can't be on two people.
+- **GymMaster still reports the visits.** GymMaster's sign-up doesn't take the ID, so after adding a Passport member the screen asks reception to type it into GymMaster (profile, Additional Details, Fitness Passport ID). It stays on Today as "Passport IDs to type into GymMaster" until someone taps "It's in GymMaster".
+- **Today** also lists Passport members with no ID, with a box to add it on the spot.
+- **Fitness Passport page.** Every Passport visit for the month with the ID it's paid on, visits with no ID, IDs on two people, and a CSV download (ID, name, visits). Owners also see the estimated payout from the tier rates, the current rate, visits to the next rate and the money lost to missing IDs.
+- **Getting the IDs in.** Add the Fitness Passport ID column to the GymMaster member export, then run the import. The import picks it up and sets `fp_ids_loaded`, which switches on the "missing ID" list for everyone.
+- **Tier rates** are in the `fp_tiers` setting (`up to visit:rate`, last one open-ended).
+- **After GymMaster.** GymMaster talks to Fitness Passport with a site token and a device token. For the Core to report check-ins itself, Fitness Passport has to give M2 their integration details (or approve the Core as a provider). Ask before the doors move.
+
 ## Rules built in now
 
 - **$250 block.** Owing $250 or more adds a `blocked` flag nightly (doors, app and class bookings check it). Gifted-time members are never blocked. Paying clears it on the next run. Live balances arrive with the Ezidebit phase.
