@@ -76,6 +76,7 @@ export default {
       if (m) return json(await memberDetail(env, who, can, +m[1]));
       if (url.pathname === "/api/staff-admin") return json(req.method === "POST" ? await saveStaff(env, who, can, await req.json()) : await staffAdmin(env, can));
       if (url.pathname === "/api/report") return await report(env, can, url.searchParams);
+      if (url.pathname === "/api/gm-report-probe" && can.settings) return json(await gmReportProbe(env, url.searchParams));
       if (url.pathname === "/api/gm-probe") return json(await gmProbe(env, can, url.searchParams));
       if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
@@ -1072,7 +1073,7 @@ async function gmMemberToken(env, memberId) {
 
 // Owner-only window into GymMaster's raw replies, for building and fixing the data feeds.
 const PROBE_PATHS = ["/booking/classes/schedule", "/booking/classes/filter_options", "/booking/classes", "/member/outstandingbalance", "/member/memberships",
-  "/member/bookings", "/member/bookings/past", "/member/visits/monthly", "/member/accounthistory", "/member/profile", "/settings", "/companies", "/memberships"];
+  "/member/bookings", "/member/bookings/past", "/member/visits/monthly", "/member/visits", "/member/accounthistory", "/member/profile", "/settings", "/companies", "/memberships", "/members", "/prospects", "/visits"];
 async function gmProbe(env, can, q) {
   if (!can.settings) return { error: "Owners only" };
   const v = q.get("v") === "v2" ? "v2" : "v1", path = q.get("path") || "";
@@ -1084,6 +1085,24 @@ async function gmProbe(env, can, q) {
     const d = await gmCall(env, v, path, { auth: q.get("auth") === "high" ? "high" : "low", member: q.get("member") ? +q.get("member") : null, params });
     return { ok: true, data: d };
   } catch (e) { return { ok: false, error: String(e.message || e) }; }
+}
+
+// Owner-only: does the GymMaster Report API answer with the keys we already have?
+async function gmReportProbe(env, q) {
+  const out = {};
+  const path = q.get("path") || "/api/v2/report/standard_report/list?predefined_only=true";
+  if (!/^\/api\/v2\/report\//.test(path)) return { error: "Report paths only" };
+  for (const [name, key] of [["low", env.GM_API_KEY], ["high", env.GM_STAFF_KEY], ["report", env.GM_REPORT_KEY]]) {
+    if (!key) { out[name] = "not set"; continue; }
+    try {
+      const init = { headers: { "X-GM-API-KEY": key, "Content-Type": "application/json" } };
+      if (q.get("body")) { init.method = "POST"; init.body = q.get("body"); }
+      const r = await fetch(env.GM_SITE + path, init);
+      const t = await r.text();
+      out[name] = { status: r.status, body: t.slice(0, +(q.get("n") || 1500)) };
+    } catch (e) { out[name] = String(e.message || e); }
+  }
+  return out;
 }
 
 /* ---------------- settings (owners) ---------------- */
