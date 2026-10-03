@@ -734,7 +734,7 @@ get("/api/me").then(function(me){
  if(me.can.members===true)$("#navFp").hidden=false;
  if(me.can.settings){$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
  if(me.can.settings){$("#navPt").hidden=false;ptCount()}
- if(!me.can.settings&&["trainer","coach","manager"].indexOf(me.role)>=0){$("#navMyPt").hidden=false;myPtCount()}
+ if(!me.can.settings){get("/api/pt/mine").then(function(d){var L=d.leads||[];if(L.length||["trainer","coach","manager"].indexOf(me.role)>=0){$("#navMyPt").hidden=false;var n=L.filter(function(l){return l.pt_status==="assigned"}).length;$("#ctMyPt").hidden=!n;$("#ctMyPt").textContent=n}})}
  if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false;$("#navEm").hidden=false}
  if(me.can.business){$("#navBizLab").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
  if(me.can.settings)$("#navAdminLab").hidden=false;

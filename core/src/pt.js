@@ -28,7 +28,8 @@ export function makePt(L) {
                        (SELECT count(*) FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.assigned_to = s.id AND p.pt_status = 'client' AND p.updated_at >= datetime('now','-90 days')) won,
                        (SELECT count(*) FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.assigned_to = s.id AND p.assigned_at >= datetime('now','-30 days')) month,
                        (SELECT count(*) FROM push_subs ps WHERE ps.staff_id = s.id) phones
-                     FROM staff s WHERE s.active = 1 AND s.role IN ('trainer','coach','owner','manager')
+                     FROM staff s WHERE s.active = 1 AND (s.role IN ('trainer','coach','owner','manager')
+                       OR EXISTS (SELECT 1 FROM leads l WHERE l.assigned_to = s.id AND l.kind = 'free_pt'))
                      ORDER BY CASE s.role WHEN 'trainer' THEN 0 WHEN 'coach' THEN 1 WHEN 'manager' THEN 2 ELSE 3 END, s.list_order, s.name`);
   }
   function matchStaff(staff, sheetName) {
