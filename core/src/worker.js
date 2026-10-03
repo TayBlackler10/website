@@ -625,7 +625,7 @@ async function billingLink(env, can, id, origin) {
   set("a", env.EZIDEBIT_PUBLIC_KEY); set("uRef", "M2-" + m.id); set("businessOrPerson", 1);
   set("fName", m.first_name); set("lName", m.last_name); set("email", m.email); set("mobile", m.mobile);
   set("debits", 2); set("rAmount", ms && ms.price); set("freq", ms && FREQ[ms.frequency]); set("rDate", 0);
-  set("callback", origin + "/billing-done?member=" + m.id); set("ed", 1);
+  set("callback", (env.PUBLIC_URL || "https://m2-join.taylor-3e5.workers.dev").replace(/\/$/, "") + "/billing-done?member=" + m.id); set("ed", 1);
   return { mode: "ezidebit", url: u.toString(), note: "Hand the screen to the member, or scan the code with their phone." };
 }
 

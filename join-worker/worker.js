@@ -22,6 +22,7 @@
 //           ALLOWED_ORIGINS comma separated origins allowed to call this worker
 //           PASSPORT_IDS   comma separated Fitness Passport membership type ids (default 844596).
 //                          Signups on these need a Fitness Passport ID and never take promo codes.
+//           CORE           service binding to m2-core (wrangler.toml), used ahead of CORE_URL
 //           CORE_URL       M2 Core base URL. With the INTAKE_KEY secret set, new Passport members
 //                          and their ID go to the Core, which puts "type the ID into GymMaster"
 //                          on reception's Today list.
@@ -53,6 +54,10 @@ export default {
         const ip = req.headers.get("CF-Connecting-IP") || "?";
         if (limited(ip)) return out({ ok: false, error: "Too many attempts. Please wait a few minutes and try again." }, cors, 0, 429);
         return out(await signup(env, await req.json()), cors);
+      }
+      // Member-facing M2 Core pages, passed straight through to the Core.
+      if ((url.pathname === "/unsubscribe" || url.pathname === "/billing-done") && env.CORE) {
+        return env.CORE.fetch(new Request("https://m2-core" + url.pathname + url.search, { method: req.method === "POST" ? "POST" : "GET" }));
       }
       if (url.pathname === "/") return out({ ok: true, service: "m2-join" }, cors);
       return out({ error: "Not found" }, cors, 0, 404);
@@ -269,9 +274,10 @@ async function signup(env, b) {
   // sign-up has no field for it, so hand it to M2 Core, which lists it on reception's
   // Today screen until someone types it into GymMaster (Additional Details).
   let fpSaved = false;
-  if (isPassport && env.CORE_URL && env.INTAKE_KEY) {
+  if (isPassport && (env.CORE || env.CORE_URL) && env.INTAKE_KEY) {
     try {
-      const r = await fetch(env.CORE_URL.replace(/\/$/, "") + "/api/intake", {
+      const intakeUrl = (env.CORE ? "https://m2-core" : env.CORE_URL.replace(/\/$/, "")) + "/api/intake";
+      const r = await (env.CORE ? env.CORE.fetch.bind(env.CORE) : fetch)(intakeUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-M2-Key": env.INTAKE_KEY, "Origin": "https://m2club.co.nz" },
         body: JSON.stringify({

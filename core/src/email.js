@@ -18,7 +18,8 @@ export function makeEmail(L) {
   const run = (env, sql, ...a) => env.DB.prepare(sql).bind(...a).run();
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const FROM = env => env.EMAIL_FROM || "M2 Training Club <reception@m2club.co.nz>";
-  const ORIGIN = "https://m2-core.taylor-3e5.workers.dev";
+  // Member-facing links go through the public join worker (the Core itself is behind staff sign-in).
+  const PUBLIC = env => (env.PUBLIC_URL || "https://m2-join.taylor-3e5.workers.dev").replace(/\/$/, "");
 
   // Who each automation is for. Every list skips people with no email, marked do not contact or staff.
   // "marketing" ones also skip anyone who unsubscribed or said no to marketing email.
@@ -157,7 +158,7 @@ export function makeEmail(L) {
         const ins = await run(env, "INSERT OR IGNORE INTO email_log(auto_key, member_id, email, subject, status, day) VALUES (?, ?, ?, ?, ?, ?)", a.key, p.id, p.email, a.subject, status === "sent" ? "sending" : status, d);
         if (!(ins.meta && ins.meta.changes)) continue;   // already handled today
         if (status === "sent") {
-          try { pid = await send(env, p.email, a, p.first_name, ORIGIN + "/unsubscribe?e=" + encodeURIComponent(p.email) + "&t=" + await sign(env, p.email)); sentToday.add(p.id); }
+          try { pid = await send(env, p.email, a, p.first_name, PUBLIC(env) + "/unsubscribe?e=" + encodeURIComponent(p.email) + "&t=" + await sign(env, p.email)); sentToday.add(p.id); }
           catch (e) { status = "failed"; detail = String(e.message || e).slice(0, 200); }
           await run(env, "UPDATE email_log SET status = ?, provider_id = ?, detail = ? WHERE auto_key = ? AND member_id = ? AND day = ?", status, pid, detail, a.key, p.id, d);
         }
