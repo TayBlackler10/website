@@ -637,14 +637,16 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <a class="btn line" id="fpCsv" href="#">Download visits (CSV)</a>
 </div>
 <section class="card dark" style="margin-bottom:18px"><div class="tiles" id="fpTiles"></div><div class="muted" style="color:var(--soft)" id="fpNote"></div></section>
+<div class="row2" style="margin-bottom:18px">
+<section class="card" id="fpNudgeCard" style="min-width:0"><h2>Come-in reminders</h2><p class="muted" style="margin:0 0 10px">Passport pays per visit. When this is on, Passport members who haven't been in for a week get a friendly reminder on their phone through the M2 App (after 4 days near the end of a month when the club is close to the next tier). At most one a week each, and only for people who've left "Check-ins from M2" on.</p><div id="fpNudge"><div class="muted">Loading...</div></div></section>
+<section class="card" id="fpCheckCard" style="min-width:0"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Core count against GymMaster</h2><button class="btn line sm" id="fpCheckRun">Check this month again</button></div><p class="muted" style="margin:0 0 10px">Before the Core sends Passport visits itself, its count has to match GymMaster's for every member. Checked automatically for last month on the 2nd.</p><div id="fpCheck"><div class="muted">Loading...</div></div></section>
+</div>
 <div class="row2">
 <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
 <section class="card"><h2>Visits Passport can't pay for</h2><p class="muted" style="margin:0">Passport members who trained this month with no Passport ID on file. Add the ID and these visits count.</p><div class="list" id="fpNoId"></div></section>
 <section class="card" id="fpDupCard" hidden><h2>Same ID on two people</h2><p class="muted" style="margin:0">Every person has their own Passport ID. Check their cards.</p><div class="list" id="fpDup"></div></section>
 </div>
-<section class="card" id="fpNudgeCard"><h2>Come-in reminders</h2><p class="muted" style="margin:0 0 10px">Passport pays per visit. When this is on, Passport members who haven't been in for a week get a friendly reminder on their phone through the M2 App (after 4 days near the end of a month when the club is close to the next tier). At most one a week each, and only for people who've left "Check-ins from M2" on.</p><div id="fpNudge"><div class="muted">Loading...</div></div></section>
-<section class="card" id="fpCheckCard"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Core count against GymMaster</h2><button class="btn line sm" id="fpCheckRun">Check this month again</button></div><p class="muted" style="margin:0 0 10px">Before the Core sends Passport visits itself, its count has to match GymMaster's for every member. Checked automatically for last month on the 2nd.</p><div id="fpCheck"><div class="muted">Loading...</div></div></section>
-<section class="card"><h2>Every Passport visit</h2><div class="list" id="fpRows"><div class="muted">Loading...</div></div></section>
+<section class="card" style="min-width:0"><h2>Every Passport visit</h2><div class="list" id="fpRows" style="max-height:560px;overflow-y:auto"><div class="muted">Loading...</div></div></section>
 </div>
 <section class="card dark" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">This month from GymMaster's visit counts</span><span class="muted" style="color:var(--soft)" id="fpNowNote"></span></div><div class="tiles" id="fpNowTiles"></div></section>
 <div class="row2" style="margin-top:18px">
@@ -2228,8 +2230,10 @@ function loadFpCheck(fresh){var m=$("#fpMonth").value;$("#fpCheck").innerHTML='<
   if(d.core==null){$("#fpCheck").innerHTML='<div class="muted">Not checked yet for this month. Tap Check this month again.</div>';return}
   var pct=d.members?Math.round(d.same/d.members*1000)/10:0,gap=d.core-d.gm;
   var h='<div class="tiles">'+tile(d.core.toLocaleString("en-NZ"),"Core count")+tile(d.gm.toLocaleString("en-NZ"),"GymMaster count")+(d.fp!=null?tile(d.fp.toLocaleString("en-NZ"),"Passport paid for"):"")+tile(pct+"%","Members that match")+'</div>';
-  h+=Math.abs(gap)<=Math.max(5,d.gm*0.005)&&pct>=98?'<div class="ok" style="margin-top:10px">Close enough to switch over: the counts are within half a percent.</div>':'<div class="warnbox" style="margin-top:10px">'+(gap<0?"The Core is missing "+(-gap)+" visits that GymMaster has.":"The Core has "+gap+" more visits than GymMaster.")+' Not ready to take over yet.</div>';
-  if(d.diffs&&d.diffs.length)h+='<div style="overflow-x:auto;margin-top:10px">'+table([["Member",function(r){return '<a href="#" data-member="'+r.member_id+'">'+esc(r.name)+'</a>'},0,1],["Core","core",1],["GymMaster","gm",1]],d.diffs.slice(0,30))+(d.diff_count>30?'<div class="muted" style="font-size:13px">and '+(d.diff_count-30)+' more</div>':"")+'</div>';
+  var thisMonth=m===new Date().toLocaleDateString("en-CA",{timeZone:"Pacific/Auckland"}).slice(0,7);
+  if(thisMonth)h+='<div class="muted" style="margin-top:10px">This month is still running and GymMaster\'s visit report runs a few hours behind, so today\'s visits won\'t match yet. Pick last month for the real check.</div>';
+  else h+=Math.abs(gap)<=Math.max(5,d.gm*0.005)&&pct>=98?'<div class="ok" style="margin-top:10px">Close enough to switch over: the counts are within half a percent.</div>':'<div class="warnbox" style="margin-top:10px">'+(gap<0?"The Core is missing "+(-gap)+" visits that GymMaster has.":"The Core has "+gap+" more visits than GymMaster.")+' Not ready to take over yet.</div>';
+  if(d.diffs&&d.diffs.length)h+='<div style="overflow-x:auto;margin-top:10px">'+table([["Member",function(r){return '<a href="#" data-member="'+r.member_id+'">'+esc(r.name)+'</a>'},0,1],["Core","core",1],["GymMaster","gm",1]],d.diffs.slice(0,10))+(d.diff_count>10?'<div class="muted" style="font-size:13px">and '+(d.diff_count-10)+' more</div>':"")+'</div>';
   $("#fpCheck").innerHTML=h});
 }
 $("#fpCheckRun").addEventListener("click",function(){loadFpCheck(true)});
