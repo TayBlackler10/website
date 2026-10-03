@@ -251,6 +251,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">The business</span><span class="muted" style="color:var(--soft)">Only you and Tim see this</span><span class="muted" style="color:#8C8C84;margin-left:auto" id="sync"></span></div>
 <div class="tiles" id="bizTiles"></div>
 </section>
+<section class="card" id="morning" hidden style="margin-bottom:18px"></section>
 <div class="row2">
 <section class="card">
 <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>Do this today</h2><span class="muted" id="doneToday"></span></div>
@@ -742,7 +743,7 @@ function show(v){
  $$("[data-view]").forEach(function(s){s.hidden=s.dataset.view!==v});
  $$(".nav").forEach(function(b){b.classList.toggle("on",b.dataset.go===v)});
  window.scrollTo(0,0);
- if(v==="today"){loadToday();if(ME&&ME.can.business)loadBiz()}
+ if(v==="today"){loadToday();if(ME&&ME.can.business){loadBiz();loadMorning()}}
  if(v==="leads")loadLeads();
  if(v==="add")startAdd();
  if(v==="tag")setTimeout(function(){$("#lookTag").focus()},50);
@@ -783,7 +784,7 @@ get("/api/me").then(function(me){
  if(me.can.add){$("#navPos").hidden=false;$("#navCat").hidden=false;$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
  navLabels();
  var hv=(location.hash||"").slice(1);var hb=hv&&document.querySelector('.nav[data-go="'+hv.replace(/[^a-z]/g,"")+'"]');
- if(hb&&!hb.hidden)show(hb.dataset.go);else{loadToday();if(me.can.business)loadBiz()}
+ if(hb&&!hb.hidden)show(hb.dataset.go);else{loadToday();if(me.can.business){loadBiz();loadMorning()}}
  if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(function(){});
 }).catch(function(e){$("#jobs").innerHTML='<div class="err">'+esc(e)+'</div>'});
 
@@ -2203,4 +2204,21 @@ function loadFpCheck(fresh){var m=$("#fpMonth").value;$("#fpCheck").innerHTML='<
   $("#fpCheck").innerHTML=h});
 }
 $("#fpCheckRun").addEventListener("click",function(){loadFpCheck(true)});
+
+/* ---------- owners: yesterday at a glance ---------- */
+function loadMorning(){get("/api/morning").then(function(d){if(d.error)return;var el=$("#morning");el.hidden=false;
+ var dd=new Date(d.day+"T12:00:00"),dl=dd.toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"long"});
+ var paying=d.joins.filter(function(j){return !j.passport}).length,fpj=d.joins.length-paying;
+ var pos=0;(d.pos||[]).forEach(function(p){pos+=p.total});
+ var fill=function(c){return c&&c.spots?Math.round(c.booked/c.spots*100)+"%":"-"};
+ var ld=(d.leads||[]).reduce(function(a,l){return a+l.n},0);
+ var h='<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Yesterday, '+esc(dl)+'</h2><span class="muted" style="font-size:13px">Only you and Tim see this</span></div>';
+ h+='<div class="tiles" style="margin-top:10px">'+tile(paying+(fpj?" + "+fpj+" FP":""),"Joined")+tile(d.cancels.length,"Gave notice")+tile(d.failed.length+(d.failed.length?" ("+money(d.failed_total)+")":""),"Payments failed")+tile(d.people+(d.people_week_ago?" ("+(d.people>=d.people_week_ago?"+":"")+(d.people-d.people_week_ago)+")":""),"Came in (vs last week)")
+  +tile(ld,"New leads")+tile(d.pt_waiting,"PT leads waiting for Tim")+tile(fill(d.classes_yesterday),"Classes full yesterday")+tile(money(pos),"Point of sale")+'</div>';
+ var fp=d.passport;h+='<div class="ok" style="margin-top:12px">Fitness Passport this month: <b>'+fp.visits.toLocaleString("en-NZ")+' visits</b> in '+fp.days_counted+' days'+(fp.pace?', on pace for <b>'+fp.pace.toLocaleString("en-NZ")+'</b> (about '+money(fp.at_pace)+')':"")+(fp.last_month&&fp.last_month.visits?'. Last month '+fp.last_month.visits.toLocaleString("en-NZ"):"")+'.</div>';
+ var lst=function(title,rows,f){return rows.length?'<div style="margin-top:12px"><b>'+title+'</b><div class="list">'+rows.slice(0,8).map(function(r){return '<div class="lrow" data-member="'+r.id+'" style="cursor:pointer"><span>'+esc(r.name)+'</span><span class="muted" style="font-size:13px">'+f(r)+'</span></div>'}).join("")+(rows.length>8?'<div class="muted" style="font-size:13px">and '+(rows.length-8)+' more</div>':"")+'</div></div>':""};
+ h+='<div class="row2" style="margin-top:4px"><div>'+lst("Joined",d.joins,function(r){return esc(r.plan||"")})+lst("Gave notice",d.cancels,function(r){return esc((r.plan||"")+(r.reason?", "+r.reason:"")+(r.from?", from "+r.from:""))})+'</div><div>'+lst("Payments failed",d.failed,function(r){return money(r.amount)+(r.reason?", "+esc(r.reason):"")})+
+  (d.today_classes.length?'<div style="margin-top:12px"><b>Classes today</b><div class="list">'+d.today_classes.map(function(c){return '<div class="lrow"><span>'+esc(String(c.start||"").slice(0,5))+' '+esc(c.name)+'</span><span class="muted" style="font-size:13px">'+c.booked+' of '+c.max+(c.waitlist?", "+c.waitlist+" waiting":"")+'</span></div>'}).join("")+'</div></div>':"")+'</div></div>';
+ if(d.app_requests)h+='<p class="muted" style="margin-top:10px">'+d.app_requests+' request'+(d.app_requests>1?"s":"")+' from the app waiting. <a href="#" data-go="app">See them</a></p>';
+ el.innerHTML=h})}
 </script></body></html>`;

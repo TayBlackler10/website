@@ -29,6 +29,7 @@ import { makeEmail } from "./email.js";
 import { makeGmSync } from "./gmsync.js";
 import { makePos } from "./pos.js";
 import { makeApp } from "./app.js";
+import { makeMorning } from "./morning.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
@@ -43,6 +44,7 @@ const EM = makeEmail({ nzDateTime });
 const GS = makeGmSync({ nzDateTime });
 const POS = makePos({ nzDateTime });
 const APP = makeApp({ nzDateTime, P });
+const MORN = makeMorning({ nzDateTime, passportPay });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -109,6 +111,7 @@ export default {
       if (em && em[2] === "/source") return json(await EM.source(env, can, em[1]));
       if (em && em[2]) return await EM.preview(env, who, can, em[1]);
       if (em && req.method === "POST") return json(await EM.save(env, who, can, em[1], await req.json()));
+      if (url.pathname === "/api/morning") return json(await MORN.summary(env, can));
       if (url.pathname === "/api/app") return json(req.method === "POST" ? await APP.save(env, who, can, await req.json()) : await APP.overview(env, can));
       const apt = url.pathname.match(/^\/api\/app\/test\/(\d+)$/);
       if (apt) return json(await APP.test(env, can, +apt[1], url.searchParams.get("action") || "classes"));
