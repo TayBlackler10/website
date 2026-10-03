@@ -387,6 +387,10 @@ async function summary(env, can) {
     passport: (await one(`SELECT count(*) n FROM member_flags f JOIN members m ON m.id = f.member_id AND m.status = 'active' WHERE f.flag = 'passport' AND ${REAL_MEMBER}`)).n,
     on_trial: (await one(`SELECT count(DISTINCT ms.member_id) n FROM memberships ms JOIN plans p ON p.id = ms.plan_id JOIN members m ON m.id = ms.member_id AND m.status = 'active'
                           WHERE ms.status = 'current' AND p.family IN ('trial', 'pass') AND NOT ${REAL_MEMBER}`)).n,
+    staff_only: (await one(`SELECT count(DISTINCT ms.member_id) n FROM memberships ms JOIN plans p ON p.id = ms.plan_id JOIN members m ON m.id = ms.member_id AND m.status = 'active'
+                            WHERE ms.status = 'current' AND p.family = 'staff' AND NOT ${REAL_MEMBER}
+                              AND NOT EXISTS (SELECT 1 FROM memberships x JOIN plans y ON y.id = x.plan_id WHERE x.member_id = m.id AND x.status = 'current' AND y.family IN ('trial','pass'))`)).n,
+    on_any: (await one(`SELECT count(DISTINCT ms.member_id) n FROM memberships ms JOIN members m ON m.id = ms.member_id AND m.status = 'active' WHERE ms.status IN ('current','frozen')`)).n,
     by_family: await all(`SELECT p.family, count(*) n FROM memberships m JOIN plans p ON p.id = m.plan_id
                           WHERE m.status = 'current' GROUP BY p.family ORDER BY n DESC`),
     lead_source_pct: (await one(`SELECT round(100.0 * sum(CASE WHEN coalesce(lead_source,'') <> '' THEN 1 ELSE 0 END) / max(count(*),1), 1) pct
