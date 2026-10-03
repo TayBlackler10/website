@@ -646,7 +646,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card"><h2>Visits Passport can't pay for</h2><p class="muted" style="margin:0">Passport members who trained this month with no Passport ID on file. Add the ID and these visits count.</p><div class="list" id="fpNoId"></div></section>
 <section class="card" id="fpDupCard" hidden><h2>Same ID on two people</h2><p class="muted" style="margin:0">Every person has their own Passport ID. Check their cards.</p><div class="list" id="fpDup"></div></section>
 </div>
-<section class="card" style="min-width:0"><h2>Every Passport visit</h2><div class="list" id="fpRows" style="max-height:560px;overflow-y:auto"><div class="muted">Loading...</div></div></section>
+<section class="card" style="min-width:0"><h2>Every Passport visit</h2><div class="list" id="fpRows" style="max-height:380px;overflow-y:auto"><div class="muted">Loading...</div></div></section>
 </div>
 <section class="card dark" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">This month from GymMaster's visit counts</span><span class="muted" style="color:var(--soft)" id="fpNowNote"></span></div><div class="tiles" id="fpNowTiles"></div></section>
 <div class="row2" style="margin-top:18px">
@@ -2233,7 +2233,7 @@ function loadFpCheck(fresh){var m=$("#fpMonth").value;$("#fpCheck").innerHTML='<
   var thisMonth=m===new Date().toLocaleDateString("en-CA",{timeZone:"Pacific/Auckland"}).slice(0,7);
   if(thisMonth)h+='<div class="muted" style="margin-top:10px">This month is still running and GymMaster\'s visit report runs a few hours behind, so today\'s visits won\'t match yet. Pick last month for the real check.</div>';
   else h+=Math.abs(gap)<=Math.max(5,d.gm*0.005)&&pct>=98?'<div class="ok" style="margin-top:10px">Close enough to switch over: the counts are within half a percent.</div>':'<div class="warnbox" style="margin-top:10px">'+(gap<0?"The Core is missing "+(-gap)+" visits that GymMaster has.":"The Core has "+gap+" more visits than GymMaster.")+' Not ready to take over yet.</div>';
-  if(d.diffs&&d.diffs.length)h+='<div style="overflow-x:auto;margin-top:10px">'+table([["Member",function(r){return '<a href="#" data-member="'+r.member_id+'">'+esc(r.name)+'</a>'},0,1],["Core","core",1],["GymMaster","gm",1]],d.diffs.slice(0,10))+(d.diff_count>10?'<div class="muted" style="font-size:13px">and '+(d.diff_count-10)+' more</div>':"")+'</div>';
+  if(d.diffs&&d.diffs.length)h+='<details style="margin-top:10px"><summary class="muted" style="cursor:pointer">See the '+d.diff_count+' member'+(d.diff_count===1?"":"s")+' that differ</summary><div style="overflow-x:auto;max-height:320px;overflow-y:auto;margin-top:6px">'+table([["Member",function(r){return '<a href="#" data-member="'+r.member_id+'">'+esc(r.name)+'</a>'},0,1],["Core","core",1],["GymMaster","gm",1]],d.diffs)+'</div></details>';
   $("#fpCheck").innerHTML=h});
 }
 $("#fpCheckRun").addEventListener("click",function(){loadFpCheck(true)});
