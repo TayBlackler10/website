@@ -1714,8 +1714,13 @@ async function passportCheck(env, can, month, fresh) {
   if (!Array.isArray(d.result)) return { error: "GymMaster's visit count report didn't answer" + (d.error ? ": " + d.error : "") };
   const gm = new Map();
   for (const x of d.result) { const id = +x["Member ID"]; if (id) gm.set(id, Math.max(gm.get(id) || 0, +x["Number of Days Visited"] || 0)); }
-  const fpIds = new Set((await env.DB.prepare("SELECT member_id FROM member_flags WHERE flag = 'passport'").all()).results.map(x => x.member_id));
-  const core = new Map((await passportRows(env, r.from, r.to)).map(x => [x.member_id, x]));
+  // Passport members that month: flagged now, or on a Passport membership at any point in the month (people who've since left count too).
+  const fpIds = new Set((await env.DB.prepare(`SELECT member_id FROM member_flags WHERE flag = 'passport'
+    UNION SELECT member_id FROM mship_seen WHERE lower(type_name) LIKE '%passport%' AND coalesce(start_date, '') < ? AND (end_date IS NULL OR end_date = '' OR end_date >= ?)`)
+    .bind(r.to, r.from).all()).results.map(x => x.member_id));
+  const coreRows = (await env.DB.prepare(`SELECT v.member_id, m.first_name, m.last_name, count(DISTINCT substr(v.at, 1, 10)) visits FROM visits v JOIN members m ON m.id = v.member_id
+    WHERE v.at >= ? AND v.at < ? AND coalesce(v.door, '') NOT LIKE '%Not Counted%' GROUP BY v.member_id`).bind(r.from, r.to).all()).results;
+  const core = new Map(coreRows.filter(x => fpIds.has(x.member_id)).map(x => [x.member_id, x]));
   const ids = new Set([...core.keys(), ...[...gm.keys()].filter(id => fpIds.has(id))]);
   let coreTotal = 0, gmTotal = 0, same = 0;
   const diffs = [];
