@@ -697,6 +697,9 @@ const JOBS = {
   fp_missing:      { label: "Passport members with no Passport ID", one: "Passport member with no Passport ID", owner: "reception", order: 2.4 },
   no_tag:          { label: "Paying members with no key tag",   one: "paying member with no key tag",  owner: "reception", order: 6 },
   no_photo:        { label: "New members with no photo",        one: "new member with no photo",       owner: "reception", order: 7 },
+  failed_payment:  { label: "Payments that failed",             one: "payment that failed",            owner: "reception", order: 2.6 },
+  cancel_save:     { label: "Gave notice to cancel",            one: "member who gave notice to cancel", owner: "manager", order: 3.5 },
+  hold_ending:     { label: "Holds ending soon",                one: "hold ending soon",               owner: "reception", order: 6.5 },
 };
 const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "fp_in_gm", "done"];
 
@@ -723,14 +726,24 @@ async function today(env, who, can) {
                                         WHERE t.kind = 'missing_billing' AND t.outcome IS NULL ORDER BY t.due_on`))
       .map(r => ({ ...r, detail: "Joined " + r.due_on + ". Get their bank details in." })));
 
-    // 5 Days for $5: on day 4 or later they're about to finish.
-    push("trial_ending", (await all(`SELECT l.id lead_id, l.member_id, coalesce(l.name, m.first_name || ' ' || coalesce(m.last_name,'')) name, l.mobile, l.created_at
-                                     FROM leads l LEFT JOIN members m ON m.id = l.member_id
-                                     WHERE l.kind = 'trial' AND l.stage = 'trial' AND date(l.created_at) <= date(?, '-3 days')
-                                       AND (l.notes IS NULL OR l.notes <> 'gymmaster_import')
-                                     ORDER BY l.created_at`, nzToday))
-      .map(r => ({ ...r, detail: "Trial started " + String(r.created_at).slice(0, 10) + ". Best time to ask them to join." })));
+    // Anyone handled for this job in the last week drops off the list.
+    const handled = kind => `NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = '${kind}' AND t.member_id = m.id AND t.outcome IS NOT NULL AND t.done_at >= datetime('now','-7 days'))`;
+    // Trials finishing today or tomorrow, from GymMaster's own dates, who haven't joined.
+    push("trial_ending", (await all(`SELECT DISTINCT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, s.type_name, s.end_date
+                                     FROM mship_seen s JOIN members m ON m.id = s.member_id JOIN plans p ON p.gm_type_name = s.type_name AND p.family = 'trial'
+                                     WHERE s.end_date BETWEEN ? AND date(?, '+1 day') AND ${handled("trial_ending")}
+                                       AND NOT EXISTS (SELECT 1 FROM memberships ms JOIN plans px ON px.id = ms.plan_id WHERE ms.member_id = m.id AND ms.status = 'current' AND px.family NOT IN ('trial','pass'))
+                                     ORDER BY s.end_date`, nzToday, nzToday))
+      .map(r => ({ ...r, detail: r.type_name + " finishes " + (r.end_date === nzToday ? "today" : "tomorrow") + ". Best time to ask them to join." })));
 
+    // Debits that failed in the last couple of days (GymMaster's failed payments report).
+    push("failed_payment", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, f.amount, f.reason, f.billing_date,
+                                         (SELECT balance_owing FROM billing_accounts b WHERE b.member_id = m.id) owing
+                                       FROM gm_failed f JOIN members m ON m.id = f.member_id
+                                       WHERE f.first_seen >= date(?, '-2 days') AND f.billing_date >= date(?, '-7 days') AND ${handled("failed_payment")}
+                                         AND NOT EXISTS (SELECT 1 FROM member_flags g WHERE g.member_id = m.id AND g.flag = 'gifted_time')
+                                       GROUP BY m.id ORDER BY f.billing_date DESC`, nzToday, nzToday))
+      .map(r => ({ ...r, detail: "$" + (+r.amount || 0).toFixed(2) + " failed on " + r.billing_date + (r.reason ? " (" + r.reason + ")" : "") + (r.owing > 0 ? ". Owes $" + (+r.owing).toFixed(2) + " in total." : ".") })));
     // Call backs promised for today or earlier.
     push("call_back", (await all(`SELECT t.id task_id, t.member_id, t.lead_id, coalesce(m.first_name || ' ' || coalesce(m.last_name,''), l.name) name,
                                     coalesce(m.mobile, l.mobile) mobile, t.outcome_note, t.due_on
@@ -755,6 +768,23 @@ async function today(env, who, can) {
                                    ORDER BY recent DESC, m.joined_on DESC LIMIT 200`))
       .map(r => ({ ...r, need_fp: true,
                    detail: (r.recent ? r.recent + " visits in the last 30 days that Passport can't pay for. " : "") + "Ask for their Passport card or app and add the ID." })));
+  }
+
+  if (!own) {
+    // Gave notice in the last few days: a call can keep some of them.
+    push("cancel_save", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, c.type_name, c.cancel_date, c.reason
+                                    FROM gm_cancels c JOIN members m ON m.id = c.member_id
+                                    WHERE c.first_seen >= date(?, '-3 days') AND m.status = 'active'
+                                      AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = 'cancel_save' AND t.member_id = m.id AND t.outcome IS NOT NULL AND t.done_at >= datetime('now','-7 days'))
+                                    GROUP BY m.id ORDER BY c.first_seen DESC`, nzToday))
+      .map(r => ({ ...r, detail: "Cancelling " + r.type_name + (r.cancel_date ? " from " + r.cancel_date : "") + (r.reason ? ". Reason: " + r.reason : "") + ". Worth a call to see if a hold or a cheaper plan keeps them." })));
+    // Holds finishing in the next 3 days: welcome them back.
+    push("hold_ending", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, h.ends, h.reason
+                                    FROM gm_holds h JOIN members m ON m.id = h.member_id
+                                    WHERE h.ends BETWEEN ? AND date(?, '+3 days')
+                                      AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = 'hold_ending' AND t.member_id = m.id AND t.outcome IS NOT NULL AND t.done_at >= datetime('now','-14 days'))
+                                    GROUP BY m.id ORDER BY h.ends`, nzToday, nzToday))
+      .map(r => ({ ...r, detail: "Hold ends " + r.ends + (r.reason ? " (" + r.reason + ")" : "") + ". A quick welcome back message helps." })));
   }
 
   if (can.collections) {

@@ -693,7 +693,7 @@ function day(s){if(!s)return "";var d=new Date(String(s).replace(" ","T")+(Strin
 function nm(r){return ((r.first_name||"")+" "+(r.last_name||"")).trim()||r.name||"No name"}
 var ME=null, VIEW="today";
 var OUT_LABEL={joined:"Joined",joining_at_desk:"Joining at the desk",call_back:"Call back",no_answer:"No answer",not_interested:"Not for them",paid:"Paid",billing_in:"Bank details in",tag_given:"Tag given",fp_in_gm:"It's in GymMaster",done:"Done"};
-var JOB_OUTS={new_lead:["joined","call_back","no_answer","not_interested"],missing_billing:["billing_in","call_back","no_answer"],trial_ending:["joined","joining_at_desk","call_back","no_answer","not_interested"],blocked:["paid","call_back","no_answer"],call_back:["joined","paid","call_back","no_answer","not_interested","done"],no_tag:["tag_given","done"],fp_id_gm:["fp_in_gm"],fp_missing:["call_back","no_answer"],no_photo:["done"]};
+var JOB_OUTS={new_lead:["joined","call_back","no_answer","not_interested"],missing_billing:["billing_in","call_back","no_answer"],trial_ending:["joined","joining_at_desk","call_back","no_answer","not_interested"],failed_payment:["paid","call_back","no_answer"],cancel_save:["call_back","no_answer","not_interested","done"],hold_ending:["done","call_back"],blocked:["paid","call_back","no_answer"],call_back:["joined","paid","call_back","no_answer","not_interested","done"],no_tag:["tag_given","done"],fp_id_gm:["fp_in_gm"],fp_missing:["call_back","no_answer"],no_photo:["done"]};
 var KIND={prospect:"Started online or enquired",trial:"5 Days for $5",free_pt:"Free PT",unfinished_signup:"Unfinished sign-up",bring_a_mate:"Bring a Mate",app_upgrade:"App upgrade",website_form:"Enquiry",meta_form:"Meta form",walk_in:"Walk in"};
 
 function show(v){
@@ -1450,7 +1450,7 @@ var BMODE={preview:["Preview","Not connected to Ezidebit yet. GymMaster still ta
 var BKIND={regular:"Debit",one_off:"One-off",retry:"Retry",fee:"Fee",arrangement:"Payment plan"};
 var BSTAT={preview:"Would debit",planned:"Planned",sent:"With Ezidebit",paid:"Paid",failed:"Failed",cancelled:"Cancelled",waived:"Waived",due:"Due"};
 var FREQ={weekly:"weekly",fortnightly:"fortnightly",monthly:"monthly",quarterly:"quarterly",yearly:"yearly"};
-var RKIND={no_method:"No bank details",amount:"Amount differs",no_plan:"No plan in the Core",no_price:"No price",no_freq:"How often unknown",no_date:"No date"};
+var RKIND={no_method:"No bank details",amount:"Amount differs, unexplained",arrears:"Collecting money owed",credit:"Credit or free weeks",no_plan:"No plan in the Core",no_price:"No price",no_freq:"How often unknown",no_date:"No date"};
 function wd(iso){return new Date(iso+"T12:00:00").toLocaleDateString("en-NZ",{weekday:"short",day:"numeric",month:"short"})}
 function loadBill(){
  get("/api/billing").then(function(d){

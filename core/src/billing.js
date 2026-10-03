@@ -30,6 +30,7 @@ export function makeBilling(L) {
   };
   const STEP = { weekly: d => addDays(d, 7), fortnightly: d => addDays(d, 14), monthly: d => addMonths(d, 1), quarterly: d => addMonths(d, 3), yearly: d => addMonths(d, 12) };
   const PER_WEEK = { weekly: 1, fortnightly: 0.5, monthly: 12 / 52, quarterly: 4 / 52, yearly: 1 / 52 };
+  const INFO = ["gifted", "arrears", "credit"];   // worth knowing, but not a reason to hold back a move
   const MON = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
 
   // GymMaster says things like "$54.50 on Mon 5 Oct 2026" or "Unable to bill - No Default Billing Method Selected".
@@ -93,8 +94,13 @@ export function makeBilling(L) {
     else if (gm) { next = gm.date; from = "gymmaster"; }
     else if (freq && m.start_date) { next = m.start_date.slice(0, 10); while (next < today) next = STEP[freq](next); from = "start"; }
     if (/unable to bill|no default billing/i.test(m.gm_next || "") || m.no_billing) issues.push({ k: "no_method", t: "No bank or card details in GymMaster" });
-    if (gm && base != null && source === "core" && Math.abs(gm.amount - base) > 0.01 && !(m.amount_override > 0))
-      issues.push({ k: "amount", t: "GymMaster will take " + money(gm.amount) + ", the Core plan says " + money(base) });
+    if (gm && base != null && source === "core" && Math.abs(gm.amount - base) > 0.01 && !(m.amount_override > 0)) {
+      const diff = r2(gm.amount - base);
+      // GymMaster adds money owed to the next debit, and takes less when there's credit, free weeks or a part week.
+      if (diff > 0 && m.owing > 0 && diff <= r2(m.owing) + 0.05) issues.push({ k: "arrears", t: "GymMaster's next debit of " + money(gm.amount) + " includes " + money(diff) + " they owe (plan " + money(base) + ")" });
+      else if (diff < 0) issues.push({ k: "credit", t: "GymMaster will take " + money(-diff) + " less than the plan this time (" + money(gm.amount) + " instead of " + money(base) + "): free weeks, credit or a part week" });
+      else issues.push({ k: "amount", t: "GymMaster will take " + money(gm.amount) + ", the Core plan says " + money(base) + ", and it isn't money owed" });
+    }
     if (!next) issues.push({ k: "no_date", t: "No next debit date" });
     if (m.gifted) issues.push({ k: "gifted", t: "Gifted time: not billed" });
     const state = m.state || "active";
@@ -234,7 +240,7 @@ export function makeBilling(L) {
       const s = schedule(m, today);
       counts[m.billed_by === "core" ? "core" : "gymmaster"]++;
       if (s.issues.some(i => i.k === "no_method")) counts.no_method++;
-      if (s.issues.some(i => i.k !== "gifted")) counts.issues++;
+      if (s.issues.some(i => !INFO.includes(i.k))) counts.issues++;
       if (s.state === "hold") counts.hold++;
       if (s.state === "cancelled") counts.cancelled++;
       if (s.base && s.freq && s.state === "active" && !m.gifted) weekly += s.base * PER_WEEK[s.freq];
@@ -297,7 +303,7 @@ export function makeBilling(L) {
         rows.push({ id: m.id, first_name: m.first_name, last_name: m.last_name, plan: m.plan, k: i.k, t: i.t, gm: m.gm_next, checked: m.checked_at });
       }
     }
-    return { total: people.length, clean: people.length - new Set(rows.map(r => r.id)).size, kinds, rows: rows.slice(0, 600) };
+    return { total: people.length, clean: people.length - new Set(rows.filter(r => !INFO.includes(r.k)).map(r => r.id)).size, kinds, rows: rows.slice(0, 600) };
   }
 
   async function member(env, who, can, id) {
