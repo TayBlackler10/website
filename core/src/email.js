@@ -143,8 +143,12 @@ export function makeEmail(L) {
       : { ...base, every: 60, marketing: true, goal: "joined", sql: d => [`SELECT DISTINCT s.member_id id FROM mship_seen s JOIN members m ON m.id = s.member_id WHERE s.end_date = ? AND ${TYPEF("s.type_name")}
             AND NOT EXISTS (SELECT 1 FROM memberships ms JOIN plans p ON p.id = ms.plan_id WHERE ms.member_id = s.member_id AND ms.status = 'current' AND p.family NOT IN ('trial','pass'))`, addDays(d, -off), types, types] };
     if (/Birthday/i.test(tr)) return { ...base, every: 300, marketing: true, sql: d => [`SELECT m.id FROM members m WHERE m.status = 'active' AND substr(m.dob, 6, 5) = ? AND ${CURTYPE}`, d.slice(5), types, types] };
-    if (tr === "X Days No Visit") return { ...base, every: Math.max(14, x), marketing: true, goal: "visited", sql: d => [`SELECT m.id FROM members m WHERE m.status = 'active' AND ${CURTYPE}
-            AND coalesce((SELECT substr(max(v.at), 1, 10) FROM visits v WHERE v.member_id = m.id), m.joined_on) = ? AND ${NOT_ON_HOLD}`, types, types, addDays(d, -x), d, d] };
+    if (tr === "X Days No Visit") {
+      const newOnly = /new member/i.test(t.name + " " + (t.tpl_name || ""));   // the early check-in is only for people who just joined
+      return { ...base, every: Math.max(14, x), marketing: true, goal: "visited", sql: d => [`SELECT m.id FROM members m WHERE m.status = 'active' AND ${CURTYPE}
+            AND coalesce((SELECT substr(max(v.at), 1, 10) FROM visits v WHERE v.member_id = m.id), m.joined_on) = ? AND ${NOT_ON_HOLD}` + (newOnly ? " AND m.joined_on >= ?" : ""),
+            types, types, addDays(d, -x), d, d, ...(newOnly ? [addDays(d, -(x + 30))] : [])] };
+    }
     if (tr === "Failed Billing - Automatic Batch") return { ...base, every: 1, goal: "paid", sql: d => [`SELECT DISTINCT f.member_id id FROM gm_failed f WHERE f.first_seen = ? AND f.billing_date >= ?`, d, addDays(d, -7)] };
     if (/^Failed Member Payments X/.test(tr)) { const more = /or More/i.test(tr); return { ...base, every: 1, goal: "paid", sql: d => [`SELECT f.member_id id FROM gm_failed f WHERE f.first_seen = ? AND f.billing_date >= ?
             GROUP BY f.member_id HAVING (SELECT count(*) FROM gm_failed g WHERE g.member_id = f.member_id AND g.billing_date >= ?) ${more ? ">=" : "="} ?`, d, addDays(d, -7), addDays(d, -45), x] }; }
@@ -152,8 +156,10 @@ export function makeEmail(L) {
             SELECT member_id, dd, row_number() OVER (PARTITION BY member_id ORDER BY dd) rn FROM (SELECT DISTINCT member_id, substr(at, 1, 10) dd FROM visits)) v
             JOIN members m ON m.id = v.member_id WHERE v.rn = ? AND v.dd = ? AND m.joined_on >= (SELECT substr(min(at), 1, 10) FROM visits)`, x, addDays(d, -off)] };
     if (tr === "Hold Ending") return { ...base, every: 20, sql: d => [`SELECT DISTINCT h.member_id id FROM gm_holds h WHERE h.ends = ?`, addDays(d, before ? off : -off)] };
-    if (/Visited X times in a month/i.test(tr)) return { ...base, every: 90, marketing: true, goal: "upgraded", sql: d => [`SELECT m.id FROM members m WHERE m.status = 'active' AND ${CURTYPE}
-            AND (SELECT count(DISTINCT substr(v.at,1,10)) FROM visits v WHERE v.member_id = m.id AND v.at >= ?) >= ?`, types, types, addDays(d, -30), x] };
+    // Sent on the day they reach X visits this calendar month, like GymMaster.
+    if (/Visited X times in a month/i.test(tr)) return { ...base, every: 25, marketing: true, goal: "upgraded", sql: d => [`SELECT m.id FROM members m WHERE m.status = 'active' AND ${CURTYPE}
+            AND (SELECT count(DISTINCT substr(v.at,1,10)) FROM visits v WHERE v.member_id = m.id AND v.at >= ? AND substr(v.at,1,10) <= ?) >= ?
+            AND (SELECT count(DISTINCT substr(v.at,1,10)) FROM visits v WHERE v.member_id = m.id AND v.at >= ? AND substr(v.at,1,10) < ?) < ?`, types, types, d.slice(0, 8) + "01", d, x, d.slice(0, 8) + "01", d, x] };
     if (/^Membership Canceled/.test(tr)) return { ...base, every: 30, sql: d => [`SELECT DISTINCT c.member_id id FROM gm_cancels c WHERE c.first_seen = ?`, d] };
     if (/Anniversary/i.test(tr)) return { ...base, every: 300, marketing: true, sql: d => [`SELECT m.id FROM members m WHERE m.status = 'active' AND m.joined_on = date(?, '-' || ? || ' years') AND ${CURTYPE}`, d, Math.max(1, x), types, types] };
     if (/Prospect/i.test(tr)) return { ...base, every: 60, goal: "joined", sql: d => [`SELECT g.member_id id FROM member_gm g JOIN members m ON m.id = g.member_id WHERE g.is_prospect = 1 AND m.status = 'prospect' AND substr(g.created, 1, 10) = ?`, addDays(d, -off)] };
