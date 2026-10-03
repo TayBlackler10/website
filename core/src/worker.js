@@ -27,6 +27,7 @@ import { makePt } from "./pt.js";
 import { makeCatalog } from "./catalog.js";
 import { makeEmail } from "./email.js";
 import { makeGmSync } from "./gmsync.js";
+import { makePos } from "./pos.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
@@ -39,6 +40,7 @@ const PT = makePt({ nzDateTime, normMobile, P });
 const C = makeCatalog({ gmLive });
 const EM = makeEmail({ nzDateTime });
 const GS = makeGmSync({ nzDateTime });
+const POS = makePos({ nzDateTime });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -103,6 +105,12 @@ export default {
       if (em && em[2] === "/source") return json(await EM.source(env, can, em[1]));
       if (em && em[2]) return await EM.preview(env, who, can, em[1]);
       if (em && req.method === "POST") return json(await EM.save(env, who, can, em[1], await req.json()));
+      if (url.pathname === "/api/pos") return json(await POS.products(env, who, can));
+      if (url.pathname === "/api/pos/product" && req.method === "POST") return json(await POS.saveProduct(env, who, can, await req.json()));
+      if (url.pathname === "/api/pos/sale" && req.method === "POST") return json(await POS.sell(env, who, can, await req.json()));
+      if (url.pathname === "/api/pos/sales") return json(await POS.sales(env, who, can, url.searchParams));
+      const pv = url.pathname.match(/^\/api\/pos\/sale\/(\d+)\/void$/);
+      if (pv && req.method === "POST") return json(await POS.voidSale(env, who, can, +pv[1], await req.json()));
       if (url.pathname === "/api/catalog") return json(req.method === "POST" ? await C.save(env, who, can, await req.json()) : await C.list(env, who, can));
       if (url.pathname === "/api/passport") return json(await passportReport(env, can, url.searchParams.get("month")));
       if (url.pathname === "/api/passport.csv") return await passportCsv(env, can, url.searchParams.get("month"));

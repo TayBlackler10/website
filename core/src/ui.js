@@ -190,6 +190,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .ltabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.ltab{background:#fff;border:0;border-radius:16px;padding:12px 14px;text-align:left;cursor:pointer;font:inherit;color:inherit;display:flex;flex-direction:column;gap:2px;min-width:0}.ltab b{font:800 24px Archivo,Arial,sans-serif}.ltab small{font-size:13px;font-weight:600}.ltab span{font-size:12px;color:var(--muted)}.ltab.on{background:var(--ink);color:#fff}.ltab.on b{color:var(--lime)}.ltab.on span{color:var(--soft)}.ltabs.dim .ltab{opacity:.5}.lwrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}.lside{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto}.lrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:11px 6px;border:0;border-top:1px solid var(--line);cursor:pointer;background:none;width:100%;text-align:left;font:inherit;color:inherit;border-radius:0}.lrow:hover{background:var(--paper)}.lrow.on{background:var(--okbg)}.lrow .sub{font-size:13px;color:var(--muted);grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lgrp{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--olive);font-weight:600;padding:14px 6px 6px}.lgrp:first-child{padding-top:4px}.ptcard{background:#fff;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;border:2px solid transparent}.ptcard.fresh{border-color:var(--lime)}.ptans{display:grid;grid-template-columns:120px minmax(0,1fr);gap:4px 10px;font-size:14px}.ptans dt{color:var(--muted)}.ptans dd{margin:0}.ptwho{display:flex;flex-wrap:wrap;gap:6px}.ptwho button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.ptwho button span{color:var(--muted);font-weight:500;margin-left:4px}.ptwho button.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}.ptwho button.on span{color:var(--soft)}.ptst{display:flex;flex-wrap:wrap;gap:6px}.tline{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
 .citem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:12px 6px;border:0;border-top:1px solid var(--line);background:none;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}.citem:hover{background:var(--paper)}.citem.on{background:var(--okbg)}.citem .pr{font:800 18px Archivo,Arial,sans-serif;text-align:right}.citem .sub{font-size:13px;color:var(--muted)}.cform .grid2{gap:10px}.cform .chk{display:flex;gap:8px;align-items:center;font-size:14px}
 .emc{background:#fff;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px}.emc .top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.emc .nums{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}.emc .nums b{font:800 20px Archivo,Arial,sans-serif;display:block}.emframe{width:100%;height:620px;border:1px solid var(--line);border-radius:16px;background:#F3F3F0}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}.pbtn{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;cursor:pointer;font:inherit;color:inherit;display:flex;flex-direction:column;gap:4px;min-height:74px}.pbtn:hover{border-color:var(--ink)}.pbtn b{font-size:14px;line-height:1.25}.pbtn span{font:800 16px Archivo,Arial,sans-serif}.pbtn.off{opacity:.45}.pbtn.edit{border-style:dashed}.cline{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.cline .q{display:flex;align-items:center;gap:6px}.cline .q button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:700}.ctot{display:flex;justify-content:space-between;align-items:baseline;font:800 26px Archivo,Arial,sans-serif;padding-top:8px;border-top:2px solid var(--ink)}
 .bcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.bcal .bd{background:var(--tile);border:0;border-radius:12px;padding:8px;text-align:left;cursor:pointer;min-height:66px;display:flex;flex-direction:column;gap:2px;font:inherit;color:inherit}.bcal .bd b{font-size:12px;color:var(--muted);font-weight:600}.bcal .bd .c{font-size:18px;font-weight:700}.bcal .bd .t{font-size:12px;color:var(--muted)}.bcal .bd.on{background:var(--ink);color:#fff}.bcal .bd.on .c{color:var(--lime)}.bcal .bd.on b,.bcal .bd.on .t{color:var(--soft)}.bcal .bd.wk b{color:var(--olive)}.bcal .bd.zero{opacity:.55}.bsteps div{display:flex;gap:10px;align-items:center;font-size:14px;padding:6px 0;border-bottom:1px solid var(--line)}.bsteps div:last-child{border:0}.bsteps i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;flex:none}.bsteps .y i{background:var(--lime);border-color:var(--lime)}.bform{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--tile);border-radius:14px;padding:12px}.bform .fld{flex:1;min-width:130px}
 .mcal .ms.mg{background:var(--ink);color:var(--lime)}.mcal .ms.draft{border:1px dashed var(--ink)}
 .shift.mine{box-shadow:0 0 0 2px var(--lime)}
@@ -206,6 +207,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <nav aria-label="Main">
 <button class="nav on" data-go="today">Today<span class="ct" id="ctToday" hidden></span></button>
 <button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
+<button class="nav" data-go="pos" id="navPos" hidden>Point of sale</button>
 <button class="nav" data-go="members">Members</button>
 <button class="nav" data-go="leads">Leads<span class="ct" id="ctLeads" hidden></span></button>
 <button class="nav" data-go="ptleads" id="navPt" hidden>PT leads<span class="ct" id="ctPt" hidden></span></button>
@@ -304,6 +306,24 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="ltabs" id="lTabs"></div>
 <div class="mtool" style="margin:12px 0"><label class="sr" for="lKind">Type</label><select id="lKind"></select><label class="search" for="lQ" style="flex:1;min-width:200px;height:48px"><span class="sr">Search leads</span><input id="lQ" autocomplete="off" placeholder="Search everyone by name, mobile or email"></label></div>
 <div class="lwrap"><section class="card" style="padding:8px 14px 14px"><div id="lList"><div class="muted">Loading...</div></div></section><section class="card lside" id="leadPanel"></section></div>
+</section>
+
+<!-- POINT OF SALE -->
+<section data-view="pos" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px">
+<div style="margin-right:auto"><div class="eyebrow">Sell at the desk</div><h1>Point of sale<span class="dot">.</span></h1></div>
+<button class="btn line" id="posEditBtn">Edit products</button>
+</div>
+<div class="warnbox" style="margin-bottom:12px">Ready to use. Until GymMaster's point of sale is switched off, sales here don't show in GymMaster or Xero, so pick one place to ring sales through.</div>
+<div class="lwrap">
+<div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+<div class="mtool"><div class="chips" id="posCats"></div><label class="search" for="posQ" style="flex:1;min-width:180px;height:44px"><span class="sr">Find a product</span><input id="posQ" autocomplete="off" placeholder="Find a product"></label></div>
+<div id="posEditBar" hidden><div class="ok" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">Tap a product to change it. <button class="btn dark sm" id="posAdd">Add a product</button></div></div>
+<div class="pgrid" id="posGrid"><div class="muted">Loading...</div></div>
+</div>
+<section class="card lside" id="posCart"></section>
+</div>
+<section class="card" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Sales</h2><input type="date" id="posDay" style="height:40px;border:1px solid var(--line);border-radius:12px;padding:0 10px"></div><div class="tiles" id="posTotals"></div><div style="overflow-x:auto" id="posSales"></div></section>
 </section>
 
 <!-- EMAIL AUTOMATIONS -->
@@ -715,6 +735,7 @@ function show(v){
  if(v==="billing")loadBill();
  if(v==="ptleads")loadPt();
  if(v==="catalog")loadCat();
+ if(v==="pos")loadPos();
  if(v==="emails")loadEm();
  if(v==="mypt")loadMyPt();
  if(v==="money")loadMoney();
@@ -738,7 +759,7 @@ get("/api/me").then(function(me){
  if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false;$("#navEm").hidden=false}
  if(me.can.business){$("#navBizLab").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
  if(me.can.settings)$("#navAdminLab").hidden=false;
- if(me.can.add){$("#navCat").hidden=false;$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
+ if(me.can.add){$("#navPos").hidden=false;$("#navCat").hidden=false;$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
  var hv=(location.hash||"").slice(1);var hb=hv&&document.querySelector('.nav[data-go="'+hv.replace(/[^a-z]/g,"")+'"]');
  if(hb&&!hb.hidden)show(hb.dataset.go);else{loadToday();if(me.can.business)loadBiz()}
  if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(function(){});
@@ -1021,6 +1042,69 @@ $("#nlSave").addEventListener("click",function(){
   if(!r.ok){$("#nlErr").textContent=r.error;return}
   ["#nlName","#nlMobile","#nlEmail","#nlGoal","#nlNotes"].forEach(function(s){$(s).value=""});$("#newLeadCard").hidden=true;loadLeads();
  });
+});
+
+/* ---------- point of sale ---------- */
+var POS={items:[],cats:[],cat:"",q:"",cart:[],member:null,customer:"",edit:false};
+function loadPos(){
+ get("/api/pos").then(function(d){if(d.error){$("#posGrid").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}POS.items=d.items;POS.cats=d.cats;drawPos();drawCart()});
+ if(!$("#posDay").value)$("#posDay").value=new Date().toLocaleDateString("en-CA",{timeZone:"Pacific/Auckland"});
+ loadPosSales();
+}
+function drawPos(){
+ var have={};POS.items.forEach(function(p){if(p.active||POS.edit)have[p.category]=1});
+ $("#posCats").innerHTML='<button class="chip'+(POS.cat?"":" on")+'" data-pc="">Everything</button>'+POS.cats.filter(function(c){return have[c]}).map(function(c){return '<button class="chip'+(POS.cat===c?" on":"")+'" data-pc="'+esc(c)+'">'+esc(c)+'</button>'}).join("");
+ var q=POS.q.toLowerCase(),L=POS.items.filter(function(p){return (POS.edit||p.active)&&(!POS.cat||p.category===POS.cat)&&(!q||p.name.toLowerCase().indexOf(q)>=0)});
+ $("#posGrid").innerHTML=L.map(function(p){return '<button class="pbtn'+(p.active?"":" off")+(POS.edit?" edit":"")+'" data-pp="'+p.id+'"><b>'+esc(p.name)+'</b><span>'+money(p.price)+'</span></button>'}).join("")||'<div class="muted">Nothing matches.</div>';
+ $("#posEditBar").hidden=!POS.edit;$("#posEditBtn").textContent=POS.edit?"Done editing":"Edit products";
+}
+function cartTotal(){return POS.cart.reduce(function(a,l){return a+l.qty*l.price},0)}
+function drawCart(msg){
+ var h='<h2>Sale</h2>';
+ h+=POS.member?'<div class="ok" style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>For <b>'+esc(POS.member.name)+'</b></span><button class="btn line sm" data-pm="clear">Change</button></div>':
+  '<label class="search" for="posMem" style="height:44px"><span class="sr">Find the member</span><input id="posMem" autocomplete="off" placeholder="Member name, mobile or scan their tag (optional)"></label><div id="posMemRes"></div>';
+ if(!POS.cart.length)h+='<div class="muted">Tap products to add them.</div>';
+ else{h+=POS.cart.map(function(l,i){return '<div class="cline"><span>'+esc(l.name)+'<br><a href="#" class="muted" style="font-size:12px" data-cp="'+i+'">'+money(l.price)+' each</a></span><span class="q"><button data-cq="'+i+'" data-d="-1" aria-label="One less">-</button>'+l.qty+'<button data-cq="'+i+'" data-d="1" aria-label="One more">+</button></span><b>'+money(l.qty*l.price)+'</b></div>'}).join("");
+  h+='<div class="ctot"><span>Total</span><span>'+money(cartTotal())+'</span></div>'+
+   '<input id="posNote" placeholder="Note (optional)" style="height:40px;border:1px solid var(--line);border-radius:12px;padding:0 12px">'+
+   '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark" data-pay="eftpos" style="flex:1">EFTPOS</button><button class="btn line" data-pay="cash" style="flex:1">Cash</button></div><button class="btn line sm" data-pm="empty" style="align-self:flex-start">Clear the sale</button>'}
+ if(msg)h+=msg;
+ $("#posCart").innerHTML=h;
+ var mi=$("#posMem");if(mi){var t2;mi.addEventListener("input",function(){clearTimeout(t2);var v=mi.value.trim();t2=setTimeout(function(){if(v.length<2){$("#posMemRes").innerHTML="";return}get("/api/members?q="+encodeURIComponent(v)).then(function(r){$("#posMemRes").innerHTML=(r.results||[]).slice(0,6).map(function(m){return '<button class="lrow" data-pmid="'+m.id+'" data-pmn="'+esc(nm(m))+'"><span><b>'+esc(nm(m))+'</b> <span class="muted" style="font-size:13px">'+esc(m.plan||m.status||"")+'</span></span><span></span></button>'}).join("")||'<div class="muted" style="font-size:13px">No one found. You can still sell without a member.</div>'})},250)});
+  mi.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();var b=$("#posMemRes [data-pmid]");if(b)b.click()}})}
+}
+function posEditProduct(p){
+ p=p||{name:"",price:"",category:POS.cat||"Other",active:1};
+ $("#posCart").innerHTML='<h2>'+(p.id?"Change "+esc(p.name):"Add a product")+'</h2><label class="fld">Name<input id="ppN" value="'+esc(p.name)+'"></label><label class="fld">Price ($, incl GST)<input id="ppP" inputmode="decimal" value="'+(p.price===""?"":(+p.price).toFixed(2))+'"></label><label class="fld">Group<select id="ppC">'+POS.cats.map(function(c){return '<option'+(c===p.category?" selected":"")+'>'+esc(c)+'</option>'}).join("")+'</select></label>'+(p.id?'<label class="chk"><input type="checkbox" id="ppA"'+(p.active?" checked":"")+'> On sale</label>':"")+'<div style="display:flex;gap:8px"><button class="btn dark" id="ppSave">Save</button><button class="btn line" id="ppBack">Back to the sale</button></div><div id="ppMsg"></div>';
+ $("#ppBack").onclick=function(){drawCart()};
+ $("#ppSave").onclick=function(){post("/api/pos/product",{id:p.id,name:$("#ppN").value,price:$("#ppP").value,category:$("#ppC").value,active:p.id?$("#ppA").checked:true}).then(function(r){if(!r.ok){$("#ppMsg").innerHTML='<div class="err">'+esc(r.error)+'</div>';return}get("/api/pos").then(function(d){POS.items=d.items;drawPos();drawCart('<div class="ok">Saved.</div>')})})};
+}
+function loadPosSales(){
+ get("/api/pos/sales?day="+$("#posDay").value).then(function(d){if(d.error)return;
+  var t=d.totals,sum=(t.eftpos||0)+(t.cash||0);
+  $("#posTotals").innerHTML=tile(money(sum),"Taken")+tile(money(t.eftpos||0),"EFTPOS")+tile(money(t.cash||0),"Cash")+tile(d.rows.filter(function(r){return !r.voided}).length,"Sales");
+  $("#posSales").innerHTML=d.rows.length?table([["Time",function(r){return new Date(String(r.at).replace(" ","T")+"Z").toLocaleTimeString("en-NZ",{hour:"numeric",minute:"2-digit"})}],["Who",function(r){return r.member_id?'<a href="#" data-member="'+r.member_id+'">'+esc(nm(r))+'</a>':esc(r.customer||"Walk in")},0,1],["What","items"],["Paid",function(r){return r.paid_by==="eftpos"?"EFTPOS":"Cash"}],["Total",function(r){return r.voided?'<s>'+money(r.total)+'</s> <span class="pill warn">Voided</span>':money(r.total)},1,1],["By","staff"],["",function(r){return d.can_void&&!r.voided?'<a href="#" data-pv="'+r.id+'">Void</a>':""},0,1]],d.rows):'<div class="muted">No sales this day.</div>';
+ });
+}
+$("#posDay").addEventListener("change",loadPosSales);
+$("#posCats").addEventListener("click",function(e){var b=e.target.closest("[data-pc]");if(!b)return;POS.cat=b.dataset.pc;drawPos()});
+$("#posQ").addEventListener("input",function(e){POS.q=e.target.value;drawPos()});
+$("#posEditBtn").addEventListener("click",function(){POS.edit=!POS.edit;drawPos();if(!POS.edit)drawCart()});
+$("#posAdd").addEventListener("click",function(){posEditProduct(null)});
+$("#posGrid").addEventListener("click",function(e){var b=e.target.closest("[data-pp]");if(!b)return;var p=POS.items.find(function(x){return x.id===+b.dataset.pp});if(!p)return;
+ if(POS.edit){posEditProduct(p);return}
+ var l=POS.cart.find(function(x){return x.id===p.id&&x.price===p.price});if(l)l.qty++;else POS.cart.push({id:p.id,name:p.name,price:p.price,qty:1});drawCart()});
+$("#posSales").addEventListener("click",function(e){var a=e.target.closest("[data-pv]");if(!a)return;e.preventDefault();var why=prompt("Why is this sale being voided?","");if(!why)return;post("/api/pos/sale/"+a.dataset.pv+"/void",{reason:why}).then(function(r){if(!r.ok)alert(r.error);loadPosSales()})});
+$("#posCart").addEventListener("click",function(e){var t;
+ if((t=e.target.closest("[data-pmid]"))){POS.member={id:+t.dataset.pmid,name:t.dataset.pmn};drawCart();return}
+ if((t=e.target.closest("[data-pm]"))){if(t.dataset.pm==="clear")POS.member=null;else POS.cart=[];drawCart();return}
+ if((t=e.target.closest("[data-cq]"))){var l=POS.cart[+t.dataset.cq];l.qty+=+t.dataset.d;if(l.qty<1)POS.cart.splice(+t.dataset.cq,1);drawCart();return}
+ if((t=e.target.closest("[data-cp]"))){e.preventDefault();var l2=POS.cart[+t.dataset.cp],np=prompt("Price for "+l2.name+" this time (for a discount)",l2.price.toFixed(2));if(np===null)return;var n=parseFloat(np);if(!isNaN(n)&&n>=0){l2.price=Math.round(n*100)/100;drawCart()}return}
+ if((t=e.target.closest("[data-pay]"))){var pay=t.dataset.pay;t.disabled=true;
+  post("/api/pos/sale",{paid_by:pay,member_id:POS.member&&POS.member.id,note:($("#posNote")||{}).value,lines:POS.cart.map(function(l){return {id:l.id,qty:l.qty,price:l.price}})}).then(function(r){
+   if(!r.ok){t.disabled=false;drawCart('<div class="err">'+esc(r.error)+'</div>');return}
+   var who=POS.member;POS.cart=[];POS.member=null;
+   drawCart('<div class="ok">Sold. '+money(r.total)+' by '+(pay==="eftpos"?"EFTPOS":"cash")+(who?" for "+esc(who.name):"")+'.'+(r.key_tag&&who?' <a href="#" data-member="'+who.id+'">Give them their key tag</a>':"")+'</div>');loadPosSales()})}
 });
 
 /* ---------- email automations ---------- */

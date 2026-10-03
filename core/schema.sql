@@ -374,6 +374,39 @@ CREATE TABLE IF NOT EXISTS auto_html (
   html TEXT NOT NULL
 );
 
+-- Point of sale at the desk.
+CREATE TABLE IF NOT EXISTS pos_products (
+  id         INTEGER PRIMARY KEY,
+  name       TEXT NOT NULL,
+  category   TEXT NOT NULL DEFAULT 'Other',
+  price      REAL NOT NULL,                 -- incl GST
+  gm_name    TEXT,                          -- name in GymMaster, when it came from there
+  active     INTEGER NOT NULL DEFAULT 1,
+  sort       INTEGER NOT NULL DEFAULT 500,
+  updated_by INTEGER REFERENCES staff(id),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS pos_sales (
+  id        INTEGER PRIMARY KEY,
+  member_id INTEGER REFERENCES members(id),
+  customer  TEXT,                           -- walk-in name, when it's not a member
+  staff_id  INTEGER REFERENCES staff(id),
+  total     REAL NOT NULL,
+  paid_by   TEXT NOT NULL,                  -- eftpos, cash
+  note      TEXT,
+  voided    INTEGER NOT NULL DEFAULT 0,
+  day       TEXT NOT NULL,                  -- NZ date
+  at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS pos_sales_day ON pos_sales(day);
+CREATE TABLE IF NOT EXISTS pos_lines (
+  sale_id    INTEGER NOT NULL REFERENCES pos_sales(id) ON DELETE CASCADE,
+  product_id INTEGER REFERENCES pos_products(id),
+  name       TEXT NOT NULL,
+  qty        INTEGER NOT NULL DEFAULT 1,
+  price      REAL NOT NULL
+);
+
 -- Collections: current members and former members with money owing.
 CREATE TABLE IF NOT EXISTS collections_cases (
   id             INTEGER PRIMARY KEY,
