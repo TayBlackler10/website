@@ -24,6 +24,7 @@ import { makeEzidebit } from "./ezidebit.js";
 import { makeBilling } from "./billing.js";
 import { makePush, SW_JS } from "./push.js";
 import { makePt } from "./pt.js";
+import { makeCatalog } from "./catalog.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
@@ -33,6 +34,7 @@ const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile
 const B = makeBilling({ nzDateTime, E: makeEzidebit() });
 const P = makePush();
 const PT = makePt({ nzDateTime, normMobile, P });
+const C = makeCatalog({ gmLive });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -85,6 +87,7 @@ export default {
       const mn = url.pathname.match(/^\/api\/members\/(\d+)\/(notes|flags|details)$/);
       if (mn && req.method === "POST") return json(await updateMember(env, who, can, +mn[1], mn[2], await req.json()));
       if (url.pathname === "/api/plans") return json(await sellablePlans(env, can));
+      if (url.pathname === "/api/catalog") return json(req.method === "POST" ? await C.save(env, who, can, await req.json()) : await C.list(env, who, can));
       if (url.pathname === "/api/passport") return json(await passportReport(env, can, url.searchParams.get("month")));
       if (url.pathname === "/api/passport.csv") return await passportCsv(env, can, url.searchParams.get("month"));
       if (url.pathname === "/api/members" && req.method === "POST") return json(await addMember(env, who, can, await req.json()));
@@ -399,13 +402,27 @@ async function gmMember(env, method, path, fields = {}) {
   try { return JSON.parse(t); } catch { return { error: "Unexpected reply from GymMaster (" + r.status + ")" }; }
 }
 
+// GymMaster's membership list, kept for 5 minutes.
+let gmLiveCache = { at: 0, map: null };
+async function gmLive(env) {
+  if (gmLiveCache.map && Date.now() - gmLiveCache.at < 300_000) return gmLiveCache.map;
+  if (!env.GM_API_KEY) throw new Error("GM_API_KEY is not set");
+  const d = await gmMember(env, "GET", "/v1/memberships");
+  if (d.error) throw new Error("GymMaster: " + d.error);
+  gmLiveCache = { at: Date.now(), map: new Map((d.result || []).map(m => [Number(m.id), m])) };
+  return gmLiveCache.map;
+}
+
 async function sellablePlans(env, can) {
   if (!can.add) return { error: "No access" };
   if (!env.GM_API_KEY) return { error: "GM_API_KEY is not set" };
-  const d = await gmMember(env, "GET", "/v1/memberships");
-  if (d.error) return { error: "GymMaster: " + d.error };
-  const live = new Map((d.result || []).map(m => [Number(m.id), m]));
-  const plans = SELLABLE.filter(p => live.has(p.id)).map(p => {
+  let live;
+  try { live = await gmLive(env); } catch (e) { return { error: String(e.message || e) }; }
+  // The team's own list decides what's sold at the desk, once it's been started.
+  const cat = await C.forSale(env).catch(() => null);
+  const source = cat ? cat.map((c, i) => ({ id: +c.gm_id, family: c.kind === "trial" || c.kind === "pass" ? "trial" : c.family,
+                                             frequency: c.billing === "once" ? "upfront" : c.billing, flexi: !!c.flexi, sort: i })) : SELLABLE;
+  const plans = source.filter(p => live.has(p.id)).map(p => {
     const m = live.get(p.id);
     return { ...p, name: String(m.name || "").trim(), price: m.price, priceDescription: m.pricedescription,
              signupFee: parseFloat(String(m.signupfee || "0").replace(/[^0-9.]/g, "")) || 0 };

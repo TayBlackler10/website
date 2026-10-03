@@ -251,6 +251,46 @@ CREATE TABLE IF NOT EXISTS push_subs (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- What M2 sells: memberships, trials, passes, paid in full. The team edits this in "Memberships and prices".
+CREATE TABLE IF NOT EXISTS catalog (
+  id                INTEGER PRIMARY KEY,
+  name              TEXT NOT NULL,
+  kind              TEXT NOT NULL DEFAULT 'membership',  -- membership, trial, pass, paid_in_full, corporate, other
+  family            TEXT NOT NULL DEFAULT 'other',       -- perform, classes, daily, recovery, transporter, pool, passport, other
+  billing           TEXT NOT NULL DEFAULT 'weekly',      -- weekly, fortnightly, monthly, quarterly, once
+  price             REAL,                                -- incl GST, per billing period
+  joining_fee       REAL NOT NULL DEFAULT 0,
+  tag_fee           REAL NOT NULL DEFAULT 0,
+  lock_in_months    INTEGER,
+  flexi             INTEGER NOT NULL DEFAULT 0,          -- 30 days notice instead of a lock-in
+  length_days       INTEGER,                             -- trials, passes, paid in full
+  visits            INTEGER,                             -- trip passes
+  includes_classes  INTEGER NOT NULL DEFAULT 0,
+  includes_recovery INTEGER NOT NULL DEFAULT 0,
+  online            INTEGER NOT NULL DEFAULT 0,
+  at_desk           INTEGER NOT NULL DEFAULT 1,
+  status            TEXT NOT NULL DEFAULT 'selling',     -- selling, existing (members keep it, not sold), retired
+  gm_id             INTEGER,                             -- GymMaster membership id while GymMaster runs sign-ups
+  gm_price          REAL,                                -- what GymMaster says, to spot differences
+  gm_name           TEXT,
+  gm_seen           INTEGER NOT NULL DEFAULT 1,
+  blurb             TEXT,
+  staff_note        TEXT,
+  sort              INTEGER NOT NULL DEFAULT 500,
+  created_by        INTEGER REFERENCES staff(id),
+  updated_by        INTEGER REFERENCES staff(id),
+  created_at        TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS catalog_gm ON catalog(gm_id) WHERE gm_id IS NOT NULL;
+CREATE TABLE IF NOT EXISTS catalog_changes (
+  id       INTEGER PRIMARY KEY,
+  item_id  INTEGER REFERENCES catalog(id),
+  staff_id INTEGER REFERENCES staff(id),
+  what     TEXT NOT NULL,
+  at       TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 -- Collections: current members and former members with money owing.
 CREATE TABLE IF NOT EXISTS collections_cases (
   id             INTEGER PRIMARY KEY,
