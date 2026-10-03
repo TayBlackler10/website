@@ -1038,7 +1038,7 @@ function loadEm(){
     '<div class="muted" style="font-size:13px">'+esc(a.when)+'. Goal: they '+esc(a.goal_label)+' within '+a.goal_window_days+' days.</div>'+
     (a.supported?'<div class="nums"><span><b>'+a.today.length+'</b>today</span><span><b>'+n+'</b>last 30 days</span><span><b>'+(rate==null?"-":rate+"%")+'</b>'+esc(a.goal_label)+'</span>'+(hrate!=null?'<span><b>'+hrate+'%</b>without the email</span>':"")+'</div>'+
      (a.today.length?'<details><summary class="muted" style="cursor:pointer;font-size:13px">Who it\'s for today</summary><div style="font-size:14px;margin-top:6px">'+a.today.map(function(p){return '<a href="#" data-member="'+p.id+'">'+esc(p.name)+'</a>'}).join(", ")+'</div></details>':"")+
-     '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn line sm" data-emk="'+a.key+'">Edit the email</button>'+(d.can_switch?'<button class="btn '+(a.sending?"line":"dark")+' sm" data-emsw="'+a.key+'">'+(a.sending?"Hand back to GymMaster":"Send from the Core")+'</button>':"")+'</div>':"")+'</div>'}).join("");
+     '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn line sm" data-emk="'+a.key+'">Edit the email</button>'+(d.can_switch?'<button class="btn line sm" data-emsw="'+a.key+'">'+(a.sending?"Hand back to GymMaster":"Send from the Core")+'</button>':"")+'</div>':"")+'</div>'}).join("");
  });
 }
 function emEdit(key){
