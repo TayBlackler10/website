@@ -32,7 +32,7 @@ h1{font-size:32px}h2{font-size:21px}h3{font-size:16px}
 .card{background:#fff;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .card.dark{background:var(--ink);color:#fff}
 .card.dark .eyebrow{color:var(--lime)}
-.row2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;align-items:start}
+.row2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;align-items:start}.row2.eq{align-items:stretch}.row2.eq>.colfill{display:flex;flex-direction:column;gap:18px}.row2.eq>.colfill>.card:first-child{flex:1}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .tile{background:var(--tile);border-radius:14px;padding:14px;min-width:0}
 .card.dark .tile{background:var(--ink2)}
@@ -637,16 +637,16 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <a class="btn line" id="fpCsv" href="#">Download visits (CSV)</a>
 </div>
 <section class="card dark" style="margin-bottom:18px"><div class="tiles" id="fpTiles"></div><div class="muted" style="color:var(--soft)" id="fpNote"></div></section>
-<div class="row2" style="margin-bottom:18px">
+<div class="row2 eq" style="margin-bottom:18px">
 <section class="card" id="fpNudgeCard" style="min-width:0"><h2>Come-in reminders</h2><p class="muted" style="margin:0 0 10px">Passport pays per visit. When this is on, Passport members who haven't been in for a week get a friendly reminder on their phone through the M2 App (after 4 days near the end of a month when the club is close to the next tier). At most one a week each, and only for people who've left "Check-ins from M2" on.</p><div id="fpNudge"><div class="muted">Loading...</div></div></section>
 <section class="card" id="fpCheckCard" style="min-width:0"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Core count against GymMaster</h2><button class="btn line sm" id="fpCheckRun">Check this month again</button></div><p class="muted" style="margin:0 0 10px">Before the Core sends Passport visits itself, its count has to match GymMaster's for every member. Checked automatically for last month on the 2nd.</p><div id="fpCheck"><div class="muted">Loading...</div></div></section>
 </div>
-<div class="row2">
-<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<div class="row2 eq">
+<div class="colfill" style="min-width:0">
 <section class="card"><h2>Visits Passport can't pay for</h2><p class="muted" style="margin:0">Passport members who trained this month with no Passport ID on file. Add the ID and these visits count.</p><div class="list" id="fpNoId"></div></section>
 <section class="card" id="fpDupCard" hidden><h2>Same ID on two people</h2><p class="muted" style="margin:0">Every person has their own Passport ID. Check their cards.</p><div class="list" id="fpDup"></div></section>
 </div>
-<section class="card" style="min-width:0"><h2>Every Passport visit</h2><div class="list" id="fpRows" style="max-height:380px;overflow-y:auto"><div class="muted">Loading...</div></div></section>
+<section class="card" style="min-width:0"><h2>Every Passport visit</h2><div class="list" id="fpRows" style="max-height:420px;overflow-y:auto"><div class="muted">Loading...</div></div></section>
 </div>
 <section class="card dark" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">This month from GymMaster's visit counts</span><span class="muted" style="color:var(--soft)" id="fpNowNote"></span></div><div class="tiles" id="fpNowTiles"></div></section>
 <div class="row2" style="margin-top:18px">
