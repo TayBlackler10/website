@@ -336,10 +336,22 @@ export function makeApp(L) {
     return { ok: true };
   }
   // Owners only: what the app would get from the Core for a member, without signing in as them.
+  // Owners only: ask both sides what the app gets for a member (read-only: classes or me), to compare.
+  async function test(env, can, id, action) {
+    if (!can.settings) return { error: "Owners only" };
+    if (!["classes", "me"].includes(action)) return { error: "classes or me only" };
+    const session = await sign(env, { m: id, exp: Date.now() + 60_000 });
+    const g = await forward(env, { action, session });
+    let c = null; try { c = await native(env, action, { action, session }, { m: id }); } catch (e) { c = { error: String(e) }; }
+    const sum = r => !r ? null : action === "classes" ? { ok: r.ok, message: r.message, n: (r.classes || []).length, booked: r.booked, waits: r.waits,
+      mine: (r.classes || []).filter(x => x.bookedId).map(x => [x.day, x.start, x.name, x.bookedId, x.num + "/" + x.max]) } : { ok: r.ok, tier: r.tier, ms: r.memberships, days: (r.days || []).length, staff: r.member && r.member.staff };
+    const seen = await all(env, "SELECT member_id, day, via FROM app_seen ORDER BY day DESC LIMIT 10");
+    return { google: sum(g), core: sum(c), seen };
+  }
   async function preview(env, can, id) {
     if (!can.settings) return { error: "Owners only" };
     return (await me(env, { m: id })) || { error: "That member isn't in the Core yet." };
   }
 
-  return { handle, overview, save, doneRequest, preview, _sign: sign, _verify: verify };
+  return { handle, overview, save, doneRequest, preview, test, _sign: sign, _verify: verify };
 }

@@ -110,6 +110,8 @@ export default {
       if (em && em[2]) return await EM.preview(env, who, can, em[1]);
       if (em && req.method === "POST") return json(await EM.save(env, who, can, em[1], await req.json()));
       if (url.pathname === "/api/app") return json(req.method === "POST" ? await APP.save(env, who, can, await req.json()) : await APP.overview(env, can));
+      const apt = url.pathname.match(/^\/api\/app\/test\/(\d+)$/);
+      if (apt) return json(await APP.test(env, can, +apt[1], url.searchParams.get("action") || "classes"));
       const apr = url.pathname.match(/^\/api\/app\/(request|preview)\/(\d+)$/);
       if (apr) return json(apr[1] === "request" && req.method === "POST" ? await APP.doneRequest(env, who, can, +apr[2]) : await APP.preview(env, can, +apr[2]));
       if (url.pathname === "/api/pos") return json(await POS.products(env, who, can));
