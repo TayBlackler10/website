@@ -14,7 +14,7 @@ const GYM = { lat: -36.8658602, lng: 174.7642444 };
 const SESSION_DAYS = 60;
 const LATE_CANCEL_HOURS = 12;
 const DOORS = ["front", "male", "female", "door4"];
-const NATIVE = new Set(["login", "reset", "me", "classes", "book", "cancel", "warm", "request", "door"]);
+const NATIVE = new Set(["login", "reset", "me", "classes", "book", "cancel", "warm", "request", "door", "account", "hold_request", "cancel_request"]);
 
 export function makeApp(L) {
   const { nzDateTime, P } = L;
@@ -137,6 +137,9 @@ export function makeApp(L) {
     if (a === "cancel") return cancel(env, s, b);
     if (a === "request") return request(env, s, b);
     if (a === "door") return door(env, s, b);
+    if (a === "account") return account(env, s);
+    if (a === "hold_request") return holdRequest(env, s, b);
+    if (a === "cancel_request") return cancelRequest(env, s, b);
     return null;
   }
 
@@ -279,6 +282,80 @@ export function makeApp(L) {
     const to = (await all(env, "SELECT id FROM staff WHERE active = 1 AND role IN ('owner', 'manager')")).map(r => r.id);
     if (P) await P.toStaff(env, to, { title: KINDS[kind] + ": " + [m.first_name, m.last_name].filter(Boolean).join(" "), body: (text || "Sent from the M2 app.").slice(0, 140), url: "/#app", tag: "app-req" }).catch(() => {});
     return { ok: true };
+  }
+
+
+  /* ---------- the member's own membership: what they owe, next payment, holds and cancelling ---------- */
+  const HOLD_WHY = ["Travel", "Injury or illness", "Work", "Money is tight", "Other"];
+  const CANCEL_WHY = ["Moving away", "Cost", "Not using it enough", "Injury or illness", "Joined another gym", "Other"];
+  const money = v => { const n = parseFloat(String(v ?? "").replace(/[^0-9.\-]/g, "")); return Number.isFinite(n) ? Math.round(n * 100) / 100 : null; };
+  async function bankUrl(env, id) {
+    if ((env.BILLING_MODE || "gymmaster") !== "ezidebit" || !env.EZIDEBIT_EDDR_BASE || !env.EZIDEBIT_PUBLIC_KEY) return null;
+    const m = await one(env, "SELECT id, first_name, last_name, email, mobile FROM members WHERE id = ?", id);
+    const u = new URL(env.EZIDEBIT_EDDR_BASE);
+    const set = (k, v) => { if (v !== undefined && v !== null && v !== "") u.searchParams.set(k, String(v)); };
+    set("a", env.EZIDEBIT_PUBLIC_KEY); set("uRef", "M2-" + m.id); set("businessOrPerson", 1); set("fName", m.first_name); set("lName", m.last_name);
+    set("email", m.email); set("mobile", m.mobile); set("ed", 1);
+    set("callback", (env.PUBLIC_URL || "https://m2-join.taylor-3e5.workers.dev").replace(/\/$/, "") + "/billing-done?member=" + m.id);
+    return u.toString();
+  }
+  async function account(env, s) {
+    const m = await one(env, "SELECT id, first_name FROM members WHERE id = ?", s.m);
+    if (!m) return null;
+    const ms = await all(env, `SELECT p.gm_type_name name, p.family, p.frequency, p.flexi, ms.price, ms.start_date, ms.min_term_end, ms.end_date, ms.status, ms.freeze_from, ms.freeze_to, ms.billed_by
+                               FROM memberships ms JOIN plans p ON p.id = ms.plan_id WHERE ms.member_id = ? AND ms.status IN ('current', 'frozen') ORDER BY ms.start_date`, s.m);
+    const t = todayNz();
+    let owing = null, next = null, live = false;
+    try {
+      const tok = await memberToken(env, s.m);
+      const r = tok && await gm(env, "get", "/portal/api/v1/member/outstandingbalance", { api_key: env.GM_STAFF_KEY, token: tok });
+      if (r && r.owingamount !== undefined) { owing = money(r.owingamount); next = r.next_bill || null; live = true; }
+    } catch {}
+    if (!live) {
+      const b = await one(env, "SELECT a.balance_owing, c.owing, c.next_bill FROM members m LEFT JOIN billing_accounts a ON a.member_id = m.id LEFT JOIN balance_checks c ON c.member_id = m.id WHERE m.id = ?", s.m);
+      if (b) { owing = b.owing != null ? b.owing : b.balance_owing; next = b.next_bill || null; }
+    }
+    if (next && /unable|no default/i.test(next)) next = null;
+    const hold = await one(env, "SELECT starts, ends, reason FROM gm_holds WHERE member_id = ? AND (ends IS NULL OR ends >= ?) ORDER BY starts LIMIT 1", s.m, t);
+    const open = await all(env, "SELECT kind, text, at FROM app_requests WHERE member_id = ? AND kind IN ('hold', 'cancel') AND done_at IS NULL ORDER BY id DESC", s.m);
+    const cancelling = await one(env, "SELECT cancel_date FROM gm_cancels WHERE member_id = ? AND (cancel_date IS NULL OR cancel_date >= ?) ORDER BY cancel_date DESC LIMIT 1", s.m, t);
+    const passport = ms.some(x => x.family === "passport"), billed = ms.some(x => x.billed_by === "ezidebit");
+    return { ok: true,
+      memberships: ms.map(x => ({ name: x.name, price: x.price, frequency: x.frequency, flexi: !!x.flexi, start: x.start_date, lockin: x.min_term_end && x.min_term_end > t ? x.min_term_end : null,
+        end: x.end_date, status: x.status })),
+      owing: owing && owing > 0 ? owing : 0, next, hold, cancelling: cancelling ? (cancelling.cancel_date || "soon") : null,
+      requests: open.map(r => ({ kind: r.kind, at: r.at })),
+      can_hold: billed && !passport && !hold, can_cancel: billed && !passport && !cancelling,
+      passport, bank_url: billed ? await bankUrl(env, s.m) : null, hold_why: HOLD_WHY, cancel_why: CANCEL_WHY };
+  }
+  async function newRequest(env, s, kind, text, title) {
+    if (await tooMany(env, "req:" + s.m, 5, 3600)) return { ok: false, message: "We've got your request already. Reception will be in touch." };
+    if (await one(env, "SELECT 1 FROM app_requests WHERE member_id = ? AND kind = ? AND done_at IS NULL", s.m, kind)) return { ok: false, message: "You've already sent one of these. The team will be in touch." };
+    const m = await one(env, "SELECT first_name, last_name FROM members WHERE id = ?", s.m);
+    if (!m) return null;
+    await run(env, "INSERT INTO app_requests(member_id, kind, text) VALUES (?, ?, ?)", s.m, kind, text);
+    await run(env, "INSERT INTO activity(member_id, kind, detail) VALUES (?, 'app', ?)", s.m, title + " from the app: " + text.slice(0, 300));
+    const to = (await all(env, "SELECT id FROM staff WHERE active = 1 AND role IN ('owner', 'manager')")).map(r => r.id);
+    if (P) await P.toStaff(env, to, { title: title + ": " + [m.first_name, m.last_name].filter(Boolean).join(" "), body: text.slice(0, 140), url: "/#today", tag: "app-" + kind }).catch(() => {});
+    return { ok: true };
+  }
+  const isDay = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d || ""));
+  async function holdRequest(env, s, b) {
+    const t = todayNz();
+    if (!isDay(b.from) || !isDay(b.to)) return { ok: false, message: "Pick the dates for your hold." };
+    if (b.from < t) return { ok: false, message: "The hold can start today or later." };
+    if (b.to <= b.from) return { ok: false, message: "The end date needs to be after the start." };
+    if ((Date.parse(b.to) - Date.parse(b.from)) / 864e5 > 186) return { ok: false, message: "Holds can be up to 6 months. Talk to reception about anything longer." };
+    if (!HOLD_WHY.includes(b.reason)) return { ok: false, message: "Pick a reason." };
+    const note = String(b.note || "").trim().slice(0, 500);
+    if (b.reason === "Other" && !note) return { ok: false, message: "Tell us a bit about why." };
+    return newRequest(env, s, "hold", "Hold " + b.from + " to " + b.to + ". Reason: " + b.reason + (note ? ". " + note : ""), "Hold request");
+  }
+  async function cancelRequest(env, s, b) {
+    if (!CANCEL_WHY.includes(b.reason)) return { ok: false, message: "Pick a reason." };
+    const note = String(b.note || "").trim().slice(0, 500);
+    if (b.reason === "Other" && !note) return { ok: false, message: "Tell us a bit about why." };
+    return newRequest(env, s, "cancel", "Reason: " + b.reason + (note ? ". " + note : ""), "Cancel request");
   }
 
   /* ---------- doors: GymMaster's kiosk check-in while GymMaster runs the gate ---------- */

@@ -1415,9 +1415,10 @@ function renderMe(){const t=tier();$('meNav').textContent=MEMBER.first;$('meH').
  $('planCard').innerHTML=`<div class="sh"><span class="eb">Membership</span></div><div class="card plan"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div class="h3" style="font-size:24px">${t.n}</div><p class="muted small" style="margin-top:2px">${t.for}</p></div><span class="pill p-ink">Active</span></div>
  ${LIVE&&S.tier!=='trial'&&S.tier!=='fp'?'':t.price?`<div class="price"><b>$${t.price}</b><span>/ week</span></div>`:S.tier==='trial'?`<div class="price"><b style="font-size:30px">${esc(passLeft(passNow())||'Active')}</b></div>`:`<div class="price"><b style="font-size:30px">Covered</b><span>by your work</span></div>`}<p class="muted small" style="margin-top:4px">${t.term}</p>
  <ul class="ticks">${feats.map(([l,k])=>`<li class="${t[k]?'':'no'}">${ico(t[k]?'i-check':'i-x')}${l}</li>`).join('')}</ul>
- ${LIVE&&S.tier!=='trial'?`<div class="kv"><span>Membership</span><b>${esc(((MEMBER.memberships||[])[0]||{}).name||t.n)}</b></div><div class="kv"><span>Billing and changes</span><b>Ask at reception</b></div>`:t.price?`<div class="kv"><span>Next payment</span><b>${DN[nb.getDay()]} ${nb.getDate()} ${MN[nb.getMonth()]}, $${t.price}</b></div><div class="kv"><span>Notice</span><b>Fixed term. Flexi is +$5 a week</b></div>`:(S.tier==='trial'?`<div class="kv"><span>Access</span><b>Full club, same as Perform</b></div><a class="btn b-dark b-full" style="margin-top:14px" href="${joinURL()}">Join M2</a>`:`<div class="kv"><span>Access</span><b>Show your card at reception</b></div>`)}
+ ${LIVE&&S.tier!=='trial'?`<div class="kv"><span>Membership</span><b>${esc(((MEMBER.memberships||[])[0]||{}).name||t.n)}</b></div><div id="acct">${acctHtml()}</div>`:t.price?`<div class="kv"><span>Next payment</span><b>${DN[nb.getDay()]} ${nb.getDate()} ${MN[nb.getMonth()]}, $${t.price}</b></div><div class="kv"><span>Notice</span><b>Fixed term. Flexi is +$5 a week</b></div>`:(S.tier==='trial'?`<div class="kv"><span>Access</span><b>Full club, same as Perform</b></div><a class="btn b-dark b-full" style="margin-top:14px" href="${joinURL()}">Join M2</a>`:`<div class="kv"><span>Access</span><b>Show your card at reception</b></div>`)}
  ${t.offers&&S.tier!=='perform'?`<button class="btn b-dark b-full" style="margin-top:14px" onclick="openUpgrade('me')">${S.upReq?'Upgrade requested':upgLine()}</button>`:''}
  ${LIVE?'':`<button class="btn b-out b-full" style="margin-top:10px" onclick="openWallet()">${ico('i-wallet')}${S.wallet?'In your '+S.wallet:'Add to Wallet'}</button>`}</div>`;
+ if(LIVE&&S.tier!=='trial')loadAccount();
  // heat
  const W=16,st=addDays(T0,-((now.getDay()+6)%7)-(W-1)*7);let tot=0,mo=0;$('heat').innerHTML='';
  for(let i=0;i<W*7;i++){const d=addDays(st,i);let c='';if(d>T0)c='f';else if(trained(d)){tot++;if(d.getMonth()===now.getMonth())mo++;c='l'+(1+hash('i'+dkey(d))%3)}$('heat').insertAdjacentHTML('beforeend',`<i class="${c}"></i>`)}
@@ -1539,6 +1540,53 @@ function handleDoorHash(){const m=location.hash.match(/door=(\w+)/);if(!m)return
 addEventListener('hashchange',()=>{if(S.profile)handleDoorHash()});
 function checkIn(){const k=dkey(T0);if(!S.checkins.includes(k)){S.checkins.push(k);save('checkins');if(!MEMBER.demo)MEMBER.totalvisits++}if(S.away){S.away=false;save('away');$('awaySw').classList.remove('on')}const tx=$('inTx');if(tx)tx.textContent="You're in. Have a good session.";$('inok')?.classList.add('on');renderAll();checkMilestone(window.ALLT)}
 
+
+/* ---------- your membership: what you owe, next payment, hold, cancel, bank details (M2 Core) ---------- */
+var ACC=null,ACC_T=0,ACC_BUSY=false;
+const dNice=d=>{const x=new Date(String(d).slice(0,10)+'T12:00:00');return isNaN(x)?esc(d):x.getDate()+' '+MN[x.getMonth()]+' '+x.getFullYear()};
+function acctHtml(){const a=ACC;
+ if(!a)return `<div class="kv"><span>Billing and changes</span><b>Ask at reception</b></div>`;
+ const m=(a.memberships||[]).find(x=>x.lockin)||{};let h='';
+ if(a.passport)return `<div class="kv"><span>Paid by</span><b>Fitness Passport</b></div><p class="muted small" style="margin-top:8px">Holds and cancelling go through your work's Fitness Passport scheme.</p>`;
+ if(a.owing>0)h+=`<div class="kv"><span>Owing now</span><b style="color:#B42318">$${a.owing.toFixed(2)}</b></div>`;
+ if(a.next)h+=`<div class="kv"><span>Next payment</span><b>${esc(String(a.next).replace(/ on /,', '))}</b></div>`;
+ if(m.lockin)h+=`<div class="kv"><span>Minimum term ends</span><b>${dNice(m.lockin)}</b></div>`;
+ if(a.hold)h+=`<div class="kv"><span>On hold</span><b>${a.hold.starts?dNice(a.hold.starts)+' to ':''}${a.hold.ends?dNice(a.hold.ends):'further notice'}</b></div>`;
+ if(a.cancelling)h+=`<div class="kv"><span>Cancelling</span><b>${a.cancelling==='soon'?'Notice given':'From '+dNice(a.cancelling)}</b></div>`;
+ (a.requests||[]).forEach(r=>{h+=`<div class="kv"><span>${r.kind==='hold'?'Hold request':'Cancel request'}</span><b>Sent, the team will be in touch</b></div>`});
+ const sent=k=>(a.requests||[]).some(r=>r.kind===k);
+ if(a.owing>0)h+=`<p class="muted small" style="margin-top:8px">Pay at reception, or reply to our email and we'll sort a plan with you.</p>`;
+ h+=`<div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">`;
+ if(a.bank_url)h+=`<a class="btn b-out b-full" href="${esc(a.bank_url)}" target="_blank" rel="noopener">Update bank details</a>`;
+ if(a.can_hold&&!sent('hold'))h+=`<button class="btn b-out b-full" onclick="openHoldReq()">Put my membership on hold</button>`;
+ if(a.can_cancel&&!sent('cancel'))h+=`<button class="btn b-full" style="color:var(--muted)" onclick="openCancelReq()">Cancel my membership</button>`;
+ if(!a.bank_url&&(a.can_hold||a.can_cancel))h+=`<p class="muted small" style="text-align:center">To change bank details, see reception.</p>`;
+ return h+`</div>`}
+async function loadAccount(force){if(!LIVE||!S.doorSess||ACC_BUSY||(!force&&Date.now()-ACC_T<6e4))return;ACC_BUSY=true;let r=null;
+ try{r=await api({action:'account',session:S.doorSess})}catch(e){}ACC_BUSY=false;ACC_T=Date.now();
+ if(r&&r.signin)return signOut();ACC=r&&r.ok?r:null;const el=$('acct');if(el)el.innerHTML=acctHtml()}
+var RQ_BUSY=false;
+async function sendAcct(action,body){if(RQ_BUSY)return;RQ_BUSY=true;toast('Sending');let r=null;
+ try{r=await api(Object.assign({action,session:S.doorSess},body))}catch(e){}RQ_BUSY=false;
+ if(r&&r.signin)return signOut();
+ if(!r||!r.ok){toast((r&&r.message)||"That didn't send. Check your signal and try again.",1);return}
+ after(()=>openSheet(`<span class="eb">Your membership</span><h2 style="margin-top:8px">Request sent<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${action==='hold_request'?"The team will put your hold on and confirm with you. Your membership stays as it is until then.":"The team will be in touch to confirm the details and your last payment. Nothing changes until they do."}</p>`,`<button class="btn b-dark b-full" onclick="closeSheet()">Got it</button>`));
+ loadAccount(true)}
+function reasonChips(list,name){return `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${list.map(x=>`<button class="chip" data-r="${esc(x)}" onclick="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));this.classList.add('on')">${esc(x)}</button>`).join('')}</div>`}
+function openHoldReq(){const a=ACC||{},t=dkey(T0).split('-').map(n=>String(n).padStart(2,'0')).join('-');
+ openSheet(`<span class="eb">Your membership</span><h2 style="margin-top:8px">Put it on hold<span class="od">.</span></h2><p class="muted" style="margin-top:8px">Pick your dates and the team will set it up and confirm the details with you.</p>
+ <label class="small muted" style="display:block;margin-top:14px">From</label><input id="hqFrom" class="fsearch" type="date" min="${t}" value="${t}" style="margin-top:6px">
+ <label class="small muted" style="display:block;margin-top:12px">Back on</label><input id="hqTo" class="fsearch" type="date" min="${t}" style="margin-top:6px">
+ <p class="small muted" style="margin-top:14px">Why are you pausing?</p><div id="hqWhy">${reasonChips(a.hold_why||['Travel','Injury or illness','Work','Money is tight','Other'])}</div>
+ <textarea class="ta lt" id="hqNote" placeholder="Anything else we should know (optional)" style="margin-top:12px"></textarea>`,
+ `<button class="btn b-dark b-full" onclick="sendAcct('hold_request',{from:$('hqFrom').value,to:$('hqTo').value,reason:(($('hqWhy').querySelector('.on')||{}).dataset||{}).r||'',note:$('hqNote').value})">Send hold request</button>`)}
+function openCancelReq(){const a=ACC||{},m=(a.memberships||[]).find(x=>x.lockin);
+ openSheet(`<span class="eb">Your membership</span><h2 style="margin-top:8px">Cancel your membership<span class="od">.</span></h2>
+ <div class="card" style="margin-top:14px;background:var(--paper)"><b>Need a break instead?</b><p class="muted small" style="margin-top:4px">A hold keeps your membership and your price while you're away.</p>${a.can_hold?`<button class="btn b-out b-full" style="margin-top:10px" onclick="after(openHoldReq)">Put it on hold instead</button>`:''}</div>
+ ${m?`<p class="small" style="margin-top:14px">Your minimum term runs to <b>${dNice(m.lockin)}</b>. The team will go through what that means for your last payment.</p>`:''}
+ <p class="small muted" style="margin-top:14px">Why are you leaving?</p><div id="cqWhy">${reasonChips(a.cancel_why||['Moving away','Cost','Not using it enough','Injury or illness','Joined another gym','Other'])}</div>
+ <textarea class="ta lt" id="cqNote" placeholder="Anything we could have done better? (optional)" style="margin-top:12px"></textarea>`,
+ `<button class="btn b-dark b-full" onclick="sendAcct('cancel_request',{reason:(($('cqWhy').querySelector('.on')||{}).dataset||{}).r||'',note:$('cqNote').value})">Send cancel request</button><button class="btn b-out b-full" onclick="closeSheet()">Keep my membership</button>`)}
 /* ---------- share / sheets ---------- */
 function doShare(text,url,ch){const full=text+' '+url;if(ch==='whatsapp'){open('https://wa.me/?text='+encodeURIComponent(full),'_blank');return true}if(ch==='sms'){location.href='sms:&body='+encodeURIComponent(full);return true}if(navigator.share){navigator.share({title:'M2 Training Club',text,url}).catch(()=>{});return true}try{navigator.clipboard.writeText(full)}catch(e){}toast('Link copied. Send it to a mate');return true}
 function shareRef(ch){doShare('Come train with me at M2 in Grafton. Join through my link and we both get 4 weeks free, plus no joining or key tag fee for you.','https://'+REF_URL,ch);S.refs.sent++;save('refs');/* real app: POST /api/referrals/share {member, channel} */setTimeout(renderMe,300)}
@@ -2194,7 +2242,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-03c';
+const APP_VER='2026-10-03d';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);

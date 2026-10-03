@@ -717,8 +717,10 @@ const JOBS = {
   failed_payment:  { label: "Payments that failed",             one: "payment that failed",            owner: "reception", order: 2.6 },
   cancel_save:     { label: "Gave notice to cancel",            one: "member who gave notice to cancel", owner: "manager", order: 3.5 },
   hold_ending:     { label: "Holds ending soon",                one: "hold ending soon",               owner: "reception", order: 6.5 },
+  app_hold:        { label: "Hold requests from the app",       one: "hold request from the app",      owner: "reception", order: 2.8 },
+  app_cancel:      { label: "Cancel requests from the app",     one: "cancel request from the app",    owner: "manager",   order: 2.9 },
 };
-const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "fp_in_gm", "done"];
+const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "fp_in_gm", "done", "hold_set", "cancel_set", "kept"];
 
 async function today(env, who, can) {
   const db = env.DB;
@@ -795,6 +797,11 @@ async function today(env, who, can) {
                                       AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = 'cancel_save' AND t.member_id = m.id AND t.outcome IS NOT NULL AND t.done_at >= datetime('now','-7 days'))
                                     GROUP BY m.id ORDER BY c.first_seen DESC`, nzToday))
       .map(r => ({ ...r, detail: "Cancelling " + r.type_name + (r.cancel_date ? " from " + r.cancel_date : "") + (r.reason ? ". Reason: " + r.reason : "") + ". Worth a call to see if a hold or a cheaper plan keeps them." })));
+    // Holds and cancellations members asked for in the app.
+    for (const [job, kind] of [["app_hold", "hold"], ["app_cancel", "cancel"]])
+      push(job, (await all(`SELECT r.id req_id, m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, r.text, r.at
+                            FROM app_requests r JOIN members m ON m.id = r.member_id WHERE r.kind = ? AND r.done_at IS NULL ORDER BY r.id`, kind))
+        .map(r => ({ ...r, detail: r.text + (kind === "hold" ? ". Put the hold on in GymMaster, then tick Hold put on." : ". Call first: a hold or a cheaper plan may keep them. If not, cancel in GymMaster and tick Cancelled.") })));
     // Holds finishing in the next 3 days: welcome them back.
     push("hold_ending", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, h.ends, h.reason
                                     FROM gm_holds h JOIN members m ON m.id = h.member_id
@@ -880,6 +887,8 @@ async function recordOutcome(env, who, can, b) {
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`)
       .bind(kind, memberId, leadId, JOBS[kind].owner, who.id, nzToday, outcome, note, who.id));
   }
+  if (memberId && (kind === "app_hold" || kind === "app_cancel") && outcome !== "call_back" && outcome !== "no_answer")
+    stmts.push(db.prepare("UPDATE app_requests SET done_at = datetime('now'), done_by = ? WHERE member_id = ? AND kind = ? AND done_at IS NULL").bind(who.id, memberId, kind === "app_hold" ? "hold" : "cancel"));
   if (leadId) {
     const stage = { joined: "joined", not_interested: "lost", joining_at_desk: "trial" }[outcome] || "contacted";
     stmts.push(db.prepare(`UPDATE leads SET stage = CASE WHEN stage IN ('joined','lost') THEN stage ELSE ? END,
