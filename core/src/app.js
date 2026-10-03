@@ -101,12 +101,20 @@ export function makeApp(L) {
       try { out = await native(env, a, body, s); if (out) by = "core"; }
       catch (e) { console.log("app", a, String(e && e.stack || e)); out = null; }
     }
+    const t0 = Date.now();
     if (!out) out = await forward(env, body);
-    if (ctx && ctx.waitUntil) ctx.waitUntil(note(env, a, s, out, by, !!body.session).catch(() => {}));
-    else await note(env, a, s, out, by, !!body.session).catch(() => {});
+    const ms = Date.now() - t0;
+    if (ctx && ctx.waitUntil) ctx.waitUntil(Promise.all([note(env, a, s, out, by, !!body.session).catch(() => {}), logCall(env, a, s, out, by, ms).catch(() => {})]));
+    else { await note(env, a, s, out, by, !!body.session).catch(() => {}); await logCall(env, a, s, out, by, ms).catch(() => {}); }
     return out;
   }
 
+  // Last week of app calls (no passwords, no message text), for fixing problems.
+  async function logCall(env, a, s, out, by, ms) {
+    const sum = !out ? "" : a === "classes" ? (out.classes || []).length + " classes, " + (out.classes || []).filter(c => c.bookedId).length + " booked" : String(out.message || "").slice(0, 120);
+    await run(env, "INSERT INTO app_log(member_id, action, via, ok, signin, note, ms) VALUES (?, ?, ?, ?, ?, ?, ?)", s ? s.m : null, a.slice(0, 20), by, out && out.ok ? 1 : 0, out && out.signin ? 1 : 0, sum, ms);
+    if (Math.random() < 0.02) await run(env, "DELETE FROM app_log WHERE at < datetime('now', '-7 days')");
+  }
   // Keep a light record: who uses the app, and which doors the old service has switched on.
   async function note(env, a, s, out, by, hadSession) {
     const id = s ? s.m : (a === "login" && out && out.ok && out.session ? ((await verify(env, out.session)) || {}).m : null);
@@ -212,14 +220,11 @@ export function makeApp(L) {
     })(r, 0);
     return out;
   }
+  // Only real cancel flags. (GymMaster also sends cancelmode, cancelfee and cancelbenefitloss on live bookings.)
   function cancelled(c) {
-    for (const k in c) {
-      if (!/cancel|status|deleted|void/i.test(k)) continue;
-      const v = c[k];
-      if (/status/i.test(k)) { if (/cancel|void|delet/i.test(String(v || ""))) return true; continue; }
-      if (v && v !== "0" && v !== "f" && v !== "false" && v !== "N" && v !== "n") return true;
-    }
-    return false;
+    const yes = v => v === true || v === 1 || /^(1|t|true|y|yes)$/i.test(String(v ?? ""));
+    if (yes(c.is_cancelled) || yes(c.cancelled) || yes(c.deleted) || yes(c.void)) return true;
+    return /cancel|void|delet/i.test(String(c.status || "") + " " + String(c.resulttext || ""));
   }
   async function classes(env, s) {
     const tok = await memberToken(env, s.m); if (!tok) return null;
@@ -345,7 +350,7 @@ export function makeApp(L) {
     let c = null; try { c = await native(env, action, { action, session }, { m: id }); } catch (e) { c = { error: String(e) }; }
     const sum = r => !r ? null : action === "classes" ? { ok: r.ok, message: r.message, n: (r.classes || []).length, booked: r.booked, waits: r.waits,
       mine: (r.classes || []).filter(x => x.bookedId).map(x => [x.day, x.start, x.name, x.bookedId, x.num + "/" + x.max]) } : { ok: r.ok, tier: r.tier, ms: r.memberships, days: (r.days || []).length, staff: r.member && r.member.staff };
-    const seen = await all(env, "SELECT member_id, day, via FROM app_seen ORDER BY day DESC LIMIT 10");
+    const seen = await all(env, "SELECT at, member_id, action, via, ok, signin, note FROM app_log ORDER BY id DESC LIMIT 25");
     return { google: sum(g), core: sum(c), seen };
   }
   async function preview(env, can, id) {

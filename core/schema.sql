@@ -778,3 +778,4 @@ CREATE TABLE IF NOT EXISTS app_doors (
   metres     INTEGER,
   at         TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS app_log (id INTEGER PRIMARY KEY, at TEXT NOT NULL DEFAULT (datetime('now')), member_id INTEGER, action TEXT, via TEXT, ok INTEGER, signin INTEGER, note TEXT, ms INTEGER);
