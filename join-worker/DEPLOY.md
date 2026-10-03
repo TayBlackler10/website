@@ -40,3 +40,7 @@ If the worker ends up on a different URL, change `API` near the top of the scrip
 - The Fitness Passport ID is compulsory (5 to 12 digits). Passport sign-ups never take promo codes and pay nothing.
 - GymMaster's online sign-up has no field for the ID, so it goes two places: M2 Core (reception's Today list, "Passport IDs to type into GymMaster") when `CORE_URL` and `INTAKE_KEY` are set, and an email to M2's inbox via Web3Forms as a backup. Reception types it into GymMaster: profile, Additional Details, Fitness Passport ID.
 - GymMaster needs "Enable online sign-up" ticked on the Fitness Passport membership type (Settings, Membership Types, Fitness Passport, Sell Membership Online), or the sign-up is refused and the page asks them to come to reception.
+
+## Deploys from GitHub (since 3 Oct 2026)
+
+m2-join now builds from TayBlackler10/website (root `join-worker`) on every push to main, like M2 Core. Variables set in the dashboard are kept (`keep_vars`). Secrets stay in the dashboard.
