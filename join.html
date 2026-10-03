@@ -191,6 +191,9 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .actions{display:flex;gap:12px;align-items:center;margin-top:28px}
   .btn{appearance:none;border:0;cursor:pointer;font:inherit;font-weight:600;font-size:15px;background:var(--black);color:var(--lime);padding:15px 28px;border-radius:999px;transition:transform .1s,opacity .15s;display:inline-block;text-align:center}
   .btn:active{transform:scale(.98)}
+  .kiosk{margin:22px 0 4px;text-align:center}
+  .kiosk .btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--ink);width:100%}
+  .kiosk small{display:block;font-size:13px;color:var(--muted);margin-top:10px}
   .billbox{background:var(--soft);border-radius:14px;padding:18px;margin:22px 0 4px}
   .billbox b{color:var(--ink)}
   .billbox > b{display:block;font-size:16px;margin-bottom:6px}
@@ -456,6 +459,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
           <a class="btn" id="billBtn" href="https://m2trainingclub.gymmasteronline.com/portal/login" target="_blank" rel="noopener" data-track="add_billing_click">Add payment details</a>
           <small>Rather do it in person? No worries, we'll do it at reception.</small>
         </div>
+        <div class="kiosk" id="kioskWrap" hidden>
+          <button type="button" class="btn ghost" id="kioskBtn">Done, start a new sign-up</button>
+          <small id="kioskNote"></small>
+        </div>
         <div id="ptWrap" hidden style="margin:22px 0 26px"><a class="btn" id="ptBtn" href="/free-pt.html">Book my free PT session</a></div>
         <div class="intro"><p>Any questions, just reply to any of our emails or give reception a call. See you soon.</p></div>
         <div class="sig">
@@ -482,6 +489,14 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   // m2-join Cloudflare Worker. Holds the GymMaster key and does the signup.
   var STARTED = Date.now();
   var qs = new URLSearchParams(location.search);
+  // Reception iPad: open join.html?kiosk=1 once and the iPad remembers it. After each
+  // sign-up the welcome screen gets a "start a new sign-up" button and resets itself.
+  var KIOSK = false;
+  try {
+    if (qs.get('kiosk') === '1') localStorage.setItem('m2_kiosk', '1');
+    if (qs.get('kiosk') === '0') localStorage.removeItem('m2_kiosk');
+    KIOSK = localStorage.getItem('m2_kiosk') === '1';
+  } catch(e) { KIOSK = qs.get('kiosk') === '1'; }
   var API = qs.get('api') || 'https://m2-join.taylor-3e5.workers.dev';
   var PORTAL = 'https://m2trainingclub.gymmasteronline.com/portal/';
   var TIER_ORDER = ['Daily','Classes','Perform','Recovery'];
@@ -1038,6 +1053,18 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     } catch(e){}
   }
 
+  function startKioskReset(){
+    var left = 60, home = location.pathname + '?kiosk=1';
+    function go(){ location.href = home; }
+    $('kioskWrap').hidden = false;
+    $('kioskBtn').addEventListener('click', go);
+    function tick(){
+      $('kioskNote').textContent = 'Back to the start in ' + left + ' seconds';
+      if (left-- <= 0) go(); else setTimeout(tick, 1000);
+    }
+    tick();
+  }
+
   function finish(first, free){
     var name = chosen._fp ? 'M2 with Fitness Passport' : chosen._p ? 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') : titleCase(chosen.name);
     $('doneTitle').textContent = 'Welcome to M2' + (first ? ', ' + first : '') + '.';
@@ -1068,6 +1095,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     $('formView').style.display = 'none';
     $('doneView').classList.add('active');
     window.scrollTo({top:0, behavior:'smooth'});
+    if (KIOSK) startKioskReset();
   }
 })();
 </script>
