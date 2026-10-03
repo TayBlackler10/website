@@ -22,6 +22,8 @@ import { makeRoster } from "./roster.js";
 import { makeFeeds } from "./feeds.js";
 import { makeEzidebit } from "./ezidebit.js";
 import { makeBilling } from "./billing.js";
+import { makePush, SW_JS } from "./push.js";
+import { makePt } from "./pt.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
@@ -29,6 +31,8 @@ const R = makeRoster({ nzDateTime });
 const F = makeFeeds({ nzDateTime });
 const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
 const B = makeBilling({ nzDateTime, E: makeEzidebit() });
+const P = makePush();
+const PT = makePt({ nzDateTime, normMobile, P });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -55,6 +59,15 @@ export default {
       const can = CAN[who.role] || {};
 
       if (url.pathname === "/" || url.pathname === "/index.html") return html(APP_HTML);
+      if (url.pathname === "/sw.js") return new Response(SW_JS, { headers: { "Content-Type": "text/javascript; charset=utf-8", "Cache-Control": "no-cache", "Service-Worker-Allowed": "/" } });
+      if (url.pathname === "/api/push") return json(req.method === "POST" ? await P.subscribe(env, who, await req.json()) : await P.status(env, who));
+      if (url.pathname === "/api/pt") return json(await PT.board(env, who, can));
+      if (url.pathname === "/api/pt/sync" && req.method === "POST" && can.settings) return json(await PT.sync(env));
+      if (url.pathname === "/api/pt/mine") return json(await PT.mine(env, who));
+      const ptm = url.pathname.match(/^\/api\/pt\/(\d+)(\/assign)?$/);
+      if (ptm && ptm[2] && req.method === "POST") return json(await PT.assign(env, who, can, +ptm[1], await req.json()));
+      if (ptm && req.method === "POST") return json(await PT.update(env, who, can, +ptm[1], await req.json()));
+      if (ptm) return json(await PT.history(env, who, can, +ptm[1]));
       if (url.pathname === "/manifest.webmanifest") return new Response(JSON.stringify({
         name: "M2 Core", short_name: "M2 Core", start_url: "/", display: "standalone", background_color: "#0A0A0A", theme_color: "#0A0A0A",
         icons: [192, 512].map(n => ({ src: "https://m2club.co.nz/assets/icon-" + n + ".png", sizes: n + "x" + n, type: "image/png" })),
@@ -138,7 +151,7 @@ export default {
         if (url.pathname === "/api/roster/start") return json(await H2.rosterStart(env));
         if (url.pathname === "/api/roster/apply") return json(await H2.rosterApply(env, (await req.json()).chunk));
         if (url.pathname === "/api/roster/finish") return json(await H2.rosterFinish(env));
-        if (url.pathname === "/api/leads/rebuild") return json(await H2.rebuildLeads(env));
+        if (url.pathname === "/api/leads/rebuild") { const r = await H2.rebuildLeads(env); r.pt = await PT.sync(env); return json(r); }
         if (url.pathname === "/api/visits/pull") return json(await H2.pullVisits(env, (await req.json().catch(() => ({}))).day));
         if (url.pathname === "/api/sweep") return json(await H.sweepStep(env, (await req.json()).after, H2.sweepVisits));
       }
@@ -177,6 +190,7 @@ export default {
         const b = await H.refreshBalances(env);
         const v = b.lap ? await H2.sweepVisits(env, b.lap) : 0;
         const p = env.GM_REPORT_KEY ? await H2.pullVisits(env).catch(e => ({ error: String(e) })) : null;
+        console.log("pt", JSON.stringify(await PT.sync(env)));
         console.log("quarter", JSON.stringify({ done: b.done, failed: b.failed, visits: v, checkins: p }));
         return;
       }
@@ -799,7 +813,7 @@ async function staffList(env, can) {
 
 async function listLeads(env, who, can, q) {
   if (!can.members) return { error: "No access" };
-  const where = ["(l.notes IS NULL OR l.notes <> 'gymmaster_import')"], binds = [];
+  const where = ["(l.notes IS NULL OR l.notes <> 'gymmaster_import')", "l.kind <> 'free_pt'"], binds = [];
   if (can.members === "own") { where.push("l.assigned_to = ?"); binds.push(who.id); }
   const kind = q.get("kind"); if (kind) { where.push("l.kind = ?"); binds.push(kind); }
   const days = Math.min(+(q.get("days") || 30), 365);
@@ -883,7 +897,8 @@ async function saveLead(env, b, who) {
     return { ok: true, id: open.id, repeat: true };
   }
   let assigned = b.assigned_to ? Number(b.assigned_to) : null;
-  if (!assigned && kind === "free_pt") assigned = await nextTrainer(db);
+  // Free PT leads wait for Tim to hand them out on the PT leads page.
+  if (kind === "free_pt") assigned = null;
   const stage = kind === "trial" ? "trial" : "new";
   const row = await db.prepare(`INSERT INTO leads(member_id, name, email, mobile, kind, source, campaign, stage, assigned_to, goal, notes)
                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`)
@@ -891,6 +906,7 @@ async function saveLead(env, b, who) {
           clean(b.goal) || null, clean(b.notes) || null).first();
   await db.prepare("INSERT INTO activity(lead_id, member_id, staff_id, kind, detail) VALUES (?, ?, ?, 'note', ?)")
     .bind(row.id, member && member.id, who ? who.id : null, (who ? "Added by " + who.name : "Came in from the website") + ": " + leadKindLabel(kind)).run();
+  if (kind === "free_pt") await db.prepare("INSERT OR IGNORE INTO pt_leads(lead_id, reason, pt_status, updated_at) VALUES (?, ?, 'new', datetime('now'))").bind(row.id, clean(b.notes || b.goal) || null).run();
   return { ok: true, id: row.id, member_id: member && member.id, assigned_to: assigned };
 }
 

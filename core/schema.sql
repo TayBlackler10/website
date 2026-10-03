@@ -218,6 +218,39 @@ CREATE TABLE IF NOT EXISTS billing_events (
 );
 CREATE INDEX IF NOT EXISTS billing_events_member ON billing_events(member_id, at);
 
+-- Free PT leads: the questionnaire answers and where each one is up to. One row per lead (kind free_pt).
+CREATE TABLE IF NOT EXISTS pt_leads (
+  lead_id       INTEGER PRIMARY KEY REFERENCES leads(id) ON DELETE CASCADE,
+  sheet_id      TEXT UNIQUE,                     -- id in the PT Leads sheet while that still runs
+  reason        TEXT,
+  wants         TEXT,                            -- trainer preference
+  style         TEXT,
+  best_time     TEXT,
+  injuries      TEXT,
+  pt_status     TEXT NOT NULL DEFAULT 'new',     -- new (waiting for Tim), assigned, contacted, booked, client, lost
+  sheet_trainer TEXT,
+  assigned_at   TEXT,
+  assigned_by   INTEGER REFERENCES staff(id),
+  tim_note      TEXT,
+  seen_at       TEXT,                            -- when the trainer first opened it
+  notes         TEXT,
+  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS pt_leads_status ON pt_leads(pt_status);
+
+-- Phones that have turned on Core notifications (one row per phone).
+CREATE TABLE IF NOT EXISTS push_subs (
+  id         INTEGER PRIMARY KEY,
+  staff_id   INTEGER NOT NULL REFERENCES staff(id),
+  endpoint   TEXT NOT NULL UNIQUE,
+  p256dh     TEXT NOT NULL,
+  auth       TEXT NOT NULL,
+  ua         TEXT,
+  fails      INTEGER NOT NULL DEFAULT 0,
+  last_ok    TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 -- Collections: current members and former members with money owing.
 CREATE TABLE IF NOT EXISTS collections_cases (
   id             INTEGER PRIMARY KEY,

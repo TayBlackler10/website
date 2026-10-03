@@ -116,39 +116,14 @@ export function makeHub2(L) {
                   AND NOT EXISTS (SELECT 1 FROM memberships ms JOIN plans p ON p.id = ms.plan_id AND p.family = 'trial'
                                   WHERE ms.member_id = leads.member_id AND ms.status = 'current')`),
     ]);
-    try { res.pt = await syncPtLeads(env); } catch (e) { res.pt = String(e.message || e); }
     return res;
-  }
-
-  const PT_SCRIPT_DEFAULT = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec";
-  async function syncPtLeads(env) {
-    const r = await fetch((env.PT_SCRIPT || PT_SCRIPT_DEFAULT) + "?action=list" + (env.PT_ADMIN_KEY ? "&key=" + encodeURIComponent(env.PT_ADMIN_KEY) : ""), { redirect: "follow" });
-    const d = await r.json();
-    const list = (d.leads || []).filter(l => l.name || l.phone || l.email);
-    const staff = await all(env, "SELECT id, name FROM staff WHERE active = 1");
-    const findStaff = n => { n = String(n || "").toLowerCase().trim(); if (!n) return null; const s = staff.find(x => x.name.toLowerCase().split(" ")[0] === n.split(" ")[0]); return s ? s.id : null; };
-    const stmts = [];
-    for (const l of list.slice(-400)) {
-      const at = l.receivedAt ? nzDateTime(new Date(l.receivedAt)) : nzDateTime(new Date());
-      const trainer = findStaff(l.trainer);
-      const notes = [l.reasonForJoining, l.trainingStyle && "Style: " + l.trainingStyle, l.preferredTime && "Best time: " + l.preferredTime,
-                     l.trainerPreference && "Wants: " + l.trainerPreference].filter(Boolean).join(". ").slice(0, 400) || null;
-      const stage = /join|signed|client/i.test(l.status || "") ? "joined" : /lost|no/i.test(l.status || "") ? "lost" : trainer ? "contacted" : "new";
-      stmts.push(env.DB.prepare(`INSERT INTO leads(name, email, mobile, kind, source, campaign, stage, assigned_to, notes, created_at)
-                                 SELECT ?, ?, ?, 'free_pt', 'PT lead form', ?, ?, ?, ?, ?
-                                 WHERE NOT EXISTS (SELECT 1 FROM leads WHERE kind = 'free_pt' AND created_at = ? AND coalesce(name,'') = ?)`)
-        .bind(String(l.name || "").slice(0, 120) || null, (l.email || "").toLowerCase() || null, normMobile(l.phone || "") || null, l.source || null,
-              stage, trainer, notes, at, at, String(l.name || "").slice(0, 120)));
-    }
-    for (let i = 0; i < stmts.length; i += 100) await env.DB.batch(stmts.slice(i, i + 100));
-    return list.length;
   }
 
   const KIND_LABEL = { trial: "5 Days for $5 and trials", prospect: "GymMaster prospects", free_pt: "Free PT", unfinished_signup: "Unfinished online sign-ups",
                        bring_a_mate: "Bring a Mate", website_form: "Website enquiries", meta_form: "Meta forms", walk_in: "Walk ins", app_upgrade: "App upgrades" };
   async function leadStats(env, who, can) {
     if (!can.members) return { error: "No access" };
-    const own = can.members === "own" ? " AND assigned_to = " + (+who.id) : "";
+    const own = (can.members === "own" ? " AND assigned_to = " + (+who.id) : "") + " AND kind <> 'free_pt'";
     const since = addDays(todayNz(), -30);
     const by = await all(env, `SELECT kind, count(*) n, sum(stage = 'joined') joined, sum(stage IN ('contacted','trial','joined','lost')) touched,
                                  sum(stage = 'new') waiting FROM leads WHERE created_at >= ?${own} GROUP BY kind ORDER BY n DESC`, since);

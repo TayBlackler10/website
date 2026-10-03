@@ -27,6 +27,9 @@ export const SCHEMA = [
 "CREATE INDEX IF NOT EXISTS billing_items_member ON billing_items(member_id, debit_date);",
 "CREATE TABLE IF NOT EXISTS billing_events (\n  id         INTEGER PRIMARY KEY,\n  member_id  INTEGER REFERENCES members(id),\n  kind       TEXT NOT NULL,    \n  detail     TEXT,\n  staff_id   INTEGER REFERENCES staff(id),\n  ezidebit   TEXT,             \n  at         TEXT NOT NULL DEFAULT (datetime('now'))\n);",
 "CREATE INDEX IF NOT EXISTS billing_events_member ON billing_events(member_id, at);",
+"CREATE TABLE IF NOT EXISTS pt_leads (\n  lead_id       INTEGER PRIMARY KEY REFERENCES leads(id) ON DELETE CASCADE,\n  sheet_id      TEXT UNIQUE,                    \n  reason        TEXT,\n  wants         TEXT,                           \n  style         TEXT,\n  best_time     TEXT,\n  injuries      TEXT,\n  pt_status     TEXT NOT NULL DEFAULT 'new',    \n  sheet_trainer TEXT,\n  assigned_at   TEXT,\n  assigned_by   INTEGER REFERENCES staff(id),\n  tim_note      TEXT,\n  seen_at       TEXT,                           \n  notes         TEXT,\n  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE INDEX IF NOT EXISTS pt_leads_status ON pt_leads(pt_status);",
+"CREATE TABLE IF NOT EXISTS push_subs (\n  id         INTEGER PRIMARY KEY,\n  staff_id   INTEGER NOT NULL REFERENCES staff(id),\n  endpoint   TEXT NOT NULL UNIQUE,\n  p256dh     TEXT NOT NULL,\n  auth       TEXT NOT NULL,\n  ua         TEXT,\n  fails      INTEGER NOT NULL DEFAULT 0,\n  last_ok    TEXT,\n  created_at TEXT NOT NULL DEFAULT (datetime('now'))\n);",
 "CREATE TABLE IF NOT EXISTS collections_cases (\n  id             INTEGER PRIMARY KEY,\n  member_id      INTEGER NOT NULL REFERENCES members(id),\n  opened_on      TEXT NOT NULL,\n  amount_owed    REAL NOT NULL,\n  is_former      INTEGER NOT NULL DEFAULT 0,\n  status         TEXT NOT NULL DEFAULT 'open', \n  settle_offer   REAL,                         \n  referred_on    TEXT,                         \n  closed_on      TEXT\n);",
 "CREATE TABLE IF NOT EXISTS balance_checks (\n  member_id   INTEGER PRIMARY KEY REFERENCES members(id),\n  owing       REAL NOT NULL DEFAULT 0,\n  next_bill   TEXT,\n  no_billing  INTEGER NOT NULL DEFAULT 0, \n  checked_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
 "CREATE TABLE IF NOT EXISTS finance_months (\n  month         TEXT PRIMARY KEY,          \n  income        REAL,\n  cost_of_sales REAL,\n  expenses      REAL,\n  net           REAL,\n  lines         TEXT,                      \n  source        TEXT,\n  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))\n);",
@@ -75,4 +78,4 @@ export const SCHEMA = [
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "5c37a96da878";
+export const SCHEMA_VERSION = "9706e33cb374";
