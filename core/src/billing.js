@@ -44,7 +44,10 @@ export function makeBilling(L) {
     const rows = await all(env, "SELECT key, value FROM settings WHERE key LIKE 'bill_%' OR key = 'block_at_balance'");
     const v = Object.fromEntries(rows.map(r => [r.key, r.value]));
     return { lead_days: +(v.bill_lead_days ?? 2), failed_fee: +(v.bill_failed_fee ?? 0), retry_days: +(v.bill_retry_days ?? 3),
-             max_retries: +(v.bill_max_retries ?? 2), block_at: +(v.block_at_balance ?? 250) };
+             max_retries: +(v.bill_max_retries ?? 2), block_at: +(v.block_at_balance ?? 250),
+             // What billing costs M2 (owners fill these in from Ezidebit's and GymMaster's actual quotes).
+             debit_fee: +(v.bill_debit_fee ?? 0.99), dishonour_fee: +(v.bill_dishonour_fee ?? 0), gm_cost: +(v.bill_gm_cost ?? 793.5), gm_doors_cost: v.bill_gm_doors_cost != null ? +v.bill_gm_doors_cost : null,
+             fee_confirmed: v.bill_fee_confirmed === "1" };
   }
 
   function mode(env) {
@@ -266,6 +269,20 @@ export function makeBilling(L) {
                     { t: "Pilot: 20 members moved from GymMaster to the Core", done: counts.core >= 20 && M.kind === "live" },
                     { t: "Everyone moved, GymMaster billing turned off", done: counts.gymmaster === 0 && counts.core > 0 },
                   ] };
+    // What moving billing would cost: debits a month from the real schedule, at the fee per debit.
+    if (can.business) {
+      const debits28 = list.reduce((a, d) => a + d.n, 0), perMonth = debits28 * (365 / 12) / 28;
+      const byFreq = {}; for (const m of people) { const s = schedule(m, today); if (s.state === "active" && s.freq) byFreq[s.freq] = (byFreq[s.freq] || 0) + 1; }
+      const weeklyPayers = byFreq.weekly || 0, savedIfFortnightly = weeklyPayers * (52 / 12) / 2;
+      const failRate = (await one(env, `SELECT count(*) n FROM gm_failed WHERE billing_date >= ?`, addDays(today, -30))).n / Math.max(1, perMonth);
+      const fees = perMonth * R.debit_fee + perMonth * failRate * R.dishonour_fee;
+      const fn = (perMonth - savedIfFortnightly);
+      out.cost = { debits_month: Math.round(perMonth), by_freq: byFreq, fail_rate: Math.round(failRate * 1000) / 10,
+        fees_month: r2(fees), per_member: r2(fees / Math.max(1, counts.members)),
+        fortnightly: { debits_month: Math.round(fn), fees_month: r2(fn * R.debit_fee + fn * failRate * R.dishonour_fee) },
+        gm_now: R.gm_cost, gm_doors: R.gm_doors_cost, fee_confirmed: R.fee_confirmed, debit_fee: R.debit_fee, dishonour_fee: R.dishonour_fee,
+        after: R.gm_doors_cost != null ? r2(fees + R.gm_doors_cost) : null };
+    }
     if (can.business) out.money = { weekly: r2(weekly), next7: r2(list.slice(0, 7).reduce((a, d) => a + d.total, 0)), next28: r2(list.reduce((a, d) => a + d.total, 0)),
                                      failed_sum: r2(failed.reduce((a, f) => a + f.amount, 0)) };
     return out;
@@ -460,7 +477,8 @@ export function makeBilling(L) {
 
   async function saveRules(env, who, can, b) {
     if (!can.settings) return { ok: false, error: "Owners only" };
-    const ok = { bill_lead_days: [1, 7], bill_failed_fee: [0, 50], bill_retry_days: [1, 14], bill_max_retries: [0, 5] };
+    const ok = { bill_lead_days: [1, 7], bill_failed_fee: [0, 50], bill_retry_days: [1, 14], bill_max_retries: [0, 5],
+                 bill_debit_fee: [0, 5], bill_dishonour_fee: [0, 50], bill_gm_cost: [0, 5000], bill_gm_doors_cost: [0, 5000], bill_fee_confirmed: [0, 1] };
     const stmts = [];
     for (const [k, [lo, hi]] of Object.entries(ok)) {
       if (b[k] === undefined || b[k] === "") continue;
