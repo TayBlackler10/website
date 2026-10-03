@@ -446,6 +446,9 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 </div>
 <section class="card dark" style="margin-bottom:18px"><div class="tiles" id="clsTiles"></div></section>
 <section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="clsTitle">This week</h2><span class="muted" id="clsCount"></span><span style="margin-left:auto" class="legend2" id="clsLegend"></span></div><div id="clsNote2"></div><div style="overflow-x:auto"><div id="clsWeek"><div class="muted">Loading...</div></div></div></section>
+<section class="card" style="margin-top:18px" id="ttCard"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Weekly timetable</h2><button class="btn line sm" id="ttAdd" hidden>Add a class</button></div>
+<p class="muted" style="margin:0 0 10px">The Core's own timetable, copied from GymMaster. The owners and Bekka can change it here. While GymMaster still runs bookings, make the same change in GymMaster too; anything that doesn't match shows below.</p>
+<div id="ttForm"></div><div id="ttBody"><div class="muted">Loading...</div></div></section>
 <div class="row2" style="margin-top:18px;grid-template-columns:minmax(0,1fr)">
 <section class="card" id="clsPanel"><h2>Pick a class</h2><p class="muted" style="margin:0">See who's booked with their photos, and book people in or cancel them. Members who owe $250 or more can't be booked until it's paid.</p></section>
 </div>
@@ -752,7 +755,7 @@ function show(v){
  if(v==="reports")loadReport();
  if(v==="staff")loadStaff();
  if(v==="settings")loadSettings();
- if(v==="classes"){loadClasses(CLS.week);loadClassStats()}
+ if(v==="classes"){loadClasses(CLS.week);loadClassStats();loadTT()}
  if(v==="roster")loadRoster(RO.week);
  if(v==="collections")loadCol();
  if(v==="billing")loadBill();
@@ -2224,4 +2227,30 @@ function loadMorning(){get("/api/morning").then(function(d){if(d.error)return;va
   (d.today_classes.length?'<div style="margin-top:12px"><b>Classes today</b><div class="list">'+d.today_classes.map(function(c){return '<div class="lrow"><span>'+esc(String(c.start||"").slice(0,5))+' '+esc(c.name)+'</span><span class="muted" style="font-size:13px">'+c.booked+' of '+c.max+(c.waitlist?", "+c.waitlist+" waiting":"")+'</span></div>'}).join("")+'</div></div>':"")+'</div></div>';
  if(d.app_requests)h+='<p class="muted" style="margin-top:10px">'+d.app_requests+' request'+(d.app_requests>1?"s":"")+' from the app waiting. <a href="#" data-go="app">See them</a></p>';
  el.innerHTML=h})}
+
+/* ---------- weekly timetable (owned by the Core) ---------- */
+var TTD=null;
+function loadTT(){get("/api/timetable").then(function(d){if(d.error){$("#ttBody").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}TTD=d;$("#ttAdd").hidden=!d.can_edit;drawTT()})}
+function drawTT(){var d=TTD,order=[1,2,3,4,5,6,0],h="";
+ order.forEach(function(w){var L=d.classes.filter(function(c){return c.weekday===w&&c.active});if(!L.length)return;
+  h+='<div style="margin-top:10px"><b>'+d.days[w]+'</b><div class="list">'+L.map(function(c){return '<div class="lrow"'+(d.can_edit?' data-tt="'+c.id+'" style="cursor:pointer"':"")+'><span>'+esc(c.start)+' to '+esc(c.end_time||"")+' <b>'+esc(c.name)+'</b></span><span class="muted" style="font-size:13px">'+esc(c.coach_name||"No coach")+', cap '+c.cap+'</span></div>'}).join("")+'</div></div>'});
+ var off=d.classes.filter(function(c){return !c.active});
+ if(off.length)h+='<details style="margin-top:12px"><summary class="muted">Off the timetable ('+off.length+')</summary><div class="list">'+off.map(function(c){return '<div class="lrow"'+(d.can_edit?' data-tt="'+c.id+'" style="cursor:pointer"':"")+'><span>'+d.days[c.weekday]+' '+esc(c.start)+' '+esc(c.name)+'</span><span></span></div>'}).join("")+'</div></details>';
+ h+=d.diffs.length?'<div class="warnbox" style="margin-top:14px"><b>Different in GymMaster</b><ul style="margin:6px 0 0 18px">'+d.diffs.map(function(x){return '<li>'+esc(x.what)+'</li>'}).join("")+'</ul></div>':'<div class="ok" style="margin-top:14px">GymMaster\'s next two weeks match this timetable.</div>';
+ if(d.log.length)h+='<details style="margin-top:12px"><summary class="muted">Changes</summary><div class="list">'+d.log.map(function(l){return '<div class="lrow"><span>'+esc(l.what)+'</span><span class="muted" style="font-size:13px">'+esc(l.staff||"Core")+', '+fmtWhen(l.at)+'</span></div>'}).join("")+'</div></details>';
+ $("#ttBody").innerHTML=h||'<div class="muted">No classes yet.</div>'}
+function ttEdit(c){c=c||{weekday:1,start:"",end_time:"",name:"",coach_id:"",cap:20,active:1};
+ $("#ttForm").innerHTML='<div class="card" style="background:var(--paper);margin-bottom:12px"><h3 style="margin:0 0 8px">'+(c.id?"Change "+esc(c.name):"Add a class")+'</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">'+
+  '<label class="fld">Day<select id="ttDay">'+[1,2,3,4,5,6,0].map(function(w){return '<option value="'+w+'"'+(w===c.weekday?" selected":"")+'>'+TTD.days[w]+'</option>'}).join("")+'</select></label>'+
+  '<label class="fld">Starts<input id="ttStart" type="time" value="'+esc(c.start)+'"></label><label class="fld">Ends<input id="ttEnd" type="time" value="'+esc(c.end_time||"")+'"></label>'+
+  '<label class="fld">Class<input id="ttName" value="'+esc(c.name)+'" placeholder="HYROX Strength"></label>'+
+  '<label class="fld">Coach<select id="ttCoach"><option value="">No coach</option>'+TTD.coaches.map(function(s){return '<option value="'+s.id+'"'+(s.id===c.coach_id?" selected":"")+'>'+esc(s.name)+'</option>'}).join("")+'</select></label>'+
+  '<label class="fld">Cap<input id="ttCap" inputmode="numeric" value="'+c.cap+'"></label></div>'+
+  (c.id?'<label class="chk" style="margin-top:8px"><input type="checkbox" id="ttActive"'+(c.active?" checked":"")+'> On the timetable</label>':"")+
+  '<div style="display:flex;gap:8px;margin-top:10px"><button class="btn dark" id="ttSave">Save</button><button class="btn line" id="ttCancel">Cancel</button></div><div id="ttMsg"></div></div>';
+ $("#ttCancel").onclick=function(){$("#ttForm").innerHTML=""};
+ $("#ttSave").onclick=function(){post("/api/timetable",{id:c.id,weekday:+$("#ttDay").value,start:$("#ttStart").value,end:$("#ttEnd").value,name:$("#ttName").value,coach_id:$("#ttCoach").value,cap:$("#ttCap").value,active:c.id?$("#ttActive").checked:true}).then(function(r){if(!r.ok){$("#ttMsg").innerHTML='<div class="err">'+esc(r.error)+'</div>';return}$("#ttForm").innerHTML="";loadTT()})};
+ $("#ttForm").scrollIntoView({behavior:"smooth",block:"nearest"})}
+$("#ttAdd").addEventListener("click",function(){ttEdit(null)});
+$("#ttBody").addEventListener("click",function(e){var r=e.target.closest("[data-tt]");if(!r||!TTD)return;ttEdit(TTD.classes.find(function(c){return c.id===+r.dataset.tt}))});
 </script></body></html>`;

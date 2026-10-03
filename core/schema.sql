@@ -799,3 +799,21 @@ CREATE TABLE IF NOT EXISTS class_attendance (
 CREATE INDEX IF NOT EXISTS class_attendance_member ON class_attendance(member_id, day);
 CREATE TABLE IF NOT EXISTS class_closed (class_id TEXT PRIMARY KEY, day TEXT, by_name TEXT, at TEXT NOT NULL DEFAULT (datetime('now')));
 CREATE TABLE IF NOT EXISTS class_attendance_log (id INTEGER PRIMARY KEY, class_id TEXT, day TEXT, start TEXT, name TEXT, member_id INTEGER, what TEXT, by_name TEXT, at TEXT NOT NULL DEFAULT (datetime('now')));
+-- The weekly class timetable, owned by the Core (copied from GymMaster once, then edited here).
+CREATE TABLE IF NOT EXISTS class_templates (
+  id          INTEGER PRIMARY KEY,
+  weekday     INTEGER NOT NULL,         -- 0 Sunday to 6 Saturday
+  start       TEXT NOT NULL,            -- 05:30
+  end_time    TEXT,
+  name        TEXT NOT NULL,
+  coach_id    INTEGER REFERENCES staff(id),
+  coach_name  TEXT,
+  cap         INTEGER NOT NULL DEFAULT 20,
+  gm_classid  INTEGER,
+  active      INTEGER NOT NULL DEFAULT 1,
+  notes       TEXT,
+  updated_by  INTEGER,
+  updated_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (weekday, start, name)
+);
+CREATE TABLE IF NOT EXISTS timetable_changes (id INTEGER PRIMARY KEY, staff_id INTEGER, what TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')));
