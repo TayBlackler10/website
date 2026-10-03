@@ -96,6 +96,9 @@ export function makeApp(L) {
       else core = !!s && await servedByCore(env, s.m).catch(() => false);
       if (a === "door" && core && !(await doorNo(env, body.door))) core = false;
     }
+    if (a.startsWith("coach_")) {
+      core = !!s && (await setting(env, "app_coach", "google")) === "core" && !!env.GM_STAFF_KEY;
+    }
     let out = null, by = "google";
     if (core) {
       try { out = await native(env, a, body, s); if (out) by = "core"; }
@@ -137,6 +140,7 @@ export function makeApp(L) {
     if (a === "cancel") return cancel(env, s, b);
     if (a === "request") return request(env, s, b);
     if (a === "door") return door(env, s, b);
+    if (a.startsWith("coach_")) return coach(env, s, a, b);
     if (a === "account") return account(env, s);
     if (a === "hold_request") return holdRequest(env, s, b);
     if (a === "cancel_request") return cancelRequest(env, s, b);
@@ -285,6 +289,174 @@ export function makeApp(L) {
   }
 
 
+
+  /* ---------- Coach mode on the Core ----------
+     Classes and who's booked come from GymMaster (while it runs the timetable). Check-ins, no-shows,
+     walk-ins and closing a class are recorded in the Core (class_attendance), which becomes the record
+     when GymMaster stops. Front gate scans tick people in automatically (visits copy every 15 minutes). */
+  const CLASS_CAP = 20, GATE_BEFORE_MIN = 120, CHECKIN_FROM_MIN = 60, NOSHOW_AFTER_MIN = 10;
+  const norm = x => String(x || "").toLowerCase().replace(/[^a-z]/g, "");
+  function nzMs(day, hhmm) {
+    const m = String(hhmm || "").match(/(\d{1,2}):(\d{2})/); if (!m || !day) return null;
+    const guess = Date.parse(String(day).slice(0, 10) + "T" + m[1].padStart(2, "0") + ":" + m[2] + ":00Z");
+    const nzOfGuess = Date.parse(nzDateTime(new Date(guess)).replace(" ", "T") + "Z");
+    return guess - (nzOfGuess - guess);
+  }
+  const coachCache = new Map();   // class id -> class info, per worker instance
+  async function schedule(env, week) {
+    const r = await gm(env, "get", "/portal/api/v1/booking/classes/schedule", { api_key: env.GM_API_KEY, week });
+    return Array.isArray(r && r.result) ? r.result : [];
+  }
+  function clsOf(x, me) {
+    const c = { id: x.id, name: String(x.classname || x.bookingname || "").trim(), day: String(x.arrival || "").slice(0, 10),
+      start: String(x.starttime || "").slice(0, 5), end: String(x.endtime || "").slice(0, 5),
+      coach: String(x.staffname || "").replace(/\s+/g, " ").trim(), max: +x.max_students || 0, num: +x.num_students || 0, wait: +x.waitlist_count || 0 };
+    c.startMs = nzMs(c.day, c.start); c.endMs = nzMs(c.day, c.end) || (c.startMs ? c.startMs + 3600e3 : null);
+    c.cap = c.max ? Math.min(c.max, CLASS_CAP) : CLASS_CAP; if (c.max > CLASS_CAP) c.cap = c.max;   // big Saturday classes keep their own cap
+    c.mine = !!me && norm(c.coach) === norm(me);
+    coachCache.set(String(c.id), c);
+    return c;
+  }
+  async function classInfo(env, id) {
+    if (coachCache.has(String(id))) return coachCache.get(String(id));
+    const t = todayNz();
+    for (const w of [t, nzDay(Date.now() - 6 * 864e5), nzDay(Date.now() + 7 * 864e5)]) for (const x of await schedule(env, w)) clsOf(x, null);
+    return coachCache.get(String(id)) || null;
+  }
+  async function coachOf(env, s) {
+    const m = await one(env, "SELECT email FROM members WHERE id = ?", s.m);
+    return one(env, "SELECT id, name, role FROM staff WHERE active = 1 AND role IN ('owner', 'manager', 'coach', 'trainer') AND (member_id = ? OR lower(email) = lower(?))", s.m, (m && m.email) || "-");
+  }
+  function readAtt(a) {
+    const mid = +(a.memberid ?? a.member_id ?? a.memberID ?? 0) || null;
+    const name = a.fullname || a.name || a.membername || [a.firstname, a.surname].filter(Boolean).join(" ") || "Member";
+    const st = String(a.status || a.resulttext || "");
+    const wait = a.waitlist === true || a.is_waitlist === true || /wait/i.test(st);
+    const cancelled = /cancel/i.test(st) || a.is_cancelled === true;
+    return { bid: String(a.bookingid ?? a.booking_id ?? a.bid ?? a.id ?? mid), mid, name: String(name).trim(), wait, cancelled,
+             ms: a.membershipname || a.booking_name || a.membership || "" };
+  }
+  async function roster(env, id, me, opts = {}) {
+    const c = await classInfo(env, id);
+    if (!c) return { ok: false, message: "Couldn't find that class. Pull down to refresh." };
+    const r = await gm(env, "get", "/portal/api/v2/booking/classes/" + encodeURIComponent(id) + "/attendees", { api_key: env.GM_STAFF_KEY });
+    if (!r || !Array.isArray(r.result)) return { ok: false, message: "GymMaster didn't send the class list." + (r && r.error ? " " + r.error : "") };
+    const list = r.result.map(readAtt).filter(p => !p.cancelled);
+    const marks = new Map((await all(env, "SELECT member_id, status, via, walkin, at FROM class_attendance WHERE class_id = ?", String(id))).map(x => [x.member_id, x]));
+    // Walk-ins added here who GymMaster hasn't listed yet still show.
+    for (const [mid, mk] of marks) if (mk.walkin && !list.some(p => p.mid === mid)) {
+      const m = await one(env, "SELECT first_name, last_name FROM members WHERE id = ?", mid);
+      list.push({ bid: "w" + mid, mid, name: m ? [m.first_name, m.last_name].filter(Boolean).join(" ") : "Member " + mid, wait: false, ms: "" });
+    }
+    const ids = list.map(p => p.mid).filter(Boolean);
+    const info = new Map();
+    if (ids.length) for (const x of await all(env, `SELECT m.id, m.first_name, m.last_name, (SELECT p.gm_type_name FROM memberships ms JOIN plans p ON p.id = ms.plan_id WHERE ms.member_id = m.id AND ms.status = 'current' ORDER BY ms.start_date DESC LIMIT 1) plan
+                                                    FROM members m WHERE m.id IN (${ids.map(() => "?").join(",")})`, ...ids)) info.set(x.id, x);
+    // Front gate: first scan today in the window from 2 hours before the start to the end.
+    const gate = new Map();
+    if (ids.length && c.startMs) {
+      const from = nzDateTime(new Date(c.startMs - GATE_BEFORE_MIN * 60000)), to = nzDateTime(new Date(c.endMs || c.startMs + 3600e3));
+      for (const v of await all(env, `SELECT member_id, min(at) at FROM visits WHERE at >= ? AND at <= ? AND member_id IN (${ids.map(() => "?").join(",")}) GROUP BY member_id`, from, to, ...ids)) gate.set(v.member_id, v.at);
+    }
+    const now = Date.now(), canIn = !c.startMs || now >= c.startMs - CHECKIN_FROM_MIN * 60000;
+    const t12 = at => { const [h, mi] = String(at).slice(11, 16).split(":").map(Number); return (h % 12 || 12) + ":" + String(mi).padStart(2, "0") + (h < 12 ? "am" : "pm"); };
+    const people = [];
+    for (const p of list.filter(p => !p.wait)) {
+      const x = info.get(p.mid), mk = marks.get(p.mid), g = gate.get(p.mid);
+      let status = mk ? mk.status : "booked", auto = mk && mk.via === "gate";
+      if (g && canIn && !opts.noAuto && status !== "in" && !(mk && mk.via === "coach" && status === "booked")) {
+        status = "in"; auto = true;
+        await mark(env, id, c, p.mid, p.bid, "in", "Gate", "gate", 0, "Checked in at the gate " + t12(g));
+      }
+      people.push({ bid: p.bid, mid: p.mid, name: x ? [x.first_name, x.last_name].filter(Boolean).join(" ") : p.name, photo: "", ms: (x && x.plan) || p.ms || "",
+        status, gate: g ? t12(g) : "", auto: !!auto, walkin: !!(mk && mk.walkin) });
+    }
+    const wait = list.filter(p => p.wait).map((p, i) => ({ wid: p.bid, mid: p.mid, name: p.name, photo: "", pos: i + 1 }));
+    const closed = !!(await one(env, "SELECT 1 FROM class_closed WHERE class_id = ?", String(id)));
+    return { ok: true, cls: { ...c, closed }, people, wait, cancelled: 0, taken: people.filter(p => p.status !== "noshow").length, now, canIn,
+             note: "Ticks are saved in the M2 Core. Anyone still booked " + NOSHOW_AFTER_MIN + " minutes after the start becomes a no-show." };
+  }
+  async function mark(env, id, c, mid, bid, status, byName, via, walkin, what) {
+    await run(env, `INSERT INTO class_attendance(class_id, day, start, name, member_id, booking_id, status, via, walkin, by_name, at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      ON CONFLICT(class_id, member_id) DO UPDATE SET status = excluded.status, via = excluded.via, by_name = excluded.by_name, at = excluded.at, walkin = max(class_attendance.walkin, excluded.walkin)`,
+      String(id), c.day, c.start, c.name, mid, String(bid || ""), status, via, walkin ? 1 : 0, byName);
+    await run(env, "INSERT INTO class_attendance_log(class_id, day, start, name, member_id, what, by_name) VALUES (?, ?, ?, ?, ?, ?, ?)", String(id), c.day, c.start, c.name, mid, what, byName);
+  }
+  async function coach(env, s, a, b) {
+    const me = await coachOf(env, s);
+    if (!me) return { ok: false, notcoach: true, message: "Coach mode is only for M2 coaches." };
+    const first = me.name.split(" ")[0];
+    if (a === "coach_me") return { ok: true, name: me.name, first, ready: true };
+    if (await tooMany(env, "coach:" + s.m, 120, 60)) return { ok: false, message: "Easy, give it a few seconds." };
+    if (a === "coach_classes") {
+      const t = todayNz(), last = nzDay(Date.now() + 6 * 864e5), seen = new Set(), out = [];
+      for (const w of [t, nzDay(Date.now() + 7 * 864e5)]) for (const x of await schedule(env, w)) {
+        const c = clsOf(x, me.name); if (seen.has(c.id) || c.day < t || c.day > last) continue; seen.add(c.id); out.push(c);
+      }
+      const closed = new Set((await all(env, "SELECT class_id FROM class_closed WHERE day >= ?", t)).map(x => x.class_id));
+      out.forEach(c => { c.closed = closed.has(String(c.id)); });
+      out.sort((x, y) => (x.startMs || 0) - (y.startMs || 0));
+      return { ok: true, now: Date.now(), classes: out, coach: me.name, first };
+    }
+    const id = String(b.id || "").replace(/[^0-9]/g, "");
+    if (!id) return { ok: false, message: "Pick a class." };
+    const c = await classInfo(env, id);
+    if (!c) return { ok: false, message: "Couldn't find that class. Pull down to refresh." };
+    if (a === "coach_roster") return roster(env, id, me);
+    if (a === "coach_checkin" || a === "coach_noshow") {
+      const mid = +b.mid; if (!mid) return { ok: false, message: "That person isn't matched to a member." };
+      const undo = !!b.undo, st = a === "coach_checkin" ? (undo ? "booked" : "in") : (undo ? "booked" : "noshow");
+      const words = { in: "Checked in", booked: a === "coach_checkin" ? "Check-in undone" : "No-show cleared", noshow: "No-show" };
+      await mark(env, id, c, mid, b.bid, st, me.name, "coach", 0, words[st]);
+      return roster(env, id, me, { noAuto: true });
+    }
+    if (a === "coach_find") {
+      const q = String(b.q || "").trim(); if (q.length < 2) return { ok: true, members: [] };
+      const like = "%" + q.toLowerCase() + "%";
+      const rows = await all(env, `SELECT m.id, m.first_name, m.last_name, (SELECT p.gm_type_name FROM memberships ms JOIN plans p ON p.id = ms.plan_id WHERE ms.member_id = m.id AND ms.status = 'current' ORDER BY ms.start_date DESC LIMIT 1) plan
+        FROM members m WHERE m.status = 'active' AND (lower(m.first_name || ' ' || coalesce(m.last_name, '')) LIKE ? OR CAST(m.id AS TEXT) = ?) ORDER BY m.first_name LIMIT 15`, like, q);
+      return { ok: true, members: rows.map(r => ({ mid: r.id, name: [r.first_name, r.last_name].filter(Boolean).join(" "), photo: "", ms: r.plan || "" })) };
+    }
+    if (a === "coach_add") {
+      const mid = +b.mid; if (!mid) return { ok: false, message: "Pick someone." };
+      const ro = await roster(env, id, me, { noAuto: true }); if (!ro.ok) return ro;
+      if (ro.people.some(p => p.mid === mid && p.status !== "noshow")) return { ok: false, message: (b.name || "They") + " are already in this class." };
+      if (ro.taken >= ro.cls.cap) return { ok: false, full: true, message: "Class is full at " + ro.cls.cap + ". They can join the waitlist or book the next class." };
+      const owes = await one(env, "SELECT balance_owing FROM billing_accounts WHERE member_id = ? AND balance_owing >= ?", mid, +(await setting(env, "block_at_balance", "250")));
+      if (owes) return { ok: false, message: "They owe money, so send them to reception first." };
+      const tok = await memberToken(env, mid);
+      if (!tok) return { ok: false, message: "Couldn't reach GymMaster. Try again." };
+      const r = await gm(env, "post", "/portal/api/v2/booking/classes", { api_key: env.GM_STAFF_KEY, token: tok, bookings: [{ bookingparentid: +id }] }, "json");
+      if (!r || r.error) return { ok: false, message: r && r.error ? "GymMaster said: " + r.error + ". Send them to reception." : "Couldn't reach GymMaster. Try again." };
+      await mark(env, id, c, mid, "", ro.canIn ? "in" : "booked", me.name, "coach", 1, "Walk-in added" + (ro.canIn ? " and checked in" : ""));
+      return roster(env, id, me, { noAuto: true });
+    }
+    if (a === "coach_close") {
+      const ro = await roster(env, id, me); if (!ro.ok) return ro;
+      let n = 0;
+      for (const p of ro.people) if (p.status === "booked" && p.mid) { await mark(env, id, c, p.mid, p.bid, "noshow", me.name, "coach", 0, "No-show (class closed)"); n++; }
+      await run(env, "INSERT OR IGNORE INTO class_closed(class_id, day, by_name) VALUES (?, ?, ?)", id, c.day, me.name);
+      return { ...(await roster(env, id, me, { noAuto: true })), marked: n };
+    }
+    return { ok: false, message: "Unknown request." };
+  }
+  // Every 15 minutes: classes that started 10+ minutes ago and aren't closed get their no-shows marked.
+  async function autoClose(env) {
+    if ((await setting(env, "app_coach", "google")) !== "core") return { skipped: true };
+    const now = Date.now(), t = todayNz(), done = [];
+    for (const x of await schedule(env, t)) {
+      const c = clsOf(x, null);
+      if (c.day !== t || !c.startMs || now < c.startMs + NOSHOW_AFTER_MIN * 60000 || now > c.startMs + 4 * 3600e3) continue;
+      if (await one(env, "SELECT 1 FROM class_closed WHERE class_id = ?", String(c.id))) continue;
+      const ro = await roster(env, c.id, null); if (!ro.ok) continue;
+      let n = 0;
+      for (const p of ro.people) if (p.status === "booked" && p.mid) { await mark(env, c.id, c, p.mid, p.bid, "noshow", "Auto", "auto", 0, "No-show (auto)"); n++; }
+      await run(env, "INSERT OR IGNORE INTO class_closed(class_id, day, by_name) VALUES (?, ?, 'Auto')", String(c.id), c.day);
+      done.push(c.name + " " + c.start + ": " + n);
+    }
+    return { done };
+  }
+
   /* ---------- the member's own membership: what they owe, next payment, holds and cancelling ---------- */
   const HOLD_WHY = ["Travel", "Injury or illness", "Work", "Money is tight", "Other"];
   const CANCEL_WHY = ["Moving away", "Cost", "Not using it enough", "Injury or illness", "Joined another gym", "Other"];
@@ -385,6 +557,8 @@ export function makeApp(L) {
     return {
       mode: await setting(env, "app_mode", "off"),
       secret_check: await setting(env, "app_secret_check", ""),
+      coach: await setting(env, "app_coach", "google"),
+      coach_log: await all(env, "SELECT l.at, l.day, l.start, l.name, l.member_id, l.what, l.by_name, m.first_name, m.last_name FROM class_attendance_log l LEFT JOIN members m ON m.id = l.member_id ORDER BY l.id DESC LIMIT 30"),
       ready: { secret: !!env.APP_SESSION_SECRET, staff_key: !!env.GM_STAFF_KEY, member_key: !!env.GM_API_KEY },
       doors, door_field: await setting(env, "app_door_field", "doorid"), doors_seen: await setting(env, "app_doors_seen", ""),
       users: { ever: (await one(env, "SELECT count(*) n FROM members WHERE app_installed = 1")).n,
@@ -408,6 +582,7 @@ export function makeApp(L) {
       if (v && !/^\d{1,6}$/.test(v)) return { ok: false, error: "Door numbers are whole numbers from GymMaster, like 1." };
       await setSetting(env, "app_door_" + k, v);
     }
+    if (b.coach !== undefined) { if (!["google", "core"].includes(b.coach)) return { ok: false, error: "Pick where Coach mode runs." }; await setSetting(env, "app_coach", b.coach); }
     if (b.door_field !== undefined) await setSetting(env, "app_door_field", /^[a-z_]{2,20}$/.test(b.door_field) ? b.door_field : "doorid");
     await run(env, "INSERT INTO activity(staff_id, kind, detail) VALUES (?, 'settings', ?)", who.id, "M2 App settings changed" + (b.mode ? ": served by the Core for " + ({ off: "nobody", staff: "staff only", all: "everyone" })[b.mode] : ""));
     return { ok: true };
@@ -435,5 +610,5 @@ export function makeApp(L) {
     return (await me(env, { m: id })) || { error: "That member isn't in the Core yet." };
   }
 
-  return { handle, overview, save, doneRequest, preview, test, _sign: sign, _verify: verify };
+  return { handle, overview, save, doneRequest, preview, test, autoClose, _sign: sign, _verify: verify };
 }

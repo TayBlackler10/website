@@ -235,6 +235,7 @@ export default {
         const v = b.lap ? await H2.sweepVisits(env, b.lap) : 0;
         const p = env.GM_REPORT_KEY ? await H2.pullVisits(env).catch(e => ({ error: String(e) })) : null;
         console.log("pt", JSON.stringify(await PT.sync(env)));
+        console.log("coach", JSON.stringify(await APP.autoClose(env).catch(e => String(e))));
         // Once an hour: new and changed members, every membership's dates, then the automations
         // (each person gets each email once a day at most, so running hourly only makes them prompt).
         const nz = nzDateTime(new Date()), hr = +nz.slice(11, 13);

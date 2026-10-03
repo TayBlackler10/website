@@ -781,3 +781,21 @@ CREATE TABLE IF NOT EXISTS app_doors (
 CREATE TABLE IF NOT EXISTS app_log (id INTEGER PRIMARY KEY, at TEXT NOT NULL DEFAULT (datetime('now')), member_id INTEGER, action TEXT, via TEXT, ok INTEGER, signin INTEGER, note TEXT, ms INTEGER);
 -- Core's Passport visit count against GymMaster's, month by month, before the Core reports visits itself.
 CREATE TABLE IF NOT EXISTS passport_checks (month TEXT PRIMARY KEY, core INTEGER, gm INTEGER, fp INTEGER, members INTEGER, same INTEGER, diff_count INTEGER, diffs TEXT, checked_at TEXT);
+-- Coach mode on the Core: who came to each class (the record once GymMaster stops), closed classes, and a running log.
+CREATE TABLE IF NOT EXISTS class_attendance (
+  class_id   TEXT NOT NULL,
+  day        TEXT,
+  start      TEXT,
+  name       TEXT,
+  member_id  INTEGER NOT NULL,
+  booking_id TEXT,
+  status     TEXT NOT NULL,          -- booked, in, noshow
+  via        TEXT,                   -- coach, gate, auto
+  walkin     INTEGER NOT NULL DEFAULT 0,
+  by_name    TEXT,
+  at         TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (class_id, member_id)
+);
+CREATE INDEX IF NOT EXISTS class_attendance_member ON class_attendance(member_id, day);
+CREATE TABLE IF NOT EXISTS class_closed (class_id TEXT PRIMARY KEY, day TEXT, by_name TEXT, at TEXT NOT NULL DEFAULT (datetime('now')));
+CREATE TABLE IF NOT EXISTS class_attendance_log (id INTEGER PRIMARY KEY, class_id TEXT, day TEXT, start TEXT, name TEXT, member_id INTEGER, what TEXT, by_name TEXT, at TEXT NOT NULL DEFAULT (datetime('now')));

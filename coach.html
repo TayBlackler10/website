@@ -139,7 +139,7 @@ body.embed .foot{padding-bottom:12px}
 <div class="toast" id="toast"></div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbwjnvxCFtmmERRtMVV6lXZBuuaOJxjkAikKKawqTXYJLFsS00v1LNIPb86q3ROPtROn/exec';
+const API='https://m2-join.taylor-3e5.workers.dev/app'; // M2 Core (passes Coach mode to the Google service until it's switched to the Core)
 const DEMO=/[?&]demo\b/.test(location.search),EMBED=/[?&]embed\b/.test(location.search)&&window.parent!==window;
 const $=id=>document.getElementById(id);
 const LOGO=$('ttl').innerHTML;
@@ -250,7 +250,7 @@ function drawRoster(){
  ${ns.length?`<div class="sh"><span class="eb">No-shows · ${ns.length}</span></div><div class="list">${ns.map(row).join('')}</div>`:''}
  ${!P.length?'<div class="empty">Nobody booked yet.</div>':''}
  ${r.wait&&r.wait.length?`<div class="sh"><span class="eb">Waitlist · ${r.wait.length}</span></div><div class="list">${r.wait.map(w=>`<div class="p">${av(w)}<div class="x"><b>${esc(w.name)}</b><small>Number ${w.pos} on the waitlist</small></div></div>`).join('')}</div>`:''}
- <p class="muted" style="font-size:13px;margin-top:22px;line-height:1.5">Ticks go straight into GymMaster. Anyone still booked ${10} minutes after the start becomes a no-show automatically.</p>`;
+ <p class="muted" style="font-size:13px;margin-top:22px;line-height:1.5">${esc(r.note||'Ticks go straight into GymMaster. Anyone still booked 10 minutes after the start becomes a no-show automatically.')}</p>`;
  const f=$('foot');f.classList.remove('hide');
  f.innerHTML=`<button class="btn ${full?'b-dark':'b-lime'}" onclick="openWalkin()" ${full?'disabled':''}>${full?'Class full':'Add walk-in'}</button>${!c.closed&&started&&bk.length?`<button class="btn b-err" onclick="confirmClose()">Close class</button>`:''}`;
 }
@@ -272,7 +272,7 @@ function personMenu(bid){const p=findP(bid);if(!p)return;
  ${p.status==='noshow'?`<button class="btn b-dark" onclick="closeSheet();act('coach_noshow',findP('${p.bid}'),{undo:1})">Clear no-show</button>`:''}
  <button class="btn b-out" onclick="closeSheet()">Done</button>`)}
 function confirmClose(){const n=ST.ro.people.filter(p=>p.status==='booked').length;
- openSheet(`<span class="eb">Close class</span><h2>Mark ${n} as no-show${n===1?'':'s'}?</h2><p class="muted" style="margin-top:10px">Everyone not ticked in becomes a no-show in GymMaster. You can still fix a mistake after.</p>
+ openSheet(`<span class="eb">Close class</span><h2>Mark ${n} as no-show${n===1?'':'s'}?</h2><p class="muted" style="margin-top:10px">Everyone not ticked in becomes a no-show. You can still fix a mistake after.</p>
  <button class="btn b-err" onclick="closeClass()">Yes, close the class</button><button class="btn b-out" onclick="closeSheet()">Not yet</button>`)}
 async function closeClass(){closeSheet();toast('Closing the class');let r;try{r=await api({action:'coach_close',id:ST.cls})}catch(e){r=null}
  if(!r||!r.ok)return fail(r);ST.ro=r;drawRoster();toast(r.marked?r.marked+' marked as no-show':'Class closed')}
