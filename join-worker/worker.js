@@ -37,7 +37,7 @@ export default {
     const origin = req.headers.get("Origin") || "";
     const cors = corsHeaders(origin, env);
 
-    if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+    if (req.method === "OPTIONS" && url.pathname !== "/core-import") return new Response(null, { status: 204, headers: cors });
 
     try {
       if (url.pathname === "/memberships" && req.method === "GET") {
@@ -54,6 +54,15 @@ export default {
         const ip = req.headers.get("CF-Connecting-IP") || "?";
         if (limited(ip)) return out({ ok: false, error: "Too many attempts. Please wait a few minutes and try again." }, cors, 0, 429);
         return out(await signup(env, await req.json()), cors);
+      }
+      // One-time copy of GymMaster's email automations into the Core, sent from a signed-in
+      // GymMaster staff page. The Core checks a one-time code the owners create.
+      if (url.pathname === "/core-import" && env.CORE) {
+        const gm = { "Access-Control-Allow-Origin": "https://m2trainingclub.gymmasteronline.com", "Access-Control-Allow-Methods": "POST", "Access-Control-Allow-Headers": "Content-Type", "Vary": "Origin" };
+        if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: gm });
+        if (req.method !== "POST" || origin !== "https://m2trainingclub.gymmasteronline.com") return new Response("Not allowed", { status: 403, headers: gm });
+        const r = await env.CORE.fetch(new Request("https://m2-core/gm-import", { method: "POST", headers: { "Content-Type": "application/json" }, body: await req.text() }));
+        return new Response(await r.text(), { status: r.status, headers: { ...gm, "Content-Type": "application/json" } });
       }
       // Member-facing M2 Core pages, passed straight through to the Core.
       if ((url.pathname === "/unsubscribe" || url.pathname === "/billing-done") && env.CORE) {

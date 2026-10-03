@@ -324,6 +324,56 @@ CREATE TABLE IF NOT EXISTS email_unsubs (
   at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Copies of GymMaster's report data the automations run on.
+CREATE TABLE IF NOT EXISTS mship_seen (
+  member_id  INTEGER NOT NULL,
+  type_name  TEXT NOT NULL,
+  category   TEXT,
+  start_date TEXT NOT NULL DEFAULT '',
+  end_date   TEXT,
+  last_seen  TEXT,                -- last day it was current in GymMaster
+  PRIMARY KEY (member_id, type_name, start_date)
+);
+CREATE INDEX IF NOT EXISTS mship_seen_end ON mship_seen(end_date);
+CREATE TABLE IF NOT EXISTS gm_holds (
+  member_id INTEGER NOT NULL, starts TEXT, ends TEXT, reason TEXT,
+  PRIMARY KEY (member_id, starts)
+);
+CREATE TABLE IF NOT EXISTS gm_failed (
+  member_id INTEGER NOT NULL, billing_date TEXT, amount REAL, status TEXT, reason TEXT, first_seen TEXT,
+  PRIMARY KEY (member_id, billing_date, amount)
+);
+CREATE TABLE IF NOT EXISTS gm_cancels (
+  member_id INTEGER NOT NULL, type_name TEXT, cancel_date TEXT, reason TEXT, first_seen TEXT,
+  PRIMARY KEY (member_id, type_name, cancel_date)
+);
+-- The GymMaster automations and their emails, copied across so the Core can send the same ones.
+CREATE TABLE IF NOT EXISTS gm_tasks (
+  task_id     INTEGER PRIMARY KEY,
+  name        TEXT,
+  trigger     TEXT,
+  qty         INTEGER,
+  unit        TEXT,
+  sign        TEXT,                -- Before, After, Immediately
+  x           INTEGER,
+  types       TEXT,                -- JSON list of GymMaster membership type names, or ["All Memberships"]
+  template_id INTEGER,
+  recipient   TEXT,                -- member or staff
+  imported_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS gm_templates (
+  template_id INTEGER PRIMARY KEY,
+  name        TEXT,
+  subject     TEXT,
+  body        TEXT,                -- GymMaster's HTML with its {58:Member Firstname} style fields
+  imported_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+-- The designed HTML for an automation, when it came from GymMaster (else the simple editor is used).
+CREATE TABLE IF NOT EXISTS auto_html (
+  key  TEXT PRIMARY KEY,
+  html TEXT NOT NULL
+);
+
 -- Collections: current members and former members with money owing.
 CREATE TABLE IF NOT EXISTS collections_cases (
   id             INTEGER PRIMARY KEY,

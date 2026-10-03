@@ -26,6 +26,7 @@ import { makePush, SW_JS } from "./push.js";
 import { makePt } from "./pt.js";
 import { makeCatalog } from "./catalog.js";
 import { makeEmail } from "./email.js";
+import { makeGmSync } from "./gmsync.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
@@ -37,6 +38,7 @@ const P = makePush();
 const PT = makePt({ nzDateTime, normMobile, P });
 const C = makeCatalog({ gmLive });
 const EM = makeEmail({ nzDateTime });
+const GS = makeGmSync({ nzDateTime });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -60,6 +62,8 @@ export default {
       await ensureSchema(env);
       // Public: the unsubscribe link in members' emails (needs an Access bypass for this path).
       if (url.pathname === "/unsubscribe") return await EM.unsubscribe(env, url, req);
+      // Public (only reachable through m2-join): the one-time copy of GymMaster's automations.
+      if (url.pathname === "/gm-import" && req.method === "POST") return json(await EM.importGm(env, await req.json().catch(() => null)));
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -93,7 +97,10 @@ export default {
       if (url.pathname === "/api/plans") return json(await sellablePlans(env, can));
       if (url.pathname === "/api/emails") return json(await EM.overview(env, who, can));
       if (url.pathname === "/api/emails/run" && req.method === "POST" && can.settings) return json(await EM.daily(env));
-      const em = url.pathname.match(/^\/api\/emails\/([a-z_]+)(\/preview)?$/);
+      if (url.pathname === "/api/emails/import-token" && req.method === "POST") return json(await EM.importToken(env, can));
+      if (url.pathname === "/api/gm-sync" && req.method === "POST" && can.settings) return json({ memberships: await GS.memberships(env).catch(e => String(e)), events: await GS.events(env).catch(e => String(e)) });
+      const em = url.pathname.match(/^\/api\/emails\/([a-z0-9_]+)(\/preview|\/source)?$/);
+      if (em && em[2] === "/source") return json(await EM.source(env, can, em[1]));
       if (em && em[2]) return await EM.preview(env, who, can, em[1]);
       if (em && req.method === "POST") return json(await EM.save(env, who, can, em[1], await req.json()));
       if (url.pathname === "/api/catalog") return json(req.method === "POST" ? await C.save(env, who, can, await req.json()) : await C.list(env, who, can));
@@ -207,6 +214,14 @@ export default {
         const v = b.lap ? await H2.sweepVisits(env, b.lap) : 0;
         const p = env.GM_REPORT_KEY ? await H2.pullVisits(env).catch(e => ({ error: String(e) })) : null;
         console.log("pt", JSON.stringify(await PT.sync(env)));
+        // Once an hour: new and changed members, every membership's dates, then the automations
+        // (each person gets each email once a day at most, so running hourly only makes them prompt).
+        const nz = nzDateTime(new Date()), hr = +nz.slice(11, 13);
+        if (+nz.slice(14, 16) < 15) {
+          console.log("hourly members", JSON.stringify(await syncMembers(env).catch(e => String(e))));
+          if (env.GM_REPORT_KEY) console.log("hourly memberships", JSON.stringify(await GS.memberships(env).catch(e => String(e))));
+          if (hr >= 7 && hr <= 20) console.log("emails", JSON.stringify(await EM.daily(env).catch(e => String(e))));
+        }
         console.log("quarter", JSON.stringify({ done: b.done, failed: b.failed, visits: v, checkins: p }));
         return;
       }
@@ -216,6 +231,10 @@ export default {
       console.log("leads", JSON.stringify(await H2.rebuildLeads(env).catch(e => String(e))));
       if (env.XERO_CLIENT_ID) console.log("xero", JSON.stringify(await F.xeroSync(env, 2).catch(e => String(e))));
       if (env.WINDSOR_API_KEY) console.log("marketing", JSON.stringify(await F.marketingSync(env, 10).catch(e => String(e))));
+      if (env.GM_REPORT_KEY) {
+        console.log("gm memberships", JSON.stringify(await GS.memberships(env).catch(e => String(e))));
+        console.log("gm events", JSON.stringify(await GS.events(env).catch(e => String(e))));
+      }
       console.log("billing", JSON.stringify(await B.nightly(env).catch(e => String(e))));
       console.log("email goals", JSON.stringify(await EM.goals(env).catch(e => String(e))));
       if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));

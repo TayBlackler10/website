@@ -38,6 +38,14 @@ export const SCHEMA = [
 "CREATE UNIQUE INDEX IF NOT EXISTS email_log_once ON email_log(auto_key, member_id, day);",
 "CREATE INDEX IF NOT EXISTS email_log_member ON email_log(member_id, auto_key, at);",
 "CREATE TABLE IF NOT EXISTS email_unsubs (\n  email TEXT PRIMARY KEY,\n  at    TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS mship_seen (\n  member_id  INTEGER NOT NULL,\n  type_name  TEXT NOT NULL,\n  category   TEXT,\n  start_date TEXT NOT NULL DEFAULT '',\n  end_date   TEXT,\n  last_seen  TEXT,               \n  PRIMARY KEY (member_id, type_name, start_date)\n);",
+"CREATE INDEX IF NOT EXISTS mship_seen_end ON mship_seen(end_date);",
+"CREATE TABLE IF NOT EXISTS gm_holds (\n  member_id INTEGER NOT NULL, starts TEXT, ends TEXT, reason TEXT,\n  PRIMARY KEY (member_id, starts)\n);",
+"CREATE TABLE IF NOT EXISTS gm_failed (\n  member_id INTEGER NOT NULL, billing_date TEXT, amount REAL, status TEXT, reason TEXT, first_seen TEXT,\n  PRIMARY KEY (member_id, billing_date, amount)\n);",
+"CREATE TABLE IF NOT EXISTS gm_cancels (\n  member_id INTEGER NOT NULL, type_name TEXT, cancel_date TEXT, reason TEXT, first_seen TEXT,\n  PRIMARY KEY (member_id, type_name, cancel_date)\n);",
+"CREATE TABLE IF NOT EXISTS gm_tasks (\n  task_id     INTEGER PRIMARY KEY,\n  name        TEXT,\n  trigger     TEXT,\n  qty         INTEGER,\n  unit        TEXT,\n  sign        TEXT,               \n  x           INTEGER,\n  types       TEXT,               \n  template_id INTEGER,\n  recipient   TEXT,               \n  imported_at TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS gm_templates (\n  template_id INTEGER PRIMARY KEY,\n  name        TEXT,\n  subject     TEXT,\n  body        TEXT,               \n  imported_at TEXT NOT NULL DEFAULT (datetime('now'))\n);",
+"CREATE TABLE IF NOT EXISTS auto_html (\n  key  TEXT PRIMARY KEY,\n  html TEXT NOT NULL\n);",
 "CREATE TABLE IF NOT EXISTS collections_cases (\n  id             INTEGER PRIMARY KEY,\n  member_id      INTEGER NOT NULL REFERENCES members(id),\n  opened_on      TEXT NOT NULL,\n  amount_owed    REAL NOT NULL,\n  is_former      INTEGER NOT NULL DEFAULT 0,\n  status         TEXT NOT NULL DEFAULT 'open', \n  settle_offer   REAL,                         \n  referred_on    TEXT,                         \n  closed_on      TEXT\n);",
 "CREATE TABLE IF NOT EXISTS balance_checks (\n  member_id   INTEGER PRIMARY KEY REFERENCES members(id),\n  owing       REAL NOT NULL DEFAULT 0,\n  next_bill   TEXT,\n  no_billing  INTEGER NOT NULL DEFAULT 0, \n  checked_at  TEXT NOT NULL DEFAULT (datetime('now'))\n);",
 "CREATE TABLE IF NOT EXISTS finance_months (\n  month         TEXT PRIMARY KEY,          \n  income        REAL,\n  cost_of_sales REAL,\n  expenses      REAL,\n  net           REAL,\n  lines         TEXT,                      \n  source        TEXT,\n  updated_at    TEXT NOT NULL DEFAULT (datetime('now'))\n);",
@@ -86,4 +94,4 @@ export const SCHEMA = [
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "038c537b6b67";
+export const SCHEMA_VERSION = "c25326656a4f";
