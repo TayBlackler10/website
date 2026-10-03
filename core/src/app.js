@@ -102,17 +102,19 @@ export function makeApp(L) {
       catch (e) { console.log("app", a, String(e && e.stack || e)); out = null; }
     }
     if (!out) out = await forward(env, body);
-    if (ctx && ctx.waitUntil) ctx.waitUntil(note(env, a, s, out, by).catch(() => {}));
-    else await note(env, a, s, out, by).catch(() => {});
+    if (ctx && ctx.waitUntil) ctx.waitUntil(note(env, a, s, out, by, !!body.session).catch(() => {}));
+    else await note(env, a, s, out, by, !!body.session).catch(() => {});
     return out;
   }
 
   // Keep a light record: who uses the app, and which doors the old service has switched on.
-  async function note(env, a, s, out, by) {
+  async function note(env, a, s, out, by, hadSession) {
     const id = s ? s.m : (a === "login" && out && out.ok && out.session ? ((await verify(env, out.session)) || {}).m : null);
     if (id) await run(env, "UPDATE members SET app_installed = 1 WHERE id = ? AND coalesce(app_installed, 0) = 0", id);
     if (id && (a === "me" || a === "login")) await run(env, "INSERT INTO app_seen(member_id, day, via) VALUES (?, ?, ?) ON CONFLICT(member_id, day) DO UPDATE SET via = excluded.via", id, todayNz(), by);
     if (a === "me" && by === "google" && out && out.ok && out.doors) await setSetting(env, "app_doors_seen", JSON.stringify(out.doors));
+    // Proof the shared secret is right: the Google service accepted a session, and the Core could read it too.
+    if (by === "google" && hadSession && out && out.ok && !out.signin && env.APP_SESSION_SECRET) await setSetting(env, "app_secret_check", (s ? "match " : "nomatch ") + new Date().toISOString());
   }
 
   async function native(env, a, b, s) {
@@ -300,6 +302,7 @@ export function makeApp(L) {
     const week = nzDay(Date.now() - 6 * 864e5);
     return {
       mode: await setting(env, "app_mode", "off"),
+      secret_check: await setting(env, "app_secret_check", ""),
       ready: { secret: !!env.APP_SESSION_SECRET, staff_key: !!env.GM_STAFF_KEY, member_key: !!env.GM_API_KEY },
       doors, door_field: await setting(env, "app_door_field", "doorid"), doors_seen: await setting(env, "app_doors_seen", ""),
       users: { ever: (await one(env, "SELECT count(*) n FROM members WHERE app_installed = 1")).n,
@@ -315,6 +318,7 @@ export function makeApp(L) {
     if (b.mode !== undefined) {
       if (!["off", "staff", "all"].includes(b.mode)) return { ok: false, error: "Pick who the Core serves." };
       if (b.mode !== "off" && !env.APP_SESSION_SECRET) return { ok: false, error: "Add the APP_SESSION_SECRET secret in Cloudflare first (see the steps on this page)." };
+      if (b.mode !== "off" && /^nomatch/.test(await setting(env, "app_secret_check", ""))) return { ok: false, error: "APP_SESSION_SECRET doesn't match the Google script's SESSION_SECRET yet. Copy it again, open the app once, then switch on." };
       await setSetting(env, "app_mode", b.mode);
     }
     if (b.doors) for (const k of DOORS) if (b.doors[k] !== undefined) {
