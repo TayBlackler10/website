@@ -1456,7 +1456,7 @@ function qr(seed,dark='#0A0A0A',light='#fff'){const N=25;let r=hash(seed);const 
    m2-door-access.gs), which holds the API keys, checks the member session and location, then calls
    GymMaster's member kiosk check-in for that door. GymMaster applies the normal access rules and fires the relay.
    Leave DOOR_API empty to run in demo mode. */
-const M2_API=DEMO?'':'https://script.google.com/macros/s/AKfycbwjnvxCFtmmERRtMVV6lXZBuuaOJxjkAikKKawqTXYJLFsS00v1LNIPb86q3ROPtROn/exec'; // M2 App Service. Add ?demo to the page address to see the demo instead
+const M2_API=DEMO?'':'https://m2-join.taylor-3e5.workers.dev/app'; // M2 Core (passes anything it doesn't handle to the old Google M2 App Service). Add ?demo to the page address to see the demo instead
 const DOOR_API=M2_API;
 const GYM={lat:-36.8658602,lng:174.7642444,r:150}; // 8 Nugent St, Grafton. Doors only open within this many metres
 const DOORS=[
@@ -2193,7 +2193,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-03a';
+const APP_VER='2026-10-03b';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
