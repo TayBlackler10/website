@@ -228,6 +228,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="navlab" id="navAdminLab" hidden>Admin</div>
 <button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
 <button class="nav" data-go="import" id="navImport" hidden>Import from GymMaster</button>
+<button class="nav" data-go="app" id="navApp" hidden>M2 App</button>
 <button class="nav" data-go="settings" id="navSettings" hidden>Settings</button>
 </nav>
 <div class="me"><div class="av" id="meAv"></div><div><span id="meName"></span><small id="meRole"></small></div></div>
@@ -561,6 +562,20 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 </section>
 
 <!-- SETTINGS -->
+<!-- M2 APP -->
+<section data-view="app" hidden>
+<div class="eyebrow">The member app</div><h1>M2 App<span class="dot">.</span></h1>
+<p class="muted" style="max-width:720px">The app on members' phones now talks to the Core. The Core answers sign-in, their details, classes, bookings, doors and requests itself, and passes Strava and Coach mode to the old Google service. Start with staff only, check it on your own phone, then switch it on for everyone. You can switch back at any time and nobody gets signed out.</p>
+<div class="tiles" id="apTiles" style="margin:14px 0"></div>
+<div class="row2">
+<section class="card"><h2>Who the Core serves</h2><div id="apMode"></div><div id="apReady"></div></section>
+<section class="card"><h2>Doors</h2><p class="muted" style="font-size:14px">Door numbers from GymMaster. Leave a door blank and the old service keeps opening it.</p><div id="apDoors"></div></section>
+</div>
+<section class="card" style="margin-top:18px"><h2>Requests from the app</h2><p class="muted" style="font-size:14px">Delete my account, upgrade requests and feedback. Owners and the manager get a notification.</p><div style="overflow-x:auto" id="apReq"></div></section>
+<section class="card" style="margin-top:18px"><h2>Doors opened from the app</h2><div style="overflow-x:auto" id="apDoorLog"></div></section>
+<section class="card" style="margin-top:18px"><h2>See what a member sees</h2><div class="mtool"><input id="apPrevId" inputmode="numeric" placeholder="Member number" style="height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;width:180px"><button class="btn line" id="apPrevGo">Show</button></div><div id="apPrev"></div></section>
+</section>
+
 <section data-view="settings" hidden>
 <div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Settings<span class="dot">.</span></h1></div>
 <div class="row2">
@@ -736,6 +751,7 @@ function show(v){
  if(v==="ptleads")loadPt();
  if(v==="catalog")loadCat();
  if(v==="pos")loadPos();
+ if(v==="app")loadApp();
  if(v==="emails")loadEm();
  if(v==="mypt")loadMyPt();
  if(v==="money")loadMoney();
@@ -753,7 +769,7 @@ get("/api/me").then(function(me){
  $("#hello").innerHTML="Morning, "+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  var h=new Date().getHours();if(h>=12)$("#hello").innerHTML=(h<17?"Afternoon, ":"Evening, ")+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  if(me.can.members===true)$("#navFp").hidden=false;
- if(me.can.settings){$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
+ if(me.can.settings){$("#navApp").hidden=false;$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
  if(me.can.settings){$("#navPt").hidden=false;ptCount()}
  if(!me.can.settings){get("/api/pt/mine").then(function(d){var L=d.leads||[];if(L.length||["trainer","coach","manager"].indexOf(me.role)>=0){$("#navMyPt").hidden=false;var n=L.filter(function(l){return l.pt_status==="assigned"}).length;$("#ctMyPt").hidden=!n;$("#ctMyPt").textContent=n}})}
  if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false;$("#navEm").hidden=false}
@@ -2143,4 +2159,27 @@ function resetAdd(){
  $("#goal").value="";$("#source").value="";$("#gender").value="";$("#passport").checked=false;$("#fpid").value="";PHOTO=null;$("#aFace").innerHTML="?";$("#aPhotoBtn").textContent="Take photo";$("#aNoPhoto").checked=false;$("#fpWrap").hidden=true;$("#fpGm").hidden=true;$("#billCard").hidden=false;$("#billOpen").hidden=false;$("#agreed").checked=false;$("#billDone").checked=false;$("#mateWrap").hidden=false;
  $("#tagOk").innerHTML="";$("#mateSel").textContent="";$("#qr").hidden=true;$("#finErr").dataset.warned="";sel=null;mate=null;newId=null;if(PL)drawPlans();sizeSig();
 }
+
+/* ---------- M2 App ---------- */
+function loadApp(){
+ get("/api/app").then(function(d){if(d.error){$("#apMode").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  $("#apTiles").innerHTML=tile(d.users.ever,"Members who have used the app")+tile(d.users.week,"Used it this week")+tile(d.users.week_core,"Served by the Core this week")+tile(d.requests.filter(function(r){return !r.done_at}).length,"Requests to handle");
+  var M=[["off","Nobody yet","The old Google service answers everything, as before."],["staff","Staff only","Staff are served by the Core. Use this to test on your own phones."],["all","Everyone","Every member is served by the Core."]];
+  $("#apMode").innerHTML=M.map(function(m){return '<label style="display:flex;gap:10px;align-items:flex-start;margin:10px 0;cursor:pointer"><input type="radio" name="apm" value="'+m[0]+'"'+(d.mode===m[0]?" checked":"")+' style="margin-top:4px"> <span><b>'+m[1]+'</b><br><span class="muted" style="font-size:13px">'+m[2]+'</span></span></label>'}).join("")+'<div id="apModeMsg"></div>';
+  var R=d.ready,steps=[];
+  if(!R.secret)steps.push('<li>In the Google script <b>M2 APP Service</b>, open Project Settings, Script properties, and copy the value of <b>SESSION_SECRET</b>. In Cloudflare, Workers, <b>m2-core</b>, Settings, Variables and secrets, add a <b>Secret</b> called <b>APP_SESSION_SECRET</b> with that same value. Then members stay signed in whichever side answers.</li>');
+  if(!R.staff_key||!R.member_key)steps.push('<li>The GymMaster keys (GM_API_KEY and GM_STAFF_KEY) are missing on m2-core.</li>');
+  $("#apReady").innerHTML=steps.length?'<div class="warnbox" style="margin-top:10px"><b>One step before switching on</b><ol style="margin:8px 0 0 18px">'+steps.join("")+'</ol></div>':'<div class="ok" style="margin-top:10px">Ready. Keys and the shared session secret are in.</div>';
+  var N={front:"Front door",male:"Men's recovery",female:"Women's recovery",door4:"Fourth door"};
+  $("#apDoors").innerHTML=Object.keys(N).map(function(k){return '<label class="fld">'+N[k]+'<input data-apd="'+k+'" inputmode="numeric" value="'+esc(d.doors[k]||"")+'" placeholder="Old service opens it"></label>'}).join("")+'<button class="btn dark" id="apDoorSave">Save doors</button><div id="apDoorMsg"></div>';
+  $("#apReq").innerHTML=d.requests.length?table([["When",function(r){return fmtWhen(r.at)}],["Member",function(r){return '<a href="#" data-member="'+r.member_id+'">'+esc(nm(r))+'</a>'},0,1],["Request",function(r){return ({delete:"Delete my account",upgrade:"Upgrade",feedback:"Feedback"})[r.kind]||r.kind}],["Message","text"],["",function(r){return r.done_at?'<span class="muted">Done by '+esc(r.done_by||"")+'</span>':'<a href="#" data-apdone="'+r.id+'">Mark done</a>'},0,1]],d.requests):'<div class="muted">Nothing yet. Requests sent through the Core show here.</div>';
+  $("#apDoorLog").innerHTML=d.door_log.length?table([["When",function(r){return fmtWhen(r.at)}],["Member",function(r){return '<a href="#" data-member="'+r.member_id+'">'+esc(nm(r))+'</a>'},0,1],["Door","door"],["Opened",function(r){return r.opened?"Yes":"No"}],["Note","note"],["Metres away","metres",1]],d.door_log):'<div class="muted">No doors opened through the Core yet.</div>';
+ });
+}
+function fmtWhen(s){var d=new Date(String(s).replace(" ","T")+"Z");return d.toLocaleString("en-NZ",{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+$("#apMode").addEventListener("change",function(e){if(e.target.name!=="apm")return;post("/api/app",{mode:e.target.value}).then(function(r){if(!r.ok){$("#apModeMsg").innerHTML='<div class="err">'+esc(r.error)+'</div>';loadApp();return}$("#apModeMsg").innerHTML='<div class="ok">Saved.</div>'})});
+$("#apDoors").addEventListener("click",function(e){if(!e.target.closest("#apDoorSave"))return;var o={};document.querySelectorAll("[data-apd]").forEach(function(i){o[i.dataset.apd]=i.value});post("/api/app",{doors:o}).then(function(r){$("#apDoorMsg").innerHTML=r.ok?'<div class="ok">Saved.</div>':'<div class="err">'+esc(r.error)+'</div>'})});
+$("#apReq").addEventListener("click",function(e){var a=e.target.closest("[data-apdone]");if(!a)return;e.preventDefault();post("/api/app/request/"+a.dataset.apdone,{}).then(loadApp)});
+$("#apPrevGo").addEventListener("click",function(){var id=$("#apPrevId").value.replace(/\D/g,"");if(!id)return;get("/api/app/preview/"+id).then(function(d){if(d.error){$("#apPrev").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+ var m=d.member;$("#apPrev").innerHTML='<div class="tiles">'+tile(m.first+" "+m.last,"Name")+tile(d.tier||"none","App tier")+tile(m.totalvisits,"Visits")+tile(d.days.length,"Days in the last 400")+'</div><p class="muted" style="margin-top:8px">Memberships: '+esc(d.memberships.map(function(x){return x.name}).join(", ")||"none")+(d.pass?". Pass: "+esc(d.pass.name)+(d.pass.left!=null?", "+d.pass.left+" days left":""):"")+(m.staff?". Staff":"")+(m.coach?", coach":"")+'</p>'})});
 </script></body></html>`;

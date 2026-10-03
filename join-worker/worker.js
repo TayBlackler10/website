@@ -37,7 +37,7 @@ export default {
     const origin = req.headers.get("Origin") || "";
     const cors = corsHeaders(origin, env);
 
-    if (req.method === "OPTIONS" && url.pathname !== "/core-import") return new Response(null, { status: 204, headers: cors });
+    if (req.method === "OPTIONS" && url.pathname !== "/core-import" && url.pathname !== "/app") return new Response(null, { status: 204, headers: cors });
 
     try {
       if (url.pathname === "/memberships" && req.method === "GET") {
@@ -63,6 +63,15 @@ export default {
         if (req.method !== "POST" || origin !== "https://m2trainingclub.gymmasteronline.com") return new Response("Not allowed", { status: 403, headers: gm });
         const r = await env.CORE.fetch(new Request("https://m2-core/gm-import", { method: "POST", headers: { "Content-Type": "application/json" }, body: await req.text() }));
         return new Response(await r.text(), { status: r.status, headers: { ...gm, "Content-Type": "application/json" } });
+      }
+      // The M2 member app's backend. Members sign in with their own session, so any origin may call it
+      // (the app runs on m2club.co.nz and inside the phone app). Plain text body, so no preflight is needed.
+      if (url.pathname === "/app" && env.CORE) {
+        const ac = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST", "Access-Control-Allow-Headers": "Content-Type" };
+        if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: ac });
+        if (req.method !== "POST") return new Response(JSON.stringify({ ok: true, service: "M2 app" }), { headers: { ...ac, "Content-Type": "application/json" } });
+        const r = await env.CORE.fetch(new Request("https://m2-core/app-api", { method: "POST", headers: { "Content-Type": "application/json" }, body: await req.text() }));
+        return new Response(await r.text(), { status: r.status, headers: { ...ac, "Content-Type": "application/json", "Cache-Control": "no-store" } });
       }
       // Member-facing M2 Core pages, passed straight through to the Core.
       if ((url.pathname === "/unsubscribe" || url.pathname === "/billing-done") && env.CORE) {

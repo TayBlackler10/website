@@ -755,3 +755,26 @@ INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VAL
   ('failed_payment',     'Failed payment',        'paid',      7,  0),
   ('daily_to_perform',   'Daily to Perform',      'upgraded',  14, 0),
   ('no_show',            'Class no-show',         'attended',  14, 0);
+
+-- ---------- M2 member app, served by the Core ----------
+CREATE TABLE IF NOT EXISTS app_hits (k TEXT PRIMARY KEY, n INTEGER NOT NULL, until INTEGER NOT NULL);   -- sign-in and booking limits
+CREATE TABLE IF NOT EXISTS app_tokens (member_id INTEGER PRIMARY KEY, token TEXT NOT NULL, exp INTEGER NOT NULL);   -- short-lived GymMaster member tokens
+CREATE TABLE IF NOT EXISTS app_seen (member_id INTEGER NOT NULL, day TEXT NOT NULL, via TEXT, PRIMARY KEY (member_id, day));   -- who opened the app each day
+CREATE TABLE IF NOT EXISTS app_requests (
+  id         INTEGER PRIMARY KEY,
+  member_id  INTEGER REFERENCES members(id),
+  kind       TEXT NOT NULL,               -- delete, feedback, upgrade
+  text       TEXT,
+  at         TEXT NOT NULL DEFAULT (datetime('now')),
+  done_at    TEXT,
+  done_by    INTEGER REFERENCES staff(id)
+);
+CREATE TABLE IF NOT EXISTS app_doors (
+  id         INTEGER PRIMARY KEY,
+  member_id  INTEGER,
+  door       TEXT,
+  opened     INTEGER NOT NULL DEFAULT 0,
+  note       TEXT,
+  metres     INTEGER,
+  at         TEXT NOT NULL DEFAULT (datetime('now'))
+);

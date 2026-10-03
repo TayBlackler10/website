@@ -18,7 +18,7 @@ export function makePos(L) {
     n = n.toLowerCase();
     if (/key tag|casual|pool|spa|visit|pass/.test(n)) return "Entry and key tags";
     if (/hydrate|red ?bull|water|drink|electrolyte/.test(n) && !/protein water/.test(n)) return "Drinks";
-    if (/kyro|creatine|protein|pre ?workout|amino|burn|oxy|hyperload|whey|bcaa|supplement|nexus|ghost|bsc/.test(n)) return "Supplements";
+    if (/kyro|creatine|protein|pre ?workout|pre ?lift|redcon|rule ?1|big noise|amino|burn|oxy|hyperload|whey|bcaa|supplement|nexus|ghost|bsc/.test(n)) return "Supplements";
     if (/zip|jacket|hood|tee|shirt|singlet|uniform|cap|hat|sock/.test(n)) return "Clothing";
     if (/towel/.test(n)) return "Towels";
     if (/tanita|scan|session|massage/.test(n)) return "Services";

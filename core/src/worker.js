@@ -28,6 +28,7 @@ import { makeCatalog } from "./catalog.js";
 import { makeEmail } from "./email.js";
 import { makeGmSync } from "./gmsync.js";
 import { makePos } from "./pos.js";
+import { makeApp } from "./app.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
@@ -41,6 +42,7 @@ const C = makeCatalog({ gmLive });
 const EM = makeEmail({ nzDateTime });
 const GS = makeGmSync({ nzDateTime });
 const POS = makePos({ nzDateTime });
+const APP = makeApp({ nzDateTime, P });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -66,6 +68,8 @@ export default {
       if (url.pathname === "/unsubscribe") return await EM.unsubscribe(env, url, req);
       // Public (only reachable through m2-join): the one-time copy of GymMaster's automations.
       if (url.pathname === "/gm-import" && req.method === "POST") return json(await EM.importGm(env, await req.json().catch(() => null)));
+      // Public (only reachable through m2-join's /app): the M2 member app's backend.
+      if (url.pathname === "/app-api" && req.method === "POST") return json(await APP.handle(env, await req.json().catch(() => null), ctx));
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -105,6 +109,9 @@ export default {
       if (em && em[2] === "/source") return json(await EM.source(env, can, em[1]));
       if (em && em[2]) return await EM.preview(env, who, can, em[1]);
       if (em && req.method === "POST") return json(await EM.save(env, who, can, em[1], await req.json()));
+      if (url.pathname === "/api/app") return json(req.method === "POST" ? await APP.save(env, who, can, await req.json()) : await APP.overview(env, can));
+      const apr = url.pathname.match(/^\/api\/app\/(request|preview)\/(\d+)$/);
+      if (apr) return json(apr[1] === "request" && req.method === "POST" ? await APP.doneRequest(env, who, can, +apr[2]) : await APP.preview(env, can, +apr[2]));
       if (url.pathname === "/api/pos") return json(await POS.products(env, who, can));
       if (url.pathname === "/api/pos/product" && req.method === "POST") return json(await POS.saveProduct(env, who, can, await req.json()));
       if (url.pathname === "/api/pos/sale" && req.method === "POST") return json(await POS.sell(env, who, can, await req.json()));
