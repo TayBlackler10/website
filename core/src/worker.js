@@ -1147,8 +1147,8 @@ async function gmReportProbe(env, q) {
   for (const [name, key] of [["low", env.GM_API_KEY], ["high", env.GM_STAFF_KEY], ["report", env.GM_REPORT_KEY]]) {
     if (!key) { out[name] = "not set"; continue; }
     try {
-      const init = { headers: { "X-GM-API-KEY": key, "Content-Type": "application/json" } };
-      if (q.get("body")) { init.method = "POST"; init.body = q.get("body"); }
+      const init = { headers: { "X-GM-API-KEY": key, "Accept": "application/json" } };
+      if (q.get("body")) { init.method = "POST"; init.body = q.get("body"); init.headers["Content-Type"] = "application/json"; }
       const r = await fetch(env.GM_SITE + path, init);
       const t = await r.text();
       out[name] = { status: r.status, body: t.slice(0, +(q.get("n") || 1500)) };

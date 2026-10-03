@@ -254,8 +254,8 @@ export function makeHub2(L) {
 
   // Check-ins as they happen, from GymMaster's Report API visitor log (needs GM_REPORT_KEY).
   async function reportCall(env, path, body) {
-    const init = { headers: { "X-GM-API-KEY": env.GM_REPORT_KEY, "Content-Type": "application/json" } };
-    if (body) { init.method = "POST"; init.body = JSON.stringify(body); }
+    const init = { headers: { "X-GM-API-KEY": String(env.GM_REPORT_KEY).trim(), "Accept": "application/json" } };
+    if (body) { init.method = "POST"; init.body = JSON.stringify(body); init.headers["Content-Type"] = "application/json"; }
     const r = await fetch((env.GM_SITE || "https://m2trainingclub.gymmasteronline.com") + path, init);
     const t = await r.text();
     try { return JSON.parse(t); } catch { return { error: "Report API replied " + r.status }; }
