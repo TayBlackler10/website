@@ -94,8 +94,9 @@ export function makeJoin(L) {
     if (typeof b.photo === "string" && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(b.photo) && b.photo.length <= 600_000)
       await run(env, "INSERT INTO member_photos(member_id, jpeg) VALUES (?, ?) ON CONFLICT(member_id) DO UPDATE SET jpeg = excluded.jpeg, taken_at = datetime('now')", id, b.photo);
     else if (b.photo) notes.push("photo too big or not a JPEG, take one at reception");
-    if (b.agreed) await run(env, "INSERT INTO member_agreements(member_id, plan_name, signature, source) VALUES (?, ?, ?, ?)", id, clean(b.plan_name, 160),
-      typeof b.signature === "string" && /^data:image\/png;base64,/.test(b.signature) && b.signature.length <= 400_000 ? b.signature : null, "m2club.co.nz online sign-up");
+    if (b.agreed) await run(env, "INSERT INTO member_agreements(member_id, plan, body, signature) VALUES (?, ?, ?, ?)", id, clean(b.plan_name, 160),
+      "Agreed to the membership terms and signed online at m2club.co.nz/join.html",
+      typeof b.signature === "string" && /^data:image\/png;base64,/.test(b.signature) && b.signature.length <= 400_000 ? b.signature : null);
     if (email && b.password && String(b.password).length >= 6) {
       const h = await hashPassword(String(b.password));
       await run(env, "INSERT INTO member_logins(email, member_id, salt, hash) VALUES (?, ?, ?, ?) ON CONFLICT(email) DO UPDATE SET member_id = excluded.member_id, salt = excluded.salt, hash = excluded.hash, set_at = datetime('now')", email, id, h.salt, h.hash);

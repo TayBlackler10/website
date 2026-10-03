@@ -196,6 +196,18 @@ function stripScripts(html) {
 
 /* ---------------- signup ---------------- */
 
+
+// Send something to M2 Core's intake (service binding first, CORE_URL as a fallback). Never throws.
+async function core(env, body) {
+  if (!(env.CORE || env.CORE_URL) || !env.INTAKE_KEY) return { ok: false, error: "Core not connected" };
+  try {
+    const url = (env.CORE ? "https://m2-core" : env.CORE_URL.replace(/\/$/, "")) + "/api/intake";
+    const r = await (env.CORE ? env.CORE.fetch.bind(env.CORE) : fetch)(url, { method: "POST",
+      headers: { "Content-Type": "application/json", "X-M2-Key": env.INTAKE_KEY, "Origin": "https://m2club.co.nz" }, body: JSON.stringify(body) });
+    return await r.json().catch(() => ({ ok: false, error: "Core replied " + r.status }));
+  } catch (e) { return { ok: false, error: String(e && e.message || e) }; }
+}
+
 async function signup(env, b) {
   // Bot checks. Hidden field filled in, or the whole form done in under 8 seconds.
   // (Not called "company": Chrome autofills that with the person's employer.)
@@ -238,6 +250,20 @@ async function signup(env, b) {
   let m = ms.find(x => String(x.id) === f.membershiptypeid);
   if (!m && isPassport) m = { id: Number(f.membershiptypeid), name: "Fitness Passport", price: "$0.00", priceValue: 0, priceDescription: "", length: null };
   if (!m) return { ok: false, error: "That membership isn't available online any more. Please pick another." };
+
+  // M2 Core first: record them as an unfinished sign-up, so nobody is lost if GymMaster then fails.
+  const priceNum = Number(String(m.priceValue ?? "").replace(/[^0-9.]/g, "")) || 0;
+  const coreBase = { first: f.firstname, last: f.surname, email: f.email, mobile: f.phonecell, plan_name: m.name, plan_id: m.id, code: code || null,
+    source: clean(b.source) || "Online signup", campaign: clean(b.campaign || b.utm_campaign) };
+  const started = await core(env, { kind: "join_start", ...coreBase });
+
+  // When GymMaster has been switched off (JOIN_MODE = core), the Core is the only system.
+  if (env.JOIN_MODE === "core") {
+    const r = await core(env, { kind: "online_join", ...coreBase, lead_id: started.lead_id, price: priceNum, paid: m.priceValue > 0, dob: f.dob, gender: f.gender,
+      suburb: f.addresssuburb, fp_id: isPassport ? fpId : null, agreed: !!b.agreed, signature: b.signature, photo: b.photo, password: f.password });
+    if (!r.ok) return { ok: false, exists: !!r.exists, error: r.error || "Something went wrong. Please try again or pop in to reception." };
+    return { ok: true, memberid: r.member_id, paid: m.priceValue > 0, membership: m.name, code: code || null, passport: isPassport, fpSaved: isPassport, photoSaved: !!b.photo, warnings: [] };
+  }
 
   // Already in GymMaster?
   const ex = await gmGet(env, "/v2/member/exists", { email: f.email });
@@ -288,26 +314,15 @@ async function signup(env, b) {
     if (!pr.ok) warnings.push("photo: " + pr.log.join(" | "));
   }
 
-  // Fitness Passport ID: Passport pays M2 per visit on this number. GymMaster's online
-  // sign-up has no field for it, so hand it to M2 Core, which lists it on reception's
-  // Today screen until someone types it into GymMaster (Additional Details).
+  // Copy the new member into M2 Core straight away (same number as GymMaster): membership, lead source,
+  // photo, signed agreement, Passport ID and the "get bank details" job. The Passport ID can't go into
+  // GymMaster's online sign-up, so the Core lists it for reception to type in.
   let fpSaved = false;
-  if (isPassport && (env.CORE || env.CORE_URL) && env.INTAKE_KEY) {
-    try {
-      const intakeUrl = (env.CORE ? "https://m2-core" : env.CORE_URL.replace(/\/$/, "")) + "/api/intake";
-      const r = await (env.CORE ? env.CORE.fetch.bind(env.CORE) : fetch)(intakeUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-M2-Key": env.INTAKE_KEY, "Origin": "https://m2club.co.nz" },
-        body: JSON.stringify({
-          kind: "passport_join", gm_id: memberid, fp_id: fpId,
-          first: f.firstname, last: f.surname, email: f.email, mobile: f.phonecell, dob: f.dob,
-          source: clean(b.source) || "Online signup"
-        })
-      });
-      const j = await r.json().catch(() => ({}));
-      if (!j.ok) warnings.push("core: " + (j.error || r.status));
-    } catch (e) { warnings.push("core: " + String(e && e.message || e)); }
-  }
+  const cr = await core(env, { kind: "online_join", ...coreBase, gm_id: memberid, lead_id: started.lead_id, price: priceNum, paid: m.priceValue > 0, dob: f.dob, gender: f.gender,
+    suburb: f.addresssuburb, fp_id: isPassport ? fpId : null, agreed: !!b.agreed, signature: b.signature,
+    photo: typeof b.photo === "string" && /^data:image\/jpeg/.test(b.photo) ? b.photo : null, password: f.password });
+  if (!cr.ok) warnings.push("core: " + (cr.error || "no reply"));
+  else fpSaved = isPassport;
 
   // Tell the team: goes into the PT Leads sheet, which emails Tim
   if (env.PT_SCRIPT) {

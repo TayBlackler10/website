@@ -17,7 +17,7 @@ const DOORS = ["front", "male", "female", "door4"];
 const NATIVE = new Set(["login", "reset", "me", "classes", "book", "cancel", "warm", "request", "door", "account", "hold_request", "cancel_request"]);
 
 export function makeApp(L) {
-  const { nzDateTime, P } = L;
+  const { nzDateTime, P, checkPassword } = L;
   const todayNz = () => nzDateTime(new Date()).slice(0, 10);
   const nzDay = ms => nzDateTime(new Date(ms)).slice(0, 10);
   const all = (env, sql, ...a) => env.DB.prepare(sql).bind(...a).all().then(r => r.results || []);
@@ -151,9 +151,11 @@ export function makeApp(L) {
     if (!b.email || !b.password) return { ok: false, message: "Pop in your email and password." };
     if (await tooMany(env, "login:all", 300, 3600)) return { ok: false, message: "Sign-in is busy right now. Try again in a few minutes." };
     if (await tooMany(env, "login:" + String(b.email).toLowerCase(), 8, 600)) return { ok: false, message: "Too many tries. Give it 10 minutes, or see reception." };
-    const r = await gm(env, "post", "/portal/api/v1/login", { api_key: env.GM_API_KEY, email: b.email, password: b.password }, "form");
-    if (!r || !r.result || !r.result.token) return null; // let the old service answer, in case it's a key problem rather than the password
-    const id = +r.result.memberid;
+    const r = await gm(env, "post", "/portal/api/v1/login", { api_key: env.GM_API_KEY, email: b.email, password: b.password }, "form").catch(() => null);
+    let id = r && r.result && r.result.token ? +r.result.memberid : null;
+    // Members who joined in the Core (or once GymMaster is gone) sign in with the password they chose on the join page.
+    if (!id && checkPassword) id = await checkPassword(env, b.email, b.password).catch(() => null);
+    if (!id) return null; // let the old service answer, in case it's a key problem rather than the password
     if (!(await servedByCore(env, id))) return null; // staff-only test: everyone else signs in through the old service as before
     const m = await one(env, "SELECT gender, email FROM members WHERE id = ?", id);
     const st = await staffOf(env, id, m && m.email);

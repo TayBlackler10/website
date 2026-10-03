@@ -45,7 +45,7 @@ const C = makeCatalog({ gmLive });
 const EM = makeEmail({ nzDateTime });
 const GS = makeGmSync({ nzDateTime });
 const POS = makePos({ nzDateTime });
-const APP = makeApp({ nzDateTime, P });
+const APP = makeApp({ nzDateTime, P, checkPassword: (env, e, pw) => JOIN.checkPassword(env, e, pw) });
 const MORN = makeMorning({ nzDateTime, passportPay });
 const TT = makeTimetable({ nzDateTime });
 const JOIN = makeJoin({ nzDateTime, normMobile, classify: GS.classify, passportJoin: (env, b) => passportJoin(env, b), P });

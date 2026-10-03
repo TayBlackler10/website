@@ -63,7 +63,8 @@ export function makeGmSync(L) {
     if (newPlans.length) await env.DB.batch(newPlans.map(({ r, c }) => env.DB.prepare(`INSERT OR IGNORE INTO plans(gm_type_name, gm_category, family, frequency, flexi, paid_in_full, includes_classes, includes_recovery)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).bind(r["Membership Type Name"] || "", r["Membership Type Category Name"] || "", c.family, c.frequency, c.flexi, c.paid_in_full, c.includes_classes, c.includes_recovery)));
     const stmts = [
-      env.DB.prepare("DELETE FROM memberships WHERE status = 'current' AND plan_id IN (SELECT id FROM plans WHERE coalesce(gm_category,'') <> 'Sold in M2 Core')"),
+      // Members the Core created itself (number 1,000,000 and up) aren't in GymMaster, so their memberships stay.
+      env.DB.prepare("DELETE FROM memberships WHERE status = 'current' AND member_id < 1000000 AND plan_id IN (SELECT id FROM plans WHERE coalesce(gm_category,'') <> 'Sold in M2 Core')"),
     ];
     for (const r of rows) {
       const id = +r["Member ID"]; if (!id) continue;
