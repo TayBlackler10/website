@@ -125,7 +125,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .goal{height:12px;border-radius:6px;background:var(--ink2);overflow:hidden;margin-top:6px}.goal i{display:block;height:100%;background:var(--lime)}
 .goal i.mark{background:transparent}
 .line svg{width:100%;height:170px;display:block}
-.navlab{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E66;padding:14px 12px 4px}
+.navlab{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6E6E66;padding:16px 12px 4px}
 .tbl td.r,.tbl th.r{text-align:right;font-variant-numeric:tabular-nums}
 .wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
 .mcard{display:grid;grid-template-columns:116px minmax(0,1fr);background:#fff;border:0;border-radius:18px;overflow:hidden;text-align:left;cursor:pointer;padding:0;min-height:146px;color:inherit}
@@ -206,29 +206,34 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <img src="https://m2club.co.nz/assets/img/m2-logo-lime.png" alt="M2 Training Club">
 <nav aria-label="Main">
 <button class="nav on" data-go="today">Today<span class="ct" id="ctToday" hidden></span></button>
+<div class="navlab">Front desk</div>
+<button class="nav" data-go="members">Members</button>
 <button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
 <button class="nav" data-go="pos" id="navPos" hidden>Point of sale</button>
-<button class="nav" data-go="members">Members</button>
-<button class="nav" data-go="leads">Leads<span class="ct" id="ctLeads" hidden></span></button>
+<button class="nav" data-go="tag">Key tag lookup</button>
+<div class="navlab">Leads</div>
+<button class="nav" data-go="leads">Member leads<span class="ct" id="ctLeads" hidden></span></button>
 <button class="nav" data-go="ptleads" id="navPt" hidden>PT leads<span class="ct" id="ctPt" hidden></span></button>
 <button class="nav" data-go="mypt" id="navMyPt" hidden>My PT leads<span class="ct" id="ctMyPt" hidden></span></button>
+<div class="navlab">Classes and team</div>
 <button class="nav" data-go="classes">Classes</button>
 <button class="nav" data-go="roster">Roster</button>
-<button class="nav" data-go="tag">Key tag lookup</button>
+<div class="navlab">Memberships and billing</div>
 <button class="nav" data-go="catalog" id="navCat" hidden>Memberships and prices</button>
-<button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
-<button class="nav" data-go="collections" id="navCol" hidden>Money owed</button>
 <button class="nav" data-go="billing" id="navBill" hidden>Billing</button>
+<button class="nav" data-go="collections" id="navCol" hidden>Money owed</button>
+<button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
+<div class="navlab">Members' app and emails</div>
 <button class="nav" data-go="emails" id="navEm" hidden>Email automations</button>
-<button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
-<div class="navlab" id="navBizLab" hidden>The business</div>
+<button class="nav" data-go="app" id="navApp" hidden>M2 App</button>
+<div class="navlab">The business</div>
 <button class="nav" data-go="money" id="navMoney" hidden>Money</button>
 <button class="nav" data-go="growth" id="navGrowth" hidden>Growth</button>
 <button class="nav" data-go="marketing" id="navMkt" hidden>Marketing</button>
-<div class="navlab" id="navAdminLab" hidden>Admin</div>
+<button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
+<div class="navlab">Admin</div>
 <button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
 <button class="nav" data-go="import" id="navImport" hidden>Import from GymMaster</button>
-<button class="nav" data-go="app" id="navApp" hidden>M2 App</button>
 <button class="nav" data-go="settings" id="navSettings" hidden>Settings</button>
 </nav>
 <div class="me"><div class="av" id="meAv"></div><div><span id="meName"></span><small id="meRole"></small></div></div>
@@ -773,9 +778,9 @@ get("/api/me").then(function(me){
  if(me.can.settings){$("#navPt").hidden=false;ptCount()}
  if(!me.can.settings){get("/api/pt/mine").then(function(d){var L=d.leads||[];if(L.length||["trainer","coach","manager"].indexOf(me.role)>=0){$("#navMyPt").hidden=false;var n=L.filter(function(l){return l.pt_status==="assigned"}).length;$("#ctMyPt").hidden=!n;$("#ctMyPt").textContent=n}})}
  if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false;$("#navEm").hidden=false}
- if(me.can.business){$("#navBizLab").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
- if(me.can.settings)$("#navAdminLab").hidden=false;
+ if(me.can.business){$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
  if(me.can.add){$("#navPos").hidden=false;$("#navCat").hidden=false;$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
+ navLabels();
  var hv=(location.hash||"").slice(1);var hb=hv&&document.querySelector('.nav[data-go="'+hv.replace(/[^a-z]/g,"")+'"]');
  if(hb&&!hb.hidden)show(hb.dataset.go);else{loadToday();if(me.can.business)loadBiz()}
  if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(function(){});
@@ -2183,4 +2188,6 @@ $("#apDoors").addEventListener("click",function(e){if(!e.target.closest("#apDoor
 $("#apReq").addEventListener("click",function(e){var a=e.target.closest("[data-apdone]");if(!a)return;e.preventDefault();post("/api/app/request/"+a.dataset.apdone,{}).then(loadApp)});
 $("#apPrevGo").addEventListener("click",function(){var id=$("#apPrevId").value.replace(/\D/g,"");if(!id)return;get("/api/app/preview/"+id).then(function(d){if(d.error){$("#apPrev").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
  var m=d.member;$("#apPrev").innerHTML='<div class="tiles">'+tile(m.first+" "+m.last,"Name")+tile(d.tier||"none","App tier")+tile(m.totalvisits,"Visits")+tile(d.days.length,"Days in the last 400")+'</div><p class="muted" style="margin-top:8px">Memberships: '+esc(d.memberships.map(function(x){return x.name}).join(", ")||"none")+(d.pass?". Pass: "+esc(d.pass.name)+(d.pass.left!=null?", "+d.pass.left+" days left":""):"")+(m.staff?". Staff":"")+(m.coach?", coach":"")+'</p>'})});
+
+function navLabels(){document.querySelectorAll("nav .navlab").forEach(function(l){var n=l.nextElementSibling,any=false;while(n&&!n.classList.contains("navlab")){if(!n.hidden)any=true;n=n.nextElementSibling}l.hidden=!any})}
 </script></body></html>`;
