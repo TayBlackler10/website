@@ -267,7 +267,7 @@ export function makeHub2(L) {
     if (!rid) {
       const l = await reportCall(env, "/api/v2/report/standard_report/list?predefined_only=true");
       const list = [].concat(l.result || l.reports || []);
-      const hit = list.find(x => /visitor/i.test(x.name || x.title || "") && !/passport|summary|count/i.test(x.name || x.title || "")) || list.find(x => /visit/i.test(x.name || x.title || ""));
+      const hit = list.find(x => /^visitor log$/i.test(x.name || "")) || list.find(x => /^visitor log/i.test(x.name || "") && !/trainer|passport/i.test(x.name || ""));
       if (!hit) return { ok: false, error: "No visitor log report found", reports: list.slice(0, 40).map(x => x.name || x.title) };
       rid = String(hit.id ?? hit.report_id);
       await setSetting(env, "visit_report_id", rid);
@@ -277,12 +277,17 @@ export function makeHub2(L) {
     if (!rows.length) return { ok: true, rows: 0, error: d.error || null };
     const keys = Object.keys(rows[0]);
     const pick = re => keys.find(k => re.test(k));
-    const kId = pick(/member.?id|^id$|member.?no|^#$/i), kTime = pick(/time|arriv|check.?in|date/i), kDoor = pick(/door|gate|location|resource|area|kiosk/i);
-    if (!kId || !kTime) return { ok: false, error: "Couldn't read the visitor log columns", columns: keys };
+    const kId = pick(/^member id$/i) || pick(/member.?id|^id$/i), kSec = pick(/^sorted_visit time$/i), kTime = pick(/^visit time$/i) || pick(/time/i),
+          kDoor = pick(/entry access/i) || pick(/door|gate|access/i);
+    if (!kId || !(kSec || kTime)) return { ok: false, error: "Couldn't read the visitor log columns", columns: keys };
     const stmts = [];
     for (const r of rows) {
       const mid = parseInt(String(r[kId]).replace(/\D/g, ""), 10); if (!mid) continue;
-      let at = String(r[kTime] || "").trim(); if (/^\d{1,2}:\d{2}/.test(at)) at = day + " " + at; at = at.replace("T", " ").slice(0, 19);
+      if (kDoor && /denied/i.test(String(r[kDoor] || ""))) continue;   // only people who actually got in
+      let at;
+      if (kSec && Number.isFinite(+r[kSec])) { const t = +r[kSec]; at = day + " " + [Math.floor(t / 3600), Math.floor(t % 3600 / 60), t % 60].map(n => String(n).padStart(2, "0")).join(":"); }
+      else { const m = String(r[kTime] || "").match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?/i); if (!m) continue;
+             let h = +m[1]; if (m[4]) h = h % 12 + (/pm/i.test(m[4]) ? 12 : 0); at = day + " " + String(h).padStart(2, "0") + ":" + m[2] + ":" + (m[3] || "00"); }
       stmts.push(env.DB.prepare(`INSERT INTO visits(member_id, at, door, via, gm_visit_id) SELECT ?, ?, ?, 'gymmaster', ? WHERE EXISTS (SELECT 1 FROM members WHERE id = ?)
                                  ON CONFLICT(gm_visit_id) DO NOTHING`).bind(mid, at, kDoor ? String(r[kDoor] || "").slice(0, 40) : null, mid + "|" + at, mid));
     }

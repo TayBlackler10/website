@@ -155,6 +155,7 @@ export default {
       await applyBlockRule(env);
       console.log("snapshot", JSON.stringify(await H.takeSnapshot(env)));
       console.log("leads", JSON.stringify(await H2.rebuildLeads(env).catch(e => String(e))));
+      if (env.GM_REPORT_KEY) console.log("yesterday", JSON.stringify(await H2.pullVisits(env, nzDateTime(new Date(Date.now() - 86400_000)).slice(0, 10)).catch(e => String(e))));
       try {
         const t = nzDateTime(new Date()).slice(0, 10);
         for (const wk of [t, nzDateTime(new Date(Date.now() + 7 * 86400_000)).slice(0, 10)]) {
