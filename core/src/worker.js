@@ -174,6 +174,7 @@ export default {
         }
         const bk = url.pathname.match(/^\/api\/backups\/(m2-core-[\d-]+\.json\.gz)$/);
         if (bk) return await F.backupGet(env, bk[1]);
+        if (url.pathname === "/api/backups/verify" && req.method === "POST") return json(await F.backupVerify(env).catch(e => ({ ok: false, error: String(e.message || e) })));
       }
       if (url.pathname === "/api/billing") return json(await B.overview(env, who, can));
       if (url.pathname === "/api/billing/day") return json(await B.day(env, who, can, url.searchParams.get("date")));
@@ -276,6 +277,7 @@ export default {
       console.log("billing", JSON.stringify(await B.nightly(env).catch(e => String(e))));
       console.log("email goals", JSON.stringify(await EM.goals(env).catch(e => String(e))));
       if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));
+      if (env.BACKUPS && nzDateTime(new Date()).slice(8, 10) === "01") console.log("backup drill", JSON.stringify(await F.backupVerify(env).then(r => ({ ok: r.ok, problems: r.problems })).catch(e => String(e))));
       // Passport: check last month's count against GymMaster on the 2nd to the 5th (visits from the 1st have all landed by then).
       { const d = +nzDateTime(new Date()).slice(8, 10);
         if (env.GM_REPORT_KEY && d >= 2 && d <= 5) { const lm = nzDateTime(new Date(Date.now() - d * 86400_000)).slice(0, 7);

@@ -175,6 +175,44 @@ export function makeFeeds(L) {
     return new Response(o.body, { headers: { "Content-Type": "application/gzip", "Content-Disposition": `attachment; filename="${key}"` } });
   }
 
+  // Restore drill: open the newest backup, check every table and column still fits today's database,
+  // compare row counts, and actually restore three key tables into scratch copies, count them, then drop them.
+  async function backupVerify(env) {
+    if (!env.BACKUPS) return { ok: false, error: "No backup bucket bound" };
+    const list = await backupList(env);
+    if (!list.length) return { ok: false, error: "No backups yet" };
+    const key = list[0].key, o = await env.BACKUPS.get(key);
+    const text = await new Response(o.body.pipeThrough(new DecompressionStream("gzip"))).text();
+    const data = JSON.parse(text);
+    const tables = [], problems = [];
+    for (const [t, rows] of Object.entries(data.tables)) {
+      const cols = (await env.DB.prepare(`PRAGMA table_info("${t}")`).all()).results.map(c => c.name);
+      if (!cols.length) { problems.push(t + ": table no longer exists"); continue; }
+      const missing = rows.length ? Object.keys(rows[0]).filter(c => !cols.includes(c)) : [];
+      if (missing.length) problems.push(t + ": columns no longer exist: " + missing.join(", "));
+      const live = (await env.DB.prepare(`SELECT count(*) n FROM "${t}"`).first()).n;
+      tables.push({ table: t, backup: rows.length, live });
+    }
+    const drill = [];
+    for (const t of ["members", "memberships", "staff"]) {
+      const rows = data.tables[t] || [], tmp = "restore_test_" + t;
+      await env.DB.prepare(`DROP TABLE IF EXISTS "${tmp}"`).run();
+      await env.DB.prepare(`CREATE TABLE "${tmp}" AS SELECT * FROM "${t}" WHERE 0`).run();
+      if (rows.length) {
+        const cols = Object.keys(rows[0]);
+        const sql = `INSERT INTO "${tmp}" (${cols.map(c => '"' + c + '"').join(",")}) VALUES (${cols.map(() => "?").join(",")})`;
+        for (let i = 0; i < rows.length; i += 100) await env.DB.batch(rows.slice(i, i + 100).map(r => env.DB.prepare(sql).bind(...cols.map(c => r[c] ?? null))));
+      }
+      const n = (await env.DB.prepare(`SELECT count(*) n FROM "${tmp}"`).first()).n;
+      await env.DB.prepare(`DROP TABLE "${tmp}"`).run();
+      drill.push({ table: t, in_backup: rows.length, restored: n, ok: n === rows.length });
+    }
+    const ok = !problems.length && drill.every(d => d.ok);
+    await log(env, "backup_verify", ok, drill.reduce((a, d) => a + d.restored, 0));
+    return { ok, key, taken_at: data.taken_at, size: list[0].size, tables: tables.length, rows: tables.reduce((a, t) => a + t.backup, 0), problems, drill,
+             biggest: tables.sort((a, b) => b.backup - a.backup).slice(0, 8) };
+  }
+
   async function status(env) {
     const x = JSON.parse((await setting(env, "xero_tokens")) || "null");
     const last = async s => (await one(env, "SELECT finished_at, ok, error FROM sync_log WHERE source = ? ORDER BY id DESC LIMIT 1", s)) || null;
@@ -183,5 +221,5 @@ export function makeFeeds(L) {
              backup: { bucket: !!env.BACKUPS, last: await last("backup"), files: (await backupList(env)).slice(0, 5) } };
   }
 
-  return { xeroConnect, xeroCallback, xeroSync, marketingSync, backup, backupList, backupGet, status };
+  return { xeroConnect, xeroCallback, xeroSync, marketingSync, backup, backupList, backupGet, backupVerify, status };
 }
