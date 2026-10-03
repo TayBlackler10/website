@@ -13,10 +13,10 @@ body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 "DM Sans","
 button,input,select,textarea{font:inherit;color:inherit}
 a{color:var(--olive)}
 .app{min-height:100%;display:grid;grid-template-columns:232px minmax(0,1fr)}
-aside{background:var(--ink);color:#fff;padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh}
+aside{background:var(--ink);color:#fff;padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#333 transparent}aside>*{flex-shrink:0}
 aside img{height:20px;width:auto;align-self:flex-start;margin-left:12px}
 nav{display:flex;flex-direction:column;gap:2px}
-.nav{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:var(--soft);text-decoration:none;font-weight:500;border:0;background:none;text-align:left;cursor:pointer;width:100%}
+.nav{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;color:var(--soft);text-decoration:none;font-weight:500;border:0;background:none;text-align:left;cursor:pointer;width:100%}
 .nav:hover{background:var(--ink2);color:#fff}
 .nav.on{background:var(--lime);color:var(--ink);font-weight:600}
 .nav .ct{margin-left:auto;background:var(--lime);color:var(--ink);border-radius:999px;font-size:12px;padding:0 8px;font-weight:600}
