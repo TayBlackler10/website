@@ -121,6 +121,7 @@ export default {
       if (em && req.method === "POST") return json(await EM.save(env, who, can, em[1], await req.json()));
       if (url.pathname === "/api/timetable") return json(req.method === "POST" ? await TT.save(env, who, can, await req.json()) : await TT.view(env, can));
       if (url.pathname === "/api/morning") return json(await MORN.summary(env, can));
+      if (url.pathname === "/api/passport/nudges") return json(req.method === "POST" ? await APP.nudgeSave(env, who, can, await req.json()) : await APP.nudgeView(env, can));
       if (url.pathname === "/api/app") return json(req.method === "POST" ? await APP.save(env, who, can, await req.json()) : await APP.overview(env, can));
       const apt = url.pathname.match(/^\/api\/app\/test\/(\d+)$/);
       if (apt) return json(await APP.test(env, can, +apt[1], url.searchParams.get("action") || "classes"));

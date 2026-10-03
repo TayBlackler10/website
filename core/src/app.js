@@ -223,7 +223,59 @@ export function makeApp(L) {
       member: { id: s.m, first: m.preferred_name || m.first_name || "", last: m.last_name || "", email: m.email || "", phone: m.mobile || "",
         gender: gender(m.gender), photo: /^https?:/.test(m.photo_url || "") ? m.photo_url : "", since: m.joined_on || "",
         totalvisits: Math.max(+m.total_visits_gm || 0, total), totalclasses: 0, totalpts: 0, coach: st.coach, staff: st.staff },
-      memberships: ms, doors: await doorFlags(env), tier: tr.tier, pass: tr.pass, days, source: "core" };
+      memberships: ms, doors: await doorFlags(env), tier: tr.tier, pass: tr.pass, days, source: "core", nudge: await fpNudge(env, s.m, m, days) };
+  }
+
+
+  /* ---------- Fitness Passport "come in" nudges ----------
+     Passport pays per visit, and the rate steps up as the club's monthly visits pass each tier. When owners
+     switch this on, a Passport member who hasn't been in for a week gets a gentle reminder on their phone
+     (a notification the M2 App schedules itself, only if they've left "Check-ins from M2" on). In the last
+     10 days of a month, when the club is within reach of the next tier, the reminder comes after 4 days instead.
+     At most one a week each, and every one is logged so we can see who came in after it. */
+  async function fpState(env) {
+    const t = todayNz(), ym = t.slice(0, 7);
+    const visits = (await one(env, `SELECT count(*) n FROM (SELECT DISTINCT v.member_id, substr(v.at, 1, 10) d FROM visits v
+      WHERE v.at >= ? AND coalesce(v.door, '') NOT LIKE '%Not Counted%' AND EXISTS (SELECT 1 FROM member_flags f WHERE f.member_id = v.member_id AND f.flag = 'passport'))`, ym + "-01")).n;
+    const tiers = String(await setting(env, "fp_tiers", "")).split(",").map(x => +x.split(":")[0]).filter(Boolean);
+    const next = tiers.find(x => x >= visits) || null;
+    const day = +t.slice(8, 10), dim = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7), 0)).getUTCDate();
+    const pace = day > 1 ? Math.round(visits / (day - 1) * dim) : null;
+    const push = !!next && dim - day <= 10 && (next - visits) <= Math.max(150, (dim - day + 1) * 40);   // close enough to reach with a push
+    return { visits, next_tier_at: next ? next + 1 : null, to_go: next ? next + 1 - visits : null, pace, push_week: push, days_left: dim - day + 1 };
+  }
+  async function fpNudge(env, id, m, days) {
+    if ((await setting(env, "fp_nudges", "off")) !== "on") return null;
+    if (!(await one(env, "SELECT 1 FROM member_flags WHERE member_id = ? AND flag = 'passport'", id))) return null;
+    const last = days.length ? days[days.length - 1].d : null;
+    const since = last ? Math.round((Date.parse(todayNz()) - Date.parse(last)) / 864e5) : 99;
+    const st = await fpState(env), wait = st.push_week ? 4 : 7;
+    if (since < wait) return null;
+    if (await one(env, "SELECT 1 FROM app_nudges WHERE member_id = ? AND day >= ?", id, nzDay(Date.now() - 6 * 864e5))) return null;
+    // 5:30pm today if there's time, otherwise 7am tomorrow. The phone shows it then.
+    const nz = nzDateTime(new Date()), hr = +nz.slice(11, 13);
+    const atDay = hr < 17 ? todayNz() : nzDay(Date.now() + 864e5), atTime = hr < 17 ? "17:30" : "07:00";
+    const first = m.preferred_name || m.first_name || "";
+    const body = since >= 21 ? "It's been a while. The club's open and we'd love to see you back. Even 30 minutes counts."
+      : st.push_week ? "Pop in this week. A quick session or the pool and spa, whatever suits." : "Haven't seen you this week. Even a quick session counts. See you soon.";
+    await run(env, "INSERT OR IGNORE INTO app_nudges(member_id, day, kind, days_away) VALUES (?, ?, ?, ?)", id, todayNz(), st.push_week ? "fp_push" : "fp", since);
+    return { id: 98, at_day: atDay, at_time: atTime, title: first ? "Come in this week, " + first : "Come in this week", body };
+  }
+  async function nudgeView(env, can) {
+    if (!can.settings) return { error: "Owners only" };
+    const st = await fpState(env);
+    const quiet = (await one(env, `SELECT count(*) n FROM members m JOIN member_flags f ON f.member_id = m.id AND f.flag = 'passport' WHERE m.status = 'active'
+      AND NOT EXISTS (SELECT 1 FROM visits v WHERE v.member_id = m.id AND v.at >= ?)`, nzDay(Date.now() - 7 * 864e5))).n;
+    const onApp = (await one(env, `SELECT count(*) n FROM members m JOIN member_flags f ON f.member_id = m.id AND f.flag = 'passport' WHERE m.status = 'active' AND m.app_installed = 1`)).n;
+    const sent = await all(env, `SELECT n.day, count(*) sent, sum(EXISTS (SELECT 1 FROM visits v WHERE v.member_id = n.member_id AND v.at >= n.day AND v.at < date(n.day, '+4 days'))) came
+                                 FROM app_nudges n WHERE n.day >= ? GROUP BY n.day ORDER BY n.day DESC`, nzDay(Date.now() - 30 * 864e5));
+    return { on: (await setting(env, "fp_nudges", "off")) === "on", state: st, quiet_passport: quiet, passport_on_app: onApp, sent };
+  }
+  async function nudgeSave(env, who, can, b) {
+    if (!can.settings) return { ok: false, error: "Owners only" };
+    await setSetting(env, "fp_nudges", b.on ? "on" : "off");
+    await run(env, "INSERT INTO activity(staff_id, kind, detail) VALUES (?, 'settings', ?)", who.id, "Fitness Passport come-in reminders turned " + (b.on ? "on" : "off"));
+    return { ok: true };
   }
 
   /* ---------- classes and bookings: GymMaster's timetable while it runs the classes ---------- */
@@ -633,5 +685,5 @@ export function makeApp(L) {
     return (await me(env, { m: id })) || { error: "That member isn't in the Core yet." };
   }
 
-  return { handle, overview, save, doneRequest, preview, test, autoClose, _sign: sign, _verify: verify };
+  return { handle, overview, save, doneRequest, preview, test, autoClose, nudgeView, nudgeSave, _sign: sign, _verify: verify };
 }

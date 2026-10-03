@@ -846,3 +846,5 @@ CREATE TABLE IF NOT EXISTS class_bookings (
 CREATE INDEX IF NOT EXISTS class_bookings_member ON class_bookings(member_id, status);
 -- PT leads not called within 24 hours: stage 1 = trainer buzzed, stage 2 = owners buzzed at 48 hours.
 CREATE TABLE IF NOT EXISTS pt_chases (lead_id INTEGER NOT NULL, stage INTEGER NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (lead_id, stage));
+-- Fitness Passport come-in reminders handed to members' phones (one a week at most), to see who came in after.
+CREATE TABLE IF NOT EXISTS app_nudges (member_id INTEGER NOT NULL, day TEXT NOT NULL, kind TEXT, days_away INTEGER, PRIMARY KEY (member_id, day));

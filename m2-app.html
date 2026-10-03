@@ -1528,7 +1528,7 @@ async function appReset(){const em=$('sgEm').value.trim();if(!em)return sgMsg('P
  try{await api({action:'reset',email:em})}catch(e){}sgMsg("If that email's on an M2 membership, we've sent you a link to set your password. Check your inbox, then come back and sign in.")}
 async function liveSync(first){if(!M2_API||!S.doorSess)return false;let r;try{r=await api({action:'me',session:S.doorSess})}catch(e){return false}
  if(r&&r.signin){signOut();return false}
- if(!r||!r.ok||!r.member)return false;const m=r.member;
+ if(!r||!r.ok||!r.member)return false;const m=r.member;if(r.nudge&&window.scheduleNudge)window.scheduleNudge(r.nudge);
  const me={first:m.first||'Member',last:m.last||'',no:String(m.id),email:m.email||'',phone:m.phone||'',since:m.since||'',totalvisits:m.totalvisits||0,photo:m.photo||'',memberships:r.memberships||[],demo:0};
  const idOf=m=>m&&[m.first,m.last,m.no,m.since];const before=JSON.stringify([idOf(LS.get('me',null)),S.tier,S.pass,S.doors]);LS.set('me',me);
  LS.set('coach',!!m.coach);LS.set('staff',!!(m.staff||m.coach));S.tier=r.tier||'none';save('tier');S.pass=r.pass||null;save('pass');S.doors=r.doors||null;LS.set('doors',S.doors);S.gender=m.gender||null;save('gender');
@@ -2242,7 +2242,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-03d';
+const APP_VER='2026-10-03e';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2306,6 +2306,9 @@ if(NATIVE){document.documentElement.classList.add('native');
    out.push({id:NUDGE_ID,title:`Haven't seen you in a while${MEMBER.first?', '+MEMBER.first:''}`,body:"Even 30 minutes counts. The club's open, come say hi.",schedule:{at},extra:{m2:1,go:'home'}})}
   if(out.length)try{await LN.schedule({notifications:out})}catch(e){}}
  window.syncReminders=syncReminders;
+ /* a "come in this week" reminder the M2 Core times for Fitness Passport members (only if Check-ins from M2 is on) */
+ window.scheduleNudge=async function(n){try{if(!n||!S.sw.n4||!(await canNotify(false)))return;const at=new Date(n.at_day+'T'+n.at_time+':00');if(isNaN(at)||at<new Date())return;
+  try{await LN.cancel({notifications:[{id:n.id}]})}catch(e){}await LN.schedule({notifications:[{id:n.id,title:n.title,body:n.body,schedule:{at},extra:{m2:1,go:'home'}}]})}catch(e){}};
  if(LN)try{LN.addListener('localNotificationActionPerformed',a=>{const g=a.notification&&a.notification.extra&&a.notification.extra.go;if(g==='classes')goClasses();else go('home')})}catch(e){}
  const _load=loadClasses;loadClasses=async function(){const r=await _load();syncReminders(false);return r};
  const _bk=book;book=async function(id,w){const r=await _bk(id,w);syncReminders(true);return r};

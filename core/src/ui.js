@@ -642,6 +642,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card"><h2>Visits Passport can't pay for</h2><p class="muted" style="margin:0">Passport members who trained this month with no Passport ID on file. Add the ID and these visits count.</p><div class="list" id="fpNoId"></div></section>
 <section class="card" id="fpDupCard" hidden><h2>Same ID on two people</h2><p class="muted" style="margin:0">Every person has their own Passport ID. Check their cards.</p><div class="list" id="fpDup"></div></section>
 </div>
+<section class="card" id="fpNudgeCard"><h2>Come-in reminders</h2><p class="muted" style="margin:0 0 10px">Passport pays per visit. When this is on, Passport members who haven't been in for a week get a friendly reminder on their phone through the M2 App (after 4 days near the end of a month when the club is close to the next tier). At most one a week each, and only for people who've left "Check-ins from M2" on.</p><div id="fpNudge"><div class="muted">Loading...</div></div></section>
 <section class="card" id="fpCheckCard"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Core count against GymMaster</h2><button class="btn line sm" id="fpCheckRun">Check this month again</button></div><p class="muted" style="margin:0 0 10px">Before the Core sends Passport visits itself, its count has to match GymMaster's for every member. Checked automatically for last month on the 2nd.</p><div id="fpCheck"><div class="muted">Loading...</div></div></section>
 <section class="card"><h2>Every Passport visit</h2><div class="list" id="fpRows"><div class="muted">Loading...</div></div></section>
 </div>
@@ -764,7 +765,7 @@ function show(v){
  if(v==="leads")loadLeads();
  if(v==="add")startAdd();
  if(v==="tag")setTimeout(function(){$("#lookTag").focus()},50);
- if(v==="passport"){loadPassport();loadFpMore();setTimeout(function(){loadFpCheck(false)},50)}
+ if(v==="passport"){loadPassport();loadFpMore();setTimeout(function(){loadFpCheck(false);loadFpNudge()},50)}
  if(v==="reports")loadReport();
  if(v==="staff")loadStaff();
  if(v==="settings")loadSettings();
@@ -2299,4 +2300,12 @@ $("#viNext").addEventListener("click",function(){var x=new Date($("#viDay").valu
 $("#viQ").addEventListener("input",function(e){VI.q=e.target.value.trim();if(VI.data)drawVisits()});
 $("#viChips").addEventListener("click",function(e){var b=e.target.closest("[data-vf]");if(!b)return;VI.f=b.dataset.vf;drawVisits()});
 $("#viPull").addEventListener("click",function(){var b=$("#viPull");b.disabled=true;b.textContent="Checking...";post("/api/visits/refresh",{}).then(function(){b.disabled=false;b.textContent="Check for new visits";$("#viDay").value=viToday();loadVisits()})});
+
+function loadFpNudge(){get("/api/passport/nudges").then(function(d){if(d.error){$("#fpNudgeCard").hidden=true;return}var st=d.state;
+ var sent=d.sent.reduce(function(a,x){return a+x.sent},0),came=d.sent.reduce(function(a,x){return a+x.came},0);
+ $("#fpNudge").innerHTML='<div class="tiles">'+tile(st.visits.toLocaleString("en-NZ"),"Passport visits this month")+tile(st.to_go!=null?st.to_go.toLocaleString("en-NZ"):"Top tier","To the next tier")+tile(d.quiet_passport.toLocaleString("en-NZ"),"Not in for a week")+tile(d.passport_on_app.toLocaleString("en-NZ"),"Passport members on the app")+'</div>'+
+  (st.push_week?'<div class="ok" style="margin-top:10px">Push week: the club is within reach of the next tier with '+st.days_left+' days left, so reminders go out after 4 days.</div>':"")+
+  (sent?'<p class="muted" style="margin-top:8px">Last 30 days: '+sent+' reminders, '+came+' came in within 3 days ('+Math.round(came/sent*100)+'%).</p>':"")+
+  '<label style="display:flex;gap:10px;align-items:center;margin-top:12px;cursor:pointer"><input type="checkbox" id="fpNudgeOn"'+(d.on?" checked":"")+'> <b>Send come-in reminders to Passport members</b></label><div id="fpNudgeMsg"></div>';
+ $("#fpNudgeOn").onchange=function(e){post("/api/passport/nudges",{on:e.target.checked}).then(function(r){$("#fpNudgeMsg").innerHTML=r.ok?'<div class="ok">Saved.</div>':'<div class="err">'+esc(r.error)+'</div>'})}})}
 </script></body></html>`;
