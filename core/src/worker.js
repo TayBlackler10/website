@@ -55,6 +55,10 @@ export default {
       const can = CAN[who.role] || {};
 
       if (url.pathname === "/" || url.pathname === "/index.html") return html(APP_HTML);
+      if (url.pathname === "/manifest.webmanifest") return new Response(JSON.stringify({
+        name: "M2 Core", short_name: "M2 Core", start_url: "/", display: "standalone", background_color: "#0A0A0A", theme_color: "#0A0A0A",
+        icons: [192, 512].map(n => ({ src: "https://m2club.co.nz/assets/icon-" + n + ".png", sizes: n + "x" + n, type: "image/png" })),
+      }), { headers: { "Content-Type": "application/manifest+json" } });
       if (url.pathname === "/api/me") return json({ name: who.name, role: who.role, can });
       if (url.pathname === "/api/summary") return json(await summary(env, can));
       if (url.pathname === "/api/today") return json(await today(env, who, can));
