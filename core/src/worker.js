@@ -1191,7 +1191,7 @@ async function settingsView(env, can) {
     { name: "Meta ads and Google Analytics", status: "Pushed in by Claude", detail: "Spend, leads and website visits by day land on Marketing." },
     { name: "Live balances", status: env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Every 15 minutes the Core checks 20 members' balances in GymMaster, so the $250 block and Collections stay true." },
     { name: "Live check-ins", status: env.GM_REPORT_KEY ? "Connected" : "Needs the Report API key", detail: "GymMaster's visitor log every 15 minutes, for Recent visits on Today and exact Passport counts. Add it as secret GM_REPORT_KEY." },
-    { name: "PT lead form", status: env.PT_ADMIN_KEY ? "Connected" : "Needs PT_ADMIN_KEY", detail: "Free PT requests from the website sheet appear in Leads. Add the PT admin key as secret PT_ADMIN_KEY." },
+    { name: "PT lead form", status: "Connected", detail: "Free PT requests from the M2 PT Leads sheet are copied into Leads every night, and when an owner presses Pull in on Leads." },
     { name: "Website forms", status: env.INTAKE_KEY ? "Connected" : "Not connected yet", detail: "Leads from the website land in Leads once the intake key is set." },
     { name: "Sign-in", status: env.ACCESS_TEAM ? "Cloudflare Access, email codes" : "Not set", detail: "Who can sign in is managed in Staff and access." },
   ];

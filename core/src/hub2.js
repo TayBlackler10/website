@@ -116,13 +116,13 @@ export function makeHub2(L) {
                   AND NOT EXISTS (SELECT 1 FROM memberships ms JOIN plans p ON p.id = ms.plan_id AND p.family = 'trial'
                                   WHERE ms.member_id = leads.member_id AND ms.status = 'current')`),
     ]);
-    if (env.PT_ADMIN_KEY) { try { res.pt = await syncPtLeads(env); } catch (e) { res.pt = String(e.message || e); } }
+    try { res.pt = await syncPtLeads(env); } catch (e) { res.pt = String(e.message || e); }
     return res;
   }
 
   const PT_SCRIPT_DEFAULT = "https://script.google.com/macros/s/AKfycbzd4BypnwjEdvToljlvMUpvfDMjmSAdSHaS7nnygv6TCulkC7Rax21Ure9flx_eLfpW/exec";
   async function syncPtLeads(env) {
-    const r = await fetch((env.PT_SCRIPT || PT_SCRIPT_DEFAULT) + "?action=list&key=" + encodeURIComponent(env.PT_ADMIN_KEY), { redirect: "follow" });
+    const r = await fetch((env.PT_SCRIPT || PT_SCRIPT_DEFAULT) + "?action=list" + (env.PT_ADMIN_KEY ? "&key=" + encodeURIComponent(env.PT_ADMIN_KEY) : ""), { redirect: "follow" });
     const d = await r.json();
     const list = (d.leads || []).filter(l => l.name || l.phone || l.email);
     const staff = await all(env, "SELECT id, name FROM staff WHERE active = 1");
@@ -161,7 +161,7 @@ export function makeHub2(L) {
     const stages = await all(env, `SELECT stage, count(*) n FROM leads WHERE (stage NOT IN ('joined','lost','cold') OR created_at >= ?)${own} GROUP BY stage`, since);
     const tot = by.reduce((a, x) => ({ n: a.n + x.n, joined: a.joined + (x.joined || 0), touched: a.touched + (x.touched || 0) }), { n: 0, joined: 0, touched: 0 });
     return { by: by.map(x => ({ ...x, label: KIND_LABEL[x.kind] || x.kind })), sources: src, weeks, response_hours: resp?.h ? Math.round(resp.h * 10) / 10 : null,
-             stages, total: tot, pt_connected: !!env.PT_ADMIN_KEY };
+             stages, total: tot, pt_connected: true };
   }
 
   /* ---------------- the member wall ---------------- */
