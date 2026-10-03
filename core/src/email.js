@@ -130,7 +130,9 @@ export function makeEmail(L) {
   // Turn one GymMaster task into a rule the Core can run on its own data.
   function gmRule(t) {
     const types = t.types || '["All Memberships"]';
-    const off = Math.round((+t.qty || 0) * (UNIT[t.unit] ?? 0)), before = /before/i.test(t.sign || ""), x = +t.x || 0;
+    const off = Math.round((+t.qty || 0) * (UNIT[t.unit] ?? 0)), x = +t.x || 0;
+    // GymMaster's Before/After setting didn't come across in the copy, so read it from the names when it's missing.
+    const before = t.sign ? /before/i.test(t.sign) : /ending|expiring|soon|before/i.test((t.name || "") + " " + (t.tpl_name || ""));
     const when = (n => n)(t.trigger + (off ? ", " + (t.qty + " " + t.unit) + (before ? " before" : " after") : "") + (x && /X/.test(t.trigger) ? " (X = " + x + ")" : ""));
     const base = { when, every: 7, marketing: false, goal: "none", to: t.recipient === "staff" ? "staff" : "member" };
     const tr = String(t.trigger || "");
@@ -159,7 +161,7 @@ export function makeEmail(L) {
   }
 
   async function rules(env) {
-    const tasks = await all(env, "SELECT * FROM gm_tasks");
+    const tasks = await all(env, "SELECT t.*, g.name tpl_name FROM gm_tasks t LEFT JOIN gm_templates g ON g.template_id = t.template_id");
     const out = {};
     for (const t of tasks) { const r = gmRule(t); out["gm_" + t.task_id] = r ? { ...r, task: t } : { when: t.trigger + " (the Core can't do this one yet)", unsupported: true, task: t }; }
     const useGm = tasks.length > 0;
@@ -171,6 +173,18 @@ export function makeEmail(L) {
   function fill(text, p, unsubUrl, unknown) {
     return String(text || "").replace(/\{(\d+):([^}]+)\}/g, (m0, id, name) => {
       const n = name.toLowerCase();
+      const GM = "https://m2trainingclub.gymmasteronline.com";
+      if (/failed payment url/.test(n)) return GM + "/portal/";
+      if (/add membership url/.test(n)) return "https://m2club.co.nz/join.html";
+      if (/profile url/.test(n)) return GM + "/member/view/" + (p.id || "");
+      if (/cancellation terms url/.test(n)) return GM + "/portal/";
+      if (/last fail reason/.test(n)) return p.fail_reason || "the bank declined it";
+      if (/next billing/.test(n)) return fmtDay(p.next_bill);
+      if (/joining date/.test(n)) return fmtDay(p.joined_on);
+      if (/membership description/.test(n)) return p.mtype || "your membership";
+      if (/\bcell\b|mobile/.test(n)) return p.mobile || "";
+      if (/member id/.test(n)) return String(p.id || "");
+      if (/owes/.test(n)) return "$" + (+p.owing || 0).toFixed(2);
       if (/first ?name/.test(n)) return p.first_name || "there";
       if (/surname|last ?name/.test(n)) return p.last_name || "";
       if (/full ?name|^member name$/.test(n)) return [p.first_name, p.last_name].filter(Boolean).join(" ");
@@ -240,7 +254,9 @@ export function makeEmail(L) {
     const out = [];
     for (let i = 0; i < ids.length; i += 90) {
       const part = ids.slice(i, i + 90);
-      out.push(...await all(env, `SELECT m.id, m.first_name, m.last_name, m.email, m.marketing_email,
+      out.push(...await all(env, `SELECT m.id, m.first_name, m.last_name, m.email, m.marketing_email, m.mobile, m.joined_on,
+          (SELECT f.reason FROM gm_failed f WHERE f.member_id = m.id ORDER BY f.billing_date DESC LIMIT 1) fail_reason,
+          (SELECT bc.next_bill FROM balance_checks bc WHERE bc.member_id = m.id) next_bill_raw,
           EXISTS (SELECT 1 FROM member_flags f WHERE f.member_id = m.id AND f.flag IN ('do_not_contact','staff')) dnc,
           EXISTS (SELECT 1 FROM email_unsubs u WHERE u.email = lower(m.email)) unsub,
           (SELECT max(day) FROM email_log l WHERE l.member_id = m.id AND l.auto_key = ? AND l.status IN ('sent','preview','held_out')) last_sent,
@@ -251,6 +267,8 @@ export function makeEmail(L) {
         FROM members m WHERE m.id IN (${part.map(() => "?").join(",")})`, key, ...part));
     }
     return out.map(p => {
+      const nb = String(p.next_bill_raw || "").match(/on \w{3} (\d{1,2}) (\w{3}) (\d{4})/);
+      if (nb) { const mi = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(nb[2]) + 1; if (mi) p.next_bill = nb[3] + "-" + String(mi).padStart(2, "0") + "-" + nb[1].padStart(2, "0"); }
       let skip = null;
       if (rule.to === "staff") skip = null;
       else if (!p.email || !/@/.test(p.email)) skip = "No email";
@@ -373,7 +391,7 @@ export function makeEmail(L) {
     if (b.action === "test") {
       const c = await one(env, "SELECT c.*, h.html FROM auto_content c LEFT JOIN auto_html h ON h.key = c.key WHERE c.key = ?", key);
       const me = await one(env, "SELECT email, name FROM staff WHERE id = ?", who.id);
-      const p = { first_name: String(me.name).split(" ")[0], last_name: String(me.name).split(" ").slice(1).join(" "), email: me.email, mtype: "M2 Perform - Weekly", mend: addDays(todayNz(), 7), hold_end: addDays(todayNz(), 3) };
+      const p = { first_name: String(me.name).split(" ")[0], last_name: String(me.name).split(" ").slice(1).join(" "), email: me.email, mtype: "M2 Perform - Weekly", mend: addDays(todayNz(), 7), hold_end: addDays(todayNz(), 3), owing: 54.5, next_bill: addDays(todayNz(), 4), joined_on: addDays(todayNz(), -14), mobile: "", id: 0, fail_reason: "Insufficient funds" };
       const built = c.html ? { subject: "[Test] " + fill(c.subject, p, "#"), html: gmPage(fill(c.html, p, "#"), "#", false) } : null;
       try { await send(env, me.email, { ...c, subject: "[Test] " + c.subject }, p.first_name, null, built); return { ok: true, to: me.email }; }
       catch (e) { return { ok: false, error: e.message }; }
@@ -403,7 +421,7 @@ export function makeEmail(L) {
     await ensureContent(env);
     const c = await one(env, "SELECT c.*, h.html FROM auto_content c LEFT JOIN auto_html h ON h.key = c.key WHERE c.key = ?", key);
     if (!c) return new Response("Not found", { status: 404 });
-    const p = { first_name: String(who.name).split(" ")[0], last_name: String(who.name).split(" ").slice(1).join(" "), email: "", mtype: "M2 Perform - Weekly", mend: addDays(todayNz(), 7), hold_end: addDays(todayNz(), 3), owing: 54.5 };
+    const p = { first_name: String(who.name).split(" ")[0], last_name: String(who.name).split(" ").slice(1).join(" "), email: "", mtype: "M2 Perform - Weekly", mend: addDays(todayNz(), 7), hold_end: addDays(todayNz(), 3), owing: 54.5, next_bill: addDays(todayNz(), 4), joined_on: addDays(todayNz(), -14), mobile: "021 000 0000", id: 0, fail_reason: "Insufficient funds" };
     const html = c.html ? gmPage(fill(c.html, p, "#"), "#", false) : render(c, p.first_name, "#");
     return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
   }
