@@ -249,6 +249,7 @@ export default {
         const v = b.lap ? await H2.sweepVisits(env, b.lap) : 0;
         const p = env.GM_REPORT_KEY ? await H2.pullVisits(env).catch(e => ({ error: String(e) })) : null;
         console.log("pt", JSON.stringify(await PT.sync(env)));
+        console.log("pt chase", JSON.stringify(await PT.chase(env).catch(e => String(e))));
         console.log("coach", JSON.stringify(await APP.autoClose(env).catch(e => String(e))));
         // Once an hour: new and changed members, every membership's dates, then the automations
         // (each person gets each email once a day at most, so running hourly only makes them prompt).
@@ -778,6 +779,9 @@ const JOBS = {
   hold_ending:     { label: "Holds ending soon",                one: "hold ending soon",               owner: "reception", order: 6.5 },
   app_hold:        { label: "Hold requests from the app",       one: "hold request from the app",      owner: "reception", order: 2.8 },
   app_cancel:      { label: "Cancel requests from the app",     one: "cancel request from the app",    owner: "manager",   order: 2.9 },
+  trial_welcome:   { label: "New trials to welcome",            one: "new trial to welcome",           owner: "reception", order: 2.95 },
+  trial_call:      { label: "Trials to call on day 2",          one: "trial to call on day 2",         owner: "reception", order: 2.97 },
+  at_risk:         { label: "Members who've stopped coming",    one: "member who's stopped coming",    owner: "manager",   order: 3.6 },
 };
 const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "fp_in_gm", "done", "hold_set", "cancel_set", "kept"];
 
@@ -856,6 +860,35 @@ async function today(env, who, can) {
                                       AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = 'cancel_save' AND t.member_id = m.id AND t.outcome IS NOT NULL AND t.done_at >= datetime('now','-7 days'))
                                     GROUP BY m.id ORDER BY c.first_seen DESC`, nzToday))
       .map(r => ({ ...r, detail: "Cancelling " + r.type_name + (r.cancel_date ? " from " + r.cancel_date : "") + (r.reason ? ". Reason: " + r.reason : "") + ". Worth a call to see if a hold or a cheaper plan keeps them." })));
+    // Every trial runs the same path: welcome on day 1, a call on day 2, then the join offer before it ends (trial_ending).
+    const onTrial = (from, to) => all(`SELECT DISTINCT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, s.type_name, s.start_date, s.end_date
+                                       FROM mship_seen s JOIN members m ON m.id = s.member_id JOIN plans p ON p.gm_type_name = s.type_name AND p.family = 'trial'
+                                       WHERE s.start_date BETWEEN ? AND ? AND (s.end_date IS NULL OR s.end_date >= ?)
+                                         AND NOT EXISTS (SELECT 1 FROM memberships ms JOIN plans px ON px.id = ms.plan_id WHERE ms.member_id = m.id AND ms.status = 'current' AND px.family NOT IN ('trial','pass'))`, from, to, nzToday);
+    const dAgo = n => nzDateTime(new Date(Date.now() - n * 86400_000)).slice(0, 10);
+    const notDone = (kind, rows) => all(`SELECT DISTINCT member_id FROM tasks WHERE kind = ? AND outcome IS NOT NULL AND done_at >= datetime('now','-10 days')`, kind)
+      .then(d => { const s = new Set(d.map(x => x.member_id)); return rows.filter(r => !s.has(r.member_id)); });
+    push("trial_welcome", (await notDone("trial_welcome", await onTrial(dAgo(1), nzToday)))
+      .map(r => ({ ...r, detail: "Started " + r.type_name + (r.start_date === nzToday ? " today" : " yesterday") + ". Text a welcome, offer their free PT session and make sure they know the classes." })));
+    push("trial_call", (await notDone("trial_call", await onTrial(dAgo(3), dAgo(2))))
+      .map(r => ({ ...r, detail: "Day 2 of " + r.type_name + ". Call: how's it going, have they booked their free PT, anything they need." })));
+
+    // Paying members who've stopped coming: used to come (4+ visits in the 8 weeks before), nothing for 2 weeks. Next month's cancellations.
+    const d14 = dAgo(14), d70 = dAgo(70), d42 = dAgo(42);
+    push("at_risk", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, max(p.gm_type_name) plan,
+                                  (SELECT count(DISTINCT substr(v.at,1,10)) FROM visits v WHERE v.member_id = m.id AND v.at >= ? AND v.at < ?) before,
+                                  (SELECT max(v.at) FROM visits v WHERE v.member_id = m.id) last_visit
+                                FROM members m JOIN memberships ms ON ms.member_id = m.id AND ms.status = 'current' JOIN plans p ON p.id = ms.plan_id
+                                WHERE m.status = 'active' AND p.family IN ('perform','classes','daily','recovery','transporter') AND coalesce(ms.start_date,'') <= ?
+                                  AND NOT EXISTS (SELECT 1 FROM visits v WHERE v.member_id = m.id AND v.at >= ?)
+                                  AND NOT EXISTS (SELECT 1 FROM gm_holds h WHERE h.member_id = m.id AND coalesce(h.starts,'') <= ? AND coalesce(h.ends,'9999') >= ?)
+                                  AND NOT EXISTS (SELECT 1 FROM gm_cancels c WHERE c.member_id = m.id AND coalesce(c.cancel_date,'9999') >= ?)
+                                  AND NOT EXISTS (SELECT 1 FROM member_flags f WHERE f.member_id = m.id AND f.flag = 'gifted_time')
+                                  AND NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = 'at_risk' AND t.member_id = m.id AND t.outcome IS NOT NULL AND t.done_at >= datetime('now','-21 days'))
+                                GROUP BY m.id HAVING before >= 4 ORDER BY before DESC LIMIT 60`, d70, d14, d42, d14, nzToday, nzToday, nzToday))
+      .map(r => { const days = r.last_visit ? Math.round((Date.parse(nzToday) - Date.parse(r.last_visit.slice(0, 10))) / 864e5) : null;
+        return { ...r, detail: "Came " + r.before + " days in the 8 weeks before, nothing for " + (days ?? "14+") + " days. On " + r.plan + ". A friendly check-in now saves the cancellation." }; }));
+
     // Holds and cancellations members asked for in the app.
     for (const [job, kind] of [["app_hold", "hold"], ["app_cancel", "cancel"]])
       push(job, (await all(`SELECT r.id req_id, m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, r.text, r.at

@@ -27,7 +27,9 @@ export function makePt(L) {
                        (SELECT count(*) FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.assigned_to = s.id AND p.pt_status IN ('assigned','contacted','booked')) open,
                        (SELECT count(*) FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.assigned_to = s.id AND p.pt_status = 'client' AND p.updated_at >= datetime('now','-90 days')) won,
                        (SELECT count(*) FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.assigned_to = s.id AND p.assigned_at >= datetime('now','-30 days')) month,
-                       (SELECT count(*) FROM push_subs ps WHERE ps.staff_id = s.id) phones
+                       (SELECT count(*) FROM push_subs ps WHERE ps.staff_id = s.id) phones,
+                       (SELECT count(*) FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.assigned_to = s.id AND p.pt_status = 'assigned'
+                          AND coalesce(p.assigned_at, l.created_at) < datetime('now','-24 hours') AND l.created_at >= datetime('now','-30 days')) late
                      FROM staff s WHERE s.active = 1 AND (s.role IN ('trainer','coach','owner','manager')
                        OR EXISTS (SELECT 1 FROM leads l WHERE l.assigned_to = s.id AND l.kind = 'free_pt'))
                      ORDER BY CASE s.role WHEN 'trainer' THEN 0 WHEN 'coach' THEN 1 WHEN 'manager' THEN 2 ELSE 3 END, s.list_order, s.name`);
@@ -137,6 +139,30 @@ export function makePt(L) {
     return { waiting, open, closed, trainers: await trainers(env), stats, labels: LABEL, sheet_linked: !!env.PT_ADMIN_KEY, last_sync: last ? last.value : null };
   }
 
+  // 24 hours to call: trainers get one buzz when leads they were given pass 24 hours without a call,
+  // and the owners get one buzz when any pass 48 hours. Each lead is chased once at each stage. Runs every 15 minutes.
+  async function chase(env) {
+    const late = await all(env, `SELECT l.id, l.name, l.assigned_to, s.name trainer,
+                                   (julianday('now') - julianday(coalesce(p.assigned_at, l.created_at))) * 24 hours,
+                                   (SELECT max(stage) FROM pt_chases c WHERE c.lead_id = l.id) done
+                                 FROM leads l JOIN pt_leads p ON p.lead_id = l.id JOIN staff s ON s.id = l.assigned_to
+                                 WHERE p.pt_status = 'assigned' AND l.created_at >= datetime('now','-30 days')
+                                   AND coalesce(p.assigned_at, l.created_at) < datetime('now','-24 hours')`);
+    const bosses = (await all(env, "SELECT id FROM staff WHERE role = 'owner' AND active = 1")).map(r => r.id);
+    const first = late.filter(x => !x.done), second = late.filter(x => x.done === 1 && x.hours >= 48);
+    const byTrainer = new Map(); for (const x of first) { if (!byTrainer.has(x.assigned_to)) byTrainer.set(x.assigned_to, []); byTrainer.get(x.assigned_to).push(x); }
+    for (const [tid, L] of byTrainer) {
+      await P.toStaff(env, tid, { title: L.length > 1 ? L.length + " PT leads to call today" : "Call " + (L[0].name || "your PT lead") + " today",
+        body: "Given to you over 24 hours ago and not called yet. Tap to call and update them.", url: "/#mypt", tag: "pt-late" }).catch(() => {});
+    }
+    if (second.length) await P.toStaff(env, bosses, { title: second.length + " PT lead" + (second.length > 1 ? "s" : "") + " not called after 48 hours",
+      body: [...new Set(second.map(x => x.trainer))].join(", ") + ". Tap to see them.", url: "/#ptleads", tag: "pt-late2" }).catch(() => {});
+    const stmts = first.map(x => env.DB.prepare("INSERT OR IGNORE INTO pt_chases(lead_id, stage) VALUES (?, 1)").bind(x.id))
+      .concat(second.map(x => env.DB.prepare("INSERT OR IGNORE INTO pt_chases(lead_id, stage) VALUES (?, 2)").bind(x.id)));
+    if (stmts.length) await env.DB.batch(stmts);
+    return { late: late.length, buzzed: byTrainer.size + (second.length ? 1 : 0) };
+  }
+
   async function assign(env, who, can, id, b) {
     if (!can.settings) return { ok: false, error: "Only Taylor and Tim give out PT leads." };
     const p = await one(env, `SELECT ${COLS}, p.sheet_id ${FROM} WHERE l.id = ?`, id);
@@ -200,5 +226,5 @@ export function makePt(L) {
     return r;
   }
 
-  return { sync: nightlySync, board, assign, mine, update, history, trainers, LABEL };
+  return { sync: nightlySync, board, assign, mine, update, history, trainers, LABEL, chase };
 }

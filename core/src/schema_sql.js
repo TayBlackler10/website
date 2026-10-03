@@ -110,9 +110,10 @@ export const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS member_logins (email TEXT PRIMARY KEY, member_id INTEGER NOT NULL, salt TEXT NOT NULL, hash TEXT NOT NULL, set_at TEXT NOT NULL DEFAULT (datetime('now')));",
 "CREATE TABLE IF NOT EXISTS class_sessions (\n  id          INTEGER PRIMARY KEY,\n  template_id INTEGER,\n  day         TEXT NOT NULL,\n  start       TEXT NOT NULL,\n  end_time    TEXT,\n  name        TEXT NOT NULL,\n  coach_id    INTEGER,\n  coach_name  TEXT,\n  cap         INTEGER NOT NULL DEFAULT 20,\n  cancelled   INTEGER NOT NULL DEFAULT 0,\n  UNIQUE (day, start, name)\n);",
 "CREATE TABLE IF NOT EXISTS class_bookings (\n  id           INTEGER PRIMARY KEY,\n  session_id   INTEGER NOT NULL REFERENCES class_sessions(id),\n  member_id    INTEGER NOT NULL,\n  status       TEXT NOT NULL,         \n  booked_by    TEXT,\n  booked_at    TEXT NOT NULL DEFAULT (datetime('now')),\n  cancelled_at TEXT,\n  UNIQUE (session_id, member_id)\n);",
-"CREATE INDEX IF NOT EXISTS class_bookings_member ON class_bookings(member_id, status);"
+"CREATE INDEX IF NOT EXISTS class_bookings_member ON class_bookings(member_id, status);",
+"CREATE TABLE IF NOT EXISTS pt_chases (lead_id INTEGER NOT NULL, stage INTEGER NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (lead_id, stage));"
 ];
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "15bab5018f98";
+export const SCHEMA_VERSION = "b893246b512c";
