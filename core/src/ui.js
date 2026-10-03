@@ -189,6 +189,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .mcal .dn{font:800 14px Archivo,Arial,sans-serif}.mcal .ms{font-size:11.5px;line-height:1.25;background:#fff;border-radius:6px;padding:2px 5px;border:0;text-align:left;cursor:pointer}
 .ltabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.ltab{background:#fff;border:0;border-radius:16px;padding:12px 14px;text-align:left;cursor:pointer;font:inherit;color:inherit;display:flex;flex-direction:column;gap:2px;min-width:0}.ltab b{font:800 24px Archivo,Arial,sans-serif}.ltab small{font-size:13px;font-weight:600}.ltab span{font-size:12px;color:var(--muted)}.ltab.on{background:var(--ink);color:#fff}.ltab.on b{color:var(--lime)}.ltab.on span{color:var(--soft)}.ltabs.dim .ltab{opacity:.5}.lwrap{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}.lside{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto}.lrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:11px 6px;border:0;border-top:1px solid var(--line);cursor:pointer;background:none;width:100%;text-align:left;font:inherit;color:inherit;border-radius:0}.lrow:hover{background:var(--paper)}.lrow.on{background:var(--okbg)}.lrow .sub{font-size:13px;color:var(--muted);grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lgrp{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--olive);font-weight:600;padding:14px 6px 6px}.lgrp:first-child{padding-top:4px}.ptcard{background:#fff;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;border:2px solid transparent}.ptcard.fresh{border-color:var(--lime)}.ptans{display:grid;grid-template-columns:120px minmax(0,1fr);gap:4px 10px;font-size:14px}.ptans dt{color:var(--muted)}.ptans dd{margin:0}.ptwho{display:flex;flex-wrap:wrap;gap:6px}.ptwho button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.ptwho button span{color:var(--muted);font-weight:500;margin-left:4px}.ptwho button.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}.ptwho button.on span{color:var(--soft)}.ptst{display:flex;flex-wrap:wrap;gap:6px}.tline{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
 .citem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:12px 6px;border:0;border-top:1px solid var(--line);background:none;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}.citem:hover{background:var(--paper)}.citem.on{background:var(--okbg)}.citem .pr{font:800 18px Archivo,Arial,sans-serif;text-align:right}.citem .sub{font-size:13px;color:var(--muted)}.cform .grid2{gap:10px}.cform .chk{display:flex;gap:8px;align-items:center;font-size:14px}
+.emc{background:#fff;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px}.emc .top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.emc .nums{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}.emc .nums b{font:800 20px Archivo,Arial,sans-serif;display:block}.emframe{width:100%;height:620px;border:1px solid var(--line);border-radius:16px;background:#F3F3F0}
 .bcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.bcal .bd{background:var(--tile);border:0;border-radius:12px;padding:8px;text-align:left;cursor:pointer;min-height:66px;display:flex;flex-direction:column;gap:2px;font:inherit;color:inherit}.bcal .bd b{font-size:12px;color:var(--muted);font-weight:600}.bcal .bd .c{font-size:18px;font-weight:700}.bcal .bd .t{font-size:12px;color:var(--muted)}.bcal .bd.on{background:var(--ink);color:#fff}.bcal .bd.on .c{color:var(--lime)}.bcal .bd.on b,.bcal .bd.on .t{color:var(--soft)}.bcal .bd.wk b{color:var(--olive)}.bcal .bd.zero{opacity:.55}.bsteps div{display:flex;gap:10px;align-items:center;font-size:14px;padding:6px 0;border-bottom:1px solid var(--line)}.bsteps div:last-child{border:0}.bsteps i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;flex:none}.bsteps .y i{background:var(--lime);border-color:var(--lime)}.bform{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--tile);border-radius:14px;padding:12px}.bform .fld{flex:1;min-width:130px}
 .mcal .ms.mg{background:var(--ink);color:var(--lime)}.mcal .ms.draft{border:1px dashed var(--ink)}
 .shift.mine{box-shadow:0 0 0 2px var(--lime)}
@@ -216,6 +217,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
 <button class="nav" data-go="collections" id="navCol" hidden>Money owed</button>
 <button class="nav" data-go="billing" id="navBill" hidden>Billing</button>
+<button class="nav" data-go="emails" id="navEm" hidden>Email automations</button>
 <button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
 <div class="navlab" id="navBizLab" hidden>The business</div>
 <button class="nav" data-go="money" id="navMoney" hidden>Money</button>
@@ -302,6 +304,17 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="ltabs" id="lTabs"></div>
 <div class="mtool" style="margin:12px 0"><label class="sr" for="lKind">Type</label><select id="lKind"></select><label class="search" for="lQ" style="flex:1;min-width:200px;height:48px"><span class="sr">Search leads</span><input id="lQ" autocomplete="off" placeholder="Search everyone by name, mobile or email"></label></div>
 <div class="lwrap"><section class="card" style="padding:8px 14px 14px"><div id="lList"><div class="muted">Loading...</div></div></section><section class="card lside" id="leadPanel"></section></div>
+</section>
+
+<!-- EMAIL AUTOMATIONS -->
+<section data-view="emails" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Ready to take over from GymMaster, one at a time</div><h1>Email automations<span class="dot">.</span></h1></div>
+<span class="pill dark" id="emMode"></span>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div id="emBanner" style="color:var(--soft);font-size:14px"></div><div class="tiles" id="emTiles"></div></section>
+<div class="lwrap"><div id="emList" style="display:flex;flex-direction:column;gap:12px;min-width:0"><div class="muted">Loading...</div></div>
+<section class="card lside" id="emEdit"><h2>Pick an automation</h2><p class="muted" style="margin:0">Change the words, see exactly how it looks, and send yourself a test.</p></section></div>
 </section>
 
 <!-- MEMBERSHIPS AND PRICES -->
@@ -702,6 +715,7 @@ function show(v){
  if(v==="billing")loadBill();
  if(v==="ptleads")loadPt();
  if(v==="catalog")loadCat();
+ if(v==="emails")loadEm();
  if(v==="mypt")loadMyPt();
  if(v==="money")loadMoney();
  if(v==="growth")loadGrowth();
@@ -721,7 +735,7 @@ get("/api/me").then(function(me){
  if(me.can.settings){$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
  if(me.can.settings){$("#navPt").hidden=false;ptCount()}
  if(!me.can.settings&&["trainer","coach","manager"].indexOf(me.role)>=0){$("#navMyPt").hidden=false;myPtCount()}
- if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false}
+ if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false;$("#navEm").hidden=false}
  if(me.can.business){$("#navBizLab").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
  if(me.can.settings)$("#navAdminLab").hidden=false;
  if(me.can.add){$("#navCat").hidden=false;$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
@@ -1008,6 +1022,44 @@ $("#nlSave").addEventListener("click",function(){
   ["#nlName","#nlMobile","#nlEmail","#nlGoal","#nlNotes"].forEach(function(s){$(s).value=""});$("#newLeadCard").hidden=true;loadLeads();
  });
 });
+
+/* ---------- email automations ---------- */
+var EMD=null;
+function loadEm(){
+ get("/api/emails").then(function(d){
+  if(d.error){$("#emList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  EMD=d;var on=d.autos.filter(function(a){return a.sending}).length,today=0,sent=0,prev=0,met=0;
+  d.autos.forEach(function(a){today+=a.today.length;sent+=a.stats.sent||0;prev+=a.stats.preview||0;met+=a.stats.met||0});
+  $("#emMode").textContent=!d.connected?"Preview":on?on+" sending from the Core":"Connected, all in preview";
+  $("#emBanner").textContent=!d.connected?"Email sending isn't connected yet, so GymMaster keeps sending everything. Each morning at 9am the Core works out who every automation would email, so you can compare before switching over.":"Sending from "+d.from+". An automation only sends from the Core once it's switched on here, so turn the GymMaster one off at the same time.";
+  $("#emTiles").innerHTML=tile(today,"Would email today")+tile((sent+prev).toLocaleString("en-NZ"),"Emails, last 30 days"+(sent?" ("+sent+" sent)":""))+tile(sent+prev?Math.round(met/(sent+prev)*100)+"%":"-","Did what the email asked")+tile(d.unsubs,"Unsubscribed");
+  $("#emList").innerHTML=d.autos.map(function(a){var st=a.stats,n=(st.sent||0)+(st.preview||0),rate=n?Math.round((st.met||0)/n*100):null,hrate=st.held?Math.round((st.held_met||0)/st.held*100):null;
+   return '<div class="emc"><div class="top"><h3 style="margin:0;font-size:18px;margin-right:auto">'+esc(a.name)+'</h3>'+(!a.supported?'<span class="pill">In the M2 App</span>':a.sending?'<span class="pill dark">The Core sends this</span>':'<span class="pill">Preview. GymMaster still sends</span>')+'</div>'+
+    '<div class="muted" style="font-size:13px">'+esc(a.when)+'. Goal: they '+esc(a.goal_label)+' within '+a.goal_window_days+' days.</div>'+
+    (a.supported?'<div class="nums"><span><b>'+a.today.length+'</b>today</span><span><b>'+n+'</b>last 30 days</span><span><b>'+(rate==null?"-":rate+"%")+'</b>'+esc(a.goal_label)+'</span>'+(hrate!=null?'<span><b>'+hrate+'%</b>without the email</span>':"")+'</div>'+
+     (a.today.length?'<details><summary class="muted" style="cursor:pointer;font-size:13px">Who it\'s for today</summary><div style="font-size:14px;margin-top:6px">'+a.today.map(function(p){return '<a href="#" data-member="'+p.id+'">'+esc(p.name)+'</a>'}).join(", ")+'</div></details>':"")+
+     '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn line sm" data-emk="'+a.key+'">Edit the email</button>'+(d.can_switch?'<button class="btn '+(a.sending?"line":"dark")+' sm" data-emsw="'+a.key+'">'+(a.sending?"Hand back to GymMaster":"Send from the Core")+'</button>':"")+'</div>':"")+'</div>'}).join("");
+ });
+}
+function emEdit(key){
+ var a=EMD.autos.find(function(x){return x.key===key});if(!a)return;var v=function(k){return esc(a[k]==null?"":a[k])};
+ $("#emEdit").innerHTML='<div style="display:flex;gap:10px;align-items:baseline"><h2 style="margin-right:auto">'+esc(a.name)+'</h2><button class="btn line sm" id="emClose">Close</button></div>'+
+  '<label class="fld">Subject<input id="emS" value="'+v("subject")+'"></label><label class="fld">Heading<input id="emH" value="'+v("heading")+'"></label>'+
+  '<label class="fld">The email (a blank line starts a new paragraph, {first} is their first name)<textarea id="emB" style="min-height:220px">'+v("body")+'</textarea></label>'+
+  '<div class="grid2"><label class="fld">Button<input id="emBt" value="'+v("button")+'"></label><label class="fld">Button link<input id="emU" value="'+v("url")+'"></label>'+(EMD.can_switch?'<label class="fld">Comparison group (% who don\'t get it)<input id="emHo" inputmode="numeric" value="'+(a.holdout_pct||0)+'"></label>':"")+'</div>'+
+  '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark" id="emSave">Save</button>'+(EMD.connected?'<button class="btn line" id="emTest">Send me a test</button>':"")+'</div><div id="emMsg"></div>'+
+  (a.updated_by?'<div class="muted" style="font-size:13px">Last changed by '+esc(a.updated_by)+', '+esc(day(a.updated_at))+'</div>':"")+
+  '<iframe class="emframe" id="emFrame" title="How the email looks" src="/api/emails/'+key+'/preview?t='+Date.now()+'"></iframe>';
+ $("#emClose").onclick=function(){$("#emEdit").innerHTML='<h2>Pick an automation</h2><p class="muted" style="margin:0">Change the words, see exactly how it looks, and send yourself a test.</p>'};
+ $("#emSave").onclick=function(){var b={subject:$("#emS").value,heading:$("#emH").value,body:$("#emB").value,button:$("#emBt").value,url:$("#emU").value};if($("#emHo"))b.holdout_pct=$("#emHo").value;
+  post("/api/emails/"+key,b).then(function(r){if(!r.ok){$("#emMsg").innerHTML='<div class="err">'+esc(r.error)+'</div>';return}$("#emMsg").innerHTML='<div class="ok">Saved.</div>';$("#emFrame").src="/api/emails/"+key+"/preview?t="+Date.now();get("/api/emails").then(function(d){EMD=d})})};
+ var t=$("#emTest");if(t)t.onclick=function(){post("/api/emails/"+key,{action:"test"}).then(function(r){$("#emMsg").innerHTML=r.ok?'<div class="ok">Sent to '+esc(r.to)+'.</div>':'<div class="err">'+esc(r.error)+'</div>'})};
+ if(window.innerWidth<900)$("#emEdit").scrollIntoView({behavior:"smooth"});
+}
+$("#emList").addEventListener("click",function(e){var b=e.target.closest("[data-emk]");if(b){emEdit(b.dataset.emk);return}
+ var w=e.target.closest("[data-emsw]");if(!w)return;var a=EMD.autos.find(function(x){return x.key===w.dataset.emsw}),on=!a.sending;
+ if(on&&!confirm("Send "+a.name+" from the Core from tomorrow 9am? Turn the GymMaster version off now so nobody gets two."))return;
+ post("/api/emails/"+a.key,{action:"sending",on:on}).then(function(r){if(!r.ok){alert(r.error);return}loadEm()})});
 
 /* ---------- memberships and prices ---------- */
 var CAT={data:null,tab:"membership",cur:null};

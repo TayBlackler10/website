@@ -25,6 +25,7 @@ import { makeBilling } from "./billing.js";
 import { makePush, SW_JS } from "./push.js";
 import { makePt } from "./pt.js";
 import { makeCatalog } from "./catalog.js";
+import { makeEmail } from "./email.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
@@ -35,6 +36,7 @@ const B = makeBilling({ nzDateTime, E: makeEzidebit() });
 const P = makePush();
 const PT = makePt({ nzDateTime, normMobile, P });
 const C = makeCatalog({ gmLive });
+const EM = makeEmail({ nzDateTime });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -56,6 +58,8 @@ export default {
       // Public: website forms post leads here with the shared intake key.
       if (url.pathname === "/api/intake") return intake(req, env);
       await ensureSchema(env);
+      // Public: the unsubscribe link in members' emails (needs an Access bypass for this path).
+      if (url.pathname === "/unsubscribe") return await EM.unsubscribe(env, url, req);
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -87,6 +91,11 @@ export default {
       const mn = url.pathname.match(/^\/api\/members\/(\d+)\/(notes|flags|details)$/);
       if (mn && req.method === "POST") return json(await updateMember(env, who, can, +mn[1], mn[2], await req.json()));
       if (url.pathname === "/api/plans") return json(await sellablePlans(env, can));
+      if (url.pathname === "/api/emails") return json(await EM.overview(env, who, can));
+      if (url.pathname === "/api/emails/run" && req.method === "POST" && can.settings) return json(await EM.daily(env));
+      const em = url.pathname.match(/^\/api\/emails\/([a-z_]+)(\/preview)?$/);
+      if (em && em[2]) return await EM.preview(env, who, can, em[1]);
+      if (em && req.method === "POST") return json(await EM.save(env, who, can, em[1], await req.json()));
       if (url.pathname === "/api/catalog") return json(req.method === "POST" ? await C.save(env, who, can, await req.json()) : await C.list(env, who, can));
       if (url.pathname === "/api/passport") return json(await passportReport(env, can, url.searchParams.get("month")));
       if (url.pathname === "/api/passport.csv") return await passportCsv(env, can, url.searchParams.get("month"));
@@ -189,6 +198,10 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => {
       await ensureSchema(env);
+      if (event.cron === "0 20 * * *") {
+        console.log("emails", JSON.stringify(await EM.daily(env).catch(e => String(e))));
+        return;
+      }
       if (event.cron === "*/15 * * * *") {
         const b = await H.refreshBalances(env);
         const v = b.lap ? await H2.sweepVisits(env, b.lap) : 0;
@@ -204,6 +217,7 @@ export default {
       if (env.XERO_CLIENT_ID) console.log("xero", JSON.stringify(await F.xeroSync(env, 2).catch(e => String(e))));
       if (env.WINDSOR_API_KEY) console.log("marketing", JSON.stringify(await F.marketingSync(env, 10).catch(e => String(e))));
       console.log("billing", JSON.stringify(await B.nightly(env).catch(e => String(e))));
+      console.log("email goals", JSON.stringify(await EM.goals(env).catch(e => String(e))));
       if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));
       if (env.GM_REPORT_KEY) console.log("yesterday", JSON.stringify(await H2.pullVisits(env, nzDateTime(new Date(Date.now() - 86400_000)).slice(0, 10)).catch(e => String(e))));
       try {

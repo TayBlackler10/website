@@ -9,7 +9,7 @@ enabled = true
 
 # Nightly copy from GymMaster at 2:15am NZ daylight time (1:15am in winter).
 [triggers]
-crons = ["15 13 * * *", "*/15 * * * *"]
+crons = ["15 13 * * *", "*/15 * * * *", "0 20 * * *"]   # nightly 2:15am, every 15 min, and 9am NZ for emails (8am in winter)
 
 [[d1_databases]]
 binding = "DB"

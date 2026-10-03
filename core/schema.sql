@@ -291,6 +291,39 @@ CREATE TABLE IF NOT EXISTS catalog_changes (
   at       TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Email automations: the words for each one, editable in the Core, in M2's email style.
+CREATE TABLE IF NOT EXISTS auto_content (
+  key         TEXT PRIMARY KEY REFERENCES automations(key),
+  subject     TEXT NOT NULL,
+  heading     TEXT,
+  body        TEXT NOT NULL,             -- plain text, a blank line between paragraphs. {first} becomes their first name
+  button      TEXT,
+  url         TEXT,
+  sending     INTEGER NOT NULL DEFAULT 0, -- 1 once the matching GymMaster automation is off and the Core takes over
+  updated_by  INTEGER REFERENCES staff(id),
+  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+-- Every email the Core works out, sends or would send, and what the person did afterwards.
+CREATE TABLE IF NOT EXISTS email_log (
+  id          INTEGER PRIMARY KEY,
+  auto_key    TEXT,
+  member_id   INTEGER REFERENCES members(id),
+  email       TEXT,
+  subject     TEXT,
+  status      TEXT NOT NULL,             -- preview, sent, failed, held_out, skipped
+  detail      TEXT,
+  provider_id TEXT,
+  day         TEXT NOT NULL,             -- NZ date it was due
+  at          TEXT NOT NULL DEFAULT (datetime('now')),
+  goal_met_at TEXT
+);
+CREATE UNIQUE INDEX IF NOT EXISTS email_log_once ON email_log(auto_key, member_id, day);
+CREATE INDEX IF NOT EXISTS email_log_member ON email_log(member_id, auto_key, at);
+CREATE TABLE IF NOT EXISTS email_unsubs (
+  email TEXT PRIMARY KEY,
+  at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 -- Collections: current members and former members with money owing.
 CREATE TABLE IF NOT EXISTS collections_cases (
   id             INTEGER PRIMARY KEY,
