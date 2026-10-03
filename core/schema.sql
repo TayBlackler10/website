@@ -817,3 +817,7 @@ CREATE TABLE IF NOT EXISTS class_templates (
   UNIQUE (weekday, start, name)
 );
 CREATE TABLE IF NOT EXISTS timetable_changes (id INTEGER PRIMARY KEY, staff_id INTEGER, what TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')));
+-- Online sign-ups: the signed agreement, and a password hash for the M2 App (never the password itself).
+CREATE TABLE IF NOT EXISTS member_agreements (id INTEGER PRIMARY KEY, member_id INTEGER NOT NULL, plan_name TEXT, signature TEXT, source TEXT, agreed_at TEXT NOT NULL DEFAULT (datetime('now')));
+CREATE INDEX IF NOT EXISTS member_agreements_member ON member_agreements(member_id);
+CREATE TABLE IF NOT EXISTS member_logins (email TEXT PRIMARY KEY, member_id INTEGER NOT NULL, salt TEXT NOT NULL, hash TEXT NOT NULL, set_at TEXT NOT NULL DEFAULT (datetime('now')));

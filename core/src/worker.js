@@ -31,9 +31,10 @@ import { makePos } from "./pos.js";
 import { makeApp } from "./app.js";
 import { makeMorning } from "./morning.js";
 import { makeTimetable } from "./timetable.js";
+import { makeJoin } from "./join.js";
 
 const TZ = "Pacific/Auckland";
-const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
+const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay, realMember: () => REAL_MEMBER });
 const R = makeRoster({ nzDateTime });
 const F = makeFeeds({ nzDateTime });
 const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
@@ -47,6 +48,7 @@ const POS = makePos({ nzDateTime });
 const APP = makeApp({ nzDateTime, P });
 const MORN = makeMorning({ nzDateTime, passportPay });
 const TT = makeTimetable({ nzDateTime });
+const JOIN = makeJoin({ nzDateTime, normMobile, classify: GS.classify, passportJoin: (env, b) => passportJoin(env, b), P });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -328,14 +330,19 @@ function b64urlText(s) { return new TextDecoder().decode(b64urlBytes(s)); }
 
 /* ---------------- reads ---------------- */
 
+// A member is someone active on a current membership that isn't staff, a trial or a pass.
+const REAL_MEMBER = `EXISTS (SELECT 1 FROM memberships rm JOIN plans rp ON rp.id = rm.plan_id WHERE rm.member_id = m.id AND rm.status IN ('current', 'frozen') AND rp.family NOT IN ('staff', 'trial', 'pass'))`;
 async function summary(env, can) {
   const db = env.DB;
   const one = (sql, ...a) => db.prepare(sql).bind(...a).first();
   const all = (sql, ...a) => db.prepare(sql).bind(...a).all().then(r => r.results);
 
   const out = {
-    members: (await one("SELECT count(*) n FROM members WHERE status = 'active'")).n,
-    passport: (await one("SELECT count(*) n FROM member_flags WHERE flag = 'passport'")).n,
+    // Members = people on a real membership. Staff, trials and passes are counted on their own, never as members.
+    members: (await one(`SELECT count(*) n FROM members m WHERE m.status = 'active' AND ${REAL_MEMBER}`)).n,
+    passport: (await one(`SELECT count(*) n FROM member_flags f JOIN members m ON m.id = f.member_id AND m.status = 'active' WHERE f.flag = 'passport' AND ${REAL_MEMBER}`)).n,
+    on_trial: (await one(`SELECT count(DISTINCT ms.member_id) n FROM memberships ms JOIN plans p ON p.id = ms.plan_id JOIN members m ON m.id = ms.member_id AND m.status = 'active'
+                          WHERE ms.status = 'current' AND p.family IN ('trial', 'pass') AND NOT ${REAL_MEMBER}`)).n,
     by_family: await all(`SELECT p.family, count(*) n FROM memberships m JOIN plans p ON p.id = m.plan_id
                           WHERE m.status = 'current' GROUP BY p.family ORDER BY n DESC`),
     lead_source_pct: (await one(`SELECT round(100.0 * sum(CASE WHEN coalesce(lead_source,'') <> '' THEN 1 ELSE 0 END) / max(count(*),1), 1) pct
@@ -1052,6 +1059,8 @@ async function intake(req, env) {
   let b;
   try { b = await req.json(); } catch { return reply({ error: "Bad request" }, 400); }
   if (b.m2_check) return reply({ ok: true });   // bot trap field filled in
+  if (b.kind === "join_start") return reply(await JOIN.start(env, b));
+  if (b.kind === "online_join") { const r = await JOIN.finish(env, b); return reply(r, r.ok ? 200 : 400); }
   if (b.kind === "passport_join") {
     const pr = await passportJoin(env, b);
     return reply(pr, pr.ok ? 200 : 400);

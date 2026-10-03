@@ -795,7 +795,7 @@ get("/api/me").then(function(me){
 function loadBiz(){
  get("/api/summary").then(function(s){
   var fam={};(s.by_family||[]).forEach(function(f){fam[f.family]=f.n});
-  var t=[["Members",s.members],["Fitness Passport",s.passport],["Perform",fam.perform||0],["Daily",fam.daily||0],
+  var t=[["Members",s.members],["Fitness Passport",s.passport],["On a trial or pass",s.on_trial||0],["Perform",fam.perform||0],["Daily",fam.daily||0],
    ["Billed weekly by Ezidebit",s.weekly_billed!=null?"$"+Math.round(s.weekly_billed).toLocaleString("en-NZ"):"-"],
    ["Owed to M2",s.owed_total!=null?"$"+Math.round(s.owed_total).toLocaleString("en-NZ"):"-"],
    ["Lead source recorded",(s.lead_source_pct||0)+"%"],["Blocked at the door",s.blocked]];

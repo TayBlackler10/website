@@ -218,9 +218,10 @@ export function makeHub(L) {
     const day = todayNz();
     const fam = Object.fromEntries((await all(env, `SELECT p.family, count(DISTINCT ms.member_id) n FROM memberships ms JOIN plans p ON p.id = ms.plan_id
                                                    JOIN members m ON m.id = ms.member_id AND m.status = 'active'
-                                                   WHERE ms.status = 'current' GROUP BY p.family`)).map(r => [r.family, r.n]));
-    const members = (await one(env, "SELECT count(*) n FROM members WHERE status = 'active'")).n;
-    const passport = (await one(env, "SELECT count(*) n FROM member_flags f JOIN members m ON m.id = f.member_id AND m.status = 'active' WHERE f.flag = 'passport'")).n;
+                                                   WHERE ms.status = 'current' AND p.family NOT IN ('staff', 'trial', 'pass') GROUP BY p.family`)).map(r => [r.family, r.n]));
+    // Staff, trials and passes are never counted as members.
+    const members = (await one(env, `SELECT count(*) n FROM members m WHERE m.status = 'active' AND ${L.realMember()}`)).n;
+    const passport = (await one(env, `SELECT count(*) n FROM member_flags f JOIN members m ON m.id = f.member_id AND m.status = 'active' WHERE f.flag = 'passport' AND ${L.realMember()}`)).n;
     const weekly = (await one(env, "SELECT round(sum(weekly_value), 2) v FROM memberships WHERE status = 'current' AND billed_by <> 'passport'")).v || 0;
     const owed = (await one(env, "SELECT round(sum(balance_owing), 2) v FROM billing_accounts WHERE balance_owing > 0")).v || 0;
     const named = ["perform", "daily", "classes", "recovery"].reduce((a, k) => a + (fam[k] || 0), 0);

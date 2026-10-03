@@ -106,9 +106,12 @@ export const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS class_closed (class_id TEXT PRIMARY KEY, day TEXT, by_name TEXT, at TEXT NOT NULL DEFAULT (datetime('now')));",
 "CREATE TABLE IF NOT EXISTS class_attendance_log (id INTEGER PRIMARY KEY, class_id TEXT, day TEXT, start TEXT, name TEXT, member_id INTEGER, what TEXT, by_name TEXT, at TEXT NOT NULL DEFAULT (datetime('now')));",
 "CREATE TABLE IF NOT EXISTS class_templates (\n  id          INTEGER PRIMARY KEY,\n  weekday     INTEGER NOT NULL,        \n  start       TEXT NOT NULL,           \n  end_time    TEXT,\n  name        TEXT NOT NULL,\n  coach_id    INTEGER REFERENCES staff(id),\n  coach_name  TEXT,\n  cap         INTEGER NOT NULL DEFAULT 20,\n  gm_classid  INTEGER,\n  active      INTEGER NOT NULL DEFAULT 1,\n  notes       TEXT,\n  updated_by  INTEGER,\n  updated_at  TEXT NOT NULL DEFAULT (datetime('now')),\n  UNIQUE (weekday, start, name)\n);",
-"CREATE TABLE IF NOT EXISTS timetable_changes (id INTEGER PRIMARY KEY, staff_id INTEGER, what TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')));"
+"CREATE TABLE IF NOT EXISTS timetable_changes (id INTEGER PRIMARY KEY, staff_id INTEGER, what TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')));",
+"CREATE TABLE IF NOT EXISTS member_agreements (id INTEGER PRIMARY KEY, member_id INTEGER NOT NULL, plan_name TEXT, signature TEXT, source TEXT, agreed_at TEXT NOT NULL DEFAULT (datetime('now')));",
+"CREATE INDEX IF NOT EXISTS member_agreements_member ON member_agreements(member_id);",
+"CREATE TABLE IF NOT EXISTS member_logins (email TEXT PRIMARY KEY, member_id INTEGER NOT NULL, salt TEXT NOT NULL, hash TEXT NOT NULL, set_at TEXT NOT NULL DEFAULT (datetime('now')));"
 ];
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "d0fa00b2cccf";
+export const SCHEMA_VERSION = "e4f1d1ec32f7";
