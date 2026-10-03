@@ -99,9 +99,10 @@ export const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS app_seen (member_id INTEGER NOT NULL, day TEXT NOT NULL, via TEXT, PRIMARY KEY (member_id, day));",
 "CREATE TABLE IF NOT EXISTS app_requests (\n  id         INTEGER PRIMARY KEY,\n  member_id  INTEGER REFERENCES members(id),\n  kind       TEXT NOT NULL,              \n  text       TEXT,\n  at         TEXT NOT NULL DEFAULT (datetime('now')),\n  done_at    TEXT,\n  done_by    INTEGER REFERENCES staff(id)\n);",
 "CREATE TABLE IF NOT EXISTS app_doors (\n  id         INTEGER PRIMARY KEY,\n  member_id  INTEGER,\n  door       TEXT,\n  opened     INTEGER NOT NULL DEFAULT 0,\n  note       TEXT,\n  metres     INTEGER,\n  at         TEXT NOT NULL DEFAULT (datetime('now'))\n);",
-"CREATE TABLE IF NOT EXISTS app_log (id INTEGER PRIMARY KEY, at TEXT NOT NULL DEFAULT (datetime('now')), member_id INTEGER, action TEXT, via TEXT, ok INTEGER, signin INTEGER, note TEXT, ms INTEGER);"
+"CREATE TABLE IF NOT EXISTS app_log (id INTEGER PRIMARY KEY, at TEXT NOT NULL DEFAULT (datetime('now')), member_id INTEGER, action TEXT, via TEXT, ok INTEGER, signin INTEGER, note TEXT, ms INTEGER);",
+"CREATE TABLE IF NOT EXISTS passport_checks (month TEXT PRIMARY KEY, core INTEGER, gm INTEGER, fp INTEGER, members INTEGER, same INTEGER, diff_count INTEGER, diffs TEXT, checked_at TEXT);"
 ];
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "0137785b2774";
+export const SCHEMA_VERSION = "ead15feb5448";

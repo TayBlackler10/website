@@ -779,3 +779,5 @@ CREATE TABLE IF NOT EXISTS app_doors (
   at         TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE TABLE IF NOT EXISTS app_log (id INTEGER PRIMARY KEY, at TEXT NOT NULL DEFAULT (datetime('now')), member_id INTEGER, action TEXT, via TEXT, ok INTEGER, signin INTEGER, note TEXT, ms INTEGER);
+-- Core's Passport visit count against GymMaster's, month by month, before the Core reports visits itself.
+CREATE TABLE IF NOT EXISTS passport_checks (month TEXT PRIMARY KEY, core INTEGER, gm INTEGER, fp INTEGER, members INTEGER, same INTEGER, diff_count INTEGER, diffs TEXT, checked_at TEXT);

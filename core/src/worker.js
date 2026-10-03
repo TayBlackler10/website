@@ -122,6 +122,7 @@ export default {
       if (pv && req.method === "POST") return json(await POS.voidSale(env, who, can, +pv[1], await req.json()));
       if (url.pathname === "/api/catalog") return json(req.method === "POST" ? await C.save(env, who, can, await req.json()) : await C.list(env, who, can));
       if (url.pathname === "/api/passport") return json(await passportReport(env, can, url.searchParams.get("month")));
+      if (url.pathname === "/api/passport/check") return json(await passportCheck(env, can, url.searchParams.get("month"), req.method === "POST"));
       if (url.pathname === "/api/passport.csv") return await passportCsv(env, can, url.searchParams.get("month"));
       if (url.pathname === "/api/members" && req.method === "POST") return json(await addMember(env, who, can, await req.json()));
       if (url.pathname === "/api/members") return json(await searchMembers(env, who, can, url.searchParams.get("q") || ""));
@@ -255,6 +256,10 @@ export default {
       console.log("billing", JSON.stringify(await B.nightly(env).catch(e => String(e))));
       console.log("email goals", JSON.stringify(await EM.goals(env).catch(e => String(e))));
       if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));
+      // Passport: check last month's count against GymMaster on the 2nd to the 5th (visits from the 1st have all landed by then).
+      { const d = +nzDateTime(new Date()).slice(8, 10);
+        if (env.GM_REPORT_KEY && d >= 2 && d <= 5) { const lm = nzDateTime(new Date(Date.now() - d * 86400_000)).slice(0, 7);
+          console.log("passport check", JSON.stringify(await passportCheck(env, CAN.owner, lm, true).then(x => ({ core: x.core, gm: x.gm, diffs: x.diff_count })).catch(e => String(e)))); } }
       if (env.GM_REPORT_KEY) console.log("yesterday", JSON.stringify(await H2.pullVisits(env, nzDateTime(new Date(Date.now() - 86400_000)).slice(0, 10)).catch(e => String(e))));
       try {
         const t = nzDateTime(new Date()).slice(0, 10);
@@ -1690,6 +1695,46 @@ async function passportReport(env, can, month) {
   }
   return out;
 }
+
+// Before the Core reports Passport visits itself: does its count match GymMaster's, member by member,
+// and the visits Passport actually paid for? Uses GymMaster's "Member Visit Count in Period" report (320).
+async function passportCheck(env, can, month, fresh) {
+  if (can.members !== true) return { error: "No access" };
+  const r = monthRange(month);
+  const saved = await env.DB.prepare("SELECT * FROM passport_checks WHERE month = ?").bind(r.month).first();
+  if (saved && !fresh) return { ...saved, diffs: JSON.parse(saved.diffs || "[]") };
+  if (!env.GM_REPORT_KEY) return { error: "GM_REPORT_KEY is not set" };
+  const last = monthRange(null).month;
+  if (r.month > last) return { error: "That month hasn't happened yet." };
+  const endDay = addDaysIso(r.to, -1);
+  const res = await fetch((env.GM_SITE || "https://m2trainingclub.gymmasteronline.com") + "/api/v2/report/standard_report", { method: "POST",
+    headers: { "X-GM-API-KEY": String(env.GM_REPORT_KEY).trim(), "Accept": "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify({ start_date: r.from, end_date: endDay, report_id: 320, company_id: +(env.COMPANY_ID || 4), displaymode: "ALL" }) });
+  const d = await res.json().catch(() => ({}));
+  if (!Array.isArray(d.result)) return { error: "GymMaster's visit count report didn't answer" + (d.error ? ": " + d.error : "") };
+  const gm = new Map();
+  for (const x of d.result) { const id = +x["Member ID"]; if (id) gm.set(id, Math.max(gm.get(id) || 0, +x["Number of Days Visited"] || 0)); }
+  const fpIds = new Set((await env.DB.prepare("SELECT member_id FROM member_flags WHERE flag = 'passport'").all()).results.map(x => x.member_id));
+  const core = new Map((await passportRows(env, r.from, r.to)).map(x => [x.member_id, x]));
+  const ids = new Set([...core.keys(), ...[...gm.keys()].filter(id => fpIds.has(id))]);
+  let coreTotal = 0, gmTotal = 0, same = 0;
+  const diffs = [];
+  for (const id of ids) {
+    const c = core.get(id), cv = c ? c.visits : 0, gv = gm.get(id) || 0;
+    coreTotal += cv; gmTotal += gv;
+    if (cv === gv) same++; else diffs.push({ member_id: id, name: c ? (c.first_name + " " + (c.last_name || "")).trim() : null, core: cv, gm: gv });
+  }
+  for (const x of diffs) if (!x.name) { const m = await env.DB.prepare("SELECT first_name, last_name FROM members WHERE id = ?").bind(x.member_id).first(); x.name = m ? (m.first_name + " " + (m.last_name || "")).trim() : "Member " + x.member_id; }
+  diffs.sort((a, b) => Math.abs(b.gm - b.core) - Math.abs(a.gm - a.core));
+  const fp = (await env.DB.prepare("SELECT visits FROM passport_months WHERE month = ?").bind(r.month).first())?.visits ?? null;
+  const out = { month: r.month, core: coreTotal, gm: gmTotal, fp, members: ids.size, same, diffs: diffs.slice(0, 80), diff_count: diffs.length };
+  await env.DB.prepare(`INSERT INTO passport_checks(month, core, gm, fp, members, same, diff_count, diffs, checked_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    ON CONFLICT(month) DO UPDATE SET core = excluded.core, gm = excluded.gm, fp = excluded.fp, members = excluded.members, same = excluded.same,
+    diff_count = excluded.diff_count, diffs = excluded.diffs, checked_at = excluded.checked_at`)
+    .bind(out.month, out.core, out.gm, out.fp, out.members, out.same, out.diff_count, JSON.stringify(out.diffs)).run();
+  return { ...out, checked_at: nzDateTime(new Date()) };
+}
+function addDaysIso(iso, n) { return new Date(Date.parse(iso + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10); }
 
 async function passportCsv(env, can, month) {
   if (can.members !== true) return new Response("No access", { status: 403 });
