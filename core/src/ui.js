@@ -186,10 +186,12 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .mcal .dc{background:var(--tile);border-radius:12px;padding:6px;min-height:118px;display:flex;flex-direction:column;gap:3px;cursor:pointer}
 .mcal .dc.out{background:none;cursor:default}.mcal .dc.today{box-shadow:inset 0 0 0 2px var(--olive)}
 .mcal .dn{font:800 14px Archivo,Arial,sans-serif}.mcal .ms{font-size:11.5px;line-height:1.25;background:#fff;border-radius:6px;padding:2px 5px;border:0;text-align:left;cursor:pointer}
+.bcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.bcal .bd{background:var(--tile);border:0;border-radius:12px;padding:8px;text-align:left;cursor:pointer;min-height:66px;display:flex;flex-direction:column;gap:2px;font:inherit;color:inherit}.bcal .bd b{font-size:12px;color:var(--muted);font-weight:600}.bcal .bd .c{font-size:18px;font-weight:700}.bcal .bd .t{font-size:12px;color:var(--muted)}.bcal .bd.on{background:var(--ink);color:#fff}.bcal .bd.on .c{color:var(--lime)}.bcal .bd.on b,.bcal .bd.on .t{color:var(--soft)}.bcal .bd.wk b{color:var(--olive)}.bcal .bd.zero{opacity:.55}.bsteps div{display:flex;gap:10px;align-items:center;font-size:14px;padding:6px 0;border-bottom:1px solid var(--line)}.bsteps div:last-child{border:0}.bsteps i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;flex:none}.bsteps .y i{background:var(--lime);border-color:var(--lime)}.bform{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:var(--tile);border-radius:14px;padding:12px}.bform .fld{flex:1;min-width:130px}
 .mcal .ms.mg{background:var(--ink);color:var(--lime)}.mcal .ms.draft{border:1px dashed var(--ink)}
 .shift.mine{box-shadow:0 0 0 2px var(--lime)}
 [hidden]{display:none!important}a.btn,label.btn{text-decoration:none;display:inline-flex;align-items:center}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:700px){.bcal{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:900px){.prof,.row3{grid-template-columns:1fr}.wall{grid-template-columns:1fr}.funnel div{grid-template-columns:110px minmax(0,1fr) 70px}.navlab{display:none}.hb{grid-template-columns:minmax(0,110px) minmax(0,1fr) 50px}.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:column;align-items:stretch;gap:10px;padding:12px}nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px;min-width:0;max-width:100%}aside{min-width:0;max-width:100vw}.nav{width:auto;white-space:nowrap;padding:8px 12px}.me{display:none}.row2{grid-template-columns:1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}main{padding:18px 14px 40px}}
 @media (prefers-reduced-motion:no-preference){.card{animation:none}}
 </style></head><body>
@@ -206,6 +208,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="tag">Key tag lookup</button>
 <button class="nav" data-go="passport" id="navFp" hidden>Fitness Passport</button>
 <button class="nav" data-go="collections" id="navCol" hidden>Money owed</button>
+<button class="nav" data-go="billing" id="navBill" hidden>Billing</button>
 <button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
 <div class="navlab" id="navBizLab" hidden>The business</div>
 <button class="nav" data-go="money" id="navMoney" hidden>Money</button>
@@ -393,6 +396,29 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="row2">
 <section class="card"><div style="overflow-x:auto" id="colTable"><div class="muted">Loading...</div></div></section>
 <section class="card" id="colPanel"><h2>Pick someone</h2><p class="muted" style="margin:0">Call, record what they said, and settle or refer. Everything is logged on their profile.</p></section>
+</div>
+</section>
+
+<!-- BILLING -->
+<section data-view="billing" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow" id="bilEye">Direct debits, ready for Ezidebit</div><h1>Billing<span class="dot">.</span></h1></div>
+<span class="pill dark" id="bilMode"></span>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div id="bilBanner" style="color:var(--soft);font-size:14px"></div><div class="tiles" id="bilTiles"></div></section>
+<div class="row2">
+<section class="card"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">The next four weeks</h2><span class="muted" style="font-size:13px">Tap a day to see who's debited</span></div><div class="bcal" id="bilCal"></div><div id="bilDay"></div></section>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Getting to live</h2><div class="bsteps" id="bilSteps"></div></section>
+<section class="card"><h2>Failed payments</h2><div id="bilFailed"><div class="muted">Loading...</div></div></section>
+</div>
+</div>
+<section class="card" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Ready check</h2><span class="muted" id="bilReadyNote" style="font-size:13px"></span></div><p class="muted" style="margin:0">Everything that would stop a clean move off GymMaster. Fix these in GymMaster or on the member, and they drop off here.</p><div class="chips" id="bilReadyTabs"></div><div style="overflow-x:auto" id="bilReady"><div class="muted">Checking...</div></div></section>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>What changed</h2><div class="hist" id="bilLog"></div></section>
+<section class="card" id="bilRulesCard" hidden><h2>Rules</h2>
+<div class="grid2"><label class="fld">Send debits this many days ahead<input id="brLead" type="number" min="1" max="7"></label><label class="fld">Failed payment fee ($, 0 for none)<input id="brFee" type="number" min="0" max="50" step="0.5"></label><label class="fld">Retry a failed debit after (days)<input id="brRetry" type="number" min="1" max="14"></label><label class="fld">Retries before it goes to Money owed<input id="brMax" type="number" min="0" max="5"></label></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark sm" id="brSave">Save rules</button><button class="btn line sm" id="brTest">Test Ezidebit connection</button><button class="btn line sm" id="brRun">Run tonight's billing now</button></div><div id="brMsg"></div></section>
 </div>
 </section>
 
@@ -640,6 +666,7 @@ function show(v){
  if(v==="classes"){loadClasses(CLS.week);loadClassStats()}
  if(v==="roster")loadRoster(RO.week);
  if(v==="collections")loadCol();
+ if(v==="billing")loadBill();
  if(v==="money")loadMoney();
  if(v==="growth")loadGrowth();
  if(v==="marketing"){loadMkt();loadMktMore()}
@@ -656,7 +683,7 @@ get("/api/me").then(function(me){
  var h=new Date().getHours();if(h>=12)$("#hello").innerHTML=(h<17?"Afternoon, ":"Evening, ")+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  if(me.can.members===true)$("#navFp").hidden=false;
  if(me.can.settings){$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
- if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false}
+ if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false}
  if(me.can.business){$("#navBizLab").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
  if(me.can.settings)$("#navAdminLab").hidden=false;
  if(me.can.add){$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
@@ -843,8 +870,8 @@ function renderMember(d,id){
  var notes='<section class="card"><h2>Notes and history</h2><div style="display:flex;gap:8px"><label class="sr" for="noteIn">Add a note</label><input id="noteIn" class="fld" style="flex:1;height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px" placeholder="Add a note, like what they said at the desk"><button class="btn dark sm" data-note="'+id+'" style="height:44px">Save</button></div>'+
   '<div class="hist">'+(d.activity.map(function(a){return '<div><span>'+esc(day(a.at))+'</span><span>'+esc(a.detail)+(a.staff?' <span class="muted">'+esc(a.staff)+'</span>':"")+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>')+'</div></section>';
  P.innerHTML='<div class="pcol">'+head+next+'<div id="gmBox"></div>'+(tagRows?'<section class="card"><h2>Key tags</h2><div class="hist">'+tagRows+'</div></section>':"")+'</div>'+
-  '<div class="pcol"><div id="liveBox"><section class="card"><h2>Live from GymMaster</h2><div class="muted">Checking GymMaster...</div></section></div>'+visits+bill+notes+'</div>';
- loadLive(id);
+  '<div class="pcol"><div id="liveBox"><section class="card"><h2>Live from GymMaster</h2><div class="muted">Checking GymMaster...</div></section></div>'+visits+(d.billing?'<div id="billBox"></div>':"")+notes+'</div>';
+ loadLive(id);if(d.billing)loadMemberBill(id);
 }
 document.addEventListener("click",function(e){
  var t;
@@ -1160,6 +1187,124 @@ $("#colPanel").addEventListener("click",function(e){
  if(a==="settled"){var amt=prompt("How much did they pay?",x.offer.toFixed(2));if(amt===null)return;body.amount=amt}
  if(a==="written_off"&&!confirm("Write off "+money(x.owing)+"?"))return;
  post("/api/collections",body).then(function(r){if(!r.ok){$("#colErr").textContent=r.error;return}$("#colPanel").innerHTML='<div class="ok">Saved for '+esc(nm(x))+'.</div>';loadCol()});
+});
+
+/* ---------- billing ---------- */
+var BIL={day:null,data:null,ready:null,rk:"all"};
+var BMODE={preview:["Preview","Not connected to Ezidebit yet. GymMaster still takes every debit. This page shows exactly what the Core would take, so the two can be compared before anyone moves."],sandbox:["Sandbox","Connected to Ezidebit's test system. Only members moved to the Core get test debits. No real money moves."],ready:["Live key in","The live Ezidebit key is in. Debits start once BILLING_MODE is switched to ezidebit in Cloudflare."],live:["Live","The Core sends real debits to Ezidebit for members moved across. Everyone else is still billed by GymMaster."]};
+var BKIND={regular:"Debit",one_off:"One-off",retry:"Retry",fee:"Fee",arrangement:"Payment plan"};
+var BSTAT={preview:"Would debit",planned:"Planned",sent:"With Ezidebit",paid:"Paid",failed:"Failed",cancelled:"Cancelled",waived:"Waived",due:"Due"};
+var FREQ={weekly:"weekly",fortnightly:"fortnightly",monthly:"monthly",quarterly:"quarterly",yearly:"yearly"};
+var RKIND={no_method:"No bank details",amount:"Amount differs",no_plan:"No plan in the Core",no_price:"No price",no_freq:"How often unknown",no_date:"No date"};
+function wd(iso){return new Date(iso+"T12:00:00").toLocaleDateString("en-NZ",{weekday:"short",day:"numeric",month:"short"})}
+function loadBill(){
+ get("/api/billing").then(function(d){
+  if(d.error){$("#bilTiles").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  BIL.data=d;var M=BMODE[d.mode.kind]||[d.mode.kind,""],c=d.counts;
+  $("#bilMode").textContent=M[0];$("#bilBanner").textContent=M[1];
+  var t=tile(c.members.toLocaleString("en-NZ"),"Members on a debit")+tile(c.core,"Billed by the Core")+tile(c.no_method,"No bank or card details")+tile(c.issues,"Need a look before the move");
+  if(d.money)t=tile(whole$(d.money.weekly),"Billed per week")+tile(whole$(d.money.next7),"Next 7 days")+tile(whole$(d.money.next28),"Next 4 weeks")+t+(d.money.failed_sum?tile(whole$(d.money.failed_sum),"Failed, last 60 days"):"");
+  $("#bilTiles").innerHTML=t;
+  $("#bilSteps").innerHTML=d.steps.map(function(s){return '<div class="'+(s.done?"y":"")+'"><i>'+(s.done?"&#10003;":"")+'</i><span>'+esc(s.t)+'</span></div>'}).join("")+(d.last_run?'<div class="muted" style="font-size:13px">Last run '+esc(ago(d.last_run.at.replace("T"," ").slice(0,16)))+': '+(d.last_run.preview||0)+' previewed, '+(d.last_run.sent||0)+' sent'+(d.last_run.errors&&d.last_run.errors.length?', '+d.last_run.errors.length+' problems':"")+'.</div>':'<div class="muted" style="font-size:13px">First run tonight at 2:15am.</div>');
+  var wkStart=new Date(d.today+"T12:00:00").getDay();
+  $("#bilCal").innerHTML=d.days.map(function(x,i){var dt=new Date(x.date+"T12:00:00");return '<button class="bd'+(x.date===(BIL.day||d.today)?" on":"")+(x.n?"":" zero")+(dt.getDay()===1?" wk":"")+'" data-bday="'+x.date+'"><b>'+esc(wd(x.date))+'</b><span class="c">'+x.n+'</span><span class="t">'+(x.total!=null?whole$(x.total):(x.n===1?"debit":"debits"))+(x.skipped?" &middot; "+x.skipped+" skipped":"")+'</span></button>'}).join("");
+  var fl=d.failed||[];
+  $("#bilFailed").innerHTML=fl.length?table([["Name",function(x){return '<a href="#" data-member="'+x.member_id+'">'+esc(nm(x))+'</a>'},0,1],["Date",function(x){return day(x.debit_date)}],["Amount",function(x){return money(x.amount)},1],["Why",function(x){return x.failure_reason||""}],["Retry",function(x){return x.retry_pending?'<span class="pill">Booked</span>':'<span class="pill warn">None</span>'},0,1]],fl):'<div class="ok">No failed debits. '+(d.mode.kind==="preview"?"They'll show here once Ezidebit is connected. Until then GymMaster's failed payments are in Money owed.":"")+'</div>';
+  $("#bilLog").innerHTML=(d.events||[]).map(function(e){return '<div><span>'+esc(day(e.at))+'</span><span>'+(e.member_id?'<a href="#" data-member="'+e.member_id+'">'+esc(nm(e))+'</a>: ':"")+esc(e.detail)+(e.staff?' <span class="muted">'+esc(e.staff)+'</span>':"")+'</span></div>'}).join("")||'<p class="muted" style="margin:0">Nothing yet.</p>';
+  if(ME.can.settings){var r=d.rules;$("#bilRulesCard").hidden=false;$("#brLead").value=r.lead_days;$("#brFee").value=r.failed_fee;$("#brRetry").value=r.retry_days;$("#brMax").value=r.max_retries}
+  loadBillDay(BIL.day||d.today);
+ });
+ get("/api/billing/ready").then(function(r){BIL.ready=r;drawReady()});
+}
+function drawReady(){
+ var r=BIL.ready;if(!r)return;if(r.error){$("#bilReady").innerHTML='<div class="err">'+esc(r.error)+'</div>';return}
+ $("#bilReadyNote").textContent=r.clean.toLocaleString("en-NZ")+" of "+r.total.toLocaleString("en-NZ")+" members are ready to move";
+ var tabs=[["all","Everything",r.rows.length]].concat(Object.keys(r.kinds).map(function(k){return [k,RKIND[k]||k,r.kinds[k]]}));
+ $("#bilReadyTabs").innerHTML=tabs.map(function(t){return '<button class="chip'+(BIL.rk===t[0]?" on":"")+'" data-rk="'+t[0]+'">'+esc(t[1])+' '+t[2]+'</button>'}).join("");
+ var rows=r.rows.filter(function(x){return BIL.rk==="all"||x.k===BIL.rk});
+ var lim=BIL.rall?600:25;
+ $("#bilReady").innerHTML=rows.length?table([["Name",function(x){return '<a href="#" data-member="'+x.id+'">'+esc(nm(x))+'</a>'},0,1],["Plan","plan"],["What's wrong","t"],["GymMaster says",function(x){return x.gm||""}]],rows.slice(0,lim))+(rows.length>lim?'<button class="btn line sm" id="bilAll" style="margin-top:8px">Show all '+rows.length+'</button>':""):'<div class="ok">Everyone is ready.</div>';
+ var ba=$("#bilAll");if(ba)ba.onclick=function(){BIL.rall=true;drawReady()};
+}
+function loadBillDay(dt){
+ BIL.day=dt;$$("#bilCal .bd").forEach(function(b){b.classList.toggle("on",b.dataset.bday===dt)});
+ $("#bilDay").innerHTML='<div class="muted">Loading...</div>';
+ get("/api/billing/day?date="+dt).then(function(d){
+  if(d.error){$("#bilDay").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  var h='<h3 style="margin:8px 0 0">'+esc(wd(dt))+': '+d.rows.length+' debits'+(d.total!=null?", "+money(d.total):"")+'</h3>';
+  h+=d.rows.length?table([["Name",function(x){return '<a href="#" data-member="'+x.id+'">'+esc(nm(x))+'</a>'},0,1],["Plan",function(x){return (x.plan||"")+(x.freq?", "+FREQ[x.freq]:"")}],["Amount",function(x){return money(x.amount)},1],["Billed by",function(x){return x.by==="core"?'<span class="pill dark">Core</span>':'<span class="pill">GymMaster</span>'},0,1],["",function(x){return x.status?'<span class="pill'+(x.status==="paid"?" ok":x.status==="failed"?" warn":"")+'">'+esc(BSTAT[x.status]||x.status)+'</span>':""},0,1]],d.rows):'<div class="muted">No debits this day.</div>';
+  if(d.extras&&d.extras.length)h+='<h3 style="margin:10px 0 0">Extras</h3>'+table([["Name",function(x){return '<a href="#" data-member="'+x.id_m+'">'+esc(nm(x))+'</a>'},0,1],["What",function(x){return BKIND[x.kind]+(x.note?": "+x.note:"")}],["Amount",function(x){return money(x.amount)},1],["",function(x){return '<span class="pill">'+esc(BSTAT[x.status]||x.status)+'</span>'},0,1]],d.extras);
+  if(d.skipped.length)h+='<details style="margin-top:8px"><summary class="muted" style="cursor:pointer">'+d.skipped.length+' skipped this day</summary>'+table([["Name",function(x){return '<a href="#" data-member="'+x.id+'">'+esc(nm(x))+'</a>'},0,1],["Would have been",function(x){return money(x.amount)},1],["Why not","why"]],d.skipped)+'</details>';
+  $("#bilDay").innerHTML=h;
+ });
+}
+$("#bilCal").addEventListener("click",function(e){var b=e.target.closest("[data-bday]");if(b)loadBillDay(b.dataset.bday)});
+$("#bilReadyTabs").addEventListener("click",function(e){var b=e.target.closest("[data-rk]");if(!b)return;BIL.rk=b.dataset.rk;BIL.rall=false;drawReady()});
+function brMsg(h){$("#brMsg").innerHTML=h}
+$("#brSave").addEventListener("click",function(){post("/api/billing/rules",{bill_lead_days:$("#brLead").value,bill_failed_fee:$("#brFee").value,bill_retry_days:$("#brRetry").value,bill_max_retries:$("#brMax").value}).then(function(r){brMsg(r.ok?'<div class="ok">Saved.</div>':'<div class="err">'+esc(r.error)+'</div>')})});
+$("#brTest").addEventListener("click",function(){brMsg('<div class="muted">Asking Ezidebit...</div>');post("/api/billing/test").then(function(r){brMsg(r.ok?'<div class="ok">Ezidebit answered'+(r.sandbox?" (sandbox)":" (live)")+'. The key works.</div>':'<div class="err">'+esc(r.error||"No answer")+'</div>')})});
+$("#brRun").addEventListener("click",function(){var b=this;b.disabled=true;brMsg('<div class="muted">Running...</div>');post("/api/billing/run").then(function(r){b.disabled=false;brMsg('<div class="ok">Done: '+(r.preview||0)+' previewed, '+(r.planned||0)+' planned, '+(r.sent||0)+' sent'+(r.errors&&r.errors.length?'. Problems: '+esc(r.errors.slice(0,3).join("; ")):"")+'.</div>');loadBill()})});
+
+/* member billing card */
+function loadMemberBill(id){
+ var box=$("#billBox");if(!box)return;box.innerHTML='<section class="card"><h2>Billing</h2><div class="muted">Loading...</div></section>';
+ get("/api/billing/member/"+id).then(function(b){drawMemberBill(id,b)});
+}
+function drawMemberBill(id,b){
+ var box=$("#billBox");if(!box)return;
+ if(b.error){box.innerHTML='';return}
+ var bank=ME.can.add?'<button class="btn line sm" data-bill="'+id+'">Enter or update bank details</button>':"";
+ if(b.none){box.innerHTML='<section class="card"><h2>Billing</h2><div class="muted">Not on a direct debit plan.</div>'+(b.items.length?billHist(b):"")+bank+'</section>';return}
+ var core=b.billed_by==="core",st=b.state==="hold"?'<span class="pill warn">On hold</span>':b.state==="cancelled"?'<span class="pill warn">Billing stopped</span>':'<span class="pill ok">Active</span>';
+ var h='<section class="card"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><h2 style="margin-right:auto">Billing</h2>'+st+(core?'<span class="pill dark">Billed by the Core</span>':'<span class="pill">Billed by GymMaster</span>')+'</div>';
+ if(b.owing>0)h+='<div class="warnbox">Owes <b>'+money(b.owing)+'</b></div>';
+ if(!core)h+='<div class="muted" style="font-size:13px">GymMaster still takes this member\'s debits. Changes here are planned in the Core only, so make the same change in GymMaster until they move across.</div>';
+ h+='<dl class="kv"><dt>Plan</dt><dd>'+esc(b.plan||"-")+'</dd><dt>Debit</dt><dd>'+(b.base?money(b.amount_override||b.base)+" "+esc(FREQ[b.freq]||"")+(b.amount_override?' <span class="pill">Changed from '+money(b.base)+'</span>':""):"-")+'</dd><dt>Next debit</dt><dd>'+(b.coming[0]?esc(wd(b.coming[0].date))+", "+money(b.coming[0].amount)+(b.coming[0].skip?' <span class="pill warn">'+esc(b.coming[0].skip)+'</span>':""):"-")+'</dd>'+(b.gm_next&&!core?'<dt>GymMaster says</dt><dd>'+esc(b.gm_next)+'</dd>':"")+(b.method?'<dt>Paying by</dt><dd>'+esc(b.method)+'</dd>':"")+(b.state==="hold"?'<dt>Hold</dt><dd>'+esc((b.hold_from?day(b.hold_from):"Now")+" to "+(b.hold_to?day(b.hold_to):"further notice"))+(b.hold_reason?". "+esc(b.hold_reason):"")+'</dd>':"")+(b.arrangement_extra?'<dt>Payment plan</dt><dd>Extra '+money(b.arrangement_extra)+' each debit'+(b.arrangement_note?". "+esc(b.arrangement_note):"")+'</dd>':"")+(b.min_term_end&&b.min_term_end>=new Date().toISOString().slice(0,10)?'<dt>Lock-in ends</dt><dd>'+esc(day(b.min_term_end))+'</dd>':"")+'</dl>';
+ b.issues.filter(function(i){return i.k!=="gifted"}).forEach(function(i){h+='<div class="warnbox" style="padding:8px 12px">'+esc(i.t)+'</div>'});
+ if(b.coming.length>1)h+='<div class="muted" style="font-size:13px">Coming up: '+b.coming.slice(1).map(function(x){return esc(wd(x.date))+" "+money(x.amount)+(x.skip?" (skipped)":"")}).join(", ")+'</div>';
+ if(b.can_act){
+  h+='<div style="display:flex;gap:6px;flex-wrap:wrap">'+(b.state==="hold"?'<button class="btn line sm" data-ba="resume">Take off hold</button>':'<button class="btn line sm" data-ba="hold">Put on hold</button>')+'<button class="btn line sm" data-ba="amount">Change amount</button><button class="btn line sm" data-ba="one_off">One-off charge</button><button class="btn line sm" data-ba="arrangement">'+(b.arrangement_extra?"Change payment plan":"Payment plan")+'</button>'+(b.state==="cancelled"?'<button class="btn line sm" data-ba="restart">Restart billing</button>':'<button class="btn line sm" data-ba="cancel">Stop billing</button>')+(b.can_switch?(core?'<button class="btn line sm" data-ba="back">Move back to GymMaster</button>':'<button class="btn dark sm" data-ba="switch">Move billing to the Core</button>'):"")+(b.mode!=="preview"?'<button class="btn line sm" data-ba="method">Check Ezidebit</button>':"")+bank+'</div><div id="billForm"></div>';
+ } else h+=bank;
+ h+=billHist(b)+'</section>';
+ box.innerHTML=h;box.dataset.id=id;BIL.cur=b;
+}
+function billHist(b){
+ var rows=(b.items||[]).map(function(x){return '<div><span>'+esc(day(x.debit_date))+'</span><span>'+esc(BKIND[x.kind]||x.kind)+' '+money(x.amount)+' <span class="pill'+(x.status==="paid"?" ok":x.status==="failed"?" warn":"")+'">'+esc(BSTAT[x.status]||x.status)+'</span>'+(x.failure_reason?' <span class="muted">'+esc(x.failure_reason)+'</span>':"")+(x.status==="failed"&&b.can_act?' <a href="#" data-bi="'+x.id+'" data-bia="retry">Retry</a> &middot; <a href="#" data-bi="'+x.id+'" data-bia="fee">Add fee</a> &middot; <a href="#" data-bi="'+x.id+'" data-bia="waive">Waive</a>':"")+'</span></div>'}).join("");
+ var ev=(b.events||[]).map(function(e){return '<div><span>'+esc(day(e.at))+'</span><span>'+esc(e.detail)+(e.staff?' <span class="muted">'+esc(e.staff)+'</span>':"")+'</span></div>'}).join("");
+ return (rows||ev)?'<details><summary class="muted" style="cursor:pointer">Debits and changes</summary><div class="hist">'+rows+ev+'</div></details>':"";
+}
+var BFORM={
+ hold:'<label class="fld">From<input type="date" id="bf1"></label><label class="fld">Until (blank for no end)<input type="date" id="bf2"></label><label class="fld">Why<input id="bf3" placeholder="Injury, travel"></label>',
+ amount:'<label class="fld">New amount ($)<input id="bf1" inputmode="decimal" placeholder="49.50"></label><label class="fld">From<input type="date" id="bf2"></label>',
+ one_off:'<label class="fld">Amount ($)<input id="bf1" inputmode="decimal"></label><label class="fld">Date<input type="date" id="bf2"></label><label class="fld">For<input id="bf3" placeholder="PT session, merch"></label>',
+ arrangement:'<label class="fld">Extra each debit ($)<input id="bf1" inputmode="decimal" placeholder="20.00"></label><label class="fld">Note<input id="bf3" placeholder="Agreed with Bekka"></label>',
+ cancel:'<label class="fld">Why is billing stopping?<input id="bf3" placeholder="Cancelled after lock-in"></label>',
+ retry:'<label class="fld">Try again on<input type="date" id="bf2"></label>',
+ fee:'<label class="fld">Fee ($)<input id="bf1" inputmode="decimal"></label>',
+ waive:'<label class="fld">Why<input id="bf3"></label>'
+};
+function billGo(id,body,form){post("/api/billing/member/"+id,body).then(function(r){if(!r.ok){var e=$("#bfErr");if(e)e.textContent=r.error;else alert(r.error);return}loadMemberBill(id)})}
+document.addEventListener("click",function(e){
+ var t=e.target.closest("[data-ba]"),u=e.target.closest("[data-bia]");if(!t&&!u)return;e.preventDefault();
+ var box=$("#billBox"),id=+box.dataset.id,a=t?t.dataset.ba:u.dataset.bia,item=u?+u.dataset.bi:null;
+ if(a==="resume"||a==="restart"){billGo(id,{action:a});return}
+ if(a==="method"){post("/api/billing/member/"+id,{action:"method"}).then(function(r){alert(r.ok?"Ezidebit: "+r.method+(r.status?", status "+r.status:""):r.error);loadMemberBill(id)});return}
+ if(a==="switch"){if(!confirm("Move this member's billing to the Core? Turn their billing off in GymMaster straight after, or they'll be charged twice."))return;billGo(id,{action:"switch",to:"core"});return}
+ if(a==="back"){if(!confirm("Move billing back to GymMaster? Anything already sent to Ezidebit for them is pulled back."))return;billGo(id,{action:"switch",to:"gymmaster"});return}
+ if(a==="fee"&&BIL.data&&BIL.data.rules)BFORM.fee='<label class="fld">Fee ($)<input id="bf1" inputmode="decimal" value="'+(BIL.data.rules.failed_fee||"")+'"></label>';
+ $("#billForm").innerHTML='<div class="bform">'+BFORM[a]+'<button class="btn dark sm" id="bfGo">Save</button><button class="btn line sm" id="bfNo">Cancel</button><div class="err" id="bfErr" style="width:100%"></div></div>';
+ $("#bfNo").onclick=function(){$("#billForm").innerHTML=""};
+ $("#bfGo").onclick=function(){var v=function(k){var el=$("#"+k);return el?el.value:""};
+  var body={action:a,item:item};
+  if(a==="hold"){body.from=v("bf1");body.to=v("bf2");body.reason=v("bf3")}
+  if(a==="amount"){body.amount=v("bf1");body.from=v("bf2")}
+  if(a==="one_off"){body.amount=v("bf1");body.date=v("bf2");body.note=v("bf3")}
+  if(a==="arrangement"){body.extra=v("bf1");body.note=v("bf3")}
+  if(a==="cancel"){body.reason=v("bf3")}
+  if(a==="retry"){body.date=v("bf2")}
+  if(a==="fee"){body.amount=v("bf1")}
+  if(a==="waive"){body.note=v("bf3")}
+  billGo(id,body)};
 });
 
 /* ---------- money (owners) ---------- */

@@ -129,7 +129,8 @@ export function makeHub(L) {
                       ON CONFLICT(member_id) DO UPDATE SET owing = excluded.owing, next_bill = excluded.next_bill, no_billing = excluded.no_billing, checked_at = excluded.checked_at`)
         .bind(id, owing, next, noBill),
       env.DB.prepare(`INSERT INTO billing_accounts(member_id, balance_owing) VALUES (?, ?)
-                      ON CONFLICT(member_id) DO UPDATE SET balance_owing = excluded.balance_owing, updated_at = datetime('now')`).bind(id, owing),
+                      ON CONFLICT(member_id) DO UPDATE SET balance_owing = excluded.balance_owing, updated_at = datetime('now')
+                      WHERE billing_accounts.billed_by_system <> 'core'`).bind(id, owing),
     ]);
     return owing;
   }

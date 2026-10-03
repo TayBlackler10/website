@@ -167,6 +167,57 @@ CREATE TABLE IF NOT EXISTS payments (
 );
 CREATE INDEX IF NOT EXISTS payments_member ON payments(member_id, occurred_at);
 
+-- The Core's own billing, ready for Ezidebit. Until a member is switched to billed_by_system = 'core'
+-- GymMaster bills them and the Core only plans what it would debit (preview), so nothing is taken twice.
+CREATE TABLE IF NOT EXISTS billing_profiles (
+  member_id        INTEGER PRIMARY KEY REFERENCES members(id) ON DELETE CASCADE,
+  state            TEXT NOT NULL DEFAULT 'active',  -- active, hold, cancelled
+  hold_from        TEXT,
+  hold_to          TEXT,                            -- billing restarts the day after
+  hold_reason      TEXT,
+  amount_override  REAL,                            -- replaces the plan price from amount_from
+  amount_from      TEXT,
+  arrangement_extra REAL,                           -- added to each debit until the balance is cleared
+  arrangement_note TEXT,
+  method           TEXT,                            -- bank, card, none (from Ezidebit, never the numbers)
+  method_label     TEXT,                            -- what Ezidebit shows, like "Bank account" or "Visa"
+  cancel_reason    TEXT,
+  updated_at       TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- One row per planned or sent debit. Preview rows show what the Core would have taken that day.
+CREATE TABLE IF NOT EXISTS billing_items (
+  id             INTEGER PRIMARY KEY,
+  member_id      INTEGER NOT NULL REFERENCES members(id),
+  debit_date     TEXT NOT NULL,
+  amount         REAL NOT NULL,
+  kind           TEXT NOT NULL DEFAULT 'regular',  -- regular, one_off, retry, fee, arrangement
+  status         TEXT NOT NULL DEFAULT 'planned',  -- preview, planned, sent, paid, failed, cancelled, waived
+  note           TEXT,
+  retry_of       INTEGER REFERENCES billing_items(id),
+  ezi_ref        TEXT,                             -- Ezidebit payment reference
+  failure_reason TEXT,
+  sent_at        TEXT,
+  settled_at     TEXT,
+  created_by     INTEGER REFERENCES staff(id),
+  created_at     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS billing_items_once ON billing_items(member_id, debit_date, kind) WHERE kind IN ('regular','fee');
+CREATE INDEX IF NOT EXISTS billing_items_date ON billing_items(debit_date, status);
+CREATE INDEX IF NOT EXISTS billing_items_member ON billing_items(member_id, debit_date);
+
+-- Every billing change, who made it, and whether Ezidebit has it.
+CREATE TABLE IF NOT EXISTS billing_events (
+  id         INTEGER PRIMARY KEY,
+  member_id  INTEGER REFERENCES members(id),
+  kind       TEXT NOT NULL,     -- hold, resume, amount, one_off, arrangement, cancel, retry, fee, waive, switch, method, run, failed, paid
+  detail     TEXT,
+  staff_id   INTEGER REFERENCES staff(id),
+  ezidebit   TEXT,              -- sent, not_needed, preview, error: ...
+  at         TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS billing_events_member ON billing_events(member_id, at);
+
 -- Collections: current members and former members with money owing.
 CREATE TABLE IF NOT EXISTS collections_cases (
   id             INTEGER PRIMARY KEY,
@@ -499,7 +550,12 @@ INSERT OR IGNORE INTO settings(key, value) VALUES
   ('fp_ids_loaded', '0'),
   ('fy_target_ex_gst', '1235600'),
   ('meta_budget_month', '3500'),
-  ('balance_cursor', '0');
+  ('balance_cursor', '0'),
+  -- Billing rules. Debits go to Ezidebit this many days ahead so they make the bank cut-off.
+  ('bill_lead_days', '2'),
+  ('bill_failed_fee', '0'),
+  ('bill_retry_days', '3'),
+  ('bill_max_retries', '2');
 
 INSERT OR IGNORE INTO automations(key, name, goal, goal_window_days, active) VALUES
   ('trial_ending',       'Trial ending',          'joined',    7,  0),

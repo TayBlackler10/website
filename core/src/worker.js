@@ -20,12 +20,15 @@ import { makeHub } from "./hub.js";
 import { makeHub2 } from "./hub2.js";
 import { makeRoster } from "./roster.js";
 import { makeFeeds } from "./feeds.js";
+import { makeEzidebit } from "./ezidebit.js";
+import { makeBilling } from "./billing.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
 const R = makeRoster({ nzDateTime });
 const F = makeFeeds({ nzDateTime });
 const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
+const B = makeBilling({ nzDateTime, E: makeEzidebit() });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
 // Reception and the manager can see what a single member owes.
@@ -103,6 +106,14 @@ export default {
         const bk = url.pathname.match(/^\/api\/backups\/(m2-core-[\d-]+\.json\.gz)$/);
         if (bk) return await F.backupGet(env, bk[1]);
       }
+      if (url.pathname === "/api/billing") return json(await B.overview(env, who, can));
+      if (url.pathname === "/api/billing/day") return json(await B.day(env, who, can, url.searchParams.get("date")));
+      if (url.pathname === "/api/billing/ready") return json(await B.ready(env, who, can));
+      if (url.pathname === "/api/billing/rules" && req.method === "POST") return json(await B.saveRules(env, who, can, await req.json()));
+      if (url.pathname === "/api/billing/test" && req.method === "POST") return json(await B.test(env, can));
+      if (url.pathname === "/api/billing/run" && req.method === "POST" && can.settings) return json(await B.nightly(env));
+      const bm = url.pathname.match(/^\/api\/billing\/member\/(\d+)$/);
+      if (bm) return json(req.method === "POST" ? await B.act(env, who, can, +bm[1], await req.json()) : await B.member(env, who, can, +bm[1]));
       if (url.pathname === "/api/roster") return json(req.method === "POST" ? await R.save(env, who, await req.json()) : await R.week(env, who, url.searchParams));
       if (url.pathname === "/api/roster/ask" && req.method === "POST") return json(await R.ask(env, who, await req.json()));
       if (url.pathname === "/api/roster/now") return json(await R.onNow(env));
@@ -171,6 +182,7 @@ export default {
       console.log("leads", JSON.stringify(await H2.rebuildLeads(env).catch(e => String(e))));
       if (env.XERO_CLIENT_ID) console.log("xero", JSON.stringify(await F.xeroSync(env, 2).catch(e => String(e))));
       if (env.WINDSOR_API_KEY) console.log("marketing", JSON.stringify(await F.marketingSync(env, 10).catch(e => String(e))));
+      console.log("billing", JSON.stringify(await B.nightly(env).catch(e => String(e))));
       if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));
       if (env.GM_REPORT_KEY) console.log("yesterday", JSON.stringify(await H2.pullVisits(env, nzDateTime(new Date(Date.now() - 86400_000)).slice(0, 10)).catch(e => String(e))));
       try {
@@ -1220,7 +1232,7 @@ async function settingsView(env, can) {
   const integrations = [
     { name: "GymMaster", status: env.GM_API_KEY && env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Members copied nightly at 2:15am. Sign-ups go into GymMaster first while it runs billing and doors." },
     { name: "Fitness Passport", status: env.FP_MEMBERSHIP_ID ? "Set up" : "Not set", detail: "GymMaster reports Passport check-ins until the doors move. Passport membership type " + (env.FP_MEMBERSHIP_ID || "not set") + "." },
-    { name: "Ezidebit", status: (env.BILLING_MODE || "gymmaster") === "ezidebit" ? "Billing in the Core" : "Billing still in GymMaster", detail: "Switches to Ezidebit's own bank form after the billing pilot." },
+    { name: "Ezidebit", status: { preview: "Not connected. Billing runs in preview", sandbox: "Sandbox (test money only)", ready: "Live key in, waiting for the switch", live: "Live" }[B.mode(env).kind], detail: "The Billing page shows every debit the Core would take. GymMaster keeps billing until members are moved across." },
     { name: "Xero", status: "Pushed in by Claude", detail: "Profit and loss by month, cash and bills land on Money. Ask Claude to refresh them any time." },
     { name: "Meta ads and Google Analytics", status: "Pushed in by Claude", detail: "Spend, leads and website visits by day land on Marketing." },
     { name: "Live balances", status: env.GM_STAFF_KEY ? "Connected" : "Keys missing", detail: "Every 15 minutes the Core checks 20 members' balances in GymMaster, so the $250 block and Collections stay true." },
