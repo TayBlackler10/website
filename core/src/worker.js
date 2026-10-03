@@ -32,6 +32,7 @@ import { makeApp } from "./app.js";
 import { makeMorning } from "./morning.js";
 import { makeTimetable } from "./timetable.js";
 import { makeJoin } from "./join.js";
+import { makeClasses } from "./classes.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay, realMember: () => REAL_MEMBER });
@@ -40,12 +41,13 @@ const F = makeFeeds({ nzDateTime });
 const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
 const B = makeBilling({ nzDateTime, E: makeEzidebit() });
 const P = makePush();
+const CL = makeClasses({ nzDateTime });
 const PT = makePt({ nzDateTime, normMobile, P });
 const C = makeCatalog({ gmLive });
 const EM = makeEmail({ nzDateTime });
 const GS = makeGmSync({ nzDateTime });
 const POS = makePos({ nzDateTime });
-const APP = makeApp({ nzDateTime, P, checkPassword: (env, e, pw) => JOIN.checkPassword(env, e, pw) });
+const APP = makeApp({ nzDateTime, P, CL, checkPassword: (env, e, pw) => JOIN.checkPassword(env, e, pw) });
 const MORN = makeMorning({ nzDateTime, passportPay });
 const TT = makeTimetable({ nzDateTime });
 const JOIN = makeJoin({ nzDateTime, normMobile, classify: GS.classify, passportJoin: (env, b) => passportJoin(env, b), P });
@@ -151,6 +153,8 @@ export default {
       if (url.pathname === "/api/gm-probe") return json(await gmProbe(env, can, url.searchParams));
       if (url.pathname === "/api/settings") return json(req.method === "POST" ? await saveSetting(env, who, can, await req.json()) : await settingsView(env, can));
       if (url.pathname === "/api/import" && req.method === "POST") return json(await importRows(env, who, can, await req.json()));
+      if (url.pathname === "/api/classes/source" && req.method === "POST") return json(await CL.setSource(env, who, can, await req.json()));
+      if (url.pathname === "/api/classes" && await CL.on(env)) return json(await coreWeek(env, can, url.searchParams));
       if (url.pathname === "/api/classes") {
         const w = await H.classesWeek(env, who, can, url.searchParams);
         if (w.classes) { const job = H2.saveClassCounts(env, w.classes).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job; }
@@ -201,6 +205,7 @@ export default {
         if (url.pathname === "/api/sweep") return json(await H.sweepStep(env, (await req.json()).after, H2.sweepVisits));
       }
       const cl = url.pathname.match(/^\/api\/classes\/(\d+)(?:\/(book|cancel))?$/);
+      if (cl && await CL.on(env)) return json(await coreClass(env, who, can, cl[1], cl[2], cl[2] ? await req.json() : null));
       if (cl && cl[2] === "book" && req.method === "POST") return json(await H.bookMember(env, who, can, cl[1], await req.json()));
       if (cl && cl[2] === "cancel" && req.method === "POST") return json(await H.cancelBooking(env, who, can, cl[1], await req.json()));
       if (cl && !cl[2]) return json(await H.classDetail(env, who, can, cl[1]));
@@ -280,6 +285,37 @@ export default {
     })());
   },
 };
+
+
+/* ---------------- classes run by the Core (once switched over) ---------------- */
+async function coreWeek(env, can, q) {
+  const t = nzDateTime(new Date()).slice(0, 10);
+  const asked = /^\d{4}-\d{2}-\d{2}$/.test(q.get("week") || "") ? q.get("week") : t;
+  const d = new Date(asked + "T12:00:00Z"), week = new Date(d.getTime() - ((d.getUTCDay() + 6) % 7) * 864e5).toISOString().slice(0, 10);
+  const plus = n => new Date(Date.parse(week + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
+  const list = await CL.sessions(env, week, plus(6));
+  const t12 = h => { const [a, b] = String(h).split(":").map(Number); return (a % 12 || 12) + (b ? ":" + String(b).padStart(2, "0") : "") + (a < 12 ? "am" : "pm"); };
+  return { week, prev: plus(-7), next: plus(7), today: t, can_book: !!can.add, source: "core",
+    classes: list.map(s => ({ id: s.id, day: s.day, start: s.start, end: s.end_time || "", time: t12(s.start), name: s.name, coach: s.coach_name || "", location: "",
+      booked: s.booked, max: s.cap, free: Math.max(0, s.cap - s.booked), waitlist: s.waiting, colour: null })) };
+}
+async function coreClass(env, who, can, id, action, b) {
+  if (!action) {
+    const rows = await CL.people(env, id);
+    return { source: "core", attendees: rows.map(r => ({ member_id: r.mid, name: [r.first_name, r.last_name].filter(Boolean).join(" "), status: r.status === "waitlist" ? "waitlist" : "booked",
+      booking_id: r.bid, in_core: true, has_photo: false, open: can.members === true, plan: r.plan })) };
+  }
+  if (!can.add) return { ok: false, error: "Only reception, the manager and owners can book people in or out." };
+  const mid = +(b && b.member_id);
+  if (!mid) return { ok: false, error: "Pick a member first." };
+  if (action === "book") { const r = await CL.book(env, mid, +id, "staff: " + who.name); return r.ok ? { ok: true, waitlist: !!r.waitlist } : { ok: false, error: r.message }; }
+  if (action === "cancel") {
+    const bk = await env.DB.prepare("SELECT id FROM class_bookings WHERE session_id = ? AND member_id = ? AND status IN ('booked', 'waitlist')").bind(+id, mid).first();
+    if (!bk) return { ok: false, error: "They aren't booked into that class." };
+    return CL.cancel(env, mid, bk.id, who.name);
+  }
+  return { error: "Unknown" };
+}
 
 /* ---------------- sign-in (Cloudflare Access) ---------------- */
 

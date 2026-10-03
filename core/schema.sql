@@ -819,3 +819,28 @@ CREATE TABLE IF NOT EXISTS class_templates (
 CREATE TABLE IF NOT EXISTS timetable_changes (id INTEGER PRIMARY KEY, staff_id INTEGER, what TEXT NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')));
 -- Online sign-ups: the signed agreement, and a password hash for the M2 App (never the password itself).
 CREATE TABLE IF NOT EXISTS member_logins (email TEXT PRIMARY KEY, member_id INTEGER NOT NULL, salt TEXT NOT NULL, hash TEXT NOT NULL, set_at TEXT NOT NULL DEFAULT (datetime('now')));
+-- Class bookings run by the Core (switched on with settings.classes_source = core).
+CREATE TABLE IF NOT EXISTS class_sessions (
+  id          INTEGER PRIMARY KEY,
+  template_id INTEGER,
+  day         TEXT NOT NULL,
+  start       TEXT NOT NULL,
+  end_time    TEXT,
+  name        TEXT NOT NULL,
+  coach_id    INTEGER,
+  coach_name  TEXT,
+  cap         INTEGER NOT NULL DEFAULT 20,
+  cancelled   INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (day, start, name)
+);
+CREATE TABLE IF NOT EXISTS class_bookings (
+  id           INTEGER PRIMARY KEY,
+  session_id   INTEGER NOT NULL REFERENCES class_sessions(id),
+  member_id    INTEGER NOT NULL,
+  status       TEXT NOT NULL,          -- booked, waitlist, cancelled, late_cancel
+  booked_by    TEXT,
+  booked_at    TEXT NOT NULL DEFAULT (datetime('now')),
+  cancelled_at TEXT,
+  UNIQUE (session_id, member_id)
+);
+CREATE INDEX IF NOT EXISTS class_bookings_member ON class_bookings(member_id, status);

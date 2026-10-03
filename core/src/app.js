@@ -17,7 +17,7 @@ const DOORS = ["front", "male", "female", "door4"];
 const NATIVE = new Set(["login", "reset", "me", "classes", "book", "cancel", "warm", "request", "door", "account", "hold_request", "cancel_request"]);
 
 export function makeApp(L) {
-  const { nzDateTime, P, checkPassword } = L;
+  const { nzDateTime, P, checkPassword, CL } = L;
   const todayNz = () => nzDateTime(new Date()).slice(0, 10);
   const nzDay = ms => nzDateTime(new Date(ms)).slice(0, 10);
   const all = (env, sql, ...a) => env.DB.prepare(sql).bind(...a).all().then(r => r.results || []);
@@ -96,6 +96,8 @@ export function makeApp(L) {
       else core = !!s && await servedByCore(env, s.m).catch(() => false);
       if (a === "door" && core && !(await doorNo(env, body.door))) core = false;
     }
+    // Once class bookings run in the Core, every member's classes come from the Core.
+    if (["classes", "book", "cancel"].includes(a) && s && CL && await CL.on(env)) core = true;
     if (a.startsWith("coach_")) {
       core = !!s && (await setting(env, "app_coach", "google")) === "core" && !!env.GM_STAFF_KEY;
     }
@@ -135,6 +137,11 @@ export function makeApp(L) {
       await gm(env, "post", "/portal/api/v1/email/resetpassword", { api_key: env.GM_API_KEY, email: b.email }, "form"); return { ok: true }; }
     if (a === "warm") { await memberToken(env, s.m); return { ok: true }; }
     if (a === "me") return me(env, s);
+    if (CL && ["classes", "book", "cancel"].includes(a) && await CL.on(env)) {
+      if (a === "classes") return CL.forApp(env, s.m);
+      if (a === "book") { if (await tooMany(env, "book:" + s.m, 20, 600)) return { ok: false, message: "Easy, give it a minute and try again." }; return CL.book(env, s.m, b.id, "app"); }
+      return CL.cancel(env, s.m, b.id, "app");
+    }
     if (a === "classes") return classes(env, s);
     if (a === "book") return book(env, s, b);
     if (a === "cancel") return cancel(env, s, b);
@@ -306,6 +313,12 @@ export function makeApp(L) {
   }
   const coachCache = new Map();   // class id -> class info, per worker instance
   async function schedule(env, week) {
+    if (CL && await CL.on(env)) {
+      const d = new Date(week + "T12:00:00Z"), mon = new Date(d.getTime() - ((d.getUTCDay() + 6) % 7) * 864e5).toISOString().slice(0, 10);
+      const sun = new Date(Date.parse(mon + "T12:00:00Z") + 6 * 864e5).toISOString().slice(0, 10);
+      return (await CL.sessions(env, mon, sun)).map(x => ({ id: x.id, classname: x.name, arrival: x.day, starttime: x.start, endtime: x.end_time, staffname: x.coach_name || "",
+        max_students: x.cap, num_students: x.booked, waitlist_count: x.waiting }));
+    }
     const r = await gm(env, "get", "/portal/api/v1/booking/classes/schedule", { api_key: env.GM_API_KEY, week });
     return Array.isArray(r && r.result) ? r.result : [];
   }
@@ -342,7 +355,9 @@ export function makeApp(L) {
   async function roster(env, id, me, opts = {}) {
     const c = await classInfo(env, id);
     if (!c) return { ok: false, message: "Couldn't find that class. Pull down to refresh." };
-    const r = await gm(env, "get", "/portal/api/v2/booking/classes/" + encodeURIComponent(id) + "/attendees", { api_key: env.GM_STAFF_KEY });
+    const r = CL && await CL.on(env)
+      ? { result: (await CL.people(env, id)).map(p => ({ bookingid: p.bid, memberid: p.mid, fullname: [p.first_name, p.last_name].filter(Boolean).join(" "), status: p.status === "waitlist" ? "Waitlist" : "", membershipname: p.plan })) }
+      : await gm(env, "get", "/portal/api/v2/booking/classes/" + encodeURIComponent(id) + "/attendees", { api_key: env.GM_STAFF_KEY });
     if (!r || !Array.isArray(r.result)) return { ok: false, message: "GymMaster didn't send the class list." + (r && r.error ? " " + r.error : "") };
     const list = r.result.map(readAtt).filter(p => !p.cancelled);
     const marks = new Map((await all(env, "SELECT member_id, status, via, walkin, at FROM class_attendance WHERE class_id = ?", String(id))).map(x => [x.member_id, x]));
@@ -427,10 +442,15 @@ export function makeApp(L) {
       if (ro.taken >= ro.cls.cap) return { ok: false, full: true, message: "Class is full at " + ro.cls.cap + ". They can join the waitlist or book the next class." };
       const owes = await one(env, "SELECT balance_owing FROM billing_accounts WHERE member_id = ? AND balance_owing >= ?", mid, +(await setting(env, "block_at_balance", "250")));
       if (owes) return { ok: false, message: "They owe money, so send them to reception first." };
-      const tok = await memberToken(env, mid);
-      if (!tok) return { ok: false, message: "Couldn't reach GymMaster. Try again." };
-      const r = await gm(env, "post", "/portal/api/v2/booking/classes", { api_key: env.GM_STAFF_KEY, token: tok, bookings: [{ bookingparentid: +id }] }, "json");
-      if (!r || r.error) return { ok: false, message: r && r.error ? "GymMaster said: " + r.error + ". Send them to reception." : "Couldn't reach GymMaster. Try again." };
+      if (CL && await CL.on(env)) {
+        const r = await CL.book(env, mid, +id, "coach: " + me.name);
+        if (!r.ok) return { ok: false, message: r.message + " Send them to reception." };
+      } else {
+        const tok = await memberToken(env, mid);
+        if (!tok) return { ok: false, message: "Couldn't reach GymMaster. Try again." };
+        const r = await gm(env, "post", "/portal/api/v2/booking/classes", { api_key: env.GM_STAFF_KEY, token: tok, bookings: [{ bookingparentid: +id }] }, "json");
+        if (!r || r.error) return { ok: false, message: r && r.error ? "GymMaster said: " + r.error + ". Send them to reception." : "Couldn't reach GymMaster. Try again." };
+      }
       await mark(env, id, c, mid, "", ro.canIn ? "in" : "booked", me.name, "coach", 1, "Walk-in added" + (ro.canIn ? " and checked in" : ""));
       return roster(env, id, me, { noAuto: true });
     }

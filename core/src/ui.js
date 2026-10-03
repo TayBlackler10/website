@@ -441,7 +441,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <!-- CLASSES -->
 <section data-view="classes" hidden>
 <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
-<div style="margin-right:auto"><div class="eyebrow">Live from GymMaster, the same as the M2 App</div><h1>Classes<span class="dot">.</span></h1></div>
+<div style="margin-right:auto"><div class="eyebrow" id="clsSrcLab">Live from GymMaster, the same as the M2 App</div><h1>Classes<span class="dot">.</span></h1></div>
 <button class="btn line sm" id="clsPrev">Last week</button><button class="btn line sm" id="clsNow">This week</button><button class="btn line sm" id="clsNext">Next week</button>
 </div>
 <section class="card dark" style="margin-bottom:18px"><div class="tiles" id="clsTiles"></div></section>
@@ -1443,7 +1443,7 @@ var CLS={week:null,data:null,cur:null};
 function loadClasses(w){
  get("/api/classes"+(w?"?week="+w:"")).then(function(d){
   if(d.error){$("#clsWeek").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
-  CLS.data=d;CLS.week=d.week;
+  CLS.data=d;CLS.week=d.week;$("#clsSrcLab").textContent=d.source==="core"?"Run by the M2 Core, the same as the M2 App":"Live from GymMaster, the same as the M2 App";
   var mon=new Date(d.week+"T12:00:00");
   $("#clsTitle").textContent=(d.today>=d.week&&d.today<d.next?"This week":"Week of "+mon.toLocaleDateString("en-NZ",{day:"numeric",month:"long"}));
   $("#clsCount").textContent=d.classes.length+" classes, "+d.classes.reduce(function(a,c){return a+c.booked},0)+" booked";
@@ -2238,7 +2238,9 @@ function drawTT(){var d=TTD,order=[1,2,3,4,5,6,0],h="";
  if(off.length)h+='<details style="margin-top:12px"><summary class="muted">Off the timetable ('+off.length+')</summary><div class="list">'+off.map(function(c){return '<div class="lrow"'+(d.can_edit?' data-tt="'+c.id+'" style="cursor:pointer"':"")+'><span>'+d.days[c.weekday]+' '+esc(c.start)+' '+esc(c.name)+'</span><span></span></div>'}).join("")+'</div></details>';
  h+=d.diffs.length?'<div class="warnbox" style="margin-top:14px"><b>Different in GymMaster</b><ul style="margin:6px 0 0 18px">'+d.diffs.map(function(x){return '<li>'+esc(x.what)+'</li>'}).join("")+'</ul></div>':'<div class="ok" style="margin-top:14px">GymMaster\'s next two weeks match this timetable.</div>';
  if(d.log.length)h+='<details style="margin-top:12px"><summary class="muted">Changes</summary><div class="list">'+d.log.map(function(l){return '<div class="lrow"><span>'+esc(l.what)+'</span><span class="muted" style="font-size:13px">'+esc(l.staff||"Core")+', '+fmtWhen(l.at)+'</span></div>'}).join("")+'</div></details>';
+ if(d.can_switch)h+='<div class="card" style="background:var(--paper);margin-top:14px"><b>Class bookings run in</b>'+[["gymmaster","GymMaster","As now. The app, coach mode and this page read GymMaster."],["core","M2 Core","Members book from this timetable in the app; coach mode and this page use the Core. Bookings already made in GymMaster don\'t move across, so switch on a quiet day and tell members to rebook."]].map(function(m){return '<label style="display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer"><input type="radio" name="clsSrc" value="'+m[0]+'"'+(d.source===m[0]?" checked":"")+' style="margin-top:4px"> <span><b>'+m[1]+'</b><br><span class="muted" style="font-size:13px">'+m[2]+'</span></span></label>'}).join("")+'<div id="clsSrcMsg"></div></div>';
  $("#ttBody").innerHTML=h||'<div class="muted">No classes yet.</div>'}
+$("#ttBody").addEventListener("change",function(e){if(e.target.name!=="clsSrc")return;var v=e.target.value;if(v==="core"&&!confirm("Switch class bookings to the M2 Core? Members book from the Core timetable from now on."))return loadTT();post("/api/classes/source",{source:v}).then(function(r){if(!r.ok){$("#clsSrcMsg").innerHTML='<div class="err">'+esc(r.error)+'</div>';return}loadTT();loadClasses(CLS.week)})});
 function ttEdit(c){c=c||{weekday:1,start:"",end_time:"",name:"",coach_id:"",cap:20,active:1};
  $("#ttForm").innerHTML='<div class="card" style="background:var(--paper);margin-bottom:12px"><h3 style="margin:0 0 8px">'+(c.id?"Change "+esc(c.name):"Add a class")+'</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">'+
   '<label class="fld">Day<select id="ttDay">'+[1,2,3,4,5,6,0].map(function(w){return '<option value="'+w+'"'+(w===c.weekday?" selected":"")+'>'+TTD.days[w]+'</option>'}).join("")+'</select></label>'+

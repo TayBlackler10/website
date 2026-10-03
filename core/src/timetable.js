@@ -78,7 +78,8 @@ export function makeTimetable(L) {
     for (const g of gm) { const k = key(g); if (!coreKeys.has(k) && !extra.has(k)) { extra.add(k); diffs.push({ what: DAYS[g.day] + " " + g.start + " " + g.name + " (" + g.date + ") is in GymMaster but not on this timetable" }); } }
     const coaches = await all(env, "SELECT id, name, role FROM staff WHERE active = 1 AND role IN ('owner', 'manager', 'coach', 'trainer') ORDER BY name");
     const log = await all(env, "SELECT c.at, c.what, s.name staff FROM timetable_changes c LEFT JOIN staff s ON s.id = c.staff_id ORDER BY c.id DESC LIMIT 20");
-    return { classes: rows, days: DAYS, diffs, gm_error: gmError, coaches, log, can_edit: canEdit(can) };
+    const source = (await one(env, "SELECT value FROM settings WHERE key = 'classes_source'"))?.value || "gymmaster";
+    return { classes: rows, days: DAYS, diffs: source === "core" ? [] : diffs, gm_error: gmError, coaches, log, can_edit: canEdit(can), source, can_switch: !!can.settings };
   }
 
   async function save(env, who, can, b) {
