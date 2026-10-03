@@ -2278,7 +2278,7 @@ function loadVisits(day){if(!$("#viDay").value)$("#viDay").value=viToday();if(da
 function drawVisits(){var d=VI.data,isToday=d.day===d.today;
  var diff=d.people-d.week_ago;
  $("#viTiles").innerHTML=tile(d.people,"People"+(isToday?" so far today":""))+tile(d.visits,"Gate entries")+tile((diff>=0?"+":"")+diff,"vs same day last week")+tile(d.rows.filter(function(r){return r.tags.some(function(t){return t[0]==="warn"})}).length,"Need a word at the desk");
- $("#viNote").textContent=d.latest?"Latest visit copied from GymMaster: "+new Date(String(d.latest).replace(" ","T")).toLocaleTimeString("en-NZ",{hour:"numeric",minute:"2-digit"})+". New visits come through every 15 minutes, or tap Check for new visits.":"";
+ $("#viNote").textContent=d.latest?"GymMaster's visitor report is up to "+new Date(String(d.latest).replace(" ","T")).toLocaleTimeString("en-NZ",{hour:"numeric",minute:"2-digit"})+(isToday?" (it can run a few hours behind; doors opened from the M2 App show straight away)":"")+". Checked every 15 minutes, or tap Check for new visits.":"";
  var F=[["","Everyone"],["warn","Need a word"],["First visit","First visits"],["Back after","Back after a break"],["Birthday","Birthdays"],["Trial","Trials and passes"]];
  $("#viChips").innerHTML=F.map(function(f){return '<button class="chip'+(VI.f===f[0]?" on":"")+'" data-vf="'+esc(f[0])+'">'+f[1]+'</button>'}).join("");
  var q=VI.q.toLowerCase(),L=d.rows.filter(function(r){if(q&&r.name.toLowerCase().indexOf(q)<0)return false;if(!VI.f)return true;
