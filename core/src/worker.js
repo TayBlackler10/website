@@ -1443,9 +1443,9 @@ function passportPay(visits, tiersText) {
 
 async function passportRows(env, from, to) {
   return (await env.DB.prepare(`SELECT m.id member_id, m.first_name, m.last_name, coalesce(v.fp_id, m.fp_id) fp_id, m.fp_id_in_gm,
-                                  count(*) visits, min(v.at) first_visit, max(v.at) last_visit
+                                  count(DISTINCT substr(v.at, 1, 10)) visits, min(v.at) first_visit, max(v.at) last_visit
                                 FROM visits v JOIN members m ON m.id = v.member_id
-                                WHERE v.at >= ? AND v.at < ?
+                                WHERE v.at >= ? AND v.at < ? AND coalesce(v.door, '') NOT LIKE '%Not Counted%'
                                   AND EXISTS (SELECT 1 FROM member_flags f WHERE f.member_id = m.id AND f.flag = 'passport')
                                 GROUP BY m.id ORDER BY visits DESC, m.first_name`).bind(from, to).all()).results;
 }
