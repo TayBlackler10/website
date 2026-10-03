@@ -33,6 +33,7 @@ import { makeMorning } from "./morning.js";
 import { makeTimetable } from "./timetable.js";
 import { makeJoin } from "./join.js";
 import { makeClasses } from "./classes.js";
+import { makeVisits } from "./visits.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay, realMember: () => REAL_MEMBER });
@@ -50,6 +51,7 @@ const POS = makePos({ nzDateTime });
 const APP = makeApp({ nzDateTime, P, CL, checkPassword: (env, e, pw) => JOIN.checkPassword(env, e, pw) });
 const MORN = makeMorning({ nzDateTime, passportPay });
 const TT = makeTimetable({ nzDateTime });
+const VIS = makeVisits({ nzDateTime, pullVisits: env => H2.pullVisits(env) });
 const JOIN = makeJoin({ nzDateTime, normMobile, classify: GS.classify, passportJoin: (env, b) => passportJoin(env, b), P });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
@@ -186,6 +188,8 @@ export default {
       if (url.pathname === "/api/roster.csv") return await R.csv(env, who, url.searchParams);
       if (url.pathname === "/api/classes/stats") return json(await H2.classStats(env, can));
       if (url.pathname === "/api/members/browse") return json(await H2.browse(env, who, can, url.searchParams));
+      if (url.pathname === "/api/visits/day") return json(await VIS.day(env, who, can, url.searchParams));
+      if (url.pathname === "/api/visits/refresh" && req.method === "POST") return json(await VIS.pull(env, can));
       if (url.pathname === "/api/visits/recent") return json(await H2.recentVisits(env, who, can));
       if (url.pathname === "/api/leads/stats") return json(await H2.leadStats(env, who, can));
       if (url.pathname === "/api/passport/insights") return json(await H2.passportInsights(env, can));

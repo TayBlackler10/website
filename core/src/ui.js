@@ -209,6 +209,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="navlab">Front desk</div>
 <button class="nav" data-go="members">Members</button>
 <button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
+<button class="nav" data-go="visits">Recent visits<span class="ct" id="ctVisits" hidden></span></button>
 <button class="nav" data-go="pos" id="navPos" hidden>Point of sale</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
 <div class="navlab">Leads</div>
@@ -313,6 +314,17 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="ltabs" id="lTabs"></div>
 <div class="mtool" style="margin:12px 0"><label class="sr" for="lKind">Type</label><select id="lKind"></select><label class="search" for="lQ" style="flex:1;min-width:200px;height:48px"><span class="sr">Search leads</span><input id="lQ" autocomplete="off" placeholder="Search everyone by name, mobile or email"></label></div>
 <div class="lwrap"><section class="card" style="padding:8px 14px 14px"><div id="lList"><div class="muted">Loading...</div></div></section><section class="card lside" id="leadPanel"></section></div>
+</section>
+
+<!-- RECENT VISITS -->
+<section data-view="visits" hidden>
+<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+<div style="margin-right:auto"><div class="eyebrow">Who came through the gate</div><h1>Recent visits<span class="dot">.</span></h1></div>
+<button class="btn line sm" id="viPrev">Day before</button><input type="date" id="viDay" style="height:40px;border:1px solid var(--line);border-radius:12px;padding:0 10px"><button class="btn line sm" id="viNext">Next day</button><button class="btn dark sm" id="viPull">Check for new visits</button>
+</div>
+<section class="card dark" style="margin-bottom:14px"><div class="tiles" id="viTiles"></div><div class="muted" style="color:var(--soft);font-size:13px;margin-top:6px" id="viNote"></div></section>
+<div class="mtool" style="margin-bottom:12px"><div class="chips" id="viChips"></div><label class="search" for="viQ" style="flex:1;min-width:200px;height:44px"><span class="sr">Find someone</span><input id="viQ" autocomplete="off" placeholder="Find someone in the list"></label></div>
+<section class="card" style="padding:8px 14px 14px"><div id="viList"><div class="muted">Loading...</div></div></section>
 </section>
 
 <!-- POINT OF SALE -->
@@ -762,6 +774,7 @@ function show(v){
  if(v==="ptleads")loadPt();
  if(v==="catalog")loadCat();
  if(v==="pos")loadPos();
+ if(v==="visits")loadVisits();
  if(v==="app")loadApp();
  if(v==="emails")loadEm();
  if(v==="mypt")loadMyPt();
@@ -2255,4 +2268,28 @@ function ttEdit(c){c=c||{weekday:1,start:"",end_time:"",name:"",coach_id:"",cap:
  $("#ttForm").scrollIntoView({behavior:"smooth",block:"nearest"})}
 $("#ttAdd").addEventListener("click",function(){ttEdit(null)});
 $("#ttBody").addEventListener("click",function(e){var r=e.target.closest("[data-tt]");if(!r||!TTD)return;ttEdit(TTD.classes.find(function(c){return c.id===+r.dataset.tt}))});
+
+/* ---------- recent visits ---------- */
+var VI={data:null,q:"",f:"",timer:null};
+function viToday(){return new Date().toLocaleDateString("en-CA",{timeZone:"Pacific/Auckland"})}
+function loadVisits(day){if(!$("#viDay").value)$("#viDay").value=viToday();if(day)$("#viDay").value=day;
+ get("/api/visits/day?day="+$("#viDay").value).then(function(d){if(d.error){$("#viList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}VI.data=d;drawVisits()});
+ clearInterval(VI.timer);VI.timer=setInterval(function(){if(document.querySelector('section[data-view="visits"]').hidden){clearInterval(VI.timer);return}if($("#viDay").value===viToday())get("/api/visits/day?day="+viToday()).then(function(d){if(!d.error){VI.data=d;drawVisits()}})},60000)}
+function drawVisits(){var d=VI.data,isToday=d.day===d.today;
+ var diff=d.people-d.week_ago;
+ $("#viTiles").innerHTML=tile(d.people,"People"+(isToday?" so far today":""))+tile(d.visits,"Gate entries")+tile((diff>=0?"+":"")+diff,"vs same day last week")+tile(d.rows.filter(function(r){return r.tags.some(function(t){return t[0]==="warn"})}).length,"Need a word at the desk");
+ $("#viNote").textContent=d.latest?"Latest visit copied from GymMaster: "+new Date(String(d.latest).replace(" ","T")).toLocaleTimeString("en-NZ",{hour:"numeric",minute:"2-digit"})+". New visits come through every 15 minutes, or tap Check for new visits.":"";
+ var F=[["","Everyone"],["warn","Need a word"],["First visit","First visits"],["Back after","Back after a break"],["Birthday","Birthdays"],["Trial","Trials and passes"]];
+ $("#viChips").innerHTML=F.map(function(f){return '<button class="chip'+(VI.f===f[0]?" on":"")+'" data-vf="'+esc(f[0])+'">'+f[1]+'</button>'}).join("");
+ var q=VI.q.toLowerCase(),L=d.rows.filter(function(r){if(q&&r.name.toLowerCase().indexOf(q)<0)return false;if(!VI.f)return true;
+  return r.tags.some(function(t){return VI.f==="warn"?t[0]==="warn":VI.f==="Trial"?(t[1]==="Trial"||t[1]==="Pass"):t[1].indexOf(VI.f)===0})});
+ $("#viList").innerHTML=L.length?L.map(function(r){var tm=new Date(String(r.at).replace(" ","T")).toLocaleTimeString("en-NZ",{hour:"numeric",minute:"2-digit"});
+  return '<div data-member="'+r.id+'" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 4px;border-top:1px solid var(--line);text-align:left">'+face(r.id,r.name,r.has_photo)+'<span style="flex:1;min-width:0"><b>'+esc(r.name)+'</b><br><span class="muted" style="font-size:13px">'+esc(r.plan||"")+(r.door&&!/main|front|^entry/i.test(r.door)?" · "+esc(r.door):"")+'</span>'+
+   (r.tags.length?'<br>'+r.tags.map(function(t){return '<span class="pill'+(t[0]?" "+t[0]:"")+'" style="margin:4px 4px 0 0">'+esc(t[1])+'</span>'}).join(""):"")+'</span><span class="muted" style="white-space:nowrap">'+tm+'</span></div>'}).join(""):'<div class="muted" style="padding:14px 0">'+(d.rows.length?"Nobody matches.":"No visits copied for this day yet.")+'</div>'}
+$("#viDay").addEventListener("change",function(){loadVisits()});
+$("#viPrev").addEventListener("click",function(){var x=new Date($("#viDay").value+"T12:00:00Z");x.setUTCDate(x.getUTCDate()-1);loadVisits(x.toISOString().slice(0,10))});
+$("#viNext").addEventListener("click",function(){var x=new Date($("#viDay").value+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+1);var v=x.toISOString().slice(0,10);if(v>viToday())return;loadVisits(v)});
+$("#viQ").addEventListener("input",function(e){VI.q=e.target.value.trim();if(VI.data)drawVisits()});
+$("#viChips").addEventListener("click",function(e){var b=e.target.closest("[data-vf]");if(!b)return;VI.f=b.dataset.vf;drawVisits()});
+$("#viPull").addEventListener("click",function(){var b=$("#viPull");b.disabled=true;b.textContent="Checking...";post("/api/visits/refresh",{}).then(function(){b.disabled=false;b.textContent="Check for new visits";$("#viDay").value=viToday();loadVisits()})});
 </script></body></html>`;
