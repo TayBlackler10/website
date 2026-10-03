@@ -1273,6 +1273,7 @@ var RO={week:null,d:null,view:"week",month:null};
 var WDN=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 function addD(iso,n){var d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
 $$("[data-rv]").forEach(function(b){b.addEventListener("click",function(){RO.view=b.dataset.rv;$$("[data-rv]").forEach(function(x){x.classList.toggle("on",x===b)});if(RO.view==="month"){RO.month=(RO.week?addD(RO.week,3):new Date().toISOString()).slice(0,7);loadRosterMonth(RO.month)}else loadRoster(RO.week)})});
+function rn(n,people){var f=String(n).split(" ")[0];var dup=(people||[]).filter(function(p){return p.name.split(" ")[0]===f}).length>1;return dup?short(n):f}
 function short(n){var p=String(n).split(" ");return p[0]+(p[1]?" "+p[1][0]:"")}
 function hm(t){var h=+t.slice(0,2),m=t.slice(3);return ((h+11)%12+1)+(m!=="00"?":"+m:"")+(h<12?"am":"pm")}
 function loadRosterMonth(mo){
@@ -1312,7 +1313,7 @@ function loadRoster(w){
   var BANDS=[["Morning","Opens to 11am",0,11],["Day","11am to 4pm",11,16],["Evening","4pm to close",16,24]];
   var g='<div></div>'+days.map(function(x,i){return '<div class="dh'+(x===d.today?" today":"")+'">'+WDN[i]+' '+(+x.slice(8))+'</div>'}).join("");
   BANDS.forEach(function(b){g+='<div class="band">'+b[0]+'<small>'+b[1]+'</small></div>'+days.map(function(x){var list=d.shifts.filter(function(s){var h=+s.start.slice(0,2);return s.day===x&&h>=b[2]&&h<b[3]}).sort(function(a,c){return a.start.localeCompare(c.start)});
-   return '<div class="wc'+(x===d.today?" today":"")+'" data-band="'+b[0]+'|'+x+'">'+list.map(function(s){return '<button class="ws'+(s.area==="Management"?" mg":"")+(s.published?"":" draft")+(s.staff_id===d.me?" mine":"")+'" data-shift="'+s.id+'"><b>'+esc(s.name.split(" ")[0])+'</b><span>'+esc(hm(s.start))+' to '+esc(hm(s.end))+(s.area&&s.area!=="Reception"?", "+esc(s.area):"")+'</span></button>'}).join("")+'</div>'}).join("")});
+   return '<div class="wc'+(x===d.today?" today":"")+'" data-band="'+b[0]+'|'+x+'">'+list.map(function(s){return '<button class="ws'+(s.area==="Management"?" mg":"")+(s.published?"":" draft")+(s.staff_id===d.me?" mine":"")+'" data-shift="'+s.id+'"><b>'+esc(rn(s.name,d.people))+'</b><span>'+esc(hm(s.start))+' to '+esc(hm(s.end))+(s.area&&s.area!=="Reception"?", "+esc(s.area):"")+'</span></button>'}).join("")+'</div>'}).join("")});
   if($("#roGrid").tagName==="TABLE"){$("#roGrid").outerHTML='<div class="wcal" id="roGrid"></div>';bindRoGrid()}
   $("#roGrid").innerHTML=g;
   $("#roHours").innerHTML=d.people.filter(function(p){return per[p.id]}).sort(function(a,b){return per[b.id]-per[a.id]}).map(function(p){return '<span>'+esc(p.name)+' <b>'+(Math.round(per[p.id]*10)/10)+' h</b></span>'}).join("")||'<span>Nobody rostered this week yet.</span>';
