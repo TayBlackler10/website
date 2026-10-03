@@ -157,6 +157,30 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .rgrid td:hover:not(.who):not(.tot){box-shadow:inset 0 0 0 2px var(--ink)}
 .shift{display:block;background:var(--ink);color:var(--lime);border-radius:8px;padding:4px 7px;font-size:12.5px;font-weight:600;margin-bottom:4px;border:0;width:100%;text-align:left;cursor:pointer}
 .shift.draft{background:#fff;color:var(--ink);border:1.5px dashed var(--ink)}
+.wcal{display:grid;grid-template-columns:88px repeat(7,minmax(0,1fr));gap:6px;min-width:900px}
+.wcal .dh{font-size:12px;font-weight:600;color:var(--muted);padding:2px 4px}.wcal .dh.today{color:var(--olive)}
+.wcal .band{font-size:12px;font-weight:600;color:var(--olive);text-transform:uppercase;letter-spacing:.1em;padding:10px 4px}
+.wcal .band small{display:block;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;margin-top:2px}
+.wcal .wc{background:var(--tile);border-radius:12px;padding:6px;min-height:76px;display:flex;flex-direction:column;gap:5px;cursor:pointer}
+.wcal .wc.today{box-shadow:inset 0 0 0 2px var(--olive)}
+.wcal .wc:hover{box-shadow:inset 0 0 0 2px var(--ink)}
+.ws{background:#fff;border:0;border-radius:9px;padding:6px 8px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:1px;width:100%}
+.ws b{font-size:13.5px}.ws span{font-size:12px;color:var(--muted)}
+.ws.mg{background:var(--ink);color:#fff}.ws.mg span{color:var(--lime)}
+.ws.draft{border:1.5px dashed var(--ink)}.ws.mine{box-shadow:0 0 0 2px var(--lime)}
+.hrs{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.hrs span{background:var(--tile);border-radius:999px;padding:6px 12px;font-size:13px}.hrs b{font-variant-numeric:tabular-nums}
+.ccal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;min-width:900px}
+.ccal .cd{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ccal .cdh{padding:4px 2px 6px;border-bottom:2px solid var(--line)}.ccal .cdh b{font:800 20px Archivo,Arial,sans-serif;display:block}.ccal .cdh span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.ccal .cd.today .cdh{border-color:var(--lime)}.ccal .cd.today .cdh span{color:var(--olive);font-weight:600}
+.cb{border:0;border-radius:12px;padding:9px 10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:3px;background:var(--tile);border-left:5px solid var(--ink);width:100%}
+.cb:hover{box-shadow:0 0 0 2px var(--ink)}.cb.on{box-shadow:0 0 0 2px var(--olive)}.cb.past{opacity:.5}
+.cb .ct2{font-size:12px;font-weight:600;color:var(--muted)}.cb b{font-size:14px;line-height:1.2}.cb .co{font-size:12px;color:var(--muted)}
+.cb .fill{width:100%}
+.legend2{display:flex;gap:8px;flex-wrap:wrap}.legend2 span{display:inline-flex;gap:6px;align-items:center;font-size:13px;background:#fff;border-radius:999px;padding:5px 12px}.legend2 i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.col{max-height:74vh;overflow:auto}
+.lead .t2{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.age{font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--tile);white-space:nowrap}.age.late{background:var(--warn);color:var(--warnInk)}
 .mcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;min-width:860px}
 .mcal .dh{font-size:12px;font-weight:600;color:var(--muted);padding:2px 4px}
 .mcal .dc{background:var(--tile);border-radius:12px;padding:6px;min-height:118px;display:flex;flex-direction:column;gap:3px;cursor:pointer}
@@ -289,7 +313,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card dark" style="margin-bottom:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow" id="roTitle"></span><span class="muted" style="color:var(--soft)" id="roNote"></span>
 <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap" id="roTools" hidden><button class="btn line sm" id="roCopy" style="color:#fff;border-color:#fff">Copy last week</button><a class="btn line sm" id="roCsv" style="color:#fff;border-color:#fff">Download hours</a><button class="btn sm" id="roPub">Publish</button></span></div>
 <div class="tiles" id="roTiles"></div></section>
-<section class="card"><div style="overflow-x:auto"><table class="rgrid" id="roGrid"></table></div><p class="muted" style="margin:0" id="roHelp"></p></section>
+<section class="card"><div style="overflow-x:auto"><div class="wcal" id="roGrid"></div></div><p class="muted" style="margin:0" id="roHelp"></p><div class="hrs" id="roHours"></div></section>
 <div class="row2" style="margin-top:18px">
 <section class="card" id="roEdit" hidden></section>
 <section class="card"><h2>Days off and swaps</h2><div class="list" id="roReq"></div>
@@ -345,8 +369,8 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="btn line sm" id="clsPrev">Last week</button><button class="btn line sm" id="clsNow">This week</button><button class="btn line sm" id="clsNext">Next week</button>
 </div>
 <section class="card dark" style="margin-bottom:18px"><div class="tiles" id="clsTiles"></div></section>
-<div class="row2">
-<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="clsTitle">This week</h2><span class="muted" id="clsCount"></span></div><div id="clsWeek"><div class="muted">Loading...</div></div></section>
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="clsTitle">This week</h2><span class="muted" id="clsCount"></span><span style="margin-left:auto" class="legend2" id="clsLegend"></span></div><div id="clsNote2"></div><div style="overflow-x:auto"><div id="clsWeek"><div class="muted">Loading...</div></div></div></section>
+<div class="row2" style="margin-top:18px;grid-template-columns:minmax(0,1fr)">
 <section class="card" id="clsPanel"><h2>Pick a class</h2><p class="muted" style="margin:0">See who's booked with their photos, and book people in or cancel them. Members who owe $250 or more can't be booked until it's paid.</p></section>
 </div>
 <div class="row2" style="margin-top:18px">
@@ -400,7 +424,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card"><h2>Where new members came from</h2><p class="muted" style="margin:0">Last 90 days</p><div id="grSources"></div></section>
 </div>
 <div class="row2" style="margin-top:18px">
-<section class="card"><h2>5 Days for $5</h2><div style="overflow-x:auto" id="grTrials"></div></section>
+<section class="card"><h2>Trials and passes</h2><div style="overflow-x:auto" id="grTrials"></div></section>
 <section class="card"><h2>Leads, last 90 days</h2><div id="grLeads"></div></section>
 </div>
 <div class="row2" style="margin-top:18px">
@@ -453,6 +477,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section class="card"><h2>Club details</h2><dl class="kv" id="setClub"></dl></section>
 </div>
 <div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Money, marketing and backups</h2><div id="setFeeds"><div class="muted">Loading...</div></div></section>
 <section class="card"><h2>Connections</h2><div class="list" id="setInt"></div></section>
 <section class="card"><h2>Last copies</h2><div class="hist" id="setSync"></div></section>
 </div>
@@ -597,7 +622,7 @@ function nm(r){return ((r.first_name||"")+" "+(r.last_name||"")).trim()||r.name|
 var ME=null, VIEW="today";
 var OUT_LABEL={joined:"Joined",joining_at_desk:"Joining at the desk",call_back:"Call back",no_answer:"No answer",not_interested:"Not for them",paid:"Paid",billing_in:"Bank details in",tag_given:"Tag given",fp_in_gm:"It's in GymMaster",done:"Done"};
 var JOB_OUTS={new_lead:["joined","call_back","no_answer","not_interested"],missing_billing:["billing_in","call_back","no_answer"],trial_ending:["joined","joining_at_desk","call_back","no_answer","not_interested"],blocked:["paid","call_back","no_answer"],call_back:["joined","paid","call_back","no_answer","not_interested","done"],no_tag:["tag_given","done"],fp_id_gm:["fp_in_gm"],fp_missing:["call_back","no_answer"],no_photo:["done"]};
-var KIND={prospect:"GymMaster prospect",trial:"5 Days for $5",free_pt:"Free PT",unfinished_signup:"Unfinished sign-up",bring_a_mate:"Bring a Mate",app_upgrade:"App upgrade",website_form:"Enquiry",meta_form:"Meta form",walk_in:"Walk in"};
+var KIND={prospect:"Started online or enquired",trial:"5 Days for $5",free_pt:"Free PT",unfinished_signup:"Unfinished sign-up",bring_a_mate:"Bring a Mate",app_upgrade:"App upgrade",website_form:"Enquiry",meta_form:"Meta form",walk_in:"Walk in"};
 
 function show(v){
  VIEW=v;
@@ -868,8 +893,16 @@ function loadLeads(){
   var open=LEADS.filter(function(l){return l.stage==="new"}).length;$("#ctLeads").hidden=!open;$("#ctLeads").textContent=open;
   var kinds=Object.keys(d.counts||{});
   $("#leadKinds").innerHTML='<button class="chip'+(LKIND?"":" on")+'" data-k="">All '+(LKIND?"":LEADS.length)+'</button>'+Object.keys(KIND).filter(function(k){return kinds.indexOf(k)>=0||k===LKIND}).map(function(k){return '<button class="chip'+(k===LKIND?" on":"")+'" data-k="'+k+'">'+KIND[k]+(d.counts[k]?" "+d.counts[k]:"")+'</button>'}).join("");
-  var cols=[["new","New"],["contacted","Contacted"],["trial","On trial"],["joined","Joined lately"]];
-  $("#board").innerHTML=cols.map(function(c){var list=LEADS.filter(function(l){return l.stage===c[0]});return '<div class="col"><h3><span>'+c[1]+'</span><span class="muted">'+list.length+'</span></h3>'+list.slice(0,60).map(function(l){return '<button class="lead" data-lead="'+l.id+'"><span class="t"><b>'+esc(l.name||l.email||l.mobile)+'</b><span class="muted">'+esc(day(l.created_at))+'</span></span><span class="muted">'+esc(KIND[l.kind]||l.kind)+(l.goal?", "+esc(l.goal):"")+'</span>'+(l.assigned_name?'<span class="pill">'+esc(l.assigned_name)+'</span>':"")+'</button>'}).join("")+(list.length?"":'<div class="muted" style="padding:4px 6px">None</div>')+'</div>'}).join("");
+  var cols=[["new","Needs a first call","Newest first. Amber means nobody has called in 2 days."],["contacted","Contacted","Spoken to or messaged, not decided yet."],["trial","On a trial or pass","Doing 5 Days for $5 or a pass right now."],["joined","Joined lately","Became members in the last 30 days."]];
+  var KC={free_pt:"dark",trial:"ok",prospect:"",walk_in:"",website_form:"",bring_a_mate:"ok",meta_form:"warn"};
+  var age=function(l){var dd=Math.floor((Date.now()-new Date(String(l.created_at).replace(" ","T")).getTime())/864e5);return dd<=0?"Today":dd===1?"1 day":dd+" days"};
+  $("#board").innerHTML=cols.map(function(c){var list=LEADS.filter(function(l){return l.stage===c[0]});
+   return '<div class="col"><h3><span>'+c[1]+'</span><span class="pill dark">'+list.length+'</span></h3><div class="muted" style="padding:0 6px 4px;font-size:12px">'+c[2]+'</div>'+
+    list.slice(0,80).map(function(l){var dd=(Date.now()-new Date(String(l.created_at).replace(" ","T")).getTime())/864e5;
+     return '<button class="lead" data-lead="'+l.id+'"><span class="t"><b>'+esc(l.name||l.email||l.mobile)+'</b><span class="age'+(c[0]==="new"&&dd>2?" late":"")+'">'+esc(age(l))+'</span></span>'+
+      '<span class="t2"><span class="pill '+(KC[l.kind]||"")+'">'+esc(KIND[l.kind]||l.kind)+'</span>'+(l.source&&l.source!=="PT lead form"&&l.source!=="GymMaster prospect"?'<span class="muted">'+esc(l.source)+'</span>':"")+'</span>'+
+      (l.goal?'<span class="muted">'+esc(l.goal)+'</span>':"")+(l.assigned_name?'<span class="muted">With <b style="color:var(--ink)">'+esc(l.assigned_name)+'</b></span>':"")+'</button>'}).join("")+
+    (list.length>80?'<div class="muted" style="padding:4px 6px">'+(list.length-80)+' more in List view</div>':"")+(list.length?"":'<div class="muted" style="padding:4px 6px">Nobody here right now.</div>')+'</div>'}).join("");
  });
  if(!STAFF.length)get("/api/staff").then(function(d){STAFF=d.staff||[]});
 }
@@ -1015,12 +1048,15 @@ function loadClasses(w){
   var types={};d.classes.forEach(function(c){var t=types[c.name]=types[c.name]||{b:0,s:0};t.b+=c.booked;t.s+=c.max});
   var best=Object.keys(types).sort(function(a,b){return types[b].b/Math.max(types[b].s,1)-types[a].b/Math.max(types[a].s,1)})[0];
   $("#clsTiles").innerHTML=tile(d.classes.length,"Classes this week")+tile(bk,"Spots booked")+tile(sp?Math.round(bk/sp*100)+"%":"-","How full, on average")+tile(fu,"Full classes")+tile(wl,"On waitlists")+tile(qu,"Coming up under a quarter full")+(best?tile(best,"Fullest class type"):"");
-  var by={};d.classes.forEach(function(c){(by[c.day]=by[c.day]||[]).push(c)});
-  $("#clsWeek").innerHTML=Object.keys(by).sort().map(function(dy){
-   var dd=new Date(dy+"T12:00:00");
-   return '<div class="dayh">'+esc(dd.toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"short"}))+(dy===d.today?" (today)":"")+'</div>'+by[dy].map(function(c){
-    var pct=c.max?Math.round(c.booked/c.max*100):0,full=c.max&&c.booked>=c.max;
-    return '<button class="cls'+(dy<d.today?" past":"")+(CLS.cur&&CLS.cur.id===c.id?" on":"")+'" data-cls="'+c.id+'"><b>'+esc(c.start)+'</b><span><b>'+esc(c.name)+'</b> <span class="muted">'+esc(c.coach||"")+'</span><div class="fill"><i class="'+(full?"full":"")+'" style="width:'+pct+'%"></i></div></span><span class="pill'+(full?" dark":"")+'">'+c.booked+"/"+c.max+(c.waitlist?" +"+c.waitlist+" waiting":"")+'</span></button>'}).join("")}).join("")||'<div class="muted">No classes this week.</div>';
+  var PAL=["#0A0A0A","#5E6B00","#DFFF00","#8C8C84","#C9A227","#3B6E8F","#A33A00"],names=Object.keys(types).sort(),col={};names.forEach(function(n,i){col[n]=PAL[i%PAL.length]});
+  $("#clsLegend").innerHTML=names.map(function(n){return '<span><i style="background:'+col[n]+'"></i>'+esc(n)+' '+d.classes.filter(function(c){return c.name===n}).length+'</span>'}).join("");
+  $("#clsNote2").innerHTML=d.classes.length&&!bk?'<div class="warnbox" style="margin-bottom:6px">Nobody has booked through GymMaster this week. Bookings show here as soon as members book in the M2 App or GymMaster, and reception can book people in by tapping a class.</div>':"";
+  var days7=[0,1,2,3,4,5,6].map(function(i){var x=new Date(d.week+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+i);return x.toISOString().slice(0,10)});
+  $("#clsWeek").className="ccal";
+  $("#clsWeek").innerHTML=days7.map(function(dy){var list=d.classes.filter(function(c){return c.day===dy});var dd=new Date(dy+"T12:00:00");
+   return '<div class="cd'+(dy===d.today?" today":"")+'"><div class="cdh"><span>'+esc(dd.toLocaleDateString("en-NZ",{weekday:"short"}))+(dy===d.today?", today":"")+'</span><b>'+dd.getDate()+'</b></div>'+
+    list.map(function(c){var pct=c.max?Math.round(c.booked/c.max*100):0,full=c.max&&c.booked>=c.max;
+     return '<button class="cb'+(dy<d.today?" past":"")+(CLS.cur&&CLS.cur.id===c.id?" on":"")+'" data-cls="'+c.id+'" style="border-left-color:'+col[c.name]+'"><span class="ct2">'+esc(c.time||c.start)+'</span><b>'+esc(c.name)+'</b><span class="co">'+esc(c.coach||"No coach")+'</span><div class="fill"><i class="'+(full?"full":"")+'" style="width:'+pct+'%"></i></div><span class="co">'+c.booked+' of '+c.max+' booked'+(c.waitlist?", "+c.waitlist+" waiting":"")+'</span></button>'}).join("")+(list.length?"":'<div class="muted" style="padding:6px 2px">No classes</div>')+'</div>'}).join("");
  });
 }
 $("#clsPrev").addEventListener("click",function(){if(CLS.data)loadClasses(CLS.data.prev)});
@@ -1036,7 +1072,7 @@ function loadClassStats(){
 }
 $("#clsNext").addEventListener("click",function(){if(CLS.data)loadClasses(CLS.data.next)});
 $("#clsNow").addEventListener("click",function(){loadClasses(null)});
-$("#clsWeek").addEventListener("click",function(e){var b=e.target.closest("[data-cls]");if(!b)return;var c=CLS.data.classes.find(function(x){return String(x.id)===b.dataset.cls});CLS.cur=c;$$(".cls").forEach(function(x){x.classList.toggle("on",x===b)});openClass(c)});
+$("#clsWeek").addEventListener("click",function(e){var b=e.target.closest("[data-cls]");if(!b)return;var c=CLS.data.classes.find(function(x){return String(x.id)===b.dataset.cls});CLS.cur=c;$$(".cb").forEach(function(x){x.classList.toggle("on",x===b)});document.querySelector("#clsPanel").scrollIntoView({behavior:"smooth",block:"nearest"});openClass(c)});
 function clsLabel(c){return c.name+", "+new Date(c.day+"T12:00:00").toLocaleDateString("en-NZ",{weekday:"short",day:"numeric",month:"short"})+" "+c.time}
 function openClass(c){
  var P=$("#clsPanel");
@@ -1254,14 +1290,14 @@ function loadRosterMonth(mo){
   for(var dd=1;dd<=days;dd++){var iso=mo+"-"+String(dd).padStart(2,"0");var list=d.shifts.filter(function(s){return s.day===iso});
    h+='<div class="dc'+(iso===d.today?" today":"")+'" data-mday="'+iso+'"><span class="dn">'+dd+'</span>'+list.map(function(s){return '<button class="ms'+(s.area==="Management"?" mg":"")+(s.published?"":" draft")+'" data-shift="'+s.id+'">'+esc(hm(s.start))+' '+esc(short(s.name))+'</button>'}).join("")+'</div>'}
   $("#roGrid").outerHTML='<div class="mcal" id="roGrid">'+h+'</div>';
-  $("#roHelp").textContent="Black shifts are management. Download hours gives the whole month for Smartpay.";
+  $("#roHelp").textContent="Black shifts are management. Download hours gives the whole month for Smartpay.";$("#roHours").innerHTML="";
   $("#roReq").innerHTML=d.requests.map(function(r){return '<div class="r" style="cursor:default"><span><b>'+esc(r.name)+'</b> <span class="muted">'+esc(r.kind)+', '+esc(day(r.day))+'</span></span><span class="pill">'+esc(r.status)+'</span></div>'}).join("")||'<div class="muted">Nothing waiting.</div>';
   bindRoGrid();
  });
 }
 function loadRoster(w){
  if(RO.view==="month"){loadRosterMonth(RO.month);return}
- if($("#roGrid").tagName!=="TABLE")$("#roGrid").outerHTML='<table class="rgrid" id="roGrid"></table>',bindRoGrid();
+ if(!$("#roGrid").classList.contains("wcal"))$("#roGrid").outerHTML='<div class="wcal" id="roGrid"></div>',bindRoGrid();
  $("#roCopy").hidden=false;
  get("/api/roster"+(w?"?week="+w:"")).then(function(d){
   if(d.error){$("#roGrid").innerHTML='<tr><td class="err">'+esc(d.error)+'</td></tr>';return}
@@ -1273,10 +1309,15 @@ function loadRoster(w){
   var tot=0,per={};d.shifts.forEach(function(s){tot+=s.hours;per[s.staff_id]=(per[s.staff_id]||0)+s.hours});
   var cover=days.filter(function(x){return d.shifts.some(function(s){return s.day===x})}).length;
   $("#roTiles").innerHTML=tile(d.shifts.length,"Shifts")+tile(Math.round(tot*10)/10,"Hours rostered")+tile(cover+" of 7","Days covered")+tile(d.requests.filter(function(r){return r.status==="pending"}).length,"Requests waiting");
-  var people=d.people.filter(function(p){return d.can_edit||d.shifts.some(function(s){return s.staff_id===p.id})});
-  $("#roGrid").innerHTML='<tr><th style="width:140px"></th>'+days.map(function(x,i){return '<th class="'+(x===d.today?"today":"")+'">'+WDN[i]+' '+(+x.slice(8))+'</th>'}).join("")+'<th style="width:60px">Hours</th></tr>'+
-   people.map(function(p){return '<tr><td class="who">'+esc(p.name)+'<div class="muted" style="font-weight:400">'+esc(p.role)+'</div></td>'+days.map(function(x){return '<td data-cell="'+p.id+'|'+x+'">'+d.shifts.filter(function(s){return s.staff_id===p.id&&s.day===x}).map(function(s){return '<button class="shift'+(s.published?"":" draft")+(s.staff_id===d.me?" mine":"")+'" data-shift="'+s.id+'">'+esc(s.start)+' to '+esc(s.end)+(s.area&&s.area!=="Reception"?'<br>'+esc(s.area):"")+'</button>'}).join("")+'</td>'}).join("")+'<td class="tot">'+(Math.round((per[p.id]||0)*10)/10)+' h</td></tr>'}).join("")||'<tr><td class="muted">No reception team yet. Add them in Staff and access with the Reception role.</td></tr>';
-  $("#roHelp").textContent=d.can_edit?"Tap a square to add a shift, tap a shift to change it. Add new reception staff in Staff and access (they don't need to sign in to be rostered).":"";
+  var BANDS=[["Morning","Opens to 11am",0,11],["Day","11am to 4pm",11,16],["Evening","4pm to close",16,24]];
+  var g='<div></div>'+days.map(function(x,i){return '<div class="dh'+(x===d.today?" today":"")+'">'+WDN[i]+' '+(+x.slice(8))+'</div>'}).join("");
+  BANDS.forEach(function(b){g+='<div class="band">'+b[0]+'<small>'+b[1]+'</small></div>'+days.map(function(x){var list=d.shifts.filter(function(s){var h=+s.start.slice(0,2);return s.day===x&&h>=b[2]&&h<b[3]}).sort(function(a,c){return a.start.localeCompare(c.start)});
+   return '<div class="wc'+(x===d.today?" today":"")+'" data-band="'+b[0]+'|'+x+'">'+list.map(function(s){return '<button class="ws'+(s.area==="Management"?" mg":"")+(s.published?"":" draft")+(s.staff_id===d.me?" mine":"")+'" data-shift="'+s.id+'"><b>'+esc(s.name.split(" ")[0])+'</b><span>'+esc(hm(s.start))+' to '+esc(hm(s.end))+(s.area&&s.area!=="Reception"?", "+esc(s.area):"")+'</span></button>'}).join("")+'</div>'}).join("")});
+  if($("#roGrid").tagName==="TABLE"){$("#roGrid").outerHTML='<div class="wcal" id="roGrid"></div>';bindRoGrid()}
+  $("#roGrid").innerHTML=g;
+  $("#roHours").innerHTML=d.people.filter(function(p){return per[p.id]}).sort(function(a,b){return per[b.id]-per[a.id]}).map(function(p){return '<span>'+esc(p.name)+' <b>'+(Math.round(per[p.id]*10)/10)+' h</b></span>'}).join("")||'<span>Nobody rostered this week yet.</span>';
+
+  $("#roHelp").textContent=d.can_edit?"Tap a space to add a shift, tap a shift to change it. Dashed shifts aren't published yet. Black shifts are management.":"Your shifts are outlined in lime.";
   $("#roReq").innerHTML=d.requests.map(function(r){return '<div class="r" style="cursor:default"><span><b>'+esc(r.name)+'</b> <span class="muted">'+esc({leave:"Day off",swap:"Swap",available:"Can do extra"}[r.kind])+', '+esc(day(r.day))+(r.note?". "+esc(r.note):"")+'</span></span>'+(r.status==="pending"&&d.can_edit?'<span style="display:flex;gap:6px"><button class="btn dark sm" data-rq="'+r.id+'" data-st="approved">Approve</button><button class="btn line sm" data-rq="'+r.id+'" data-st="declined">Decline</button></span>':'<span class="pill'+(r.status==="approved"?" ok":r.status==="declined"?" warn":"")+'">'+esc(r.status)+'</span>')+'</div>'}).join("")||'<div class="muted">Nothing waiting.</div>';
  });
 }
@@ -1293,6 +1334,7 @@ function bindRoGrid(){$("#roGrid").addEventListener("click",function(e){
  var md=e.target.closest("[data-mday]");if(md&&!e.target.closest("[data-shift]")){roForm({staff_id:(d.people[0]||{}).id,day:md.dataset.mday});return}
  var b=e.target.closest("[data-shift]");if(b){roForm(d.shifts.find(function(s){return String(s.id)===b.dataset.shift}));return}
  var c=e.target.closest("[data-cell]");if(c){var p=c.dataset.cell.split("|");roForm({staff_id:+p[0],day:p[1]})}
+ var bd=e.target.closest("[data-band]");if(bd){var q=bd.dataset.band.split("|"),T={Morning:["04:45","09:00"],Day:["08:30","16:00"],Evening:["16:00","22:30"]}[q[0]];roForm({staff_id:(d.people[0]||{}).id,day:q[1],start:T[0],end:T[1]})}
 })}
 bindRoGrid();
 $("#roPrev").addEventListener("click",function(){if(!RO.d)return;if(RO.view==="month")loadRosterMonth(RO.d.prev);else loadRoster(RO.d.prev)});
@@ -1305,7 +1347,20 @@ $("#raSave").addEventListener("click",function(){$("#raErr").textContent="";post
 
 /* ---------- settings ---------- */
 var FAMS={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",transporter:"Transporter",passport:"Fitness Passport",pass:"Visit pass",pool:"Pool",trial:"Trial",challenge:"Challenge",staff:"Staff",other:"Other"};
+function loadFeeds(){
+ get("/api/feeds").then(function(f){
+  if(f.error){$("#setFeeds").innerHTML='<div class="err">'+esc(f.error)+'</div>';return}
+  var last=function(l){return l?(l.ok?'<span class="pill ok">Updated '+esc(day(l.finished_at))+'</span>':'<span class="pill warn">Failed: '+esc(l.error||"")+'</span>'):'<span class="pill">Not run yet</span>'};
+  var x=f.xero,w=f.windsor,b=f.backup;
+  $("#setFeeds").innerHTML=
+   '<div class="person"><div class="top"><b>Xero</b> '+(x.connected?'<span class="pill ok">Connected'+(x.org?" to "+esc(x.org):"")+'</span> '+last(x.last):x.keys?'<span class="pill warn">Ready to connect</span>':'<span class="pill warn">Needs XERO_CLIENT_ID and XERO_CLIENT_SECRET</span>')+'</div><div class="muted">Profit and loss by month, cash, bills and GST, every night at 2:15am.</div><div style="display:flex;gap:8px;flex-wrap:wrap">'+(x.keys?'<a class="btn '+(x.connected?"line":"dark")+' sm" href="/xero/connect">'+(x.connected?"Reconnect Xero":"Connect Xero")+'</a>':"")+(x.connected?'<button class="btn line sm" data-feed="xero">Refresh now</button>':"")+'</div></div>'+
+   '<div class="person"><div class="top"><b>Meta ads and Google Analytics</b> '+(w.key?last(w.last):'<span class="pill warn">Needs WINDSOR_API_KEY</span>')+'</div><div class="muted">Spend, website visits and conversions by day, every night through Windsor.</div>'+(w.key?'<div><button class="btn line sm" data-feed="marketing">Refresh now</button></div>':"")+'</div>'+
+   '<div class="person"><div class="top"><b>Backups</b> '+(b.bucket?last(b.last):'<span class="pill warn">Backup bucket not set up</span>')+'</div><div class="muted">A full copy of the Core every night, kept for 35 days, separate from the live database.</div>'+(b.bucket?'<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn line sm" data-feed="backup">Back up now</button>'+b.files.map(function(o){return '<a class="btn line sm" href="/api/backups/'+esc(o.key)+'">'+esc(o.key.slice(8,18))+' ('+Math.round(o.size/1024)+' KB)</a>'}).join("")+'</div>':"")+'</div>';
+ });
+}
+$("#setFeeds").addEventListener("click",function(e){var b=e.target.closest("[data-feed]");if(!b)return;b.disabled=true;b.textContent="Working...";post("/api/feeds/run",{what:b.dataset.feed}).then(function(r){if(r&&r.ok===false)alert(r.error);loadFeeds()})});
 function loadSettings(){
+ loadFeeds();
  get("/api/settings").then(function(d){
   if(d.error){$("#setRules").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
   var g="";$("#setRules").innerHTML=d.settings.map(function(s){var h=(s.group!==g?'<div class="eyebrow" style="margin-top:14px">'+esc(s.group)+'</div>':"");g=s.group;
@@ -1324,9 +1379,10 @@ var ROLE_N={owner:"Owner",manager:"Manager",reception:"Reception",trainer:"Train
 function loadStaff(){
  get("/api/staff-admin").then(function(d){
   if(d.error){$("#staffList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
-  $("#staffList").innerHTML=d.staff.map(function(s){return '<div class="r" data-st="'+esc(JSON.stringify(s))+'" style="cursor:pointer'+(s.active?"":";opacity:.5")+'"><span><b>'+esc(s.name)+'</b> <span class="muted">'+esc(s.email)+'</span></span><span class="pill'+(s.role==="owner"?" dark":"")+'">'+esc(ROLE_N[s.role]||s.role)+(s.active?"":", off")+'</span></div>'}).join("");
+  $("#staffList").innerHTML=d.staff.map(function(s){return '<div class="r" data-st="'+esc(JSON.stringify(s))+'" style="cursor:pointer'+(s.active?"":";opacity:.5")+'"><span><b>'+esc(s.name)+'</b> <span class="muted">'+esc(s.email)+'</span></span><span class="pill'+(s.role==="owner"?" dark":"")+'">'+esc(ROLE_N[s.role]||s.role)+(s.active?"":", off")+'</span>'+(s.role!=="owner"&&!s.active?'<button class="btn line sm" data-strm="'+s.id+'" data-nm="'+esc(s.name)+'">Remove</button>':"")+'</div>'}).join("");
  });
 }
+$("#staffList").addEventListener("click",function(e){var b=e.target.closest("[data-strm]");if(!b)return;e.stopPropagation();if(!confirm("Remove "+b.dataset.nm+" completely? Their shifts go, their notes stay without their name."))return;post("/api/staff-admin",{action:"remove",id:+b.dataset.strm}).then(function(r){if(!r.ok)alert(r.error);loadStaff()})},true);
 function stFill(s){s=s||{};$("#stId").value=s.id||"";$("#stName").value=s.name||"";$("#stEmail").value=s.email||"";$("#stRole").value=s.role||"reception";$("#stOrder").value=s.list_order==null?100:s.list_order;$("#stActive").checked=s.active!==0;$("#stTitle").textContent=s.id?"Edit "+s.name:"Add someone";$("#stErr").textContent="";$("#stOk").innerHTML=""}
 $("#staffList").addEventListener("click",function(e){var r=e.target.closest("[data-st]");if(r)stFill(JSON.parse(r.dataset.st))});
 $("#stNew").addEventListener("click",function(){stFill(null)});

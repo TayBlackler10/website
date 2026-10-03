@@ -19,10 +19,12 @@ import { SCHEMA, STAFF_SEED, SCHEMA_VERSION } from "./schema_sql.js";
 import { makeHub } from "./hub.js";
 import { makeHub2 } from "./hub2.js";
 import { makeRoster } from "./roster.js";
+import { makeFeeds } from "./feeds.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay });
 const R = makeRoster({ nzDateTime });
+const F = makeFeeds({ nzDateTime });
 const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
 
 // What each role can see. Business numbers (totals, revenue, Xero) are owners only.
@@ -88,6 +90,18 @@ export default {
         const w = await H.classesWeek(env, who, can, url.searchParams);
         if (w.classes) { const job = H2.saveClassCounts(env, w.classes).catch(() => {}); if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job; }
         return json(w);
+      }
+      if (can.settings) {
+        if (url.pathname === "/xero/connect") return await F.xeroConnect(env, url);
+        if (url.pathname === "/xero/callback") return await F.xeroCallback(env, url);
+        if (url.pathname === "/api/feeds") return json(await F.status(env));
+        if (url.pathname === "/api/feeds/run" && req.method === "POST") {
+          const what = (await req.json()).what;
+          try { return json(what === "xero" ? await F.xeroSync(env, 13) : what === "marketing" ? await F.marketingSync(env, 60) : what === "backup" ? await F.backup(env) : { error: "Unknown" }); }
+          catch (e) { return json({ ok: false, error: String(e.message || e) }); }
+        }
+        const bk = url.pathname.match(/^\/api\/backups\/(m2-core-[\d-]+\.json\.gz)$/);
+        if (bk) return await F.backupGet(env, bk[1]);
       }
       if (url.pathname === "/api/roster") return json(req.method === "POST" ? await R.save(env, who, await req.json()) : await R.week(env, who, url.searchParams));
       if (url.pathname === "/api/roster/ask" && req.method === "POST") return json(await R.ask(env, who, await req.json()));
@@ -155,6 +169,9 @@ export default {
       await applyBlockRule(env);
       console.log("snapshot", JSON.stringify(await H.takeSnapshot(env)));
       console.log("leads", JSON.stringify(await H2.rebuildLeads(env).catch(e => String(e))));
+      if (env.XERO_CLIENT_ID) console.log("xero", JSON.stringify(await F.xeroSync(env, 2).catch(e => String(e))));
+      if (env.WINDSOR_API_KEY) console.log("marketing", JSON.stringify(await F.marketingSync(env, 10).catch(e => String(e))));
+      if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));
       if (env.GM_REPORT_KEY) console.log("yesterday", JSON.stringify(await H2.pullVisits(env, nzDateTime(new Date(Date.now() - 86400_000)).slice(0, 10)).catch(e => String(e))));
       try {
         const t = nzDateTime(new Date()).slice(0, 10);
@@ -1073,6 +1090,22 @@ async function staffAdmin(env, can) {
 
 async function saveStaff(env, who, can, b) {
   if (!can.settings) return { ok: false, error: "Only Taylor and Tim can manage staff." };
+  if (b.action === "remove") {
+    // Someone who has left: take them out completely. Their history stays, just without their name on it.
+    const id = +b.id;
+    if (!id || id === who.id) return { ok: false, error: "You can't remove yourself." };
+    const st = await env.DB.prepare("SELECT id, role FROM staff WHERE id = ?").bind(id).first();
+    if (!st) return { ok: false, error: "Not found" };
+    if (st.role === "owner") return { ok: false, error: "Owners can't be removed here." };
+    const db = env.DB, n = (t, c) => db.prepare(`UPDATE ${t} SET ${c} = NULL WHERE ${c} = ?`).bind(id);
+    await db.batch([
+      db.prepare("DELETE FROM shifts WHERE staff_id = ?").bind(id), db.prepare("DELETE FROM shift_requests WHERE staff_id = ?").bind(id),
+      n("shifts", "created_by"), n("shift_requests", "decided_by"), n("leads", "assigned_to"), n("tasks", "assigned_to"), n("tasks", "done_by"),
+      n("activity", "staff_id"), n("member_flags", "set_by"), n("key_tags", "assigned_by"), n("sales", "staff_id"), n("members", "trainer_id"),
+      n("member_photos", "taken_by"), db.prepare("DELETE FROM staff WHERE id = ?").bind(id),
+    ]);
+    return { ok: true, removed: true };
+  }
   const name = String(b.name || "").trim(), email = String(b.email || "").trim().toLowerCase(), role = String(b.role || "");
   const active = b.active === false || b.active === 0 ? 0 : 1, order = Number.isFinite(+b.list_order) ? +b.list_order : 100;
   if (!name) return { ok: false, error: "Add their name." };
