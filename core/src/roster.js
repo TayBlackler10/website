@@ -11,9 +11,10 @@ export function makeRoster(L) {
   const hours = s => { const [a, b] = [s.start, s.end].map(t => +t.slice(0, 2) + +t.slice(3, 5) / 60); return Math.max(0, (b < a ? b + 24 : b) - a - (s.break_min || 0) / 60); };
 
   async function week(env, who, q) {
-    const asked = q.get("week");
-    const wk = mondayOf(/^\d{4}-\d{2}-\d{2}$/.test(asked || "") ? asked : todayNz());
-    const end = addDays(wk, 7);
+    const asked = q.get("week"), month = /^\d{4}-\d{2}$/.test(q.get("month") || "") ? q.get("month") : null;
+    let wk = mondayOf(/^\d{4}-\d{2}-\d{2}$/.test(asked || "") ? asked : todayNz());
+    let end = addDays(wk, 7);
+    if (month) { wk = month + "-01"; end = new Date(Date.UTC(+month.slice(0, 4), +month.slice(5, 7), 1)).toISOString().slice(0, 10); }
     const edit = canEdit(who);
     const people = await all(env, `SELECT id, name, role FROM staff WHERE active = 1 AND role IN ('owner','manager','reception')
                                    ORDER BY CASE role WHEN 'reception' THEN 0 WHEN 'manager' THEN 1 ELSE 2 END, list_order, name`);
@@ -24,7 +25,8 @@ export function makeRoster(L) {
     const requests = await all(env, `SELECT r.id, r.staff_id, st.name, r.kind, r.day, r.note, r.status, r.created_at FROM shift_requests r JOIN staff st ON st.id = r.staff_id
                                      WHERE (r.status = 'pending' OR r.day >= ?) ${edit ? "" : "AND r.staff_id = " + (+who.id)} ORDER BY r.day LIMIT 50`, wk);
     const unpublished = shifts.filter(s => !s.published).length;
-    return { week: wk, prev: addDays(wk, -7), next: end, today: todayNz(), can_edit: edit, me: who.id, people, shifts, requests, unpublished };
+    return { week: wk, month, prev: month ? new Date(Date.UTC(+month.slice(0, 4), +month.slice(5, 7) - 2, 1)).toISOString().slice(0, 7) : addDays(wk, -7),
+             next: month ? end.slice(0, 7) : end, today: todayNz(), can_edit: edit, me: who.id, people, shifts, requests, unpublished };
   }
 
   async function save(env, who, b) {

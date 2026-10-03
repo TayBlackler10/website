@@ -157,6 +157,12 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .rgrid td:hover:not(.who):not(.tot){box-shadow:inset 0 0 0 2px var(--ink)}
 .shift{display:block;background:var(--ink);color:var(--lime);border-radius:8px;padding:4px 7px;font-size:12.5px;font-weight:600;margin-bottom:4px;border:0;width:100%;text-align:left;cursor:pointer}
 .shift.draft{background:#fff;color:var(--ink);border:1.5px dashed var(--ink)}
+.mcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;min-width:860px}
+.mcal .dh{font-size:12px;font-weight:600;color:var(--muted);padding:2px 4px}
+.mcal .dc{background:var(--tile);border-radius:12px;padding:6px;min-height:118px;display:flex;flex-direction:column;gap:3px;cursor:pointer}
+.mcal .dc.out{background:none;cursor:default}.mcal .dc.today{box-shadow:inset 0 0 0 2px var(--olive)}
+.mcal .dn{font:800 14px Archivo,Arial,sans-serif}.mcal .ms{font-size:11.5px;line-height:1.25;background:#fff;border-radius:6px;padding:2px 5px;border:0;text-align:left;cursor:pointer}
+.mcal .ms.mg{background:var(--ink);color:var(--lime)}.mcal .ms.draft{border:1px dashed var(--ink)}
 .shift.mine{box-shadow:0 0 0 2px var(--lime)}
 [hidden]{display:none!important}a.btn,label.btn{text-decoration:none;display:inline-flex;align-items:center}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -243,7 +249,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div style="margin-right:auto"><div class="eyebrow">Every source, one inbox</div><h1>Leads<span class="dot">.</span></h1></div>
 <button class="btn line" id="newLeadBtn" hidden>Add a lead</button>
 </div>
-<section class="card dark" style="margin-bottom:14px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">Last 30 days</span><span class="muted" style="color:var(--soft)" id="lsNote"></span><button class="btn sm" id="lsRefresh" hidden style="margin-left:auto">Pull in from GymMaster</button></div><div class="tiles" id="lsTiles"></div></section>
+<section class="card dark" style="margin-bottom:14px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">Last 30 days</span><span class="muted" style="color:var(--soft)" id="lsNote"></span><button class="btn sm" id="lsRefresh" hidden style="margin-left:auto">Refresh leads</button></div><div class="tiles" id="lsTiles"></div></section>
 <div class="row3" style="margin-bottom:14px;grid-template-columns:repeat(3,minmax(0,1fr))">
 <section class="card"><h2>By type</h2><div id="lsKind"></div></section>
 <section class="card"><h2>By source</h2><div id="lsSource"></div></section>
@@ -278,7 +284,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <section data-view="roster" hidden>
 <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
 <div style="margin-right:auto"><div class="eyebrow">Reception team. Pay stays in Smartpay</div><h1>Roster<span class="dot">.</span></h1></div>
-<button class="btn line sm" id="roPrev">Last week</button><button class="btn line sm" id="roNow">This week</button><button class="btn line sm" id="roNext">Next week</button>
+<div class="seg" role="group" aria-label="View"><button class="on" data-rv="week">Week</button><button data-rv="month">Month</button></div><button class="btn line sm" id="roPrev">Back</button><button class="btn line sm" id="roNow">Now</button><button class="btn line sm" id="roNext">Forward</button>
 </div>
 <section class="card dark" style="margin-bottom:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow" id="roTitle"></span><span class="muted" style="color:var(--soft)" id="roNote"></span>
 <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap" id="roTools" hidden><button class="btn line sm" id="roCopy" style="color:#fff;border-color:#fff">Copy last week</button><a class="btn line sm" id="roCsv" style="color:#fff;border-color:#fff">Download hours</a><button class="btn sm" id="roPub">Publish</button></span></div>
@@ -835,14 +841,14 @@ var LV={view:"board",stage:"",q:""};
 $$("[data-lv]").forEach(function(b){b.addEventListener("click",function(){LV.view=b.dataset.lv;$$("[data-lv]").forEach(function(x){x.classList.toggle("on",x===b)});$("#lStage").hidden=LV.view!=="list";loadLeads()})});
 $("#lStage").addEventListener("change",function(e){LV.stage=e.target.value;loadLeads()});
 var lqt;$("#lQ").addEventListener("input",function(e){clearTimeout(lqt);lqt=setTimeout(function(){LV.q=e.target.value.trim();if(LV.q&&LV.view==="board"){$$("[data-lv]")[1].click();return}loadLeads()},280)});
-$("#lsRefresh").addEventListener("click",function(){var b=$("#lsRefresh");b.disabled=true;b.textContent="Pulling in...";post("/api/leads/rebuild",{}).then(function(r){b.disabled=false;b.textContent="Pull in from GymMaster";loadLeads()})});
+$("#lsRefresh").addEventListener("click",function(){var b=$("#lsRefresh");b.disabled=true;b.textContent="Pulling in...";post("/api/leads/rebuild",{}).then(function(r){b.disabled=false;b.textContent="Refresh leads";loadLeads()})});
 var STG={new:"New",contacted:"Contacted",trial:"On trial",joined:"Joined",cold:"Gone cold",lost:"Not for them"};
 function loadLeadStats(){
  get("/api/leads/stats").then(function(d){
   if(d.error)return;
   var t=d.total||{n:0,joined:0,touched:0},w=(d.stages||[]).filter(function(x){return x.stage==="new"}).reduce(function(a,x){return a+x.n},0);
   $("#lsTiles").innerHTML=tile(t.n,"Leads")+tile(w,"Waiting for a first contact")+tile(t.n?Math.round(t.touched/t.n*100)+"%":"-","Contacted")+tile(t.joined,"Joined")+tile(t.n?Math.round(t.joined/t.n*100)+"%":"-","Became members")+tile(d.response_hours!=null?(d.response_hours<48?d.response_hours+" h":Math.round(d.response_hours/24)+" days"):"-","Average time to first contact");
-  $("#lsNote").textContent=d.pt_connected?"":"Free PT form leads join once the PT key is added.";
+  $("#lsNote").textContent="Free PT requests from the PT Lead System, people who started signing up online or enquired (GymMaster prospects), trials and walk ins.";
   $("#lsRefresh").hidden=!ME.can.settings;
   $("#lsKind").innerHTML=hbars((d.by||[]).map(function(x){return [x.label+(x.joined?" ("+x.joined+" joined)":""),x.n]}));
   $("#lsSource").innerHTML=hbars((d.sources||[]).map(function(x){return [x.source,x.n]}));
@@ -1227,10 +1233,36 @@ function loadMktMore(){
 }
 
 /* ---------- roster ---------- */
-var RO={week:null,d:null};
+var RO={week:null,d:null,view:"week",month:null};
 var WDN=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 function addD(iso,n){var d=new Date(iso+"T12:00:00Z");d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
+$$("[data-rv]").forEach(function(b){b.addEventListener("click",function(){RO.view=b.dataset.rv;$$("[data-rv]").forEach(function(x){x.classList.toggle("on",x===b)});if(RO.view==="month"){RO.month=(RO.week?addD(RO.week,3):new Date().toISOString()).slice(0,7);loadRosterMonth(RO.month)}else loadRoster(RO.week)})});
+function short(n){var p=String(n).split(" ");return p[0]+(p[1]?" "+p[1][0]:"")}
+function hm(t){var h=+t.slice(0,2),m=t.slice(3);return ((h+11)%12+1)+(m!=="00"?":"+m:"")+(h<12?"am":"pm")}
+function loadRosterMonth(mo){
+ get("/api/roster?month="+mo).then(function(d){
+  if(d.error)return;RO.d=d;RO.month=mo;
+  var first=new Date(mo+"-01T12:00:00Z"),lead=(first.getUTCDay()+6)%7,days=new Date(Date.UTC(+mo.slice(0,4),+mo.slice(5,7),0)).getUTCDate();
+  $("#roTitle").textContent=first.toLocaleDateString("en-NZ",{month:"long",year:"numeric"});
+  $("#roTools").hidden=!d.can_edit;$("#roPub").textContent=d.unpublished?"Publish "+d.unpublished+" shifts":"All published";$("#roPub").disabled=!d.unpublished;
+  $("#roCsv").href="/api/roster.csv?from="+mo+"-01&to="+mo+"-"+days;$("#roCopy").hidden=true;
+  var tot=0,per={},names={};d.shifts.forEach(function(s){tot+=s.hours;per[s.staff_id]=(per[s.staff_id]||0)+s.hours;names[s.staff_id]=s.name});
+  $("#roTiles").innerHTML=tile(d.shifts.length,"Shifts")+tile(Math.round(tot),"Hours rostered")+Object.keys(per).sort(function(a,b){return per[b]-per[a]}).slice(0,6).map(function(k){return tile(Math.round(per[k]*10)/10+" h",names[k])}).join("");
+  $("#roNote").textContent=d.can_edit?"Tap a day to add a shift, tap a shift to change it.":"Your shifts are outlined.";
+  var h=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(function(x){return '<div class="dh">'+x+'</div>'}).join("");
+  for(var i=0;i<lead;i++)h+='<div class="dc out"></div>';
+  for(var dd=1;dd<=days;dd++){var iso=mo+"-"+String(dd).padStart(2,"0");var list=d.shifts.filter(function(s){return s.day===iso});
+   h+='<div class="dc'+(iso===d.today?" today":"")+'" data-mday="'+iso+'"><span class="dn">'+dd+'</span>'+list.map(function(s){return '<button class="ms'+(s.area==="Management"?" mg":"")+(s.published?"":" draft")+'" data-shift="'+s.id+'">'+esc(hm(s.start))+' '+esc(short(s.name))+'</button>'}).join("")+'</div>'}
+  $("#roGrid").outerHTML='<div class="mcal" id="roGrid">'+h+'</div>';
+  $("#roHelp").textContent="Black shifts are management. Download hours gives the whole month for Smartpay.";
+  $("#roReq").innerHTML=d.requests.map(function(r){return '<div class="r" style="cursor:default"><span><b>'+esc(r.name)+'</b> <span class="muted">'+esc(r.kind)+', '+esc(day(r.day))+'</span></span><span class="pill">'+esc(r.status)+'</span></div>'}).join("")||'<div class="muted">Nothing waiting.</div>';
+  bindRoGrid();
+ });
+}
 function loadRoster(w){
+ if(RO.view==="month"){loadRosterMonth(RO.month);return}
+ if($("#roGrid").tagName!=="TABLE")$("#roGrid").outerHTML='<table class="rgrid" id="roGrid"></table>',bindRoGrid();
+ $("#roCopy").hidden=false;
  get("/api/roster"+(w?"?week="+w:"")).then(function(d){
   if(d.error){$("#roGrid").innerHTML='<tr><td class="err">'+esc(d.error)+'</td></tr>';return}
   RO.d=d;RO.week=d.week;var days=[0,1,2,3,4,5,6].map(function(i){return addD(d.week,i)});
@@ -1256,15 +1288,17 @@ function roForm(s){
  $("#rfSave").onclick=function(){post("/api/roster",{id:s.id||null,staff_id:$("#rfWho").value,day:$("#rfDay").value,start:$("#rfStart").value,end:$("#rfEnd").value,break_min:$("#rfBreak").value,area:$("#rfArea").value,note:$("#rfNote").value}).then(function(r){if(!r.ok){$("#rfErr").textContent=r.error;return}E.hidden=true;loadRoster(RO.week)})};
  if(s.id)$("#rfDel").onclick=function(){post("/api/roster",{action:"delete",id:s.id}).then(function(){E.hidden=true;loadRoster(RO.week)})};
 }
-$("#roGrid").addEventListener("click",function(e){
+function bindRoGrid(){$("#roGrid").addEventListener("click",function(e){
  var d=RO.d;if(!d||!d.can_edit)return;
+ var md=e.target.closest("[data-mday]");if(md&&!e.target.closest("[data-shift]")){roForm({staff_id:(d.people[0]||{}).id,day:md.dataset.mday});return}
  var b=e.target.closest("[data-shift]");if(b){roForm(d.shifts.find(function(s){return String(s.id)===b.dataset.shift}));return}
  var c=e.target.closest("[data-cell]");if(c){var p=c.dataset.cell.split("|");roForm({staff_id:+p[0],day:p[1]})}
-});
-$("#roPrev").addEventListener("click",function(){if(RO.d)loadRoster(RO.d.prev)});
-$("#roNext").addEventListener("click",function(){if(RO.d)loadRoster(RO.d.next)});
-$("#roNow").addEventListener("click",function(){loadRoster(null)});
-$("#roPub").addEventListener("click",function(){post("/api/roster",{action:"publish",week:RO.week}).then(function(){loadRoster(RO.week)})});
+})}
+bindRoGrid();
+$("#roPrev").addEventListener("click",function(){if(!RO.d)return;if(RO.view==="month")loadRosterMonth(RO.d.prev);else loadRoster(RO.d.prev)});
+$("#roNext").addEventListener("click",function(){if(!RO.d)return;if(RO.view==="month")loadRosterMonth(RO.d.next);else loadRoster(RO.d.next)});
+$("#roNow").addEventListener("click",function(){if(RO.view==="month")loadRosterMonth(new Date().toISOString().slice(0,7));else loadRoster(null)});
+$("#roPub").addEventListener("click",function(){var d=RO.d;if(RO.view==="month"){var ws=[];d.shifts.filter(function(s){return !s.published}).forEach(function(s){ws.push(s.day)});Promise.all(ws.filter(function(x,i){return ws.indexOf(x)===i}).map(function(x){return post("/api/roster",{action:"publish",week:x})})).then(function(){loadRosterMonth(RO.month)});return}post("/api/roster",{action:"publish",week:RO.week}).then(function(){loadRoster(RO.week)})});
 $("#roCopy").addEventListener("click",function(){post("/api/roster",{action:"copy",week:RO.week}).then(function(r){if(!r.ok&&r.canForce){if(confirm(r.error+" Copy anyway?"))post("/api/roster",{action:"copy",week:RO.week,force:true}).then(function(){loadRoster(RO.week)});return}loadRoster(RO.week)})});
 $("#roReq").addEventListener("click",function(e){var b=e.target.closest("[data-rq]");if(!b)return;post("/api/roster",{action:"request",id:+b.dataset.rq,status:b.dataset.st}).then(function(){loadRoster(RO.week)})});
 $("#raSave").addEventListener("click",function(){$("#raErr").textContent="";post("/api/roster/ask",{day:$("#raDay").value,kind:$("#raKind").value,note:$("#raNote").value}).then(function(r){if(!r.ok){$("#raErr").textContent=r.error;return}$("#raNote").value="";loadRoster(RO.week)})});
