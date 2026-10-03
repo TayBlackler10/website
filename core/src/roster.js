@@ -16,7 +16,7 @@ export function makeRoster(L) {
     let end = addDays(wk, 7);
     if (month) { wk = month + "-01"; end = new Date(Date.UTC(+month.slice(0, 4), +month.slice(5, 7), 1)).toISOString().slice(0, 10); }
     const edit = canEdit(who);
-    const people = await all(env, `SELECT id, name, role FROM staff WHERE active = 1 AND role IN ('owner','manager','reception')
+    const people = await all(env, `SELECT id, name, role FROM staff WHERE active = 1 AND role IN ('manager','reception')
                                    ORDER BY CASE role WHEN 'reception' THEN 0 WHEN 'manager' THEN 1 ELSE 2 END, list_order, name`);
     const shifts = await all(env, `SELECT s.id, s.staff_id, s.day, s.start, s.end, s.break_min, s.area, s.note, s.published, st.name
                                    FROM shifts s JOIN staff st ON st.id = s.staff_id WHERE s.day >= ? AND s.day < ? ${edit ? "" : "AND s.published = 1"}
