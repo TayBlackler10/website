@@ -22,7 +22,7 @@ export function makeFeeds(L) {
     await setSetting(env, "xero_state", state);
     const u = new URL(XERO_AUTH);
     u.search = new URLSearchParams({ response_type: "code", client_id: env.XERO_CLIENT_ID, redirect_uri: redirect(url.origin),
-      scope: env.XERO_SCOPES || "offline_access accounting.reports.read accounting.settings.read", state }).toString();
+      scope: env.XERO_SCOPES || "offline_access accounting.reports.profitandloss.read accounting.reports.balancesheet.read", state }).toString();
     return Response.redirect(u.toString(), 302);
   }
   async function tokenRequest(env, params) {
