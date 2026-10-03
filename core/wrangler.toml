@@ -45,8 +45,7 @@ FP_MEMBERSHIP_ID = "844596" # GymMaster membership type "Fitness Passport" (1,23
 binding = "M2CC"
 id = "d4237aaa27d24bddb1e4fc7f6b67b863"
 
-# Nightly backups of the whole Core (kept 35 days). Switch on once R2 is added to the account
-# and a bucket called m2-core-backups exists:
-# [[r2_buckets]]
-# binding = "BACKUPS"
-# bucket_name = "m2-core-backups"
+# Nightly backups of the whole Core (kept 35 days).
+[[r2_buckets]]
+binding = "BACKUPS"
+bucket_name = "m2-core-backups"
