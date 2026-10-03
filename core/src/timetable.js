@@ -35,7 +35,9 @@ export function makeTimetable(L) {
     if (!name) return null;
     const first = name.split(" ")[0].toLowerCase();
     const rows = await all(env, "SELECT id, name FROM staff WHERE active = 1");
-    return rows.find(r => r.name.toLowerCase() === name.toLowerCase()) || rows.find(r => r.name.toLowerCase().split(" ")[0] === first) || null;
+    const last = name.toLowerCase().split(" ").slice(-1)[0];
+    return rows.find(r => r.name.toLowerCase() === name.toLowerCase()) || rows.find(r => r.name.toLowerCase().split(" ")[0] === first)
+      || (last.length > 2 ? rows.find(r => r.name.toLowerCase().split(" ").slice(-1)[0] === last) : null) || null;
   }
 
   async function seed(env) {

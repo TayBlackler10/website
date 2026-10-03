@@ -313,7 +313,8 @@ export function makeApp(L) {
       coach: String(x.staffname || "").replace(/\s+/g, " ").trim(), max: +x.max_students || 0, num: +x.num_students || 0, wait: +x.waitlist_count || 0 };
     c.startMs = nzMs(c.day, c.start); c.endMs = nzMs(c.day, c.end) || (c.startMs ? c.startMs + 3600e3 : null);
     c.cap = c.max ? Math.min(c.max, CLASS_CAP) : CLASS_CAP; if (c.max > CLASS_CAP) c.cap = c.max;   // big Saturday classes keep their own cap
-    c.mine = !!me && norm(c.coach) === norm(me);
+    const last = x => norm(String(x || "").trim().split(/\s+/).slice(-1)[0]);
+    c.mine = !!me && (norm(c.coach) === norm(me) || (last(c.coach).length > 2 && last(c.coach) === last(me)));   // "Rebekka Schulze" in GymMaster is Bekka
     coachCache.set(String(c.id), c);
     return c;
   }
