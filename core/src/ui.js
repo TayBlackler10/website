@@ -388,7 +388,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <a class="btn line" id="repCsv" href="#">Download CSV</a>
 </div>
 <div class="chips" id="repKinds" style="margin-bottom:12px"></div>
-<div id="repDates" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px" hidden><label class="fld">From<input type="date" id="repFrom"></label><label class="fld">To<input type="date" id="repTo"></label></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end"><span id="repDates" style="display:flex;gap:10px;flex-wrap:wrap" hidden><label class="fld">From<input type="date" id="repFrom"></label><label class="fld">To<input type="date" id="repTo"></label></span><label class="search" for="repQ" style="flex:1;min-width:200px;height:48px"><span class="sr">Search this report</span><input id="repQ" autocomplete="off" placeholder="Search this report"></label></div>
 <section class="card"><div style="display:flex;align-items:baseline;gap:10px"><h2 id="repTitle">Report</h2><span class="muted" id="repCount"></span></div><div style="overflow-x:auto" id="repTable"><div class="muted">Loading...</div></div></section>
 </section>
 
@@ -1286,9 +1286,19 @@ function loadReport(){
   $("#repDates").hidden=!d.dates;if(d.dates){$("#repFrom").value=d.from;$("#repTo").value=d.to}
   $("#repTitle").textContent=d.title;$("#repCount").textContent=d.total.toLocaleString("en-NZ")+(d.total>500?" (first 500 shown, all in the CSV)":"");
   $("#repCsv").href="/api/report?"+repQuery()+"&format=csv";
-  $("#repTable").innerHTML=d.rows.length?'<table class="tbl"><thead><tr>'+d.columns.map(function(c){return '<th>'+esc(c)+'</th>'}).join("")+'</tr></thead><tbody>'+d.rows.map(function(r){return '<tr'+(r.ID?' data-member="'+r.ID+'" style="cursor:pointer"':"")+'>'+d.columns.map(function(c){var v=r[c];return '<td>'+esc(v==null?"":v)+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table>':'<div class="muted">Nothing for this one.</div>';
+  REP.d=d;REP.sort=null;drawReport();
  });
 }
+function drawReport(){
+ var d=REP.d;if(!d)return;var q=($("#repQ").value||"").trim().toLowerCase(),rows=d.rows;
+ if(q)rows=rows.filter(function(r){return d.columns.some(function(c){return String(r[c]==null?"":r[c]).toLowerCase().indexOf(q)>=0})});
+ if(REP.sort){var c=REP.sort.c,dir=REP.sort.dir,num=function(v){var n=parseFloat(String(v).replace(/[$,]/g,""));return isNaN(n)?null:n};rows=rows.slice().sort(function(a,b){var x=a[c],y=b[c],nx=num(x),ny=num(y);var r=(nx!=null&&ny!=null)?nx-ny:String(x==null?"":x).localeCompare(String(y==null?"":y));return r*dir})}
+ var idc=d.columns.indexOf("ID")>=0?"ID":d.columns.indexOf("Member ID")>=0?"Member ID":null;
+ $("#repTable").innerHTML=rows.length?'<table class="tbl"><thead><tr>'+d.columns.map(function(c){return '<th data-rs="'+esc(c)+'" style="cursor:pointer">'+esc(c)+(REP.sort&&REP.sort.c===c?(REP.sort.dir>0?" \u2191":" \u2193"):"")+'</th>'}).join("")+'</tr></thead><tbody>'+rows.map(function(r){var id=idc&&r[idc];return '<tr'+(id?' data-member="'+id+'" style="cursor:pointer"':"")+'>'+d.columns.map(function(c){var v=r[c];return '<td>'+esc(v==null?"":v)+'</td>'}).join("")+'</tr>'}).join("")+'</tbody></table>':'<div class="muted">Nothing for this one.</div>';
+ if(q)$("#repCount").textContent=rows.length+" of "+d.total.toLocaleString("en-NZ");
+}
+$("#repQ").addEventListener("input",drawReport);
+$("#repTable").addEventListener("click",function(e){var h=e.target.closest("[data-rs]");if(!h)return;var c=h.dataset.rs;REP.sort=REP.sort&&REP.sort.c===c?{c:c,dir:-REP.sort.dir}:{c:c,dir:1};drawReport()});
 $("#repKinds").addEventListener("click",function(e){var b=e.target.closest("[data-rk]");if(!b)return;REP.kind=b.dataset.rk;$("#repFrom").value="";$("#repTo").value="";loadReport()});
 $("#repFrom").addEventListener("change",loadReport);$("#repTo").addEventListener("change",loadReport);
 

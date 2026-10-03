@@ -1409,6 +1409,32 @@ const REPORTS = {
   lead_sources: { title: "Where members came from", dates: false,
     sql: `SELECT coalesce(nullif(m.lead_source, ''), 'Not recorded') "Source", count(*) "Members"
           FROM members m WHERE m.status = 'active' GROUP BY 1 ORDER BY 2 DESC` },
+  current_memberships: { title: "Current memberships", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", p.gm_type_name "Membership", p.gm_category "Category", ms.start_date "Started",
+                 ms.min_term_end "Lock-in ends", ms.end_date "Ends", ms.billed_by "Billed by", m.fp_id "Fitness Passport ID" #MONEY#
+          FROM memberships ms JOIN members m ON m.id = ms.member_id JOIN plans p ON p.id = ms.plan_id
+          WHERE ms.status = 'current' ORDER BY p.gm_type_name, m.first_name` },
+  visitor_log: { title: "Visitor log", dates: true,
+    sql: `SELECT substr(v.at, 1, 10) "Date", substr(v.at, 12, 5) "Time", m.id "ID", m.first_name || ' ' || coalesce(m.last_name, '') "Name",
+                 (SELECT p.gm_type_name FROM memberships ms JOIN plans p ON p.id = ms.plan_id WHERE ms.member_id = m.id AND ms.status = 'current' LIMIT 1) "Membership", v.door "Door"
+          FROM visits v JOIN members m ON m.id = v.member_id WHERE substr(v.at, 1, 10) >= ? AND substr(v.at, 1, 10) <= ? ORDER BY v.at DESC` },
+  passport_visits: { title: "Visitor log, Fitness Passport", dates: true,
+    sql: `SELECT substr(v.at, 1, 10) "Date", substr(v.at, 12, 5) "Time", m.id "ID", m.first_name || ' ' || coalesce(m.last_name, '') "Name", m.fp_id "Fitness Passport ID"
+          FROM visits v JOIN members m ON m.id = v.member_id JOIN member_flags f ON f.member_id = m.id AND f.flag = 'passport'
+          WHERE substr(v.at, 1, 10) >= ? AND substr(v.at, 1, 10) <= ? AND coalesce(v.door, '') NOT LIKE '%Not Counted%' ORDER BY v.at DESC` },
+  holds: { title: "Members on hold", dates: false,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", h.starts "Hold starts", h.ends "Hold ends", h.reason "Reason"
+          FROM gm_holds h JOIN members m ON m.id = h.member_id ORDER BY h.ends` },
+  cancellations: { title: "Cancellation notices", dates: true,
+    sql: `SELECT m.id "ID", m.first_name "First name", m.last_name "Last name", m.mobile "Mobile", c.type_name "Membership", c.cancel_date "Cancels on", c.reason "Reason"
+          FROM gm_cancels c JOIN members m ON m.id = c.member_id WHERE c.cancel_date >= ? AND c.cancel_date <= ? ORDER BY c.cancel_date` },
+  failed_payments: { title: "Failed payments", dates: true,
+    sql: `SELECT f.billing_date "Date", m.id "ID", m.first_name || ' ' || coalesce(m.last_name, '') "Name", m.mobile "Mobile", f.amount "Amount", f.reason "Reason"
+          FROM gm_failed f JOIN members m ON m.id = f.member_id WHERE f.billing_date >= ? AND f.billing_date <= ? ORDER BY f.billing_date DESC` },
+  all_payments: { title: "All payments", dates: true, gm: 103, business: true },
+  all_sales: { title: "All sales", dates: true, gm: 14, business: true },
+  product_sales: { title: "Product sales", dates: true, gm: 120, business: true },
+  payment_methods: { title: "Payments by payment method", dates: true, gm: 138, business: true },
   trials: { title: "Trials and how many joined", dates: true,
     sql: `SELECT substr(l.created_at, 1, 7) "Month", count(*) "Trials", sum(CASE WHEN l.stage = 'joined' THEN 1 ELSE 0 END) "Joined",
                  round(100.0 * sum(CASE WHEN l.stage = 'joined' THEN 1 ELSE 0 END) / count(*), 1) "Joined %"
@@ -1423,11 +1449,24 @@ async function report(env, can, q) {
   const today = nzDateTime(new Date()).slice(0, 10);
   const from = /^\d{4}-\d{2}-\d{2}$/.test(q.get("from") || "") ? q.get("from") : (kind === "expiring" ? today : isoDaysAgo(30));
   const to = /^\d{4}-\d{2}-\d{2}$/.test(q.get("to") || "") ? q.get("to") : (kind === "expiring" ? nzDateTime(new Date(Date.now() + 60 * 86400_000)).slice(0, 10) : today);
-  const sql = r.sql.replace("#MONEY#", can.business ? `, ms.price "Price", ms.weekly_value "Per week"` : "");
-  const stmt = env.DB.prepare(sql);
-  const binds = r.dates ? Array.from({ length: r.pairs || 1 }, () => [from, to]).flat() : [];
-  const res = await (binds.length ? stmt.bind(...binds) : stmt).all();
-  const rows = res.results || [];
+  let rows;
+  if (r.gm) {
+    // Straight from GymMaster's own report, so the numbers match it exactly. Owners only (money).
+    if (r.business && !can.business) return json({ error: "This report is for Taylor and Tim." }, 403);
+    if (!env.GM_REPORT_KEY) return json({ error: "GM_REPORT_KEY is not set" }, 400);
+    const gr = await fetch((env.GM_SITE || "https://m2trainingclub.gymmasteronline.com") + "/api/v2/report/standard_report", {
+      method: "POST", headers: { "X-GM-API-KEY": String(env.GM_REPORT_KEY).trim(), "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ start_date: from, end_date: to, report_id: r.gm, company_id: +(env.COMPANY_ID || 4), displaymode: "ALL" }) });
+    const gd = await gr.json().catch(() => ({}));
+    if (!Array.isArray(gd.result)) return json({ error: "GymMaster didn't send the report (" + (gd.error || gr.status) + ")" }, 502);
+    rows = gd.result.map(x => Object.fromEntries(Object.entries(x).filter(([k]) => !/^sorted_/.test(k))));
+  } else {
+    const sql = r.sql.replace("#MONEY#", can.business ? `, ms.price "Price", ms.weekly_value "Per week"` : "");
+    const stmt = env.DB.prepare(sql);
+    const binds = r.dates ? Array.from({ length: r.pairs || 1 }, () => [from, to]).flat() : [];
+    const res = await (binds.length ? stmt.bind(...binds) : stmt).all();
+    rows = res.results || [];
+  }
   const columns = rows.length ? Object.keys(rows[0]) : [];
   if (q.get("format") === "csv") {
     const cell = v => { const t = String(v ?? ""); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
@@ -1436,7 +1475,7 @@ async function report(env, can, q) {
       "Content-Disposition": `attachment; filename="m2-${kind}-${today}.csv"` } });
   }
   return json({ kind, title: r.title, dates: r.dates, from, to, columns, rows: rows.slice(0, 500), total: rows.length,
-                reports: Object.entries(REPORTS).map(([k, v]) => ({ kind: k, title: v.title })) });
+                reports: Object.entries(REPORTS).filter(([, v]) => !v.business || can.business).map(([k, v]) => ({ kind: k, title: v.title, gm: !!v.gm })) });
 }
 
 /* ---------------- first run: the database sets itself up ---------------- */
