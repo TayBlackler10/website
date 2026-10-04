@@ -22,7 +22,7 @@ export function makeMorning(L) {
     const cancels = await all(env, `SELECT c.member_id id, m.first_name, m.last_name, c.type_name plan, c.cancel_date, c.reason FROM gm_cancels c JOIN members m ON m.id = c.member_id
                                     WHERE c.first_seen >= ? GROUP BY c.member_id ORDER BY c.cancel_date`, y);
     const failed = await all(env, `SELECT f.member_id id, m.first_name, m.last_name, f.amount, f.reason FROM gm_failed f JOIN members m ON m.id = f.member_id
-                                   WHERE f.first_seen >= ? ORDER BY f.amount DESC`, y);
+                                   WHERE f.billing_date = ? ORDER BY f.amount DESC`, y);   // billed yesterday, not just newly copied from GymMaster
     const holds = await one(env, "SELECT count(DISTINCT member_id) n FROM gm_holds WHERE starts BETWEEN ? AND ?", y, t);
     const visits = await one(env, "SELECT count(*) n, count(DISTINCT member_id) people FROM visits WHERE at >= ? AND at < ?", y, t);
     const lastWeekSameDay = await one(env, "SELECT count(DISTINCT member_id) people FROM visits WHERE at >= ? AND at < ?", addDays(y, -7), addDays(y, -6));

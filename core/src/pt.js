@@ -16,9 +16,9 @@ export function makePt(L) {
   // Sheet status <-> Core status
   const FROM_SHEET = { "new": "new", contacted: "contacted", "trial booked": "booked", won: "client", lost: "lost" };
   const TO_SHEET = { new: "New", assigned: "New", contacted: "Contacted", booked: "Trial Booked", client: "Won", lost: "Lost" };
-  const RANK = { new: 0, assigned: 1, contacted: 2, booked: 3, client: 4, lost: 4 };
-  const STAGE = { new: "new", assigned: "new", contacted: "contacted", booked: "trial", client: "joined", lost: "lost" };
-  const LABEL = { new: "Waiting for Tim", assigned: "With the trainer", contacted: "Contacted", booked: "Session booked", client: "Became a client", lost: "Not going ahead" };
+  const RANK = { new: 0, assigned: 1, contacted: 2, booked: 3, client: 4, lost: 4, duplicate: 9 };
+  const STAGE = { new: "new", assigned: "new", contacted: "contacted", booked: "trial", client: "joined", lost: "lost", duplicate: "lost" };
+  const LABEL = { new: "Waiting for Tim", assigned: "With the trainer", contacted: "Contacted", booked: "Session booked", client: "Became a client", lost: "Not going ahead", duplicate: "Duplicate of another lead" };
   // Names the sheet uses for people whose staff record says something else.
   const ALIAS = { "te ao": "te ao kura", te: "te ao kura", joe: "jo", dave: "david", foxxy: "tim", matty: "matthew", rod: "rodney" };
 
@@ -70,6 +70,19 @@ export function makePt(L) {
     if (!list && env.M2CC) { try { const t = await env.M2CC.get("pt:last"); if (t) list = JSON.parse(t).leads; } catch {} }
     if (!list) return { ok: false, error: "Couldn't reach the PT lead sheet" };
     const staff = await all(env, "SELECT id, name FROM staff WHERE active = 1");
+    // The same questionnaire often lands in the sheet several times (repeat GymMaster imports). Tim's PT board
+    // shows each person once, so the Core does the same: one lead per person, the rest marked as duplicates.
+    const groups = new Map();
+    for (const l of list) {
+      const k = [l.name, l.phone, l.reasonForJoining, l.trainerPreference, l.trainingStyle, l.preferredTime].map(v => String(v || "").trim().toLowerCase()).join("|");
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k).push(l);
+    }
+    const dupIds = new Set(), keepIds = new Set();
+    for (const g of groups.values()) {
+      g.sort((a, b) => ((b.trainer ? 1 : 0) - (a.trainer ? 1 : 0)) || (Date.parse(b.lastUpdated || b.receivedAt || 0) - Date.parse(a.lastUpdated || a.receivedAt || 0)));
+      g.forEach((l, i) => (i ? dupIds : keepIds).add(String(l.id)));
+    }
     const have = Object.fromEntries((await all(env, "SELECT p.sheet_id, p.lead_id, p.pt_status, l.assigned_to FROM pt_leads p JOIN leads l ON l.id = p.lead_id WHERE p.sheet_id IS NOT NULL")).map(r => [r.sheet_id, r]));
     const fresh = [];
     let added = 0, changed = 0;
@@ -84,7 +97,7 @@ export function makePt(L) {
       if (!h) {
         const name = String(l.name || "").trim().slice(0, 120) || null;
         const old = await one(env, "SELECT l.id FROM leads l LEFT JOIN pt_leads p ON p.lead_id = l.id WHERE l.kind = 'free_pt' AND p.lead_id IS NULL AND l.created_at = ? AND coalesce(l.name,'') = ? LIMIT 1", at, name || "");
-        const status = st === "new" && tr ? "assigned" : st;
+        const status = dupIds.has(String(l.id)) ? "duplicate" : (st === "new" && tr ? "assigned" : st);
         let id = old && old.id;
         if (id) await run(env, "UPDATE leads SET assigned_to = coalesce(?, assigned_to), stage = ? WHERE id = ?", tr, STAGE[status], id);
         else {
@@ -103,7 +116,9 @@ export function makePt(L) {
         const ups = [];
         if (!h.assigned_to && tr) ups.push(run(env, "UPDATE leads SET assigned_to = ? WHERE id = ?", tr, h.lead_id));
         let status = h.pt_status;
-        if (RANK[st] > RANK[status]) status = st;
+        if (dupIds.has(String(l.id))) status = "duplicate";
+        else if (status === "duplicate") status = st;   // it's now the copy Tim sees
+        else if (RANK[st] > RANK[status]) status = st;
         if (status === "new" && (h.assigned_to || tr)) status = "assigned";
         if (status !== h.pt_status) ups.push(run(env, "UPDATE pt_leads SET pt_status = ?, updated_at = datetime('now') WHERE lead_id = ?", status, h.lead_id),
                                              run(env, "UPDATE leads SET stage = ? WHERE id = ?", STAGE[status], h.lead_id));
@@ -134,7 +149,7 @@ export function makePt(L) {
     const closed = await all(env, `SELECT ${COLS} ${FROM} WHERE p.pt_status IN ('client','lost') AND p.updated_at >= datetime('now','-60 days') ORDER BY p.updated_at DESC LIMIT 100`);
     const stats = await one(env, `SELECT count(*) n, sum(p.pt_status = 'client') won, sum(p.pt_status = 'lost') lost,
                                      avg(CASE WHEN p.assigned_at IS NOT NULL THEN (julianday(p.assigned_at) - julianday(l.created_at)) * 24 END) hours_to_assign
-                                   FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.created_at >= datetime('now','-30 days')`);
+                                   FROM leads l JOIN pt_leads p ON p.lead_id = l.id WHERE l.created_at >= datetime('now','-30 days') AND p.pt_status <> 'duplicate'`);
     const last = await one(env, "SELECT value FROM settings WHERE key = 'pt_last_sync'");
     return { waiting, open, closed, trainers: await trainers(env), stats, labels: LABEL, sheet_linked: !!env.PT_ADMIN_KEY, last_sync: last ? last.value : null };
   }
