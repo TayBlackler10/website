@@ -31,6 +31,7 @@ export function makeAudit(L) {
     if (path === "/api/members" && q.get("q")) return { action: "search", detail: String(q.get("q")).slice(0, 60) };
     if (path === "/api/members/browse") return { action: "browse", detail: [q.get("f"), q.get("filter"), q.get("page")].filter(Boolean).join(" ").slice(0, 60) || null };
     if (path === "/api/report") return { action: "report", detail: [q.get("kind") || "current_members", q.get("from"), q.get("to")].filter(Boolean).join(" ") };
+    if ((m = path.match(/^\/api\/members\/(\d+)\/privacy$/))) return { action: "export", member: +m[1], detail: "privacy request file" };
     if (/\.csv$/.test(path)) return { action: "export", detail: path.replace("/api/", "") + (q.get("month") ? " " + q.get("month") : "") };
     if ((m = path.match(/^\/api\/leads\/(\d+)$/))) return { action: post ? "lead_change" : "lead_view", detail: "lead " + m[1] };
     if (!post) return null;

@@ -25,6 +25,7 @@ import { makeBilling } from "./billing.js";
 import { makePush, SW_JS } from "./push.js";
 import { makePt } from "./pt.js";
 import { makeAudit } from "./audit.js";
+import { makePrivacy } from "./privacy.js";
 import { makeCatalog } from "./catalog.js";
 import { makeEmail } from "./email.js";
 import { makeGmSync } from "./gmsync.js";
@@ -46,6 +47,7 @@ const P = makePush();
 const CL = makeClasses({ nzDateTime });
 const PT = makePt({ nzDateTime, normMobile, P });
 const AUD = makeAudit({ nzDateTime, P });
+const PRIV = makePrivacy({ nzDateTime });
 const C = makeCatalog({ gmLive });
 const EM = makeEmail({ nzDateTime });
 const GS = makeGmSync({ nzDateTime });
@@ -81,7 +83,7 @@ export default {
       // Public (only reachable through m2-join): the one-time copy of GymMaster's automations.
       if (url.pathname === "/gm-import" && req.method === "POST") return json(await EM.importGm(env, await req.json().catch(() => null)));
       // Public (only reachable through m2-join's /app): the M2 member app's backend.
-      if (url.pathname === "/app-api" && req.method === "POST") return json(await APP.handle(env, await req.json().catch(() => null), ctx));
+      if (url.pathname === "/app-api" && req.method === "POST") return json(await APP.handle(env, await req.json().catch(() => null), ctx, req.headers.get("X-Client-IP")));
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
@@ -89,6 +91,8 @@ export default {
       if (url.pathname === "/api/activity") return json(await AUD.view(env, can, url.searchParams));
       const mact = url.pathname.match(/^\/api\/members\/(\d+)\/activity$/);
       if (mact) return json(await AUD.forMember(env, can, +mact[1]));
+      const mpv = url.pathname.match(/^\/api\/members\/(\d+)\/privacy$/);
+      if (mpv) return await PRIV.exportFile(env, who, can, +mpv[1]);
 
       if (url.pathname === "/" || url.pathname === "/index.html") return html(APP_HTML);
       if (url.pathname === "/sw.js") return new Response(SW_JS, { headers: { "Content-Type": "text/javascript; charset=utf-8", "Cache-Control": "no-cache", "Service-Worker-Allowed": "/" } });

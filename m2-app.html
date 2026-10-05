@@ -1484,12 +1484,16 @@ function openCard(){openSheet(`<div class="pass"><svg class="brandk" aria-label=
  <p class="small" style="color:var(--muted-d);margin-top:16px">Member ${MEMBER_NO}. Show this at reception if you need a hand.</p></div>`,
  `<button class="btn b-lime b-full" onclick="after(openPass)">${ico('i-door')}Back to doors</button><button class="btn b-ghost b-full" onclick="after(openWallet)">${ico('i-wallet')}Add to Wallet</button>`,{dark:1,full:1})}
 function dMsg(h){const m=$('dmsg');if(!m)return;m.innerHTML=h;m.classList.toggle('on',!!h)}
+// Quick fix first (wifi or cell, usually under a second and good enough for a 150 m circle), then a GPS
+// fix only if the quick one can't place the member at the club.
 function whereAmI(){if(D.skipLoc)return Promise.resolve({ok:true,lat:GYM.lat,lng:GYM.lng,acc:0});
+ return whereOnce({enableHighAccuracy:false,timeout:4000,maximumAge:120000}).then(r=>r.ok?r:whereOnce({enableHighAccuracy:true,timeout:9000,maximumAge:5000}))}
+function whereOnce(opts){
  return new Promise(res=>{if(!navigator.geolocation)return res({ok:false,msg:"This phone can't share its location, so doors can't open from here. Reception can let you in."});
   navigator.geolocation.getCurrentPosition(p=>{const c=p.coords,m=distM(c.latitude,c.longitude,GYM.lat,GYM.lng),slack=Math.min(c.accuracy||0,150);
    if(m-slack<=GYM.r)res({ok:true,lat:c.latitude,lng:c.longitude,acc:Math.round(c.accuracy||0)});
    else res({ok:false,msg:`You're about ${m>=1000?(m/1000).toFixed(1)+' km':Math.round(m/10)*10+' m'} from the club. Doors open once you're at 8 Nugent St.`})},
-  e=>res({ok:false,msg:e.code===1?"Turn on location for the M2 app so we know you're at the club. It's only used for opening doors.":"We couldn't find your location. Try again in a few seconds."}),{enableHighAccuracy:true,timeout:9000,maximumAge:5000})})}
+  e=>res({ok:false,msg:e.code===1?"Turn on location for the M2 app so we know you're at the club. It's only used for opening doors.":"We couldn't find your location. Try again in a few seconds."}),opts)})}
 async function openDoor(k){const row=$('dr-'+k),d=DOORS.find(x=>x.k===k);
  if(!row||row.classList.contains('locked')){dMsg(d?`${d.n} isn't on ${tier().n}. Tap Add to see options, or reception can help.`:"We don't know that door. Try the buttons above.");return}
  if(D.busy)return;D.busy=k;dMsg('');row.classList.remove('open');row.classList.add('busy');
@@ -2242,7 +2246,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-03e';
+const APP_VER='2026-10-05a';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2265,7 +2269,7 @@ function warmDoors(){if(!DOOR_API||!S.doorSess||Date.now()-WARMED<9e4)return;WAR
 function prewarmDoors(){if(!DOOR_API||!S.doorSess)return;warmDoors();if(!PRELOC||Date.now()-PRELOC.t>6e4)PRELOC={t:Date.now(),p:whereAmI()}}
 async function doorLoc(){if(PRELOC&&Date.now()-PRELOC.t<6e4){const r=await PRELOC.p;if(r&&r.ok)return r;PRELOC=null}let r=await whereAmI();if(r&&!r.ok&&/couldn't find/i.test(r.msg||''))r=await whereAmI();return r}
 {const _op=openPass;openPass=function(){const r=_op.apply(this,arguments);try{prewarmDoors()}catch(e){}return r}}
-if(LIVE)setTimeout(()=>{try{warmDoors()}catch(e){}},2500);
+if(LIVE)setTimeout(()=>{try{warmDoors();if(navigator.permissions&&S.doorSess)navigator.permissions.query({name:'geolocation'}).then(p=>{if(p.state==='granted')prewarmDoors()}).catch(()=>{})}catch(e){}},2500);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')try{warmDoors()}catch(e){}});
 /* =========================================================
    NATIVE (App Store build). Only runs inside the iPhone/Android app shell (Capacitor).

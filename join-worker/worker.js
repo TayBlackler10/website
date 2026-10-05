@@ -70,7 +70,7 @@ export default {
         const ac = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST", "Access-Control-Allow-Headers": "Content-Type" };
         if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: ac });
         if (req.method !== "POST") return new Response(JSON.stringify({ ok: true, service: "M2 app" }), { headers: { ...ac, "Content-Type": "application/json" } });
-        const r = await env.CORE.fetch(new Request("https://m2-core/app-api", { method: "POST", headers: { "Content-Type": "application/json" }, body: await req.text() }));
+        const r = await env.CORE.fetch(new Request("https://m2-core/app-api", { method: "POST", headers: { "Content-Type": "application/json", "X-Client-IP": req.headers.get("CF-Connecting-IP") || "" }, body: await req.text() }));
         return new Response(await r.text(), { status: r.status, headers: { ...ac, "Content-Type": "application/json", "Cache-Control": "no-store" } });
       }
       // Member-facing M2 Core pages, passed straight through to the Core.

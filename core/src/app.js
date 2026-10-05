@@ -86,9 +86,13 @@ export function makeApp(L) {
   }
 
   // Entry point: one JSON body in, one JSON reply out.
-  async function handle(env, body, ctx) {
+  async function handle(env, body, ctx, ip) {
     if (!body || typeof body !== "object") return { ok: false, message: "Bad request." };
     const a = String(body.action || "");
+    const t0 = Date.now();
+    // Password guessing across many emails from one place. Generous, because members at the gym share its wifi.
+    if ((a === "login" || a === "reset") && ip && await tooMany(env, "ip:" + a + ":" + ip, a === "login" ? 40 : 10, a === "login" ? 600 : 3600))
+      return { ok: false, message: "Too many tries from this connection. Give it 10 minutes, or see reception." };
     const s = body.session ? await verify(env, body.session) : null;
     let core = false;
     if (NATIVE.has(a)) {
@@ -106,7 +110,6 @@ export function makeApp(L) {
       try { out = await native(env, a, body, s); if (out) by = "core"; }
       catch (e) { console.log("app", a, String(e && e.stack || e)); out = null; }
     }
-    const t0 = Date.now();
     if (!out) out = await forward(env, body);
     const ms = Date.now() - t0;
     if (ctx && ctx.waitUntil) ctx.waitUntil(Promise.all([note(env, a, s, out, by, !!body.session).catch(() => {}), logCall(env, a, s, out, by, ms).catch(() => {})]));
