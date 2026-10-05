@@ -848,3 +848,16 @@ CREATE INDEX IF NOT EXISTS class_bookings_member ON class_bookings(member_id, st
 CREATE TABLE IF NOT EXISTS pt_chases (lead_id INTEGER NOT NULL, stage INTEGER NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (lead_id, stage));
 -- Fitness Passport come-in reminders handed to members' phones (one a week at most), to see who came in after.
 CREATE TABLE IF NOT EXISTS app_nudges (member_id INTEGER NOT NULL, day TEXT NOT NULL, kind TEXT, days_away INTEGER, PRIMARY KEY (member_id, day));
+-- Activity log: who opened or changed what, and from where. Kept a year. Owners see it on the Activity log page.
+CREATE TABLE IF NOT EXISTS audit_log (
+  id         INTEGER PRIMARY KEY,
+  at         TEXT NOT NULL DEFAULT (datetime('now')),
+  staff_id   INTEGER,
+  action     TEXT NOT NULL,
+  member_id  INTEGER,
+  detail     TEXT,
+  ip         TEXT,
+  country    TEXT
+);
+CREATE INDEX IF NOT EXISTS audit_staff ON audit_log(staff_id, at);
+CREATE INDEX IF NOT EXISTS audit_member ON audit_log(member_id, at);

@@ -234,6 +234,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
 <div class="navlab">Admin</div>
 <button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
+<button class="nav" data-go="activity" id="navActivity" hidden>Activity log</button>
 <button class="nav" data-go="import" id="navImport" hidden>Import from GymMaster</button>
 <button class="nav" data-go="settings" id="navSettings" hidden>Settings</button>
 </nav>
@@ -432,6 +433,16 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 </section>
 
 <!-- STAFF -->
+<section data-view="activity" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Activity log<span class="dot">.</span></h1></div>
+<p class="muted" style="margin:-6px 0 14px">Every member opened or changed, every search, report and download, and every settings or staff change, with who did it, when and from where. You and Tim get a buzz if someone opens 60+ members in an hour, pulls 5+ reports in a day, uses the Core between 11pm and 5am, or signs in from outside NZ. Kept for a year.</p>
+<section class="card" style="margin-bottom:14px"><h2>Last 24 hours</h2><div id="actToday"><div class="muted">Loading...</div></div></section>
+<section class="card"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px"><h2 style="margin:0 auto 0 0">Everything</h2>
+<label class="fld" style="margin:0">Who<select id="actStaff"><option value="">Everyone</option></select></label>
+<label class="fld" style="margin:0">What<select id="actAction"><option value="">Everything</option></select></label>
+<label class="fld" style="margin:0">Day<input type="date" id="actDay"></label></div>
+<div id="actRows" style="max-height:640px;overflow:auto"><div class="muted">Loading...</div></div></section>
+</section>
 <section data-view="staff" hidden>
 <div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Staff and access<span class="dot">.</span></h1></div>
 <div class="row2">
@@ -770,6 +781,7 @@ function show(v){
  if(v==="passport"){loadPassport();loadFpMore();setTimeout(function(){loadFpCheck(false);loadFpNudge()},50)}
  if(v==="reports")loadReport();
  if(v==="staff")loadStaff();
+ if(v==="activity")loadAct();
  if(v==="settings")loadSettings();
  if(v==="classes"){loadClasses(CLS.week);loadClassStats();loadTT()}
  if(v==="roster")loadRoster(RO.week);
@@ -797,7 +809,7 @@ get("/api/me").then(function(me){
  $("#hello").innerHTML="Morning, "+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  var h=new Date().getHours();if(h>=12)$("#hello").innerHTML=(h<17?"Afternoon, ":"Evening, ")+esc(me.name.split(" ")[0])+'<span class="dot">.</span>';
  if(me.can.members===true)$("#navFp").hidden=false;
- if(me.can.settings){$("#navApp").hidden=false;$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navSettings").hidden=false}
+ if(me.can.settings){$("#navApp").hidden=false;$("#navImport").hidden=false;$("#navStaff").hidden=false;$("#navActivity").hidden=false;$("#navSettings").hidden=false}
  if(me.can.settings){$("#navPt").hidden=false;ptCount()}
  if(!me.can.settings){get("/api/pt/mine").then(function(d){var L=d.leads||[];if(L.length||["trainer","coach","manager"].indexOf(me.role)>=0){$("#navMyPt").hidden=false;var n=L.filter(function(l){return l.pt_status==="assigned"}).length;$("#ctMyPt").hidden=!n;$("#ctMyPt").textContent=n}})}
  if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false;$("#navEm").hidden=false}
@@ -1923,6 +1935,18 @@ $("#setRules").addEventListener("click",function(e){var b=e.target.closest("[dat
 
 /* ---------- staff and access ---------- */
 var ROLE_N={owner:"Owner",manager:"Manager",reception:"Reception",trainer:"Trainer",coach:"Coach"};
+function loadAct(){
+ var q=new URLSearchParams();["Staff","Action","Day"].forEach(function(k){var v=$("#act"+k).value;if(v)q.set(k.toLowerCase(),v)});
+ get("/api/activity?"+q).then(function(d){
+  if(d.error){$("#actRows").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  if($("#actStaff").options.length<2){d.people.forEach(function(p){$("#actStaff").insertAdjacentHTML("beforeend",'<option value="'+p.id+'">'+esc(p.name)+'</option>')});
+   Object.keys(d.labels).forEach(function(k){$("#actAction").insertAdjacentHTML("beforeend",'<option value="'+k+'">'+esc(d.labels[k])+'</option>')});$("#actAction").insertAdjacentHTML("beforeend",'<option value="alert">Alerts</option>')}
+  $("#actToday").innerHTML=(d.alerts_week?'<div class="ok" style="margin-bottom:10px">'+d.alerts_week+' alert'+(d.alerts_week>1?"s":"")+' in the last 7 days. Pick "Alerts" under What to see them.</div>':"")+
+   (d.today.length?table([["Who","name"],["Role","role"],["Actions","actions",1],["Members opened","members",1],["Reports and files","reports",1],["Last","last",1]],d.today):'<div class="muted">Nothing yet.</div>');
+  $("#actRows").innerHTML=d.rows.length?table([["When",function(r){return r.at.slice(5,16)}],["Who","staff"],["What",function(r){return r.action==="alert"?'<b style="color:#B42318">Alert</b>':esc(r.label)},0,1],["Member or detail",function(r){return esc(r.member||r.detail||"")+(r.member&&r.detail?' <span class="muted">'+esc(r.detail)+'</span>':"")},0,1],["From",function(r){return (r.country||"")+(r.ip?" "+r.ip:"")}]],
+   d.rows.map(function(r){if(r.member_id)r._member=r.member_id;return r})):'<div class="muted">Nothing matches.</div>';
+ })}
+["actStaff","actAction","actDay"].forEach(function(i){document.addEventListener("change",function(e){if(e.target.id===i)loadAct()})});
 function loadStaff(){
  get("/api/staff-admin").then(function(d){
   if(d.error){$("#staffList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}

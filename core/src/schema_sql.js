@@ -112,9 +112,12 @@ export const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS class_bookings (\n  id           INTEGER PRIMARY KEY,\n  session_id   INTEGER NOT NULL REFERENCES class_sessions(id),\n  member_id    INTEGER NOT NULL,\n  status       TEXT NOT NULL,         \n  booked_by    TEXT,\n  booked_at    TEXT NOT NULL DEFAULT (datetime('now')),\n  cancelled_at TEXT,\n  UNIQUE (session_id, member_id)\n);",
 "CREATE INDEX IF NOT EXISTS class_bookings_member ON class_bookings(member_id, status);",
 "CREATE TABLE IF NOT EXISTS pt_chases (lead_id INTEGER NOT NULL, stage INTEGER NOT NULL, at TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (lead_id, stage));",
-"CREATE TABLE IF NOT EXISTS app_nudges (member_id INTEGER NOT NULL, day TEXT NOT NULL, kind TEXT, days_away INTEGER, PRIMARY KEY (member_id, day));"
+"CREATE TABLE IF NOT EXISTS app_nudges (member_id INTEGER NOT NULL, day TEXT NOT NULL, kind TEXT, days_away INTEGER, PRIMARY KEY (member_id, day));",
+"CREATE TABLE IF NOT EXISTS audit_log (\n  id         INTEGER PRIMARY KEY,\n  at         TEXT NOT NULL DEFAULT (datetime('now')),\n  staff_id   INTEGER,\n  action     TEXT NOT NULL,\n  member_id  INTEGER,\n  detail     TEXT,\n  ip         TEXT,\n  country    TEXT\n);",
+"CREATE INDEX IF NOT EXISTS audit_staff ON audit_log(staff_id, at);",
+"CREATE INDEX IF NOT EXISTS audit_member ON audit_log(member_id, at);"
 ];
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "239b19d27fee";
+export const SCHEMA_VERSION = "c6f4624c9dbc";

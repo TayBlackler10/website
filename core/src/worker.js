@@ -24,6 +24,7 @@ import { makeEzidebit } from "./ezidebit.js";
 import { makeBilling } from "./billing.js";
 import { makePush, SW_JS } from "./push.js";
 import { makePt } from "./pt.js";
+import { makeAudit } from "./audit.js";
 import { makeCatalog } from "./catalog.js";
 import { makeEmail } from "./email.js";
 import { makeGmSync } from "./gmsync.js";
@@ -44,6 +45,7 @@ const B = makeBilling({ nzDateTime, E: makeEzidebit() });
 const P = makePush();
 const CL = makeClasses({ nzDateTime });
 const PT = makePt({ nzDateTime, normMobile, P });
+const AUD = makeAudit({ nzDateTime, P });
 const C = makeCatalog({ gmLive });
 const EM = makeEmail({ nzDateTime });
 const GS = makeGmSync({ nzDateTime });
@@ -83,6 +85,10 @@ export default {
       const who = await signedIn(req, env);
       if (!who) return new Response("Sign in through M2 Core to continue.", { status: 401 });
       const can = CAN[who.role] || {};
+      await AUD.record(env, ctx, who, req, url);
+      if (url.pathname === "/api/activity") return json(await AUD.view(env, can, url.searchParams));
+      const mact = url.pathname.match(/^\/api\/members\/(\d+)\/activity$/);
+      if (mact) return json(await AUD.forMember(env, can, +mact[1]));
 
       if (url.pathname === "/" || url.pathname === "/index.html") return html(APP_HTML);
       if (url.pathname === "/sw.js") return new Response(SW_JS, { headers: { "Content-Type": "text/javascript; charset=utf-8", "Cache-Control": "no-cache", "Service-Worker-Allowed": "/" } });
@@ -244,6 +250,7 @@ export default {
       await ensureSchema(env);
       if (event.cron === "0 20 * * *") {
         console.log("emails", JSON.stringify(await EM.daily(env).catch(e => String(e))));
+        await AUD.prune(env).catch(() => {});
         return;
       }
       if (event.cron === "*/15 * * * *") {
