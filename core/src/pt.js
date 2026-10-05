@@ -61,13 +61,13 @@ export function makePt(L) {
   /* ---------------- copy from the sheet ---------------- */
 
   async function sync(env) {
-    let list = null;
+    let list = null, from = "sheet", why = null;
     try {
       const r = await fetch(SCRIPT(env) + "?action=list" + (env.PT_ADMIN_KEY ? "&key=" + encodeURIComponent(env.PT_ADMIN_KEY) : ""), { redirect: "follow" });
       const d = JSON.parse(await r.text());
-      if (Array.isArray(d.leads)) list = d.leads;
-    } catch {}
-    if (!list && env.M2CC) { try { const t = await env.M2CC.get("pt:last"); if (t) list = JSON.parse(t).leads; } catch {} }
+      if (Array.isArray(d.leads)) list = d.leads; else why = d.error || "no leads";
+    } catch (e) { why = String(e.message || e); }
+    if (!list && env.M2CC) { try { const t = await env.M2CC.get("pt:last"); if (t) { list = JSON.parse(t).leads; from = "cache"; } } catch {} }
     if (!list) return { ok: false, error: "Couldn't reach the PT lead sheet" };
     const staff = await all(env, "SELECT id, name FROM staff WHERE active = 1");
     // The same questionnaire often lands in the sheet several times (repeat GymMaster imports). Tim's PT board
@@ -133,7 +133,7 @@ export function makePt(L) {
       await P.toStaff(env, owners, { title: fresh.length > 1 ? fresh.length + " new free PT leads" : "New free PT lead: " + (f.name || "someone"),
         body: fresh.length > 1 ? "Waiting for you to give them to a trainer." : (f.reason || "Waiting for you to give it to a trainer.").slice(0, 140), url: "/#ptleads", tag: "pt-new" });
     }
-    return { ok: true, sheet: list.length, added, changed, notified: fresh.length };
+    return { ok: true, from, why, sheet: list.length, added, changed, notified: fresh.length };
   }
 
   /* ---------------- pages ---------------- */
