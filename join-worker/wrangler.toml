@@ -2,6 +2,7 @@ name = "m2-join"
 main = "worker.js"
 compatibility_date = "2026-09-01"
 workers_dev = true
+preview_urls = false   # test copies of the worker would skip the staff sign-in gate
 # Variables set in the dashboard (like CHASE_DAYS) are kept on deploy.
 keep_vars = true
 
