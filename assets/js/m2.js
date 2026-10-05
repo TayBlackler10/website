@@ -42,7 +42,8 @@
 
   /* ---------- Tracking ----------
      Every trial, join, free PT, call, email and directions click is sent to
-     GA4 (as its own event) and to the Meta pixel (as a standard event). */
+     GA4 (as its own event) and to the Meta pixel. Clicks go to Meta as custom
+     events; real sign-ups and form submits are the standard events. */
   function classify(a) {
     var explicit = a.getAttribute('data-track');
     if (explicit) return explicit;
@@ -80,8 +81,10 @@
     try { if (typeof gtag === 'function') gtag('event', name, params); } catch (err) {}
     try {
       if (typeof fbq === 'function') {
-        if (name === 'trial_click') fbq('track', 'Lead', { content_name: 'Trial', content_category: params.cta_location });
-        else if (name === 'free_pt_click') fbq('track', 'Lead', { content_name: 'Free PT session', content_category: params.cta_location });
+        // Button clicks are custom events. "Lead" and "CompleteRegistration" are kept for
+        // real form submits and sign-ups only, so Meta can optimise ads for actual sign-ups.
+        if (name === 'trial_click') fbq('trackCustom', 'TrialClick', { content_name: 'Trial', content_category: params.cta_location });
+        else if (name === 'free_pt_click') fbq('trackCustom', 'FreePTClick', { content_name: 'Free PT session', content_category: params.cta_location });
         else if (name === 'join_click') fbq('track', 'InitiateCheckout', { content_name: params.plan || 'Membership', content_category: params.cta_location });
         else if (name === 'phone_click' || name === 'email_click') fbq('track', 'Contact');
         else fbq('trackCustom', name, params);
@@ -241,7 +244,13 @@
               form.reset();
               if (status) status.textContent = form.getAttribute('data-success') || 'Thanks, we’ll be in touch soon.';
               try { if (typeof gtag === 'function') gtag('event', 'form_submit', { form: form.id || 'form', page_path: location.pathname }); } catch (e2) {}
-              try { if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: form.id || 'form' }); } catch (e3) {}
+              try {
+                if (typeof fbq === 'function') {
+                  if (form.id === 'open-week-form') fbq('track', 'CompleteRegistration', { content_name: 'Birthday Open Week', status: 'open_week', value: 0, currency: 'NZD' });
+                  else fbq('track', 'Lead', { content_name: form.id || 'form' });
+                }
+              } catch (e3) {}
+              try { if (form.id === 'open-week-form' && typeof gtag === 'function') gtag('event', 'sign_up', { method: 'website', membership: 'Birthday Open Week' }); } catch (e4) {}
             } else if (status) status.textContent = 'Something went wrong. Please call us on 09 558 1408.';
           })
           .catch(function () { if (status) status.textContent = 'Something went wrong. Please call us on 09 558 1408.'; })
