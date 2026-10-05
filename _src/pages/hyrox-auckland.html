@@ -75,14 +75,49 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>20m pool, sauna, spa pool and ice bath</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DFFF00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>No lock-in, cancel with 30 days' notice</li>
         </ul>
-        <p style="font-size:15px;color:var(--muted-dark)">Bring proof of your HYROX Auckland entry to reception at 8 Nugent Street, Grafton. Only available in person, not online. Fitness Passport members are excluded.</p>
+        <p style="font-size:15px;color:var(--muted-dark)">Claim it online in a minute and we'll lock in your price. Bring proof of your HYROX Auckland entry when you come in to 8 Nugent Street, Grafton. Fitness Passport members are excluded.</p>
         <div class="btn-row">
-          <a class="btn btn-lime" href="https://maps.google.com/?q=8+Nugent+Street+Grafton+Auckland" rel="noopener">Get directions</a>
+          <a class="btn btn-lime" href="#claim" data-track="hyrox_claim_click" data-loc="offer">Claim the race offer</a>
           <a class="text-link" href="tel:095581408" style="padding:12px">Call 09 558 1408 →</a>
         </div>
       </div>
       <div class="split-media" style="background:#161616">
         <video data-bg data-src="/assets/video/hyrox-offer.mp4" poster="/assets/img/hyrox-offer-poster-800.jpg" muted playsinline loop preload="none" aria-label="M2 members doing HYROX training in Grafton"></video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-top0" data-section="claim" id="claim" style="scroll-margin-top:24px">
+  <div class="wrap">
+    <div class="grid-2 reveal" style="align-items:center;gap:48px">
+      <div class="stack" style="gap:18px">
+        <span class="eyebrow">Racing HYROX Auckland · Claim online</span>
+        <h2 class="h-lg">Claim your $35 a week race offer</h2>
+        <ul class="ticks">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Pop in your details and we'll lock in Perform Flexi at $35 a week.</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>We'll get in touch within a day to set up your start date.</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5E6B00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Bring proof of your HYROX Auckland entry on your first visit.</li>
+        </ul>
+      </div>
+      <div class="plan-card">
+        <form class="form" id="hyrox-claim-form" data-web3 action="https://api.web3forms.com/submit" method="POST" data-success="Done. Your race price is locked in and we'll be in touch within a day. Bring proof of your HYROX Auckland entry when you come in.">
+          <input type="hidden" name="access_key" value="2aaede0f-585b-484d-9c06-663e3a4f3c45">
+          <input type="hidden" name="subject" value="HYROX Auckland race offer claim ($35/wk Perform Flexi)">
+          <input type="hidden" name="from_name" value="M2 Website">
+          <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="row">
+            <div class="field"><label for="hc-fname">First name</label><input type="text" id="hc-fname" name="first_name" autocomplete="given-name" required></div>
+            <div class="field"><label for="hc-lname">Last name</label><input type="text" id="hc-lname" name="last_name" autocomplete="family-name" required></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="hc-email">Email</label><input type="email" id="hc-email" name="email" autocomplete="email" required></div>
+            <div class="field"><label for="hc-phone">Mobile</label><input type="tel" id="hc-phone" name="phone" autocomplete="tel" inputmode="tel" required></div>
+          </div>
+          <button type="submit" class="btn btn-lime btn-lg" style="width:100%">Claim the race offer</button>
+          <p class="form-note">Fitness Passport members are excluded. We'll only use your details to set up your membership.</p>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </div>
   </div>
