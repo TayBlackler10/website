@@ -234,6 +234,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .askbar:hover{border-color:var(--ink)}.askbar b{color:var(--ink);font-weight:600}
 .askbar kbd{margin-left:auto;font:600 11px "DM Sans",Arial,sans-serif;background:var(--tile);color:var(--muted);border-radius:6px;padding:2px 7px}
 @media (max-width:900px){.g2,.g2.even,.g3{grid-template-columns:1fr}.hero{padding:20px}.askbar kbd{display:none}}
+.nav.navwhy{color:var(--lime)}.nav.navwhy.on{color:var(--ink)}
 .hb2{display:grid;grid-template-columns:minmax(0,130px) minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:13px;margin:5px 0}
 .hb2 .bar{height:20px;background:var(--tile);border-radius:999px;overflow:hidden}.hb2 .bar i{display:block;height:100%;background:var(--ink);border-radius:999px}.hb2.key .bar i{background:var(--lime);box-shadow:inset 0 0 0 1px #B8D200}
 .hb2 .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
@@ -282,7 +283,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="marketing" id="navMkt" hidden>Marketing</button>
 <button class="nav" data-go="insights" id="navIns" hidden>Insights</button>
 <button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
-<button class="nav" data-go="why" id="navWhy" hidden style="color:var(--lime)">Why M2 Core</button>
+<button class="nav navwhy" data-go="why" id="navWhy" hidden>Why M2 Core</button>
 <div class="navlab">Admin</div>
 <button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
 <button class="nav" data-go="activity" id="navActivity" hidden>Activity log</button>

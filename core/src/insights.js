@@ -60,7 +60,8 @@ export function makeInsights(L) {
     out.gender.push({ label: "Other or not recorded", n: ppl.length - out.gender.reduce((a, x) => a + x.n, 0) });
 
     // 8. Where members come from.
-    out.sources = await all(env, `SELECT coalesce(nullif(trim(m.lead_source), ''), 'Not recorded') label, count(*) n FROM members m WHERE ${REAL} GROUP BY 1 ORDER BY 2 DESC LIMIT 10`);
+    out.sources = (await all(env, `SELECT coalesce(nullif(lower(trim(m.lead_source)), ''), 'not recorded') label, count(*) n FROM members m WHERE ${REAL} GROUP BY 1 ORDER BY 2 DESC LIMIT 10`))
+      .map(r => ({ ...r, label: r.label.charAt(0).toUpperCase() + r.label.slice(1) }));
 
     // 9. Current members by the month they joined (last 12 months).
     out.cohorts = await all(env, `SELECT substr(m.joined_on, 1, 7) label, count(*) n FROM members m WHERE ${REAL} AND m.joined_on >= ? GROUP BY 1 ORDER BY 1`, addDays(t.slice(0, 7) + "-01", -335).slice(0, 7) + "-01");
