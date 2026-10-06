@@ -133,6 +133,9 @@ export default {
       if (url.pathname === "/api/morning") return json(await MORN.summary(env, can));
       if (url.pathname === "/api/passport/nudges") return json(req.method === "POST" ? await APP.nudgeSave(env, who, can, await req.json()) : await APP.nudgeView(env, can));
       if (url.pathname === "/api/app") return json(req.method === "POST" ? await APP.save(env, who, can, await req.json()) : await APP.overview(env, can));
+      // Owners: one member's recent M2 App calls (what they tapped, what came back, how long it took), for fixing problems.
+      const apl = url.pathname.match(/^\/api\/app\/log\/(\d+)$/);
+      if (apl) return json(can.settings ? ((await env.DB.prepare("SELECT at, action, via, ok, signin, note, ms FROM app_log WHERE member_id = ? ORDER BY id DESC LIMIT 60").bind(+apl[1]).all()).results || []) : { error: "Owners only" });
       const apt = url.pathname.match(/^\/api\/app\/test\/(\d+)$/);
       if (apt) return json(await APP.test(env, can, +apt[1], url.searchParams.get("action") || "classes"));
       const apr = url.pathname.match(/^\/api\/app\/(request|preview)\/(\d+)$/);
