@@ -532,8 +532,54 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   // DOB max = today
   $('dob').max = new Date().toISOString().slice(0,10);
 
+  // Never show the last person's details. Safari restores typed values when the page is
+  // reopened or reloaded, so start every load from a blank form.
+  form.reset();
+  var signedUp = false;
+  window.addEventListener('pageshow', function(e){
+    // Back button / tab restore from Safari's page cache: reload fresh after a sign-up or on the iPad
+    if (e.persisted && (KIOSK || signedUp)) location.reload();
+  });
+
+  // Reception iPad: stop Safari remembering members' emails and passwords and offering
+  // them to the next person, and reset the page if someone walks off halfway.
+  if (KIOSK) {
+    form.setAttribute('autocomplete', 'off');
+    [].forEach.call(form.querySelectorAll('input'), function(el){
+      if (el.type !== 'radio' && el.type !== 'checkbox' && el.type !== 'file') el.setAttribute('autocomplete', 'off');
+    });
+    var pw = form.elements.password;
+    if (pw) {
+      // A plain text box drawn as dots, so Safari's password manager never offers to save it
+      pw.type = 'text';
+      pw.style.webkitTextSecurity = 'disc';
+      pw.setAttribute('autocapitalize', 'off');
+      pw.setAttribute('autocorrect', 'off');
+      pw.setAttribute('spellcheck', 'false');
+    }
+    var idleTimer = null, IDLE_MS = 3 * 60 * 1000;
+    function kioskHome(){
+      try { sessionStorage.clear(); } catch(e){}
+      location.replace(location.pathname + '?kiosk=1&t=' + Date.now());
+    }
+    function poke(){
+      clearTimeout(idleTimer);
+      if (signedUp) return;
+      idleTimer = setTimeout(function(){
+        var typed = [].some.call(form.querySelectorAll('input[type=text],input[type=email],input[type=tel],input[type=date]'), function(el){
+          return el.value && el.value !== el.defaultValue;
+        });
+        if (typed || current > 0) kioskHome(); else poke();
+      }, IDLE_MS);
+    }
+    ['touchstart', 'pointerdown', 'keydown', 'input', 'scroll'].forEach(function(ev){
+      document.addEventListener(ev, poke, {passive: true, capture: true});
+    });
+    poke();
+  }
+
   // Pre-fill from links, e.g. join.html?m=844686&first=Sam&email=sam@x.com
-  var pre = {firstname: qs.get('first') || qs.get('firstname'), surname: qs.get('last') || qs.get('surname'), email: qs.get('email'), phone: qs.get('phone')};
+  var pre ={firstname: qs.get('first') || qs.get('firstname'), surname: qs.get('last') || qs.get('surname'), email: qs.get('email'), phone: qs.get('phone')};
   Object.keys(pre).forEach(function(k){ var v = pre[k]; if (v && !/^\{|\[|%/.test(v)) form.elements[k].value = v; });
 
   /* ---------- membership data ---------- */
@@ -1055,8 +1101,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   }
 
   function startKioskReset(){
-    var left = 60, home = location.pathname + '?kiosk=1';
-    function go(){ location.href = home; }
+    var left = 60;
+    function go(){
+      try { sessionStorage.clear(); } catch(e){}
+      location.replace(location.pathname + '?kiosk=1&t=' + Date.now());
+    }
     $('kioskWrap').hidden = false;
     $('kioskBtn').addEventListener('click', go);
     function tick(){
@@ -1076,23 +1125,31 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     ] : [
       '<b>Come in and see us at reception.</b> We\'ll get your key tag sorted so you can get in.',
       free ? '<b>Your trial starts today,</b> so make the most of it. Classes, pool, sauna and ice bath are all yours.'
+           : KIOSK ? '<b>Bank or card details next.</b> Let the team at the desk know you\'re done and we\'ll pop them in with you. Nothing comes out today.'
            : '<b>Add your bank or card details.</b> Do it now with the button below, or bring them to reception and we\'ll pop them in. Nothing comes out today.',
       '<b>Open the <a href="/m2-app.html" style="color:inherit">M2 app</a></b> and sign in with the email and password you just made. That\'s where you check in, open the doors and see your trial.'
     ];
     var ptOn = !/recovery/i.test(chosen.name) && !/24 hour/i.test(chosen.name);
-    if (ptOn) steps.push('<b>Book your free PT session.</b> Tell us a bit about your goals and we\'ll match you with the right coach.');
+    if (ptOn) steps.push(KIOSK ? '<b>Grab your free PT session.</b> Ask the team at the desk and we\'ll match you with the right coach.'
+                               : '<b>Book your free PT session.</b> Tell us a bit about your goals and we\'ll match you with the right coach.');
     $('doneNext').innerHTML = steps.map(function(s){ return '<li>' + s + '</li>'; }).join('');
-    if (!chosen._fp && chosen.priceValue > 0) {
+    if (!KIOSK && !chosen._fp && chosen.priceValue > 0) {
       $('billWrap').hidden = false;
       $('billBtn').addEventListener('click', function(){
         try { if (window.gtag) gtag('event', 'add_billing_click', {membership: chosen.name}); } catch(e){}
       });
     }
-    if (ptOn) {
+    if (ptOn && !KIOSK) {
       var ptUrl = '/free-pt.html?' + new URLSearchParams({name: (val('firstname') + ' ' + val('surname')).trim(), email: val('email'), phone: formatPhone(val('phone')), utm_source: 'join'}).toString();
       $('ptBtn').href = ptUrl;
       $('ptWrap').hidden = false;
     }
+    // Sign-up is through: wipe their details so nothing is left behind on a shared device
+    signedUp = true;
+    try { form.reset(); } catch(e){}
+    try { ctx.clearRect(0, 0, canvas.width, canvas.height); } catch(e){}
+    selfieData = '';
+    try { sessionStorage.removeItem('m2_attr'); } catch(e){}
     $('formView').style.display = 'none';
     $('doneView').classList.add('active');
     window.scrollTo({top:0, behavior:'smooth'});
