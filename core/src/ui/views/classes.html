@@ -1,0 +1,24 @@
+<!-- CLASSES -->
+<section data-view="classes" hidden>
+<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow" id="clsSrcLab">Live from GymMaster, the same as the M2 App</div><h1>Classes<span class="dot">.</span></h1></div>
+<button class="btn line sm" id="clsPrev">Last week</button><button class="btn line sm" id="clsNow">This week</button><button class="btn line sm" id="clsNext">Next week</button>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div class="tiles" id="clsTiles"></div></section>
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2 id="clsTitle">This week</h2><span class="muted" id="clsCount"></span><span style="margin-left:auto" class="legend2" id="clsLegend"></span></div><div id="clsNote2"></div><div style="overflow-x:auto"><div id="clsWeek"><div class="muted">Loading...</div></div></div></section>
+<section class="card" style="margin-top:18px" id="ttCard"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Weekly timetable</h2><button class="btn line sm" id="ttAdd" hidden>Add a class</button></div>
+<p class="muted" style="margin:0 0 10px">The Core's own timetable, copied from GymMaster. The owners and Bekka can change it here. While GymMaster still runs bookings, make the same change in GymMaster too; anything that doesn't match shows below.</p>
+<div id="ttForm"></div><div id="ttBody"><div class="muted">Loading...</div></div></section>
+<div class="row2" style="margin-top:18px;grid-template-columns:minmax(0,1fr)">
+<section class="card" id="clsPanel"><h2>Pick a class</h2><p class="muted" style="margin:0">See who's booked with their photos, and book people in or cancel them. Members who owe $250 or more can't be booked until it's paid.</p></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>How full each class runs</h2><span class="muted" id="csNote"></span></div><div id="csName"></div></section>
+<section class="card"><h2>By coach</h2><div id="csCoach"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>By time of day</h2><div id="csHour"></div></section>
+<section class="card"><h2>Bookings by week</h2><div id="csWeek"></div><h3 style="margin-top:8px">By day</h3><div id="csDay"></div></section>
+</div>
+</section>
+

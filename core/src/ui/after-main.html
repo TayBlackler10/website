@@ -1,0 +1,25 @@
+</main>
+</div>
+
+<!-- CAMERA -->
+<div class="cam" id="cam" hidden role="dialog" aria-modal="true" aria-labelledby="camTitle">
+<div class="box">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 id="camTitle" style="margin:0">Take their photo</h2><span class="muted" id="camWho"></span><button class="btn line sm" id="camClose" style="margin-left:auto">Close</button></div>
+<label class="fld">Camera<select id="camDev"></select></label>
+<div class="view"><video id="camVid" autoplay playsinline muted></video><img id="camShot" alt="" hidden><div class="ring"></div></div>
+<div class="err" id="camErr"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark" id="camSnap">Take photo</button><button class="btn line" id="camRetake" hidden>Retake</button><button class="btn" id="camUse" hidden>Use this photo</button>
+<label class="btn line" style="margin-left:auto;cursor:pointer">Upload a photo<input type="file" accept="image/*" id="camFile" hidden></label></div>
+<p class="muted" style="margin:0;font-size:13px">Face in the circle, looking at the camera. Plug the USB camera in before opening this, then pick it above. Chrome remembers your choice.</p>
+</div>
+</div>
+
+<div class="cam" id="ask" hidden role="dialog" aria-modal="true" aria-label="Ask M2" style="place-items:start center;padding-top:8vh"><div class="box" style="width:min(760px,100%);max-height:84vh;overflow:auto;gap:14px">
+<form id="askF" style="display:flex;gap:8px"><label class="sr" for="askQ">Ask M2</label><input id="askQ" autocomplete="off" placeholder="Ask M2 anything about your members" style="flex:1;height:48px;border:1px solid var(--line);border-radius:999px;padding:0 18px;font-size:16px;min-width:0"><button class="btn dark">Ask</button></form>
+<div id="askA"></div><div id="askS" style="display:flex;flex-wrap:wrap;gap:8px"></div><div id="askL"></div>
+<p class="muted" style="margin:0;font-size:12px">Answered by M2 Core from your own data. Nothing is sent to an AI service. Questions are kept in the Activity log.</p></div></div>
+<div class="cam" id="pm" hidden role="dialog" aria-modal="true" aria-labelledby="pmTitle"><div class="box" style="width:min(720px,100%);max-height:88vh;overflow:auto">
+<div style="display:flex;align-items:baseline;gap:10px"><h2 id="pmTitle" style="margin:0"></h2><span class="muted" id="pmN"></span><button class="btn line sm" id="pmClose" style="margin-left:auto">Close</button></div>
+<div id="pmBody"></div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>

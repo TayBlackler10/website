@@ -1,0 +1,11 @@
+<!-- REPORTS -->
+<section data-view="reports" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+<div style="margin-right:auto"><div class="eyebrow">Your GymMaster favourites</div><h1>Reports<span class="dot">.</span></h1></div>
+<a class="btn line" id="repCsv" href="#">Download CSV</a>
+</div>
+<div class="chips" id="repKinds" style="margin-bottom:12px"></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end"><span id="repDates" style="display:flex;gap:10px;flex-wrap:wrap" hidden><label class="fld">From<input type="date" id="repFrom"></label><label class="fld">To<input type="date" id="repTo"></label></span><label class="search" for="repQ" style="flex:1;min-width:200px;height:48px"><span class="sr">Search this report</span><input id="repQ" autocomplete="off" placeholder="Search this report"></label></div>
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px"><h2 id="repTitle">Report</h2><span class="muted" id="repCount"></span></div><div style="overflow-x:auto" id="repTable"><div class="muted">Loading...</div></div></section>
+</section>
+

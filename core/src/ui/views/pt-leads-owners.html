@@ -1,0 +1,17 @@
+<!-- PT LEADS (owners) -->
+<section data-view="ptleads" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Free PT questionnaire. Only you and Tim see this</div><h1>PT leads<span class="dot">.</span></h1></div>
+<button class="btn line" id="ptSync">Check for new ones</button>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div class="tiles" id="ptTiles"></div><div class="muted" style="color:var(--soft);font-size:13px" id="ptNote"></div></section>
+<div class="row2">
+<div style="display:flex;flex-direction:column;gap:12px;min-width:0"><h2 style="margin:0">Waiting for you</h2><div id="ptWait" style="display:flex;flex-direction:column;gap:12px"><div class="muted">Loading...</div></div></div>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Trainers</h2><div class="muted" style="font-size:13px">Open leads now, given out in the last 30 days, clients won in 90 days. Late means given out over 24 hours ago and not called yet: their phone buzzes at 24 hours, and yours at 48. The bell means their phone gets a buzz.</div><div id="ptTrainers"></div></section>
+<section class="card" id="ptPushCard"><h2>Buzz my phone for new leads</h2><div id="ptPush"></div></section>
+</div>
+</div>
+<section class="card" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">With the trainers</h2><div class="chips" id="ptTabs"></div></div><div style="overflow-x:auto" id="ptOpen"></div><div id="ptMove"></div></section>
+</section>
+

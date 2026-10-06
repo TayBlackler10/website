@@ -1,0 +1,5 @@
+#!/bin/sh
+# Before anything is pushed (and so deployed), check M2 Core. Stops the push if a check fails.
+cd "$(git rev-parse --show-toplevel)/core" || exit 0
+node scripts/check.mjs || exit 1
+node scripts/smoke.mjs || exit 1

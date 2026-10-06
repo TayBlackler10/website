@@ -1,0 +1,31 @@
+<!-- M2 APP -->
+<section data-view="app" hidden>
+<div class="eyebrow">The member app</div><h1>M2 App<span class="dot">.</span></h1>
+<p class="muted" style="max-width:720px">The app on members' phones now talks to the Core. The Core answers sign-in, their details, classes, bookings, doors and requests itself, and passes Strava and Coach mode to the old Google service. Start with staff only, check it on your own phone, then switch it on for everyone. You can switch back at any time and nobody gets signed out.</p>
+<div class="tiles" id="apTiles" style="margin:14px 0"></div>
+<div class="row2">
+<section class="card"><h2>Who the Core serves</h2><div id="apMode"></div><div id="apReady"></div></section>
+<section class="card"><h2>Doors</h2><p class="muted" style="font-size:14px">Door numbers from GymMaster. Leave a door blank and the old service keeps opening it.</p><div id="apDoors"></div></section>
+</div>
+<section class="card" style="margin-top:18px"><h2>Requests from the app</h2><p class="muted" style="font-size:14px">Delete my account, upgrade requests and feedback. Owners and the manager get a notification.</p><div style="overflow-x:auto" id="apReq"></div></section>
+<section class="card" style="margin-top:18px"><h2>Coach mode</h2><p class="muted" style="font-size:14px">Where coaches' class lists, check-ins, no-shows and walk-ins run. On the Core, ticks are saved in the Core (not in GymMaster), front gate scans tick people in within 15 minutes, and classes close themselves 10 minutes after the start.</p><div id="apCoach"></div></section>
+<section class="card" style="margin-top:18px"><h2>Doors opened from the app</h2><div style="overflow-x:auto" id="apDoorLog"></div></section>
+<section class="card" style="margin-top:18px"><h2>See what a member sees</h2><div class="mtool"><input id="apPrevId" inputmode="numeric" placeholder="Member number" style="height:44px;border:1px solid var(--line);border-radius:12px;padding:0 12px;width:180px"><button class="btn line" id="apPrevGo">Show</button></div><div id="apPrev"></div></section>
+</section>
+
+<section data-view="settings" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Settings<span class="dot">.</span></h1></div>
+<div class="row2">
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Club rules</h2><p class="muted" style="margin:0">Change a number and press Save. It applies straight away and is logged.</p><div id="setRules"></div></section>
+<section class="card"><h2>Club details</h2><dl class="kv" id="setClub"></dl></section>
+</div>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Money, marketing and backups</h2><div id="setFeeds"><div class="muted">Loading...</div></div></section>
+<section class="card"><h2>Connections</h2><div class="list" id="setInt"></div></section>
+<section class="card"><h2>Last copies</h2><div class="hist" id="setSync"></div></section>
+</div>
+</div>
+<section class="card" style="margin-top:18px"><h2>Membership types</h2><p class="muted" style="margin:0">GymMaster's types and the plan each one counts as in the Core. Prices and new types still come from GymMaster while it bills.</p><div style="overflow-x:auto" id="setPlans"></div></section>
+</section>
+

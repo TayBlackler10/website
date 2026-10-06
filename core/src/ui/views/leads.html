@@ -1,0 +1,27 @@
+<!-- LEADS -->
+<section data-view="leads" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+<div style="margin-right:auto"><div class="eyebrow">Every source, one inbox</div><h1>Leads<span class="dot">.</span></h1></div>
+<button class="btn line" id="newLeadBtn" hidden>Add a lead</button>
+</div>
+<section class="card dark" style="margin-bottom:14px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">Last 30 days</span><span class="muted" style="color:var(--soft)" id="lsNote"></span><button class="btn sm" id="lsRefresh" hidden style="margin-left:auto">Refresh leads</button></div><div class="tiles" id="lsTiles"></div></section>
+<details class="card" style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:600">Where leads come from</summary><div class="row3" style="margin-top:12px;grid-template-columns:repeat(3,minmax(0,1fr))"><div><h3>By type</h3><div id="lsKind"></div></div><div><h3>By source</h3><div id="lsSource"></div></div><div><h3>Leads by week</h3><div id="lsWeeks"></div></div></div></details>
+<section class="card" id="newLeadCard" hidden style="margin-bottom:14px">
+<h2>Add a lead</h2>
+<div class="grid2">
+<label class="fld">Name<input id="nlName" autocomplete="off"></label>
+<label class="fld">Mobile<input id="nlMobile" inputmode="tel" autocomplete="off"></label>
+<label class="fld">Email<input id="nlEmail" type="email" autocomplete="off"></label>
+<label class="fld">Type<select id="nlKind"><option value="walk_in">Walk in</option><option value="free_pt">Free PT (goes to Tim)</option><option value="website_form">Enquiry</option><option value="bring_a_mate">Bring a Mate</option></select></label>
+<label class="fld">Goal<input id="nlGoal" autocomplete="off"></label>
+<label class="fld">Where did they hear about us<select id="nlSource"><option value="">Pick one</option></select></label>
+</div>
+<label class="fld">Notes<textarea id="nlNotes"></textarea></label>
+<div class="err" id="nlErr"></div>
+<div style="display:flex;gap:8px"><button class="btn dark" id="nlSave">Save lead</button><button class="btn line" id="nlCancel">Cancel</button></div>
+</section>
+<div class="ltabs" id="lTabs"></div>
+<div class="mtool" style="margin:12px 0"><label class="sr" for="lKind">Type</label><select id="lKind"></select><label class="search" for="lQ" style="flex:1;min-width:200px;height:48px"><span class="sr">Search leads</span><input id="lQ" autocomplete="off" placeholder="Search everyone by name, mobile or email"></label></div>
+<div class="lwrap"><section class="card" style="padding:8px 14px 14px"><div id="lList"><div class="muted">Loading...</div></div></section><section class="card lside" id="leadPanel"></section></div>
+</section>
+

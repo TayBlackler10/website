@@ -1,0 +1,44 @@
+<!-- TODAY -->
+<section data-view="today" style="display:flex;flex-direction:column;gap:18px">
+<section class="hero">
+<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;position:relative;z-index:1"><div><div class="eb" id="todayDate"></div><h1 id="hello">Today</h1></div><span class="openpill"><span class="live"></span><span id="openTxt">Open</span></span></div>
+<div class="hstats" id="hStats" style="position:relative;z-index:1"><div class="hs"><b>-</b><span>In the club now</span></div><div class="hs"><b>-</b><span>Check-ins today</span></div></div>
+</section>
+<div class="g2" id="tRow1">
+<section class="card" id="tMoney" hidden><div class="chead"><h2>Money on the table</h2><button class="btn line sm" data-go="plays">All plays</button></div><div id="tMoneyL"></div></section>
+<section class="card dark" id="tDoor"><div class="chead"><h2 style="color:#fff">Live door</h2><span class="openpill" style="background:#262626"><span class="live"></span>Live</span></div><div id="tDoorL"><div class="muted">Loading...</div></div></section>
+</div>
+<div class="g3" id="tRow2">
+<section class="card" id="tCalls" hidden><div class="chead"><h2>Bekka's calls</h2><p id="tCallsN">Highest risk first</p></div><div id="tCallsL"></div></section>
+<section class="card"><div class="chead"><h2>Next class</h2><button class="btn line sm" data-go="classes">Classes</button></div><div id="tNext"><div class="muted">Loading...</div></div></section>
+<section class="card" id="tRev" hidden><div class="chead"><h2>Weekly revenue</h2><p>12 weeks, payments in GymMaster</p></div><div id="tRevC"></div></section>
+</div>
+<div class="g2 even">
+<section class="card" id="tHeads" hidden><h2>Heads up</h2><div style="display:flex;flex-direction:column;gap:8px" id="tHeadsL"></div></section>
+<section class="card dark"><h2 style="color:#fff">Ask M2</h2><p style="margin:0;color:#9A9A92;font-size:14px">Type a question the way you'd say it to Bekka.</p><div style="display:flex;flex-wrap:wrap;gap:8px" id="tAsk"></div></section>
+</div>
+<section class="card" id="morning" hidden></section>
+<section class="card dark" id="biz" hidden>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">The business</span><span class="muted" style="color:var(--soft)">Only you and Tim see this</span><span class="muted" style="color:#8C8C84;margin-left:auto" id="sync"></span></div>
+<div class="tiles" id="bizTiles"></div>
+</section>
+<div class="row2">
+<section class="card">
+<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>Do this today</h2><span class="muted" id="doneToday"></span></div>
+<div id="jobs"><div class="muted">Loading the day...</div></div>
+</section>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card" id="jobPanel" hidden></section>
+<section class="card" id="recentCard" hidden><h2>Joined lately</h2><div class="list" id="recent"></div></section>
+</div>
+</div>
+<div class="row3">
+<section class="card"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h2>Recent visits</h2><span class="muted" id="rvCount"></span></div><div id="rvList"><div class="muted">Loading...</div></div></section>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>On the desk today</h2><div id="tdDesk"><div class="muted">Loading...</div></div></section>
+<section class="card"><h2>Today's classes</h2><div id="tdClasses"><div class="muted">Loading...</div></div></section>
+<section class="card"><h2>Birthdays today</h2><div id="tdBday"></div></section>
+</div>
+</div>
+</section>
+

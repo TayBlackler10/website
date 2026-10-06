@@ -1,0 +1,14 @@
+<!-- IMPORT -->
+<section data-view="import" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Import from GymMaster<span class="dot">.</span></h1></div>
+<section class="card" style="max-width:760px">
+<p style="margin:0">In GymMaster run <b>Report &amp; Till → Current Memberships</b> for today, with the <b>Fitness Passport ID</b> column added, and export it as CSV. Pick it below. Run it again any time: members are updated, nothing staff did in the Core is lost.</p>
+<label class="fld">Current members (CSV, required)<input type="file" id="impCur" accept=".csv,text/csv"></label>
+<label class="fld">Trial history (optional: the same report from 1 Jan 2024 to today)<input type="file" id="impHist" accept=".csv,text/csv"></label>
+<div id="impSum" class="muted"></div>
+<div class="err" id="impErr"></div>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn dark" id="impGo" disabled>Import</button><span class="muted" id="impProg"></span></div>
+<div class="list" id="impDone"></div>
+</section>
+</section>
+

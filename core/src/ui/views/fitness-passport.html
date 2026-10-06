@@ -1,0 +1,30 @@
+<!-- FITNESS PASSPORT -->
+<section data-view="passport" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Paid per visit, matched on the Passport ID</div><h1>Fitness Passport<span class="dot">.</span></h1></div>
+<label class="fld" style="min-width:170px">Month<input type="month" id="fpMonth"></label>
+<a class="btn line" id="fpCsv" href="#">Download visits (CSV)</a>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div class="tiles" id="fpTiles"></div><div class="muted" style="color:var(--soft)" id="fpNote"></div></section>
+<div class="row2 eq" style="margin-bottom:18px">
+<section class="card" id="fpNudgeCard" style="min-width:0"><h2>Come-in reminders</h2><p class="muted" style="margin:0 0 10px">Passport pays per visit. When this is on, Passport members who haven't been in for a week get a friendly reminder on their phone through the M2 App (after 4 days near the end of a month when the club is close to the next tier). At most one a week each, and only for people who've left "Check-ins from M2" on.</p><div id="fpNudge"><div class="muted">Loading...</div></div></section>
+<section class="card" id="fpCheckCard" style="min-width:0"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Core count against GymMaster</h2><button class="btn line sm" id="fpCheckRun">Check this month again</button></div><p class="muted" style="margin:0 0 10px">Before the Core sends Passport visits itself, its count has to match GymMaster's for every member. Checked automatically for last month on the 2nd.</p><div id="fpCheck"><div class="muted">Loading...</div></div></section>
+</div>
+<div class="row2 eq">
+<div class="colfill" style="min-width:0">
+<section class="card"><h2>Visits Passport can't pay for</h2><p class="muted" style="margin:0">Passport members who trained this month with no Passport ID on file. Add the ID and these visits count.</p><div class="list" id="fpNoId"></div></section>
+<section class="card" id="fpDupCard" hidden><h2>Same ID on two people</h2><p class="muted" style="margin:0">Every person has their own Passport ID. Check their cards.</p><div class="list" id="fpDup"></div></section>
+</div>
+<section class="card" style="min-width:0"><h2>Every Passport visit</h2><div class="list" id="fpRows" style="max-height:420px;overflow-y:auto"><div class="muted">Loading...</div></div></section>
+</div>
+<section class="card dark" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow">This month from GymMaster's visit counts</span><span class="muted" style="color:var(--soft)" id="fpNowNote"></span></div><div class="tiles" id="fpNowTiles"></div></section>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Visits and pay by month</h2><div id="fpMonthsChart"></div><div style="overflow-x:auto" id="fpMonthsTbl"></div></section>
+<section class="card"><h2>How often Passport members train</h2><p class="muted" style="margin:0" id="fpFreqNote"></p><div id="fpFreq"></div><h3 style="margin-top:10px">New Passport members by month</h3><div id="fpJoins"></div></section>
+</div>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>Stopped coming</h2><p class="muted" style="margin:0" id="fpSleepNote"></p><div class="list" id="fpSleep"></div></section>
+<section class="card"><h2>Most visits last month</h2><div class="list" id="fpTop"></div></section>
+</div>
+</section>
+

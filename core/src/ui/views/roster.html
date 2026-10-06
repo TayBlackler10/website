@@ -1,0 +1,18 @@
+<!-- ROSTER -->
+<section data-view="roster" hidden>
+<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow">Reception team. Pay stays in Smartpay</div><h1>Roster<span class="dot">.</span></h1></div>
+<div class="seg" role="group" aria-label="View"><button class="on" data-rv="week">Week</button><button data-rv="month">Month</button></div><button class="btn line sm" id="roPrev">Back</button><button class="btn line sm" id="roNow">Now</button><button class="btn line sm" id="roNext">Forward</button>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="eyebrow" id="roTitle"></span><span class="muted" style="color:var(--soft)" id="roNote"></span>
+<span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap" id="roTools" hidden><button class="btn line sm" id="roCopy" style="color:#fff;border-color:#fff">Copy last week</button><a class="btn line sm" id="roCsv" style="color:#fff;border-color:#fff">Download hours</a><button class="btn sm" id="roPub">Publish</button></span></div>
+<div class="tiles" id="roTiles"></div></section>
+<section class="card"><div style="overflow-x:auto"><div class="wcal" id="roGrid"></div></div><p class="muted" style="margin:0" id="roHelp"></p><div class="hrs" id="roHours"></div></section>
+<div class="row2" style="margin-top:18px">
+<section class="card" id="roEdit" hidden></section>
+<section class="card"><h2>Days off and swaps</h2><div class="list" id="roReq"></div>
+<div class="grid2" style="margin-top:8px"><label class="fld">Day<input type="date" id="raDay"></label><label class="fld">What<select id="raKind"><option value="leave">Day off</option><option value="swap">Swap a shift</option><option value="available">I can do extra</option></select></label></div>
+<label class="fld">Note<input id="raNote" placeholder="Anything Bekka should know"></label><div class="err" id="raErr"></div><button class="btn dark sm" id="raSave" style="align-self:flex-start">Ask</button></section>
+</div>
+</section>
+

@@ -1,0 +1,11 @@
+<!-- RECENT VISITS -->
+<section data-view="visits" hidden>
+<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+<div style="margin-right:auto"><div class="eyebrow">Who came through the gate</div><h1>Recent visits<span class="dot">.</span></h1></div>
+<button class="btn line sm" id="viPrev">Day before</button><input type="date" id="viDay" style="height:40px;border:1px solid var(--line);border-radius:12px;padding:0 10px"><button class="btn line sm" id="viNext">Next day</button><button class="btn dark sm" id="viPull">Check for new visits</button>
+</div>
+<section class="card dark" style="margin-bottom:14px"><div class="tiles" id="viTiles"></div><div class="muted" style="color:var(--soft);font-size:13px;margin-top:6px" id="viNote"></div></section>
+<div class="mtool" style="margin-bottom:12px"><div class="chips" id="viChips"></div><label class="search" for="viQ" style="flex:1;min-width:200px;height:44px"><span class="sr">Find someone</span><input id="viQ" autocomplete="off" placeholder="Find someone in the list"></label></div>
+<section class="card" style="padding:8px 14px 14px"><div id="viList"><div class="muted">Loading...</div></div></section>
+</section>
+

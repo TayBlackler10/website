@@ -1,0 +1,95 @@
+<!-- ADD MEMBER -->
+<section data-view="add" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px"><div style="margin-right:auto"><div class="eyebrow">Goes into GymMaster and M2 Core together</div><h1>Sign up a member<span class="dot">.</span></h1></div></div>
+<ol class="stepper" id="aSteps"><li data-s="1" class="on"><span>1</span>Membership</li><li data-s="2"><span>2</span>Details</li><li data-s="3"><span>3</span>Health and waiver</li><li data-s="4"><span>4</span>Payment</li><li data-s="5"><span>5</span>Done</li></ol>
+<div class="suwrap">
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+
+<section class="card" data-step="1">
+<div class="chead"><h2>Pick a membership</h2><label class="flexi"><input type="checkbox" id="flexi"><span><b>Flexi</b> +$5 a week, 30 days' notice instead of a lock-in</span></label></div>
+<div class="mcards" id="mcards"><div class="muted">Loading memberships...</div></div>
+<div id="mfreq" class="chips" hidden></div>
+<div id="plans" hidden></div><div id="fam" hidden></div><div id="freq" hidden></div>
+<div class="alert blue"><b>Corporate (Gateway and Entry)</b>Need 10 or more people from one company. They're set up from the company record, not here.</div>
+<div class="err" id="s1Err"></div>
+<div style="display:flex;gap:8px"><button class="btn dark" data-next="2">Next: details</button></div>
+</section>
+
+<section class="card" data-step="2" hidden>
+<h2>Their details</h2>
+<div class="photoRow"><div class="face" id="aFace">?</div><div style="display:flex;flex-direction:column;gap:6px"><b>Photo</b><span class="muted" style="font-size:13px">So every staff member knows the name to the face.</span><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn dark sm" id="aPhotoBtn">Take photo</button><label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="aNoPhoto"> Not today, take it next visit</label></div></div></div>
+<div class="grid2">
+<label class="fld">First name<input id="first" autocomplete="off"></label>
+<label class="fld">Last name<input id="last" autocomplete="off"></label>
+<label class="fld">Email<input id="email" type="email" autocomplete="off"></label>
+<label class="fld">Mobile<input id="mobile" inputmode="tel" autocomplete="off"></label>
+<label class="fld">Date of birth<input id="dob" type="date"></label>
+<label class="fld">Gender<select id="gender"><option value="">Prefer not to say</option><option value="F">Female</option><option value="M">Male</option><option value="O">Other</option></select></label>
+<label class="fld">Start date<input id="aStart" type="date"></label>
+<label class="fld">Main goal<select id="goal"><option value="">Pick one</option></select></label>
+<label class="fld">How did they hear about M2? (required)<select id="source" required><option value="">Pick one</option></select></label>
+<label class="fld">Emergency contact name<input id="ename" autocomplete="off"></label>
+<label class="fld">Emergency contact phone<input id="ephone" inputmode="tel" autocomplete="off"></label>
+</div>
+<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="passport"> Fitness Passport member (no M2 offers or trials)</label>
+<div id="fpWrap" hidden class="warnbox" style="display:flex;flex-direction:column;gap:8px"><label class="fld">Fitness Passport ID (compulsory)<input id="fpid" inputmode="numeric" autocomplete="off" placeholder="The number on their Passport card or app"></label><span style="font-size:13px">Passport pays us for every visit on this number. Check it against their card.</span></div>
+<div id="mateWrap"><label class="fld">Brought by a member? (Bring a Mate)<input id="mate" placeholder="Search the member who brought them" autocomplete="off"></label><div class="list" id="mateRes"></div><div id="mateSel" class="muted"></div></div>
+<div class="err" id="s2Err"></div>
+<div style="display:flex;gap:8px"><button class="btn line" data-back="1">Back</button><button class="btn dark" data-next="3">Next: health and waiver</button></div>
+</section>
+
+<section class="card" data-step="3" hidden>
+<h2>Health questions</h2>
+<p class="muted" style="margin:0">So trainers and coaches can keep them safe. Kept private with their consent.</p>
+<div class="hq"><span>Any injury or medical condition we should know about?</span><div class="yn" data-hq="injury"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div><input id="hqInjury" placeholder="What is it?" hidden></div>
+<div class="hq"><span>Has a doctor told them to avoid any kind of exercise?</span><div class="yn" data-hq="doctor"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div><input id="hqDoctor" placeholder="What did the doctor say?" hidden></div>
+<div class="hq"><span>Pregnant, or had a baby in the last 6 months?</span><div class="yn" data-hq="pregnant"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div></div>
+<h2 style="margin-top:8px">Terms and waiver</h2>
+<div class="termsbox" id="aTerms"><div class="muted">Pick a membership to see its contract.</div></div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a class="btn line sm" id="aPdf" target="_blank" rel="noopener" hidden>Open the contract as a PDF</a><span class="muted">Let them read it on screen or as a PDF, then sign. A signed copy is kept on their profile.</span></div>
+<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="aRead"> They've read the contract</label>
+<canvas id="sig" aria-label="Signature pad"></canvas>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="agreed"> They've agreed to the terms</label><button class="btn line sm" id="sigClear" style="margin-left:auto">Clear signature</button></div>
+<div class="err" id="aErr"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn line" data-back="2">Back</button><button class="btn dark" id="aSave">Sign them up</button><button class="btn line" id="aAnyway" hidden>Add anyway</button></div>
+</section>
+
+<section data-step="4" hidden style="display:flex;flex-direction:column;gap:18px">
+<div class="ok" id="aDone"></div>
+<section class="card" id="fpGm" hidden>
+<h2>Passport ID into GymMaster</h2>
+<p style="margin:0">GymMaster reports their visits to Fitness Passport, so it needs the ID too. Open their GymMaster profile, go to <b>Additional Details</b> and type <b id="fpGmId"></b> into <b>Fitness Passport ID</b>.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn line" id="fpGmOpen" target="_blank" rel="noopener">Open in GymMaster</a><button class="btn dark" id="fpGmDone">It's in GymMaster</button></div>
+<div id="fpGmOk"></div>
+</section>
+<section class="card dark" id="billCard">
+<h2 style="color:#fff">Bank details</h2><p style="margin:0;color:#BDBDB5;font-size:14px">They enter their bank account or card on Ezidebit's own secure form. M2 never sees or stores the numbers.</p>
+<p style="margin:0;color:var(--soft);font-size:14px" id="billNote"></p>
+<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><button class="btn" id="billOpen">Enter bank details</button><div id="qr" style="background:#fff;border-radius:12px;padding:8px" hidden></div></div>
+<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="billDone"> Bank details are in</label>
+</section>
+<div style="display:flex;gap:8px"><button class="btn dark" data-next="5">Next</button></div>
+</section>
+
+<section class="card" data-step="5" hidden>
+<div class="eyebrow">Welcome to M2</div><h2 id="dName" style="font-size:28px"></h2>
+<div class="tiles"><div class="tile"><div class="n" id="dNum"></div><div class="l">Member number</div></div><div class="tile"><div class="n" id="dPlan" style="font-size:18px"></div><div class="l">Membership</div></div></div>
+<div id="dList"></div>
+<h3 style="margin-top:6px">Key tag</h3>
+<p class="muted" style="margin:0">Scan the new tag. The reader types the number for you.</p>
+<label class="sr" for="tag">Key tag number</label>
+<input id="tag" class="tagbox" autocomplete="off" placeholder="Scan tag">
+<div class="err" id="tagErr"></div>
+<div id="tagOk"></div>
+<div class="err" id="finErr"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="aFinish">Done</button><button class="btn line" id="aProfile">Open their profile</button></div>
+</section>
+</div>
+
+<div class="card sumcard" id="aSum">
+<div class="eyebrow">Summary</div>
+<div id="sumBody"><div class="muted">Pick a membership.</div></div>
+</div>
+</div>
+</section>
+

@@ -1,0 +1,29 @@
+<!-- STAFF -->
+<section data-view="activity" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Activity log<span class="dot">.</span></h1></div>
+<p class="muted" style="margin:-6px 0 14px">Every member opened or changed, every search, report and download, and every settings or staff change, with who did it, when and from where. You and Tim get a buzz if someone opens 60+ members in an hour, pulls 5+ reports in a day, uses the Core between 11pm and 5am, or signs in from outside NZ. Kept for a year.</p>
+<section class="card" style="margin-bottom:14px"><h2>Last 24 hours</h2><div id="actToday"><div class="muted">Loading...</div></div></section>
+<section class="card"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px"><h2 style="margin:0 auto 0 0">Everything</h2>
+<label class="fld" style="margin:0">Who<select id="actStaff"><option value="">Everyone</option></select></label>
+<label class="fld" style="margin:0">What<select id="actAction"><option value="">Everything</option></select></label>
+<label class="fld" style="margin:0">Day<input type="date" id="actDay"></label></div>
+<div id="actRows" style="max-height:640px;overflow:auto"><div class="muted">Loading...</div></div></section>
+</section>
+<section data-view="staff" hidden>
+<div style="margin-bottom:16px"><div class="eyebrow">Owners only</div><h1>Staff and access<span class="dot">.</span></h1></div>
+<div class="row2">
+<section class="card"><h2>Team</h2><p class="muted" style="margin:0">Everyone signs in with their own email and a code. Their role decides what they see: only owners see business numbers, trainers see only their own clients.</p><div class="list" id="staffList"><div class="muted">Loading...</div></div></section>
+<section class="card"><h2 id="stTitle">Add someone</h2>
+<input type="hidden" id="stId">
+<label class="fld">Name<input id="stName" autocomplete="off"></label>
+<label class="fld">Email they sign in with<input id="stEmail" type="email" autocomplete="off"></label>
+<label class="fld">Role<select id="stRole"><option value="reception">Reception</option><option value="trainer">Trainer</option><option value="coach">Coach</option><option value="manager">Manager</option><option value="owner">Owner</option></select></label>
+<label class="fld">Order for free PT leads (lower gets them first)<input id="stOrder" type="number" value="100"></label>
+<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="stActive" checked> Can sign in</label>
+<div class="err" id="stErr"></div><div id="stOk"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark" id="stSave">Save</button><button class="btn line" id="stNew">Clear</button></div>
+<p class="muted" style="margin:0;font-size:13px">People with an @m2club.co.nz email can sign in straight away. Anyone on Gmail or another address also needs adding to the sign-in rule in Cloudflare (Zero Trust, Access, m2-core policy).</p>
+</section>
+</div>
+</section>
+

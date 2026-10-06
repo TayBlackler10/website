@@ -4,6 +4,16 @@ compatibility_date = "2026-09-01"
 workers_dev = true
 preview_urls = false   # test copies of the worker would skip the staff sign-in gate
 
+# The staff page is kept in small files (src/ui) and joined in src/ui.js. These load as plain text.
+[[rules]]
+type = "Text"
+globs = ["**/*.html", "**/*.css", "**/*.client.js"]
+fallthrough = true
+
+# Checks run before every deploy. If they fail, nothing ships (see scripts/check.mjs).
+[build]
+command = "node scripts/check.mjs"
+
 # Keep logs so failed nightly copies and balance checks can be seen in the Cloudflare dashboard.
 [observability]
 enabled = true

@@ -1,0 +1,17 @@
+# M2 Core: the same checks that run before every deploy, plus the browser check, on every push.
+name: M2 Core checks
+on:
+  push:
+    paths: ["core/**", ".github/workflows/m2-core-checks.yml"]
+  pull_request:
+    paths: ["core/**"]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node core/scripts/check.mjs
+      - run: npm i --no-save playwright@1.56.0 && npx playwright install --with-deps chromium
+      - run: node core/scripts/smoke.mjs

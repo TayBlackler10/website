@@ -1,0 +1,18 @@
+<!-- POINT OF SALE -->
+<section data-view="pos" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px">
+<div style="margin-right:auto"><div class="eyebrow">Sell at the desk</div><h1>Point of sale<span class="dot">.</span></h1></div>
+<button class="btn line" id="posEditBtn">Edit products</button>
+</div>
+<div class="warnbox" style="margin-bottom:12px">Ready to use. Until GymMaster's point of sale is switched off, sales here don't show in GymMaster or Xero, so pick one place to ring sales through.</div>
+<div class="lwrap">
+<div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+<div class="mtool"><div class="chips" id="posCats"></div><label class="search" for="posQ" style="flex:1;min-width:180px;height:44px"><span class="sr">Find a product</span><input id="posQ" autocomplete="off" placeholder="Find a product"></label></div>
+<div id="posEditBar" hidden><div class="ok" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">Tap a product to change it. <button class="btn dark sm" id="posAdd">Add a product</button></div></div>
+<div class="pgrid" id="posGrid"><div class="muted">Loading...</div></div>
+</div>
+<section class="card lside" id="posCart"></section>
+</div>
+<section class="card" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Sales</h2><input type="date" id="posDay" style="height:40px;border:1px solid var(--line);border-radius:12px;padding:0 10px"></div><div class="tiles" id="posTotals"></div><div style="overflow-x:auto" id="posSales"></div></section>
+</section>
+

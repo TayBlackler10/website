@@ -1,0 +1,24 @@
+<!-- BILLING -->
+<section data-view="billing" hidden>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+<div style="margin-right:auto"><div class="eyebrow" id="bilEye">Direct debits, ready for Ezidebit</div><h1>Billing<span class="dot">.</span></h1></div>
+<span class="pill dark" id="bilMode"></span>
+</div>
+<section class="card dark" style="margin-bottom:18px"><div id="bilBanner" style="color:var(--soft);font-size:14px"></div><div class="tiles" id="bilTiles"></div></section>
+<div class="row2">
+<section class="card"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">The next four weeks</h2><span class="muted" style="font-size:13px">Tap a day to see who's debited</span></div><div class="bcal" id="bilCal"></div><div id="bilDay"></div></section>
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="card"><h2>Getting to live</h2><div class="bsteps" id="bilSteps"></div></section>
+<section class="card"><h2>Failed payments</h2><div id="bilFailed"><div class="muted">Loading...</div></div></section>
+</div>
+</div>
+<section class="card" style="margin-top:18px" id="bilCostCard" hidden><h2>What billing would cost</h2><p class="muted" style="margin:0 0 10px">Before the Core takes billing off GymMaster, this has to come out cheaper. Debits a month come from the real schedule; fill in the fees once Ezidebit and GymMaster confirm them.</p><div id="bilCost"></div></section>
+<section class="card" style="margin-top:18px"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin-right:auto">Ready check</h2><span class="muted" id="bilReadyNote" style="font-size:13px"></span></div><p class="muted" style="margin:0">Everything that would stop a clean move off GymMaster. Fix these in GymMaster or on the member, and they drop off here.</p><div class="chips" id="bilReadyTabs"></div><div style="overflow-x:auto" id="bilReady"><div class="muted">Checking...</div></div></section>
+<div class="row2" style="margin-top:18px">
+<section class="card"><h2>What changed</h2><div class="hist" id="bilLog"></div></section>
+<section class="card" id="bilRulesCard" hidden><h2>Rules</h2>
+<div class="grid2"><label class="fld">Send debits this many days ahead<input id="brLead" type="number" min="1" max="7"></label><label class="fld">Failed payment fee ($, 0 for none)<input id="brFee" type="number" min="0" max="50" step="0.5"></label><label class="fld">Retry a failed debit after (days)<input id="brRetry" type="number" min="1" max="14"></label><label class="fld">Retries before it goes to Money owed<input id="brMax" type="number" min="0" max="5"></label></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark sm" id="brSave">Save rules</button><button class="btn line sm" id="brTest">Test Ezidebit connection</button><button class="btn line sm" id="brRun">Run tonight's billing now</button></div><div id="brMsg"></div></section>
+</div>
+</section>
+
