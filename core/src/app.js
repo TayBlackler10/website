@@ -326,16 +326,20 @@ export function makeApp(L) {
     return { ok: true, result: r.result };
   }
   async function cancel(env, s, b) {
-    // A late cancel goes through the old service, which keeps the no-show and late-cancel tally for Coach mode.
+    // Late cancels (inside 12 hours) used to go through the old Google service, which could take 15+ seconds and
+    // time out while the cancel went through anyway. The Core now cancels in GymMaster itself and notes the late cancel.
+    let late = false;
     if (!b.waitlist && b.day && b.start) {
       const [h, mi] = String(b.start).split(":").map(Number), at = Date.parse(b.day + "T" + String(h).padStart(2, "0") + ":" + String(mi || 0).padStart(2, "0") + ":00+13:00");
-      if (at > Date.now() && at - Date.now() < (LATE_CANCEL_HOURS + 1) * 3600e3) return null;
+      late = at > Date.now() && at - Date.now() < LATE_CANCEL_HOURS * 3600e3;
     }
     const tok = await memberToken(env, s.m); if (!tok) return null;
     const r = await gm(env, "post", "/portal/api/v1/member/cancelbooking", { api_key: env.GM_STAFF_KEY, token: tok, bookingid: String(b.id).replace(/\D/g, ""), waitlist: b.waitlist ? 1 : 0 }, "form");
     if (!r) return null;
     if (r.error) return { ok: false, message: String(r.error) };
-    return { ok: true, late: false };
+    if (late) await run(env, "INSERT INTO activity(member_id, kind, detail) VALUES (?, 'app', ?)", s.m,
+      "Late cancel from the app: " + String(b.name || "class").slice(0, 60) + " " + b.day + " " + String(b.start).slice(0, 5)).catch(() => {});
+    return { ok: true, late };
   }
 
   /* ---------- requests to reception: land in the Core, with a push to the owners and manager ---------- */
