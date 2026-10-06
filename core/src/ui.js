@@ -2610,7 +2610,7 @@ function loadIns(){get("/api/insights").then(function(d){
  var c=[],mn=d.month_name;
  var p0=d.paying.buckets[0].n;
  c.push(icard("Who's paying and not coming?","Paying members by visits in "+mn,ibars(d.paying.buckets,0),'<b>'+p0+' paying members didn\'t come in once in '+esc(mn)+'</b>They\'re the most likely to cancel. They\'re on the red list in Money on the table. <a href="#" data-askq2="Perform members who haven\'t been in 30 days">See who</a>',"red"));
- c.push(icard("Where's the Passport money hiding?","Passport members by visits in "+mn,ibars(d.passport.buckets,0),'<b>'+d.passport.zero.toLocaleString("en-NZ")+' Passport members ('+pct(d.passport.zero,d.passport.total)+') didn\'t visit in '+esc(mn)+'</b>One visit each would have paid about '+money(d.passport.extra)+'. Passport nudges go to the ones who drop below their usual. <a href="#" data-go="passport">Open Passport</a>'));
+ c.push(icard("Where's the Passport money hiding?","Passport members by visits in "+mn,ibars(d.passport.buckets,0),'<b>'+d.passport.zero.toLocaleString("en-NZ")+' Passport members ('+pct(d.passport.zero,d.passport.total)+') didn\'t visit in '+esc(mn)+'</b>'+(d.passport.extra!=null?'One visit each would have paid about '+money(d.passport.extra)+'. ':'')+'Passport nudges go to the ones who drop below their usual. <a href="#" data-go="passport">Open Passport</a>'));
  // heatmap
  var days=[1,2,3,4,5,6,0],dn={1:"Mon",2:"Tue",3:"Wed",4:"Thu",5:"Fri",6:"Sat",0:"Sun"},hrs=[];for(var h=5;h<=22;h++)hrs.push(h);
  var g={},mx=1;d.heat.forEach(function(x){g[x.dow+"_"+x.hr]=x.n;if(x.n>mx)mx=x.n});
