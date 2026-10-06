@@ -862,10 +862,10 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 </section>
 </div>
 
-<aside class="card sumcard" id="aSum">
+<div class="card sumcard" id="aSum">
 <div class="eyebrow">Summary</div>
 <div id="sumBody"><div class="muted">Pick a membership.</div></div>
-</aside>
+</div>
 </div>
 </section>
 
