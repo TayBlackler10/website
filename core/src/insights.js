@@ -37,7 +37,7 @@ export function makeInsights(L) {
     const tiers = await setting(env, "fp_tiers", "");
     const fpVisits = fp.reduce((a, r) => a + r.n, 0), zero = fp.filter(r => !r.n).length;
     out.passport = { total: fp.length, zero, visits: fpVisits, buckets: bucket(fp, "n", VB),
-                     extra: Math.round(passportPay(fpVisits + zero, tiers).total - passportPay(fpVisits, tiers).total) };
+                     extra: can.business ? Math.round(passportPay(fpVisits + zero, tiers).total - passportPay(fpVisits, tiers).total) : null };
 
     // 3. When the club is busy: entries by weekday and hour, last 8 weeks.
     const heat = await all(env, `SELECT CAST(strftime('%w', at) AS INTEGER) dow, CAST(substr(at, 12, 2) AS INTEGER) hr, count(*) n FROM visits WHERE at >= ? GROUP BY 1, 2`, addDays(t, -56));
@@ -91,7 +91,7 @@ export function makeInsights(L) {
 
     out.kpis = { members: (await one(env, `SELECT count(*) n FROM members m WHERE ${REAL}`)).n, paying: pay.length, passport: fp.length,
                  source_pct: out.sources.length ? Math.round(100 - (out.sources.find(s => s.label === "Not recorded")?.n || 0) / Math.max(1, out.sources.reduce((a, s) => a + s.n, 0)) * 100) : 0 };
-    out.schedules = JSON.parse(await setting(env, "report_schedules", "{}"));
+    out.schedules = can.business ? JSON.parse(await setting(env, "report_schedules", "{}")) : {};
     out.email_on = !!env.RESEND_API_KEY;
     return out;
   }
@@ -114,6 +114,7 @@ export function makeInsights(L) {
     for (const [kind, x] of Object.entries(s)) {
       if (!x.to || !((x.every === "weekly" && mon) || (x.every === "monthly" && first))) continue;
       const url = (base || "https://m2-core.taylor-3e5.workers.dev") + "/#reports";
+      x.title = String(x.title || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
       const html = `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#0A0A0A;color:#fff;border-radius:16px">
         <div style="color:#DFFF00;font-size:12px;letter-spacing:2px;text-transform:uppercase">M2 Core</div>
         <h1 style="font-size:24px;margin:8px 0 12px">${x.title}</h1>

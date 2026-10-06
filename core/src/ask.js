@@ -64,7 +64,7 @@ export function makeAsk(L) {
         JOIN billing_accounts b ON b.member_id = m.id WHERE b.balance_owing > 0
           AND EXISTS (SELECT 1 FROM visits v WHERE v.member_id = m.id AND v.at >= ?) ORDER BY b.balance_owing DESC`, addDays(t, -days + 1));
       return out(`${rows.length} member${rows.length === 1 ? "" : "s"} owe money and trained in the last ${days === 1 ? "day" : days + " days"}.`,
-        rows.map(r => ({ id: r.id, name: nm(r), plan: r.plan, why: "Owes " + $(r.owed) + ", last in " + String(r.last || "").slice(0, 10) })),
+        rows.map(r => ({ id: r.id, name: nm(r), plan: r.plan, why: (biz ? "Owes " + $(r.owed) : "Owes money (open their profile for the amount)") + ", last in " + String(r.last || "").slice(0, 10) })),
         { label: "Open Money owed", go: "collections" }, [String(rows.length)]);
     }
 

@@ -31,6 +31,8 @@ export function makeAudit(L) {
     if (path === "/api/members" && q.get("q")) return { action: "search", detail: String(q.get("q")).slice(0, 60) };
     if (path === "/api/members/browse") return { action: "browse", detail: [q.get("f"), q.get("filter"), q.get("page")].filter(Boolean).join(" ").slice(0, 60) || null };
     if (path === "/api/insights" || path === "/api/why") return { action: "browse", detail: path.replace("/api/", "") };
+    if ((m = path.match(/^\/api\/members\/(\d+)\/(call|to-tim)$/)) && post) return { action: "change_member", member: +m[1], detail: m[2] === "call" ? "logged a call" : "sent to Tim as a PT lead" };
+    if (path === "/api/plays") return { action: "report", detail: "money on the table" };
     if (path === "/api/ask") return { action: "search", detail: ("Ask M2: " + (q.get("q") || "")).slice(0, 120) };
     if (/^\/api\/plays\/[a-z]+$/.test(path)) return { action: "report", detail: "money on the table: " + path.split("/").pop() };
     if (path === "/api/report") return { action: "report", detail: [q.get("kind") || "current_members", q.get("from"), q.get("to")].filter(Boolean).join(" ") };
