@@ -2438,10 +2438,10 @@ document.addEventListener("click",function(e){
 });
 
 /* ---------- Money on the table ---------- */
-var PL=null;
+var PLAYS=null;
 function loadPlays(fresh){
  get("/api/plays"+(fresh?"?fresh=1":"")).then(function(d){
-  if(d.error){$("#plList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}PL=d;
+  if(d.error){$("#plList").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}PLAYS=d;
   var top=d.plays.slice().sort(function(a,b){return b.value-a.value});
   $("#plStats").innerHTML='<div class="hs"><b class="l">'+kfmt(d.total)+'</b><span>On the table a year</span><small>Scanned '+esc(String(d.at).slice(0,16))+'</small></div><div class="hs"><b>'+d.plays.length+'</b><span>Plays</span></div><div class="hs"><b>'+d.plays.reduce(function(a,p){return a+p.n},0).toLocaleString("en-NZ")+'</b><span>Members in a play</span></div><div class="hs"><button class="btn sm" id="plRescan">Scan again now</button></div>';
   $("#plList").innerHTML=top.map(function(p){return '<section class="card" data-play="'+p.id+'"><div style="font:900 34px/1 Archivo,Arial,sans-serif;font-variant-numeric:tabular-nums">'+kfmt(p.value)+'<small style="font:600 13px DM Sans,Arial,sans-serif;color:var(--muted);margin-left:6px">a year</small></div><h3>'+esc(p.title)+'</h3><p style="margin:0;color:var(--muted);font-size:14px">'+esc(p.reason)+'</p><div style="font-size:12.5px;color:#9A9A92">'+esc(p.how)+'</div>'+(p.sample.length?'<div class="muted">'+esc(p.sample.join(", "))+(p.n>3?" and "+(p.n-3)+" more":"")+'</div>':"")+'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto">'+(p.go?'<button class="btn dark sm" data-act="1" data-go="'+p.go+'">'+esc(p.act)+'</button>':'<button class="btn dark sm" data-act="1" data-playlist="'+p.id+'">'+esc(p.act)+'</button>')+'<button class="btn line sm" data-act="1" data-playlist="'+p.id+'">See '+p.n.toLocaleString("en-NZ")+' members</button></div></section>'}).join("");
