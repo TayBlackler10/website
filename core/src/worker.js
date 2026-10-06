@@ -38,6 +38,7 @@ import { makeClasses } from "./classes.js";
 import { makeVisits } from "./visits.js";
 import { makeClub } from "./club.js";
 import { makeAsk } from "./ask.js";
+import { makeInsights } from "./insights.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay, realMember: () => REAL_MEMBER });
@@ -47,6 +48,7 @@ const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile
 const B = makeBilling({ nzDateTime, E: makeEzidebit() });
 const CLUB = makeClub({ nzDateTime, passportPay, B });
 const ASK = makeAsk({ nzDateTime, CLUB, B });
+const INS = makeInsights({ nzDateTime, passportPay, B });
 const P = makePush();
 const CL = makeClasses({ nzDateTime });
 const PT = makePt({ nzDateTime, normMobile, P });
@@ -116,6 +118,9 @@ export default {
       if (url.pathname === "/api/summary") return json(await summary(env, can));
       if (url.pathname === "/api/today") return json(await today(env, who, can));
       if (url.pathname === "/api/home") return json(await CLUB.home(env, who, can));
+      if (url.pathname === "/api/insights") { const v = await INS.view(env, who, can); if (!v.error && can.collections) v.reports = Object.entries(REPORTS).filter(([, x]) => !x.business || can.business).map(([k, x]) => ({ kind: k, title: x.title })); return json(v); }
+      if (url.pathname === "/api/insights/schedule" && req.method === "POST") return json(await INS.saveSchedule(env, who, can, await req.json()));
+      if (url.pathname === "/api/why") return json(await INS.why(env, who, can));
       if (url.pathname === "/api/ask") return json(await ASK.ask(env, who, can, url.searchParams.get("q")));
       if (url.pathname === "/api/plays") return json(await CLUB.plays(env, can, url.searchParams));
       const plm = url.pathname.match(/^\/api\/plays\/([a-z]+)$/);
@@ -270,6 +275,7 @@ export default {
       if (event.cron === "0 20 * * *") {
         console.log("emails", JSON.stringify(await EM.daily(env).catch(e => String(e))));
         await AUD.prune(env).catch(() => {});
+        console.log("report emails", JSON.stringify(await INS.sendDue(env).catch(e => String(e))));
         return;
       }
       if (event.cron === "*/15 * * * *") {

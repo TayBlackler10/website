@@ -234,6 +234,19 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .askbar:hover{border-color:var(--ink)}.askbar b{color:var(--ink);font-weight:600}
 .askbar kbd{margin-left:auto;font:600 11px "DM Sans",Arial,sans-serif;background:var(--tile);color:var(--muted);border-radius:6px;padding:2px 7px}
 @media (max-width:900px){.g2,.g2.even,.g3{grid-template-columns:1fr}.hero{padding:20px}.askbar kbd{display:none}}
+.hb2{display:grid;grid-template-columns:minmax(0,130px) minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:13px;margin:5px 0}
+.hb2 .bar{height:20px;background:var(--tile);border-radius:999px;overflow:hidden}.hb2 .bar i{display:block;height:100%;background:var(--ink);border-radius:999px}.hb2.key .bar i{background:var(--lime);box-shadow:inset 0 0 0 1px #B8D200}
+.hb2 .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.heat{display:grid;grid-template-columns:38px repeat(18,minmax(0,1fr));gap:3px;font-size:10px;color:var(--muted)}.heat i{display:block;aspect-ratio:1;border-radius:4px}.heat span{display:flex;align-items:center}
+.kpi4{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.kp{background:#fff;border-radius:16px;padding:14px 16px}.kp label{display:block;font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.07em;text-transform:uppercase}.kp b{display:block;font:900 30px/1.1 Archivo,Arial,sans-serif;font-variant-numeric:tabular-nums}.kp small{color:var(--muted);font-size:13px}
+.vs2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.vs2 ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.sld{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}.sld:first-child{border-top:0}
+.sld label{font-weight:600;font-size:14px}.sld output{font:800 16px Archivo,Arial,sans-serif;font-variant-numeric:tabular-nums}.sld input{grid-column:1/-1;width:100%;accent-color:#0A0A0A}.sld .h{grid-column:1/-1;font-size:12.5px;color:var(--muted)}
+.src{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:6px;margin-left:6px;white-space:nowrap}.src.x{background:#E3F1E8;color:#2F7D4F}.src.a{background:#FBF1DE;color:#8A5A10}
+.ledg .ln{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #262626;font-size:14px}.ledg .ln span{color:#BDBDB5}.ledg .ln b{color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}.ledg .ln.c b{color:#FF8A7A}
+.phz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.phz .card.now{box-shadow:inset 0 0 0 2px var(--ink)}.gate{background:var(--paper);border-radius:12px;padding:10px 12px;font-size:13px;margin-top:auto}.gate b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:900px){.vs2,.phz{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:no-preference){.card{animation:none}}
 </style></head><body>
 <div class="app">
@@ -267,7 +280,9 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav" data-go="money" id="navMoney" hidden>Money</button>
 <button class="nav" data-go="growth" id="navGrowth" hidden>Growth</button>
 <button class="nav" data-go="marketing" id="navMkt" hidden>Marketing</button>
+<button class="nav" data-go="insights" id="navIns" hidden>Insights</button>
 <button class="nav" data-go="reports" id="navReports" hidden>Reports</button>
+<button class="nav" data-go="why" id="navWhy" hidden style="color:var(--lime)">Why M2 Core</button>
 <div class="navlab">Admin</div>
 <button class="nav" data-go="staff" id="navStaff" hidden>Staff and access</button>
 <button class="nav" data-go="activity" id="navActivity" hidden>Activity log</button>
@@ -331,6 +346,17 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="hstats" id="plStats" style="position:relative;z-index:1"></div></section>
 <div id="plList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px"><div class="muted">Scanning...</div></div>
 </section>
+
+<!-- INSIGHTS -->
+<section data-view="insights" hidden style="display:flex;flex-direction:column;gap:18px">
+<div><div class="eyebrow">Every chart answers a question</div><h1>Insights<span class="dot">.</span></h1></div>
+<div class="kpi4" id="inK"></div>
+<div id="inC" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:18px"><div class="muted">Loading...</div></div>
+<section class="card" id="inLib" hidden><div class="chead"><h2>Report library</h2><p id="inLibN"></p></div><div id="inLibL"></div></section>
+</section>
+
+<!-- WHY M2 CORE -->
+<section data-view="why" hidden style="display:flex;flex-direction:column;gap:18px"><div class="muted">Loading...</div></section>
 
 <!-- MEMBERS -->
 <section data-view="members" hidden>
@@ -841,6 +867,8 @@ function show(v){
  window.scrollTo(0,0);
  if(v==="today"){loadToday();loadHome();if(ME&&ME.can.business){loadBiz();loadMorning()}}
  if(v==="plays")loadPlays();
+ if(v==="insights")loadIns();
+ if(v==="why")loadWhy();
  if(v==="leads")loadLeads();
  if(v==="add")startAdd();
  if(v==="tag")setTimeout(function(){$("#lookTag").focus()},50);
@@ -883,7 +911,8 @@ get("/api/me").then(function(me){
  if(me.can.settings){$("#navPt").hidden=false;ptCount()}
  if(!me.can.settings){get("/api/pt/mine").then(function(d){var L=d.leads||[];if(L.length||["trainer","coach","manager"].indexOf(me.role)>=0){$("#navMyPt").hidden=false;var n=L.filter(function(l){return l.pt_status==="assigned"}).length;$("#ctMyPt").hidden=!n;$("#ctMyPt").textContent=n}})}
  if(me.can.collections){$("#navReports").hidden=false;$("#navCol").hidden=false;$("#navBill").hidden=false;$("#navEm").hidden=false}
- if(me.can.business){$("#navPlays").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
+ if(me.can.members===true)$("#navIns").hidden=false;
+ if(me.can.business){$("#navWhy").hidden=false;$("#navPlays").hidden=false;$("#navMoney").hidden=false;$("#navGrowth").hidden=false;$("#navMkt").hidden=false}
  if(me.can.add){$("#navPos").hidden=false;$("#navCat").hidden=false;$("#navAdd").hidden=false;$("#addTop").hidden=false;$("#newLeadBtn").hidden=false}
  navLabels();
  var hv=(location.hash||"").slice(1);var hb=hv&&document.querySelector('.nav[data-go="'+hv.replace(/[^a-z]/g,"")+'"]');
@@ -2459,6 +2488,84 @@ document.addEventListener("click",function(e){
  var pl=e.target.closest("[data-askplay]");if(pl){$("#ask").hidden=true;openPlay(pl.dataset.askplay);return}
  if(e.target.closest("#ask [data-member]"))$("#ask").hidden=true;
 });
+
+/* ---------- Insights ---------- */
+function hbars(rows,keyI,fmt){var max=Math.max.apply(null,rows.map(function(r){return r.n}).concat([1]));return rows.map(function(r,i){return '<div class="hb2'+(i===keyI?" key":"")+'"><span>'+esc(r.label)+'</span><div class="bar"><i style="width:'+Math.max(r.n?2:0,Math.round(r.n/max*100))+'%"></i></div><span class="v">'+(fmt?fmt(r):r.n.toLocaleString("en-NZ"))+'</span></div>'}).join("")}
+function maxI(rows){var b=0;rows.forEach(function(r,i){if(r.n>rows[b].n)b=i});return b}
+function icard(q,sub,body,alert,cls){return '<section class="card"><div><div class="eyebrow">'+esc(sub)+'</div><h2 style="margin-top:4px">'+esc(q)+'</h2></div>'+body+(alert?'<div class="alert '+(cls||"lime")+'">'+alert+'</div>':"")+'</section>'}
+var INS=null;
+function loadIns(){get("/api/insights").then(function(d){
+ if(d.error){$("#inC").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}INS=d;
+ var pct=function(a,b){return b?Math.round(a/b*100)+"%":"-"};
+ $("#inK").innerHTML='<div class="kp"><label>Members</label><b>'+d.kpis.members.toLocaleString("en-NZ")+'</b><small>No staff, trials or passes</small></div><div class="kp"><label>Paying</label><b>'+d.kpis.paying.toLocaleString("en-NZ")+'</b><small>Direct debit</small></div><div class="kp"><label>Fitness Passport</label><b>'+d.kpis.passport.toLocaleString("en-NZ")+'</b><small>Paid per visit</small></div><div class="kp"><label>Source recorded</label><b>'+d.kpis.source_pct+'%</b><small>Of current members</small></div>';
+ var c=[],mn=d.month_name;
+ var p0=d.paying.buckets[0].n;
+ c.push(icard("Who's paying and not coming?","Paying members by visits in "+mn,hbars(d.paying.buckets,0),'<b>'+p0+' paying members didn\'t come in once in '+esc(mn)+'</b>They\'re the most likely to cancel. They\'re on the red list in Money on the table. <a href="#" data-askq2="Perform members who haven\'t been in 30 days">See who</a>',"red"));
+ c.push(icard("Where's the Passport money hiding?","Passport members by visits in "+mn,hbars(d.passport.buckets,0),'<b>'+d.passport.zero.toLocaleString("en-NZ")+' Passport members ('+pct(d.passport.zero,d.passport.total)+') didn\'t visit in '+esc(mn)+'</b>One visit each would have paid about '+money(d.passport.extra)+'. Passport nudges go to the ones who drop below their usual. <a href="#" data-go="passport">Open Passport</a>'));
+ // heatmap
+ var days=[1,2,3,4,5,6,0],dn={1:"Mon",2:"Tue",3:"Wed",4:"Thu",5:"Fri",6:"Sat",0:"Sun"},hrs=[];for(var h=5;h<=22;h++)hrs.push(h);
+ var g={},mx=1;d.heat.forEach(function(x){g[x.dow+"_"+x.hr]=x.n;if(x.n>mx)mx=x.n});
+ var all=d.heat.map(function(x){return x.n}).sort(function(a,b){return b-a}),top=all[Math.floor(all.length*.08)]||mx;
+ var hm2='<div class="heat"><span></span>'+hrs.map(function(h){return '<span style="justify-content:center">'+(h%3===0?(h>12?h-12:h)+(h>=12?"p":"a"):"")+'</span>'}).join("");
+ var best=null;days.forEach(function(dw){hm2+='<span>'+dn[dw]+'</span>'+hrs.map(function(h){var n=g[dw+"_"+h]||0,a=n/mx;if(!best||n>best.n)best={n:n,d:dn[dw],h:h};var col=n>=top?"#DFFF00":"rgba(10,10,10,"+(0.06+a*0.8).toFixed(2)+")";return '<i style="background:'+col+'" title="'+dn[dw]+" "+h+':00, '+n+' entries"></i>'}).join("")});hm2+='</div>';
+ c.push(icard("When is the club actually busy?","Entries by day and hour, last 8 weeks",hm2,best?'<b>Busiest: '+best.d+' '+(best.h>12?best.h-12:best.h)+(best.h>=12?"pm":"am")+'</b>Peaks in lime. Put classes, PT sessions and staff where the people are, and promote the quiet hours to Passport members.':""));
+ if(d.billing){var b=d.billing,mxb=Math.max.apply(null,b.days.map(function(x){return x.collected+x.failed}).concat([1]));
+  var svg='<svg viewBox="0 0 600 170" style="width:100%;height:auto;display:block" role="img" aria-label="Collected and failed by day">'+b.days.map(function(x,i){var X=i*20+2,hc=x.collected/mxb*140,hf=x.failed/mxb*140;return '<rect x="'+X+'" y="'+(150-hc)+'" width="15" height="'+hc+'" rx="3" fill="#0A0A0A"><title>'+esc(day(x.d))+': '+money(x.collected)+' collected, '+money(x.failed)+' failed</title></rect>'+(hf?'<rect x="'+X+'" y="'+(150-hc-hf-2)+'" width="15" height="'+hf+'" rx="3" fill="#C0392B"/>':"")}).join("")+'<text x="2" y="166" font-size="11" fill="#5B5B55">'+esc(day(b.days[0].d))+'</text><text x="598" y="166" font-size="11" fill="#5B5B55" text-anchor="end">'+esc(day(b.days[29].d))+'</text></svg>';
+  c.push(icard("Is billing healthy?","Direct debits collected (black) and failed (red), last 30 days",svg,'<b>'+money(b.collected)+' collected. '+b.nf+' of '+(b.n+b.nf).toLocaleString("en-NZ")+' failed ('+b.rate+'%), '+money(b.failed)+'</b>Failed payments go to reception as jobs on Today. <a href="#" data-go="billing">Open Billing</a>',b.rate>5?"amber":"lime"))}
+ if(d.cost){var k=d.cost;c.push(icard("What's billing costing you?","Each month",'<div class="tiles"><div class="tile"><div class="n">'+money(k.gm_now)+'</div><div class="l">GymMaster plan</div></div><div class="tile"><div class="n">'+money(k.fees_month)+'</div><div class="l">Ezidebit fees, '+k.debits_month.toLocaleString("en-NZ")+' debits at '+money(k.debit_fee)+(k.fee_confirmed?"":" (not confirmed)")+'</div></div><div class="tile"><div class="n">'+money(k.fortnightly.fees_month)+'</div><div class="l">Fees if weekly payers went fortnightly</div></div></div>','<b>Ask Ezidebit who pays the per-debit fee</b>At '+money(k.debit_fee)+' a debit, M2 paying it would cost about '+money(k.fees_month)+' a month. A doors-only GymMaster plan is the target.',"amber"))}
+ var lI=maxI(d.left);
+ c.push(icard("How long do members stay?","Current members by time with M2",hbars(d.tenure,-1),d.left.some(function(x){return x.n})?'<b>Most people who left in the last 6 months went at '+esc(d.left[lI].label.toLowerCase())+'</b>That\'s the danger zone. A check-in call or a free PT around then keeps people.':"",'amber'));
+ c.push(icard("Who are your members?","Age, of "+d.ages.known.toLocaleString("en-NZ")+" with a birth date",hbars(d.ages.buckets,maxI(d.ages.buckets))+'<div style="margin-top:8px">'+hbars(d.gender,-1)+'</div>','<b>'+esc(d.ages.buckets[maxI(d.ages.buckets)].label)+' is the biggest group ('+pct(d.ages.buckets[maxI(d.ages.buckets)].n,d.ages.known)+')</b>Aim ads and photos at them.'));
+ var nr=(d.sources.find(function(x){return x.label==="Not recorded"})||{n:0}).n,st=d.sources.reduce(function(a,x){return a+x.n},0);
+ c.push(icard("Where do members come from?","Lead source, current members",hbars(d.sources,-1),'<b>'+pct(nr,st)+' have no source recorded</b>"How did they hear about M2?" is now required at sign-up, so this fills in from here.',nr/st>.5?"red":"lime"));
+ c.push(icard("Are new members sticking?","Current members by the month they joined",hbars(d.cohorts.map(function(x){return {label:new Date(x.label+"-01T12:00:00").toLocaleDateString("en-NZ",{month:"short",year:"2-digit"}),n:x.n}}),maxI(d.cohorts)),d.cohorts.length?'<b>'+esc(new Date(d.cohorts[maxI(d.cohorts)].label+"-01T12:00:00").toLocaleDateString("en-NZ",{month:"long",year:"numeric"}))+' is the strongest month still here</b>Look at what ran that month and do it again.':""));
+ c.push(icard("What's the front desk dealing with?","Entries the gate turned away, last 30 days",d.denied.length?hbars(d.denied,0):'<div class="muted">Turned-away entries are now being copied from GymMaster. This fills in over the next few days.</div>',d.denied.length?'<b>Top reason: '+esc(d.denied[0].label)+'</b>Fix the cause and reception gets fewer people at the desk.':""));
+ if(d.pos){c.push(icard("What's selling at reception?","Point of sale by type, last 30 days",hbars(d.pos.map(function(x){return {label:x.label,n:x.v,c:x.n}}),0,function(r){return kfmt(r.n)}),d.trials_vs_joins?'<b>'+d.trials_vs_joins.trials+' trials and passes vs '+d.trials_vs_joins.joins+' joins in 30 days</b>Every trial should leave with a call booked. Trials ending show on Today.':"","amber"))}
+ $("#inC").innerHTML=c.join("");
+ if(d.reports){$("#inLib").hidden=false;var sc=d.schedules||{};$("#inLibN").textContent=d.email_on?"Email a report link to yourself":"Scheduling starts once email sending is connected";
+  $("#inLibL").innerHTML=d.reports.map(function(r){var cur=(sc[r.kind]||{}).every||"";return '<div class="prow"><div class="g"><div class="t">'+esc(r.title)+'</div></div><button class="btn line sm" data-openrep="'+r.kind+'">Open</button>'+(d.owner?'<select data-sched="'+r.kind+'" data-title="'+esc(r.title)+'" style="height:34px;border:1px solid var(--line);border-radius:999px;padding:0 10px"><option value="">Not emailed</option><option value="weekly"'+(cur==="weekly"?" selected":"")+'>Weekly, Mondays</option><option value="monthly"'+(cur==="monthly"?" selected":"")+'>Monthly, the 1st</option></select>':"")+'</div>'}).join("")}
+})}
+document.addEventListener("click",function(e){
+ var r=e.target.closest("[data-openrep]");if(r){REP.kind=r.dataset.openrep;show("reports");return}
+ var a=e.target.closest("[data-askq2]");if(a){e.preventDefault();openAsk(a.dataset.askq2)}
+});
+document.addEventListener("change",function(e){var s=e.target.closest("[data-sched]");if(!s)return;post("/api/insights/schedule",{kind:s.dataset.sched,title:s.dataset.title,every:s.value}).then(function(x){if(x.error)alert(x.error)})});
+
+/* ---------- Why M2 Core ---------- */
+var ROI=null;
+function loadWhy(){get("/api/why").then(function(d){
+ var el=document.querySelector('section[data-view="why"]');
+ if(d.error){el.innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+ ROI={d:d,paying:d.paying,fp:d.passport,fpv:0.5,churn:0.25,upg:4,hours:10,dev:1500};
+ var ck='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex:none;margin-top:3px"><path d="M5 12l5 5 9-11"/></svg>';
+ var li=function(a){return a.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")};
+ var built=[["Today","Live door, calls, plays and the day's jobs"],["Members","Profiles, notes, photos, key tags, the $250 block"],["Sign up","Contract, signature, Passport ID, Bring a Mate"],["Classes","Own timetable, bookings, waitlists and caps"],["Point of sale","Sales at reception"],["PT leads","Tim assigns, trainers get them on their phones"],["Billing engine","Every schedule worked out nightly, in preview"],["Money owed","Settlement offers and the Marshall Freeman rule"],["Fitness Passport","Visit checks, nudges and the pay tiers"],["M2 App","Bookings, doors by phone, account deletion"],["Email automations","Ready to take over from GymMaster"],["Security","Own logins, two-step sign-in, activity log, nightly backups"]];
+ el.innerHTML='<section class="hero"><div style="position:relative;z-index:1"><div class="eb">The case for M2 Core</div><h1>Your members.<br>Your data.<br><em>Your rules.</em></h1></div>'+
+ '<p style="margin:0;color:#BDBDB5;max-width:64ch;position:relative;z-index:1">GymMaster costs '+money(d.gm_cost)+' a month. That\'s the small number. The big one is what you can\'t do while your members live in someone else\'s system.</p>'+
+ '<div class="hstats" style="position:relative;z-index:1"><div class="hs"><b>'+d.members.toLocaleString("en-NZ")+'</b><span>Members</span><small>No staff, trials or passes</small></div><div class="hs"><b>'+kfmt(d.revenue12)+'</b><span>Revenue, '+d.revenue_months+' months</span><small>Xero'+(d.revenue_from?", "+esc(d.revenue_from)+" to "+esc(d.revenue_to):"")+'</small></div><div class="hs"><b>'+kfmt(d.gm_cost*12)+'</b><span>GymMaster a year</span><small>'+money(d.gm_cost)+' a month</small></div><div class="hs"><b class="l" id="whyUp">-</b><span>Upside a year</span><small>See the maths below</small></div></div></section>'+
+ '<div class="vs2"><section class="card"><h3>Rented: GymMaster</h3><ul>'+li(["Reports are monthly exports into spreadsheets.","The app's QR code can't open their doors.","Website, app, PT leads and dashboards each bolt on with a workaround.","Their roadmap, their timeline.","Enterprise pricing because published plans stop at 1,300 members."])+'</ul></section><section class="card dark"><h3 style="color:var(--lime)">Owned: M2 Core</h3><ul style="color:#E9E9E4">'+li(["Every door tap updates a member's health score.","Doors open from the M2 App.","Website, app, staff screens and PT leads share one member record.","M2's rules built in: settlement offers, the $250 block, Passport left out of promos.","Ask a question in plain English and get the list back."])+'</ul></section></div>'+
+ '<div class="g2 even"><section class="card dark"><div class="eyebrow">What Ezidebit confirmed, 6 Oct 2026 (Rendy)</div><div>'+
+ [["The account is in M2 Training Club's name","Ezidebit holds payers' card and bank details, so members don't re-sign."],["Payment schedules are held by GymMaster","When the GymMaster link stops, charging stops. M2 Core must send the nightly debit instructions from the same night GymMaster's stop."],["Direct connection is allowed, with certification","Sandbox build, then a checklist, then a walkthrough, then a certificate. Renewed every year."]].map(function(x){return '<div class="prow"><div class="g"><div class="t" style="color:#fff;white-space:normal">'+esc(x[0])+'</div><div class="s" style="white-space:normal">'+esc(x[1])+'</div></div></div>'}).join("")+
+ '</div><div class="alert amber" style="color:var(--ink)"><b>Still waiting on Ezidebit</b>Whether the authorities sit under M2\'s merchant account. Whether M2\'s own API key can see existing customers. Read-only access for testing. The per-debit fee and who pays it'+(d.debits_month?" (at "+money(d.debit_fee)+" × "+d.debits_month.toLocaleString("en-NZ")+" debits, about "+money(d.debit_fee*d.debits_month)+" a month)":"")+'.</div></section>'+
+ '<section class="card"><div class="eyebrow">Keep GymMaster for the doors only</div><h2>GymMaster plans</h2><table class="tbl"><thead><tr><th>Plan</th><th>Members</th><th class="r">A month</th></tr></thead><tbody><tr><td>Advanced</td><td>Up to 400</td><td class="r">$189</td></tr><tr><td>Professional</td><td>Up to 1,300</td><td class="r">$299</td></tr><tr><td><b>Enterprise (now)</b></td><td>Unlimited</td><td class="r">'+money(d.gm_cost)+'</td></tr><tr><td>+ 24/7 door access</td><td>Any plan</td><td class="r">+$50</td></tr></tbody></table><p class="muted" style="margin:0">The target is a doors-only deal near Professional pricing'+(d.gm_doors?", "+money(d.gm_doors)+" a month as entered in Billing":", around $350 a month")+'. GymMaster needs 30 days notice.</p></section></div>'+
+ '<div class="g2 even" id="calc"><section class="card"><div class="chead"><h2>Run your own numbers</h2><p>Drag anything you disagree with</p></div><div id="whyS"></div></section><section class="card dark"><h2 style="color:#fff">Year one, once it\'s all running</h2><div class="ledg" id="whyL"></div><p style="margin:0;color:#9A9A92;font-size:12px"><span class="src x">Real</span> numbers come from M2 Core and Xero. <span class="src a">Assumption</span> marks a dial you control. Revenue figures include GST.</p></section></div>'+
+ '<section class="card"><div class="chead"><h2>Already built</h2><p>Live in M2 Core today</p></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">'+built.map(function(x){return '<div style="background:var(--tile);border-radius:14px;padding:12px;display:flex;gap:8px;color:var(--olive)">'+ck+'<div style="color:var(--ink)"><b>'+esc(x[0])+'</b><div class="muted">'+esc(x[1])+'</div></div></div>'}).join("")+'</div></section>'+
+ '<div><div class="eyebrow" style="margin-bottom:10px">Roadmap, with a go or no-go at each step</div><div class="phz">'+
+ [["Now to October","Run the club from M2 Core",["Staff use M2 Core alongside GymMaster","The M2 App goes live","Milos reviews the code and security"],"Staff prefer it and its numbers match GymMaster every day.",true],["November","Billing in shadow mode",["Export every member's schedule from GymMaster (amount, frequency, next date, end date, Flexi, paid in full, Ezidebit customer ID)","Each night M2 Core works out what it would debit and compares it with GymMaster's real batch. It sends nothing.","Ezidebit certification: sandbox, checklist, walkthrough, certificate"],"Matches GymMaster to the cent for several cycles in a row.",false],["December","Cut over, one planned night",["GymMaster billing stops and M2 Core starts on the same night","GymMaster drops to a doors-only plan","Never both systems sending debits: members would be charged twice"],"The first live week runs clean, with no double debits and no missed ones.",false]].map(function(p){return '<section class="card'+(p[4]?" now":"")+'"><div class="eyebrow">'+esc(p[0])+'</div><h2>'+esc(p[1])+'</h2><ul style="margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:5px">'+li(p[2])+'</ul><div class="gate"><b>Go / no-go</b>'+esc(p[3])+'</div></section>'}).join("")+'</div></div>'+
+ '<section class="card"><h2>What could go wrong, and the answer</h2>'+[["Members charged twice or not at all","Shadow mode first, one planned cut-over night, and GymMaster's billing is switched off the same night M2 Core's goes on. Ezidebit keeps doing the actual debiting."],["Doors stop working","Doors stay with GymMaster on a doors-only plan. The M2 App opens them as well, and key tags keep working."],["It depends on one person","Milos reviews and can take over. The code, setup and backups are documented, and backups are tested monthly."],["Privacy and hackers","Own login per staff member with two-step sign-in, sessions that lock, an activity log with alerts, nightly backups, no card or bank numbers ever held by M2."],["Ezidebit's fee","Waiting on who pays the per-debit fee. If it's M2, moving weekly payers to fortnightly halves it."],["Staff have to relearn","The screens are simpler than GymMaster's and the team is already using them."]].map(function(x){return '<div class="prow" style="align-items:flex-start"><div class="g" style="flex:0 0 34%"><div class="t" style="white-space:normal">'+esc(x[0])+'</div></div><div class="muted" style="flex:1;font-size:14px">'+esc(x[1])+'</div></div>'}).join("")+'</section>'+
+ '<section class="hero"><div style="position:relative;z-index:1"><div class="eb">Recommendation</div><h2 style="color:#fff;font:900 clamp(22px,3vw,32px)/1.1 Archivo,Arial,sans-serif;text-transform:uppercase;margin-top:8px">Run the club from M2 Core now. Shadow billing in November. Cut over in December only if it matches to the cent.</h2><p style="color:#BDBDB5;margin:10px 0 0;max-width:64ch">Nothing about members\' money changes until the numbers prove it. The rest pays for itself through retention, Passport visits and upgrades.</p></div><div style="position:relative;z-index:1"><button class="btn" data-go="plays">See the money on the table</button></div></section>';
+ var S=[["paying","Paying members","x",300,2600,10,function(v){return v.toLocaleString("en-NZ")},"From M2 Core today. Average member worth "+money(d.avg_week*52)+" a year."],["fp","Fitness Passport members","x",500,2600,10,function(v){return v.toLocaleString("en-NZ")},"From M2 Core today."],["fpv","Extra Passport visits per member, a month","a",0,4,0.25,function(v){return v.toFixed(2)},"At "+money(d.fp_rate)+" a visit, the current top rate."],["churn","Monthly churn cut (percentage points)","a",0,1,0.05,function(v){return v.toFixed(2)+" pts"},"Earlier calls to red members is how this moves."],["upg","Daily to Perform upgrades a month","a",0,20,1,function(v){return v},"$20 a week more each."],["hours","Admin hours saved a week","a",0,30,1,function(v){return v+" h"},"Exports, spreadsheets, manual texts, chasing debt. At $30 an hour."],["dev","Developer and hosting a month","a",0,6000,250,function(v){return money(v)},"Milos, hosting, fixes, security. A real cost of owning it."]];
+ $("#whyS").innerHTML=S.map(function(x){return '<div class="sld"><label for="r_'+x[0]+'">'+esc(x[1])+'<span class="src '+x[2]+'">'+(x[2]==="x"?"Real":"Assumption")+'</span></label><output id="o_'+x[0]+'">'+x[6](ROI[x[0]])+'</output><input type="range" id="r_'+x[0]+'" data-k="'+x[0]+'" min="'+x[3]+'" max="'+x[4]+'" step="'+x[5]+'" value="'+ROI[x[0]]+'"><span class="h">'+esc(x[7])+'</span></div>'}).join("");
+ S.forEach(function(x){$("#r_"+x[0]).oninput=function(){ROI[x[0]]=+this.value;$("#o_"+x[0]).textContent=x[6](ROI[x[0]]);whyLedger()}});
+ whyLedger();
+})}
+function whyLedger(){var d=ROI.d,avg=d.avg_week*52;
+ var L=[["Passport visits",ROI.fp*ROI.fpv*12*d.fp_rate],["Members kept by lower churn",ROI.paying*(ROI.churn/100)*12*avg*0.5],["Daily to Perform upgrades",ROI.upg*12*20*52*0.5],["Admin time back",ROI.hours*30*52],["GymMaster down to doors only (half a year)",Math.max(0,d.gm_cost-(d.gm_doors||350))*6]];
+ var C=[["Developer and hosting",ROI.dev*12],["Ezidebit fees, if M2 pays them",(d.debits_month||0)*d.debit_fee*12]];
+ var up=L.reduce(function(a,x){return a+x[1]},0),cost=C.reduce(function(a,x){return a+x[1]},0),net=up-cost;
+ $("#whyL").innerHTML=L.map(function(x){return '<div class="ln"><span>'+esc(x[0])+'</span><b>+'+money(x[1])+'</b></div>'}).join("")+C.map(function(x){return '<div class="ln c"><span>'+esc(x[0])+'</span><b>-'+money(x[1])+'</b></div>'}).join("")+'<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding-top:16px;flex-wrap:wrap"><div><div style="color:#9A9A92;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Net upside, year one</div><b style="font:900 44px/1 Archivo,Arial,sans-serif;color:'+(net>=0?"var(--lime)":"#FF8A7A")+'">'+money(net)+'</b></div><div style="text-align:right"><div style="color:#9A9A92;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Return on cost</div><b style="font:900 28px/1 Archivo,Arial,sans-serif;color:#fff">'+(cost?(up/cost).toFixed(1)+"x":"-")+'</b></div></div>';
+ $("#whyUp").textContent=kfmt(net);
+}
 /* ---------- weekly timetable (owned by the Core) ---------- */
 var TTD=null;
 function loadTT(){get("/api/timetable").then(function(d){if(d.error){$("#ttBody").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}TTD=d;$("#ttAdd").hidden=!d.can_edit;drawTT()})}

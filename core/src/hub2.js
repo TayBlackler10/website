@@ -258,11 +258,12 @@ export function makeHub2(L) {
     const stmts = [];
     for (const r of rows) {
       const mid = parseInt(String(r[kId]).replace(/\D/g, ""), 10); if (!mid) continue;
-      if (kDoor && /denied/i.test(String(r[kDoor] || ""))) continue;   // only people who actually got in
+      const denied = kDoor && /denied/i.test(String(r[kDoor] || ""));   // only people who actually got in count as visits
       let at;
       if (kSec && Number.isFinite(+r[kSec])) { const t = +r[kSec]; at = day + " " + [Math.floor(t / 3600), Math.floor(t % 3600 / 60), t % 60].map(n => String(n).padStart(2, "0")).join(":"); }
       else { const m = String(r[kTime] || "").match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?/i); if (!m) continue;
              let h = +m[1]; if (m[4]) h = h % 12 + (/pm/i.test(m[4]) ? 12 : 0); at = day + " " + String(h).padStart(2, "0") + ":" + m[2] + ":" + (m[3] || "00"); }
+      if (denied) { stmts.push(env.DB.prepare("INSERT OR IGNORE INTO visit_denied(member_id, at, reason) VALUES (?, ?, ?)").bind(mid, at, String(r[kDoor] || "").replace(/^.*?denied\s*[-:]?\s*/i, "").slice(0, 60))); continue; }
       stmts.push(env.DB.prepare(`INSERT INTO visits(member_id, at, door, via, gm_visit_id) SELECT ?, ?, ?, 'gymmaster', ? WHERE EXISTS (SELECT 1 FROM members WHERE id = ?)
                                  ON CONFLICT(gm_visit_id) DO NOTHING`).bind(mid, at, kDoor ? String(r[kDoor] || "").slice(0, 40) : null, mid + "|" + at, mid));
     }

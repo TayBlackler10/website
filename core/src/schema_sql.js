@@ -115,9 +115,11 @@ export const SCHEMA = [
 "CREATE TABLE IF NOT EXISTS app_nudges (member_id INTEGER NOT NULL, day TEXT NOT NULL, kind TEXT, days_away INTEGER, PRIMARY KEY (member_id, day));",
 "CREATE TABLE IF NOT EXISTS audit_log (\n  id         INTEGER PRIMARY KEY,\n  at         TEXT NOT NULL DEFAULT (datetime('now')),\n  staff_id   INTEGER,\n  action     TEXT NOT NULL,\n  member_id  INTEGER,\n  detail     TEXT,\n  ip         TEXT,\n  country    TEXT\n);",
 "CREATE INDEX IF NOT EXISTS audit_staff ON audit_log(staff_id, at);",
-"CREATE INDEX IF NOT EXISTS audit_member ON audit_log(member_id, at);"
+"CREATE INDEX IF NOT EXISTS audit_member ON audit_log(member_id, at);",
+"CREATE TABLE IF NOT EXISTS visit_denied (\n  member_id  INTEGER NOT NULL,\n  at         TEXT NOT NULL,\n  reason     TEXT,\n  PRIMARY KEY (member_id, at)\n);",
+"CREATE INDEX IF NOT EXISTS visit_denied_at ON visit_denied(at);"
 ];
 export const STAFF_SEED = [
 "INSERT OR IGNORE INTO staff(name, email, role, list_order) VALUES\n  ('Taylor Blackler', 'taylor@m2club.co.nz', 'owner', 1),\n  ('Tim Fox',         'tim@m2club.co.nz',    'owner', 2),\n  ('Bekka Schulze',   'bekka@m2club.co.nz',  'manager', 3);"
 ];
-export const SCHEMA_VERSION = "c6f4624c9dbc";
+export const SCHEMA_VERSION = "4499a5fd71ff";

@@ -861,3 +861,12 @@ CREATE TABLE IF NOT EXISTS audit_log (
 );
 CREATE INDEX IF NOT EXISTS audit_staff ON audit_log(staff_id, at);
 CREATE INDEX IF NOT EXISTS audit_member ON audit_log(member_id, at);
+
+-- Entries the gate turned away (outside door hours, owes money, no membership), for Insights.
+CREATE TABLE IF NOT EXISTS visit_denied (
+  member_id  INTEGER NOT NULL,
+  at         TEXT NOT NULL,
+  reason     TEXT,
+  PRIMARY KEY (member_id, at)
+);
+CREATE INDEX IF NOT EXISTS visit_denied_at ON visit_denied(at);
