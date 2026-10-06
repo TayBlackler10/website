@@ -308,6 +308,7 @@ export default {
       }
       console.log("billing", JSON.stringify(await B.nightly(env).catch(e => String(e))));
       if (env.GM_REPORT_KEY) console.log("payments", JSON.stringify(await CLUB.pullPayments(env).catch(e => String(e))));
+      console.log("mate rewards", JSON.stringify(await mateRewards(env).catch(e => String(e))));
       console.log("plays", JSON.stringify(await CLUB.scan(env).then(x => ({ total: x.total })).catch(e => String(e))));
       console.log("email goals", JSON.stringify(await EM.goals(env).catch(e => String(e))));
       if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));
@@ -572,7 +573,11 @@ async function sellablePlans(env, can) {
   // The team's own list decides what's sold at the desk, once it's been started.
   const cat = await C.forSale(env).catch(() => null);
   const source = cat ? cat.map((c, i) => ({ id: +c.gm_id, family: c.kind === "trial" || c.kind === "pass" ? "trial" : c.family,
-                                             frequency: c.billing === "once" ? "upfront" : c.billing, flexi: !!c.flexi, sort: i })) : SELLABLE;
+                                             frequency: c.billing === "once" ? "upfront" : c.billing, flexi: !!c.flexi, sort: i,
+                                             // From Memberships and prices, so the team changes these, not the code.
+                                             cat: { name: c.name, kind: c.kind, price: c.price, joining_fee: c.joining_fee || 0, tag_fee: c.tag_fee || 0, lock_in_months: c.lock_in_months,
+                                                    length_days: c.length_days, includes_classes: !!c.includes_classes, includes_recovery: !!c.includes_recovery, blurb: c.blurb || "",
+                                                    corporate: c.kind === "corporate" } })) : SELLABLE;
   const plans = source.filter(p => live.has(p.id)).map(p => {
     const m = live.get(p.id);
     return { ...p, name: String(m.name || "").trim(), price: m.price, priceDescription: m.pricedescription,
@@ -601,6 +606,21 @@ function cleanFpId(v) {
   return d.length >= 5 && d.length <= 12 ? d : "";
 }
 
+// Bring a Mate: the member who brought someone gets 4 weeks free once the new member's first payment clears.
+async function mateRewards(env) {
+  const rows = (await env.DB.prepare(`SELECT n.id, n.first_name, n.last_name, n.referred_by FROM members n
+      WHERE n.referred_by IS NOT NULL AND n.joined_on >= date('now', '-120 days')
+        AND EXISTS (SELECT 1 FROM payments p WHERE p.member_id = n.id AND p.kind = 'debit' AND p.occurred_at >= n.joined_on)
+        AND NOT EXISTS (SELECT 1 FROM activity a WHERE a.member_id = n.referred_by AND a.kind = 'note' AND a.detail LIKE '%[mate ' || n.id || ']%')`).all()).results || [];
+  for (const r of rows) {
+    await env.DB.batch([
+      env.DB.prepare("UPDATE billing_accounts SET free_weeks_credit = free_weeks_credit + 4 WHERE member_id = ?").bind(r.referred_by),
+      env.DB.prepare("INSERT INTO activity(member_id, kind, detail) VALUES (?, 'note', ?)").bind(r.referred_by, `Bring a Mate reward: ${r.first_name} ${r.last_name || ""}'s first payment cleared. 4 weeks free to apply in GymMaster. [mate ${r.id}]`),
+    ]);
+  }
+  return { rewarded: rows.length };
+}
+
 async function addMember(env, who, can, b) {
   if (!can.add) return { ok: false, error: "Only reception, the manager and owners can add members." };
   const db = env.DB;
@@ -611,7 +631,7 @@ async function addMember(env, who, can, b) {
     campaign: clean(b.campaign), planId: Number(b.planId), referredBy: b.referredBy ? Number(b.referredBy) : null,
     passport: !!b.passport, signature: typeof b.signature === "string" ? b.signature : "",
     emergencyName: clean(b.emergencyName), emergencyPhone: normMobile(b.emergencyPhone),
-    fpId: cleanFpId(b.fpId), fpIdRaw: clean(b.fpId),
+    fpId: cleanFpId(b.fpId), fpIdRaw: clean(b.fpId), start: /^\d{4}-\d{2}-\d{2}$/.test(String(b.start || "")) ? String(b.start) : "",
   };
   const missing = [["first", "first name"], ["last", "last name"], ["email", "email"], ["mobile", "mobile"], ["dob", "date of birth"],
                    ["goal", "goal"], ["source", "where they heard about us"]].filter(([k]) => !f[k]).map(([, l]) => l);
@@ -625,6 +645,10 @@ async function addMember(env, who, can, b) {
   const liveList = await gmMember(env, "GET", "/v1/memberships");
   const liveMap = new Map((liveList.result || []).map(m => [Number(m.id), m]));
   let plan = SELLABLE.find(p => p.id === f.planId);
+  if (!plan) {
+    const c = (await C.forSale(env).catch(() => null) || []).find(x => +x.gm_id === f.planId);
+    if (c) plan = { id: f.planId, family: c.kind === "trial" || c.kind === "pass" ? "trial" : c.family, frequency: c.billing === "once" ? "upfront" : c.billing, flexi: !!c.flexi };
+  }
   if (!plan && passportTypeIds(env, liveMap).includes(f.planId)) plan = { id: f.planId, family: "passport", frequency: "yearly", flexi: false };
   if (!plan) return { ok: false, error: "That membership can't be sold here." };
   if (plan.family === "passport") f.passport = true;
@@ -662,10 +686,12 @@ async function addMember(env, who, can, b) {
              error: "That email is already in GymMaster. If it's a family member sharing it, add anyway." };
   }
   const today = nzDateTime(new Date()).slice(0, 10);
+  // Start date: today, or a day up to 60 days ahead.
+  const startOn = f.start && f.start > today && f.start <= new Date(Date.parse(today + "T12:00:00Z") + 60 * 864e5).toISOString().slice(0, 10) ? f.start : today;
   const password = Array.from(crypto.getRandomValues(new Uint8Array(12)), x => (x % 36).toString(36)).join("");
   const res = await gmMember(env, "POST", "/v1/signup", {
     firstname: f.first, surname: f.last, email: f.email, phonecell: f.mobile, dob: f.dob, gender: f.gender,
-    password, membershiptypeid: String(f.planId), companyid: env.COMPANY_ID || "4", startdate: today,
+    password, membershiptypeid: String(f.planId), companyid: env.COMPANY_ID || "4", startdate: startOn,
   });
   if (res.error || !res.memberid) return { ok: false, error: "GymMaster said: " + (res.error || "no member id came back") };
   const id = Number(res.memberid);
@@ -703,7 +729,7 @@ async function addMember(env, who, can, b) {
       .bind(id, id, f.first, f.last, f.email, f.mobile, f.dob, f.gender || null, f.goal, f.source, f.campaign || null, f.passport ? null : f.referredBy,
             f.emergencyName || null, f.emergencyPhone || null, today, today, f.fpId || null),
     db.prepare("INSERT INTO memberships(member_id, plan_id, price, weekly_value, start_date, status, billed_by, sold_by) VALUES (?, ?, ?, ?, ?, 'current', ?, ?)")
-      .bind(id, planDbId, price, weekly, today, billedBy, who.name),
+      .bind(id, planDbId, price, weekly, startOn, billedBy, who.name),
     db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'sale', ?)")
       .bind(id, who.id, "Added at reception: " + (b.planName || plan.family) + (f.referredBy ? ", Bring a Mate" : "")),
   ];
@@ -715,11 +741,20 @@ async function addMember(env, who, can, b) {
     stmts.push(db.prepare("INSERT INTO tasks(kind, member_id, owner_role, due_on) VALUES ('fp_id_gm', ?, 'reception', ?)").bind(id, today));
   }
   if (f.referredBy && !f.passport) {
-    // Bring a Mate: both get 4 weeks free. Applied in GymMaster at the desk until billing moves.
-    stmts.push(db.prepare("UPDATE billing_accounts SET free_weeks_credit = free_weeks_credit + 4 WHERE member_id IN (?, ?)").bind(id, f.referredBy));
+    // Bring a Mate: the new member's 4 weeks free now; the member who brought them gets theirs once
+    // the new member's first debit clears (applied by the nightly run, see mateRewards).
+    stmts.push(db.prepare("UPDATE billing_accounts SET free_weeks_credit = free_weeks_credit + 4 WHERE member_id = ?").bind(id));
     stmts.push(db.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, 'note', ?)")
-      .bind(f.referredBy, who.id, `Brought a mate: ${f.first} ${f.last}. 4 weeks free to apply in GymMaster.`));
+      .bind(f.referredBy, who.id, `Brought a mate: ${f.first} ${f.last}. Their 4 weeks free come once ${f.first}'s first payment clears.`));
   }
+  // Health questions, kept with consent (Privacy Act). Only what they told us.
+  const hq = b.health && typeof b.health === "object" ? b.health : null;
+  const hNote = hq ? [hq.injury ? "Injury or condition: " + clean(hq.injury_detail || "yes").slice(0, 300) : null, hq.doctor ? "Told by a doctor to avoid some exercise: " + clean(hq.doctor_detail || "yes").slice(0, 300) : null,
+                      hq.pregnant ? "Pregnant or recently had a baby" : null].filter(Boolean).join(". ") : "";
+  if (hq) stmts.push(db.prepare("INSERT INTO member_health_notes(member_id, note, consent_on) VALUES (?, ?, ?) ON CONFLICT(member_id) DO UPDATE SET note = excluded.note, consent_on = excluded.consent_on")
+    .bind(id, hNote || "Nothing to note", today));
+  // Free PT session: a lead for Tim to hand to a trainer. Recovery, Passport and trials don't get one.
+  const freePt = !f.passport && !["recovery", "trial", "passport"].includes(plan.family);
   if (billedBy === "ezidebit") {
     stmts.push(db.prepare("INSERT INTO tasks(kind, member_id, owner_role, due_on, value_at_stake) VALUES ('missing_billing', ?, 'reception', ?, ?)")
       .bind(id, today, null));
@@ -734,11 +769,30 @@ async function addMember(env, who, can, b) {
                            WHERE NOT EXISTS (SELECT 1 FROM leads WHERE member_id = ? AND kind = 'trial' AND stage = 'trial')`)
       .bind(id, f.first + " " + f.last, f.email, f.mobile, f.source, f.campaign || null, f.goal, id));
   }
+  const leadsBefore = await db.prepare("SELECT count(*) n FROM leads WHERE stage NOT IN ('joined','lost') AND (lower(email) = ? OR mobile = ?)").bind(f.email, f.mobile).first();
   await db.batch(stmts);
+  let ptSent = false;
+  if (freePt && !(await db.prepare("SELECT 1 x FROM leads WHERE member_id = ? AND kind = 'free_pt'").bind(id).first())) {
+    const l = await db.prepare(`INSERT INTO leads(member_id, name, email, mobile, kind, source, stage, goal, notes) VALUES (?, ?, ?, ?, 'free_pt', ?, 'new', ?, 'New member, from sign-up')`)
+      .bind(id, f.first + " " + f.last, f.email, f.mobile, f.source, f.goal).run();
+    await db.prepare("INSERT INTO pt_leads(lead_id, reason, injuries, pt_status) VALUES (?, ?, ?, 'new')").bind(l.meta.last_row_id, "New member: " + (f.goal || "free PT session"), hNote || null).run();
+    ptSent = true;
+    await P.toStaff(env, (await db.prepare("SELECT id FROM staff WHERE role = 'owner' AND active = 1 AND (lower(name) LIKE 'tim%')").all()).results.map(r => r.id),
+      { title: "New free PT lead", body: f.first + " " + f.last + " just joined. Pick a trainer.", url: "/#ptleads", tag: "pt-new" }).catch(() => {});
+  }
   try { await H2.saveSignedContract(env, who, id, f.planId, b.planName || plan.family, b.planPrice || (lm && lm.price) || null, f.signature); }
   catch (e) { warnings.push("Signed contract not saved: " + String(e.message || e)); }
+  const done = [
+    { t: "Member record created", ok: true, d: "Number " + id + ", in GymMaster and M2 Core" },
+    { t: "Signed contract kept", ok: !warnings.some(w => /contract|Signature|Terms/i.test(w)), d: "On their profile" },
+    { t: "Payment set up", ok: billedBy !== "ezidebit", d: billedBy === "ezidebit" ? "Next step: bank details" : billedBy === "passport" ? "Paid by Fitness Passport" : "Nothing to set up" },
+    { t: "Free PT lead sent to Tim", ok: ptSent, d: ptSent ? "Tim picks the trainer" : plan.family === "recovery" ? "Recovery memberships don't include one" : "Not included" },
+    { t: "Lead closed with its source", ok: true, d: (leadsBefore.n ? leadsBefore.n + " open lead" + (leadsBefore.n > 1 ? "s" : "") + " closed" : "No open lead") + ", source " + f.source },
+    { t: "Phone entry", ok: true, d: "They sign in to the M2 App with " + f.email },
+    { t: "Welcome email", ok: true, d: "GymMaster sends it while it runs sign-ups" },
+  ];
   return { ok: true, id, needsBilling: billedBy === "ezidebit", warnings, gymmasterUrl: (env.GM_SITE || "") + "/member/view/" + id,
-           fpId: f.passport ? f.fpId : null };
+           fpId: f.passport ? f.fpId : null, done };
 }
 
 // Where reception enters bank details for a member.

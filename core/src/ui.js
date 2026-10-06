@@ -248,6 +248,25 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 .ledg .ln{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #262626;font-size:14px}.ledg .ln span{color:#BDBDB5}.ledg .ln b{color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}.ledg .ln.c b{color:#FF8A7A}
 .phz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.phz .card.now{box-shadow:inset 0 0 0 2px var(--ink)}.gate{background:var(--paper);border-radius:12px;padding:10px 12px;font-size:13px;margin-top:auto}.gate b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 @media (max-width:900px){.vs2,.phz{grid-template-columns:1fr}}
+.stepper{list-style:none;margin:0 0 16px;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.stepper li{display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:10px 12px;font-size:13px;font-weight:600;color:var(--muted);min-width:0}
+.stepper li span{width:24px;height:24px;border-radius:50%;background:var(--tile);display:grid;place-items:center;font-size:12px;flex:none}
+.stepper li.on{background:var(--ink);color:#fff}.stepper li.on span{background:var(--lime);color:var(--ink)}.stepper li.done span{background:var(--ink);color:var(--lime)}
+.suwrap{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.sumcard{position:sticky;top:16px}.sumcard .ln{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.sumcard .ln:first-child{border-top:0}.sumcard .ln b{font-variant-numeric:tabular-nums;text-align:right}
+.sumcard .due{display:flex;justify-content:space-between;align-items:baseline;background:var(--ink);color:#fff;border-radius:14px;padding:14px;margin-top:6px}.sumcard .due b{font:900 28px Archivo,Arial,sans-serif;color:var(--lime)}
+.mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.mc{position:relative;border:1px solid var(--line);background:#fff;border-radius:18px;padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;font:inherit;color:inherit}
+.mc:hover{border-color:var(--ink)}.mc.on{box-shadow:inset 0 0 0 2px var(--ink);border-color:var(--ink)}
+.mc .nm{font:800 17px Archivo,Arial,sans-serif}.mc .pr{font:900 26px Archivo,Arial,sans-serif;font-variant-numeric:tabular-nums}.mc .pr small{font:600 13px "DM Sans",Arial,sans-serif;color:var(--muted)}
+.mc .tm{font-size:13px;color:var(--muted)}.mc ul{margin:4px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.mc .pop{position:absolute;top:-9px;right:14px;background:var(--lime);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 10px}
+.mc.small{padding:12px}.mc.small .nm{font-size:15px}.mc.small .pr{font-size:18px}
+.flexi{display:flex;gap:8px;align-items:center;font-size:14px;background:var(--tile);border-radius:999px;padding:8px 14px;cursor:pointer}
+.hq{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.hq input{grid-column:1/-1;height:40px;border:1px solid var(--line);border-radius:12px;padding:0 12px}
+.yn{display:inline-flex;background:var(--tile);border-radius:999px;padding:3px}.yn button{border:0;background:none;border-radius:999px;padding:6px 16px;font-weight:600;cursor:pointer}.yn button.on{background:var(--ink);color:var(--lime)}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}.chk i{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:700}.chk i.y{background:var(--ink);color:var(--lime)}.chk i.n{background:var(--warn);color:var(--warnInk)}
+@media (max-width:1000px){.suwrap{grid-template-columns:1fr}.sumcard{position:static}.stepper{grid-template-columns:repeat(5,auto);overflow-x:auto}.stepper li{white-space:nowrap}}
 @media (prefers-reduced-motion:no-preference){.card{animation:none}}
 </style></head><body>
 <div class="app">
@@ -257,7 +276,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <button class="nav on" data-go="today">Today<span class="ct" id="ctToday" hidden></span></button>
 <div class="navlab">Front desk</div>
 <button class="nav" data-go="members">Members</button>
-<button class="nav" data-go="add" id="navAdd" hidden>Add member</button>
+<button class="nav" data-go="add" id="navAdd" hidden>Sign up member</button>
 <button class="nav" data-go="visits">Recent visits<span class="ct" id="ctVisits" hidden></span></button>
 <button class="nav" data-go="pos" id="navPos" hidden>Point of sale</button>
 <button class="nav" data-go="tag">Key tag lookup</button>
@@ -757,17 +776,23 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 
 <!-- ADD MEMBER -->
 <section data-view="add" hidden>
-<div style="margin-bottom:16px"><div class="eyebrow">Goes into GymMaster and the Core together</div><h1>Add a member<span class="dot">.</span></h1></div>
-<div id="a1" style="display:flex;flex-direction:column;gap:18px">
-<section class="card">
-<h2><span class="stepn">1</span>Membership</h2>
-<div class="chips" id="fam"></div>
-<div class="chips" id="freq"></div>
-<label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="flexi"> Flexi (+$5 a week, 30 days notice, no lock-in)</label>
-<div class="plans" id="plans"><div class="muted">Loading memberships from GymMaster...</div></div>
+<div style="display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px"><div style="margin-right:auto"><div class="eyebrow">Goes into GymMaster and M2 Core together</div><h1>Sign up a member<span class="dot">.</span></h1></div></div>
+<ol class="stepper" id="aSteps"><li data-s="1" class="on"><span>1</span>Membership</li><li data-s="2"><span>2</span>Details</li><li data-s="3"><span>3</span>Health and waiver</li><li data-s="4"><span>4</span>Payment</li><li data-s="5"><span>5</span>Done</li></ol>
+<div class="suwrap">
+<div style="display:flex;flex-direction:column;gap:18px;min-width:0">
+
+<section class="card" data-step="1">
+<div class="chead"><h2>Pick a membership</h2><label class="flexi"><input type="checkbox" id="flexi"><span><b>Flexi</b> +$5 a week, 30 days' notice instead of a lock-in</span></label></div>
+<div class="mcards" id="mcards"><div class="muted">Loading memberships...</div></div>
+<div id="mfreq" class="chips" hidden></div>
+<div id="plans" hidden></div><div id="fam" hidden></div><div id="freq" hidden></div>
+<div class="alert blue"><b>Corporate (Gateway and Entry)</b>Need 10 or more people from one company. They're set up from the company record, not here.</div>
+<div class="err" id="s1Err"></div>
+<div style="display:flex;gap:8px"><button class="btn dark" data-next="2">Next: details</button></div>
 </section>
-<section class="card">
-<h2><span class="stepn">2</span>Their details</h2>
+
+<section class="card" data-step="2" hidden>
+<h2>Their details</h2>
 <div class="photoRow"><div class="face" id="aFace">?</div><div style="display:flex;flex-direction:column;gap:6px"><b>Photo</b><span class="muted" style="font-size:13px">So every staff member knows the name to the face.</span><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn dark sm" id="aPhotoBtn">Take photo</button><label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="aNoPhoto"> Not today, take it next visit</label></div></div></div>
 <div class="grid2">
 <label class="fld">First name<input id="first" autocomplete="off"></label>
@@ -776,27 +801,36 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <label class="fld">Mobile<input id="mobile" inputmode="tel" autocomplete="off"></label>
 <label class="fld">Date of birth<input id="dob" type="date"></label>
 <label class="fld">Gender<select id="gender"><option value="">Prefer not to say</option><option value="F">Female</option><option value="M">Male</option><option value="O">Other</option></select></label>
+<label class="fld">Start date<input id="aStart" type="date"></label>
 <label class="fld">Main goal<select id="goal"><option value="">Pick one</option></select></label>
-<label class="fld">Where did they hear about us<select id="source"><option value="">Pick one</option></select></label>
+<label class="fld">How did they hear about M2? (required)<select id="source" required><option value="">Pick one</option></select></label>
 <label class="fld">Emergency contact name<input id="ename" autocomplete="off"></label>
 <label class="fld">Emergency contact phone<input id="ephone" inputmode="tel" autocomplete="off"></label>
 </div>
 <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="passport"> Fitness Passport member (no M2 offers or trials)</label>
 <div id="fpWrap" hidden class="warnbox" style="display:flex;flex-direction:column;gap:8px"><label class="fld">Fitness Passport ID (compulsory)<input id="fpid" inputmode="numeric" autocomplete="off" placeholder="The number on their Passport card or app"></label><span style="font-size:13px">Passport pays us for every visit on this number. Check it against their card.</span></div>
 <div id="mateWrap"><label class="fld">Brought by a member? (Bring a Mate)<input id="mate" placeholder="Search the member who brought them" autocomplete="off"></label><div class="list" id="mateRes"></div><div id="mateSel" class="muted"></div></div>
+<div class="err" id="s2Err"></div>
+<div style="display:flex;gap:8px"><button class="btn line" data-back="1">Back</button><button class="btn dark" data-next="3">Next: health and waiver</button></div>
 </section>
-<section class="card">
-<h2><span class="stepn">3</span>Terms and signature</h2>
+
+<section class="card" data-step="3" hidden>
+<h2>Health questions</h2>
+<p class="muted" style="margin:0">So trainers and coaches can keep them safe. Kept private with their consent.</p>
+<div class="hq"><span>Any injury or medical condition we should know about?</span><div class="yn" data-hq="injury"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div><input id="hqInjury" placeholder="What is it?" hidden></div>
+<div class="hq"><span>Has a doctor told them to avoid any kind of exercise?</span><div class="yn" data-hq="doctor"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div><input id="hqDoctor" placeholder="What did the doctor say?" hidden></div>
+<div class="hq"><span>Pregnant, or had a baby in the last 6 months?</span><div class="yn" data-hq="pregnant"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div></div>
+<h2 style="margin-top:8px">Terms and waiver</h2>
 <div class="termsbox" id="aTerms"><div class="muted">Pick a membership to see its contract.</div></div>
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><a class="btn line sm" id="aPdf" target="_blank" rel="noopener" hidden>Open the contract as a PDF</a><span class="muted">Let them read it on screen or as a PDF, then sign. A signed copy is kept on their profile.</span></div>
 <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="aRead"> They've read the contract</label>
 <canvas id="sig" aria-label="Signature pad"></canvas>
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="agreed"> They've agreed to the terms</label><button class="btn line sm" id="sigClear" style="margin-left:auto">Clear signature</button></div>
 <div class="err" id="aErr"></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn dark" id="aSave">Add member</button><button class="btn line" id="aAnyway" hidden>Add anyway</button></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn line" data-back="2">Back</button><button class="btn dark" id="aSave">Sign them up</button><button class="btn line" id="aAnyway" hidden>Add anyway</button></div>
 </section>
-</div>
-<div id="a2" hidden style="display:flex;flex-direction:column;gap:18px">
+
+<section data-step="4" hidden style="display:flex;flex-direction:column;gap:18px">
 <div class="ok" id="aDone"></div>
 <section class="card" id="fpGm" hidden>
 <h2>Passport ID into GymMaster</h2>
@@ -805,13 +839,19 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div id="fpGmOk"></div>
 </section>
 <section class="card dark" id="billCard">
-<h2><span class="stepn" style="background:var(--lime);color:var(--ink)">4</span>Bank details</h2>
+<h2 style="color:#fff">Bank details</h2><p style="margin:0;color:#BDBDB5;font-size:14px">They enter their bank account or card on Ezidebit's own secure form. M2 never sees or stores the numbers.</p>
 <p style="margin:0;color:var(--soft);font-size:14px" id="billNote"></p>
 <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><button class="btn" id="billOpen">Enter bank details</button><div id="qr" style="background:#fff;border-radius:12px;padding:8px" hidden></div></div>
 <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="billDone"> Bank details are in</label>
 </section>
-<section class="card">
-<h2><span class="stepn">5</span>Key tag</h2>
+<div style="display:flex;gap:8px"><button class="btn dark" data-next="5">Next</button></div>
+</section>
+
+<section class="card" data-step="5" hidden>
+<div class="eyebrow">Welcome to M2</div><h2 id="dName" style="font-size:28px"></h2>
+<div class="tiles"><div class="tile"><div class="n" id="dNum"></div><div class="l">Member number</div></div><div class="tile"><div class="n" id="dPlan" style="font-size:18px"></div><div class="l">Membership</div></div></div>
+<div id="dList"></div>
+<h3 style="margin-top:6px">Key tag</h3>
 <p class="muted" style="margin:0">Scan the new tag. The reader types the number for you.</p>
 <label class="sr" for="tag">Key tag number</label>
 <input id="tag" class="tagbox" autocomplete="off" placeholder="Scan tag">
@@ -820,6 +860,12 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="err" id="finErr"></div>
 <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="aFinish">Done</button><button class="btn line" id="aProfile">Open their profile</button></div>
 </section>
+</div>
+
+<aside class="card sumcard" id="aSum">
+<div class="eyebrow">Summary</div>
+<div id="sumBody"><div class="muted">Pick a membership.</div></div>
+</aside>
 </div>
 </section>
 
@@ -2217,23 +2263,79 @@ var PL=null,pick={fam:"perform",freq:"weekly"},sel=null,mate=null,newId=null;
 var FAMN={perform:"Perform",classes:"Classes",daily:"Daily",recovery:"Recovery",trial:"Trial or pass",passport:"Fitness Passport"};
 var FREQN={weekly:"Weekly",fortnightly:"Fortnightly",monthly:"Monthly",quarterly:"Quarterly",upfront:"Paid upfront"};
 function startAdd(){
- $("#a1").hidden=false;$("#a2").hidden=true;$("#aErr").textContent="";$("#aAnyway").hidden=true;
+ goStep(1);$("#aErr").textContent="";$("#aAnyway").hidden=true;
+ if(!$("#aStart").value)$("#aStart").value=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
  if(!PL)get("/api/plans").then(function(d){
-  if(d.error){$("#plans").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
+  if(d.error){$("#mcards").innerHTML='<div class="err">'+esc(d.error)+'</div>';return}
   PL=d.plans;fillSelect($("#goal"),d.goals,"");fillSelect($("#source"),d.sources,"");drawPlans();
- });
+ });else drawPlans();
  setTimeout(sizeSig,50);
 }
+var STEP=1,HQ={},LASTADD=null;
+function goStep(n){STEP=n;$$('section[data-view="add"] [data-step]').forEach(function(x){x.hidden=+x.dataset.step!==n});
+ $$("#aSteps li").forEach(function(li){var k=+li.dataset.s;li.className=k===n?"on":k<n?"done":""});
+ if(n===3)setTimeout(sizeSig,50);window.scrollTo(0,0);drawSum()}
+var GORDER=["perform","classes","daily","recovery","transporter","pif","pool","other","passport","trial"];
+var GNAME={perform:"M2 Perform",classes:"M2 Classes",daily:"M2 Daily",recovery:"M2 Recovery",transporter:"Transporter",pif:"Perform, paid in full",pool:"Pool",other:"Other",passport:"Fitness Passport",trial:"Trials and passes"};
+var PERW={weekly:1,fortnightly:0.5,monthly:12/52,quarterly:4/52};
+function grp(p){return p.family==="perform"&&p.frequency==="upfront"?"pif":p.family}
+function pprice(p){if(p.cat&&p.cat.price!=null)return +p.cat.price;var n=parseFloat(String(p.price||"").replace(/[^0-9.]/g,""));return isNaN(n)?null:n}
+function pweek(p){var v=pprice(p);return v!=null&&PERW[p.frequency]?v*PERW[p.frequency]:null}
+function pname(p){return (p.cat&&p.cat.name)||p.name}
 function drawPlans(){
- var fams=[];PL.forEach(function(p){if(fams.indexOf(p.family)<0)fams.push(p.family)});
- $("#fam").innerHTML=fams.map(function(f){return '<button type="button" class="chip'+(f===pick.fam?" on":"")+'" data-f="'+f+'">'+FAMN[f]+'</button>'}).join("");
- var freqs=[];PL.filter(function(p){return p.family===pick.fam}).forEach(function(p){if(freqs.indexOf(p.frequency)<0)freqs.push(p.frequency)});
- if(freqs.indexOf(pick.freq)<0)pick.freq=freqs[0];
- $("#freq").innerHTML=(pick.fam==="trial"||pick.fam==="passport")?"":freqs.map(function(f){return '<button type="button" class="chip'+(f===pick.freq?" on":"")+'" data-q="'+f+'">'+FREQN[f]+'</button>'}).join("");
- var fx=$("#flexi").checked;
- var list=PL.filter(function(p){return p.family===pick.fam&&(pick.fam==="trial"||pick.fam==="passport"||(p.frequency===pick.freq&&(p.frequency==="upfront"||p.frequency==="quarterly"||p.flexi===fx)))});
- $("#plans").innerHTML=list.map(function(p){return '<button type="button" class="plan'+(sel&&sel.id===p.id?" on":"")+'" data-p="'+p.id+'"><b>'+esc(p.name)+'</b><span>'+esc(p.price+" "+(p.priceDescription||""))+(p.signupFee?", joining fee $"+p.signupFee:"")+'</span></button>'}).join("")||'<div class="muted">Nothing for that combination.</div>';
+ if(!PL)return;var fx=$("#flexi").checked,G={};
+ PL.forEach(function(p){var g=grp(p);(G[g]=G[g]||[]).push(p)});
+ var keys=GORDER.filter(function(k){return G[k]}).concat(Object.keys(G).filter(function(k){return GORDER.indexOf(k)<0}));
+ $("#mcards").innerHTML=keys.map(function(k){
+  var L=G[k],small=k==="trial"||k==="passport";
+  var cand=L.filter(function(p){return p.frequency==="upfront"||p.frequency==="yearly"||p.frequency==="quarterly"||!!p.flexi===fx});if(!cand.length)cand=L;
+  var wk=cand.map(pweek).filter(function(x){return x!=null}),lo=wk.length?Math.min.apply(null,wk):null,c=(cand[0]&&cand[0].cat)||{};
+  var price=k==="passport"?'<div class="pr" style="font-size:16px">Paid by Fitness Passport</div>':k==="trial"?'<div class="pr">'+cand.length+' <small>options</small></div>':k==="pif"?'<div class="pr">'+money(pprice(cand[0]))+' <small>once</small></div>':lo!=null?'<div class="pr">$'+lo.toFixed(2).replace(/\.00$/,"")+'<small> a week</small></div>':"";
+  var term=k==="pif"?"12 months, paid once":k==="trial"?"Short trials and visit passes":k==="passport"?"Their Passport ID is compulsory":fx?"Flexi: 30 days' notice":c.lock_in_months?c.lock_in_months+" month lock-in":"No lock-in";
+  var inc=k==="trial"||k==="passport"?[]:["Gym floor"].concat(c.includes_classes?["Classes"]:[]).concat(c.includes_recovery?["Sauna, ice bath and pool"]:[]);
+  return '<button type="button" class="mc'+(small?" small":"")+(pick.fam===k?" on":"")+'" data-grp="'+k+'">'+(k==="perform"?'<span class="pop">Most popular</span>':"")+'<span class="nm">'+esc(GNAME[k]||k)+'</span>'+price+'<span class="tm">'+esc(term)+'</span>'+(inc.length?'<ul>'+inc.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ul>':"")+(c.blurb&&!small?'<span class="tm">'+esc(c.blurb)+'</span>':"")+'</button>'}).join("");
+ var L=G[pick.fam]||[],list=L.filter(function(p){return pick.fam==="trial"||pick.fam==="passport"||pick.fam==="pif"||p.frequency==="quarterly"||!!p.flexi===fx});
+ $("#mfreq").hidden=!list.length;
+ $("#mfreq").innerHTML=list.map(function(p){var lbl=pick.fam==="trial"||pick.fam==="passport"||pick.fam==="pif"?pname(p):(FREQN[p.frequency]||p.frequency);var pr=pprice(p);
+  return '<button type="button" class="chip'+(sel&&sel.id===p.id?" on":"")+'" data-p="'+p.id+'">'+esc(lbl)+(pr!=null&&pick.fam!=="passport"?" · "+money(pr):"")+'</button>'}).join("");
+ drawSum();
 }
+$("#mcards").addEventListener("click",function(e){var b=e.target.closest("[data-grp]");if(!b)return;pick.fam=b.dataset.grp;sel=null;
+ if(pick.fam==="passport")$("#passport").checked=true;fpToggle();drawPlans();
+ var only=$$("#mfreq [data-p]");var wk=only.filter(function(x){var p=PL.find(function(q){return q.id===+x.dataset.p});return p&&p.frequency==="weekly"})[0]||(only.length===1?only[0]:null);
+ if(wk){sel=PL.find(function(p){return p.id===+wk.dataset.p});drawPlans();loadTerms()}});
+$("#mfreq").addEventListener("click",function(e){var b=e.target.closest("[data-p]");if(!b)return;sel=PL.find(function(p){return p.id===+b.dataset.p});drawPlans();loadTerms()});
+function drawSum(){
+ if(!sel){$("#sumBody").innerHTML='<div class="muted">Pick a membership.</div>';return}
+ var c=sel.cat||{},pr=pprice(sel),once=sel.frequency==="upfront",pass=sel.family==="passport";
+ var jf=pass?0:(c.joining_fee!=null?+c.joining_fee:(sel.signupFee||0)),tf=pass?0:(c.tag_fee!=null?+c.tag_fee:0);
+ var start=$("#aStart").value,due=jf+tf+(once&&pr?pr:0);
+ var ln=function(a,b){return '<div class="ln"><span>'+esc(a)+'</span><b>'+b+'</b></div>'};
+ $("#sumBody").innerHTML='<h3 style="margin:4px 0 8px">'+esc(pname(sel))+'</h3>'+
+  ln("Price",pass?"Paid by Passport":pr!=null?money(pr)+(once?" once":" "+esc((FREQN[sel.frequency]||"").toLowerCase())):"-")+
+  (pweek(sel)!=null&&sel.frequency!=="weekly"?ln("Per week",money(pweek(sel))):"")+
+  ln("Term",pass?"Passport":once?"Paid in full":sel.flexi?"Flexi, 30 days' notice":c.lock_in_months?c.lock_in_months+" months":"No lock-in")+
+  ln("Joining fee",jf?money(jf):"Waived")+ln("Key tag",tf?money(tf):"Waived")+
+  ln("Starts",start?esc(day(start)):"Today")+
+  (mate?ln("Bring a Mate","4 weeks free"):"")+
+  '<div class="due"><span>Due today</span><b>'+money(due)+'</b></div>'+
+  (!once&&!pass&&pr?'<p class="muted" style="margin:8px 0 0">First debit of '+money(pr)+' on their start date, by Ezidebit.</p>':"");
+}
+$("#aStart").addEventListener("change",drawSum);
+document.addEventListener("click",function(e){
+ var n=e.target.closest("[data-next]");if(n&&n.closest('section[data-view="add"]')){var to=+n.dataset.next;
+  if(to===2&&!sel){$("#s1Err").textContent="Pick a membership first.";return}$("#s1Err").textContent="";
+  if(to===3){var need=[["#first","first name"],["#last","last name"],["#email","email"],["#mobile","mobile"],["#dob","date of birth"],["#goal","main goal"],["#source","how they heard about M2"]].filter(function(x){return !$(x[0]).value.trim()}).map(function(x){return x[1]});
+   if(need.length){$("#s2Err").textContent="Still needed: "+need.join(", ")+".";return}
+   if(!PHOTO&&!$("#aNoPhoto").checked){$("#s2Err").textContent="Take their photo, or tick \"Not today\".";return}
+   if(($("#passport").checked||sel.family==="passport")&&!$("#fpid").value.trim()){$("#s2Err").textContent="Add their Fitness Passport ID. Passport can't pay us for their visits without it.";return}
+   $("#s2Err").textContent=""}
+  if(to===5&&!$("#billDone").checked&&!$("#billCard").hidden&&!$("#billOpen").hidden&&!n.dataset.warned){n.dataset.warned="1";n.textContent="Next anyway (bank details stay on Today)";return}
+  goStep(to);return}
+ var bk=e.target.closest("[data-back]");if(bk){goStep(+bk.dataset.back);return}
+ var yn=e.target.closest(".yn button");if(yn){var w=yn.parentNode;w.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===yn)});HQ[w.dataset.hq]=yn.dataset.v==="1";
+  if(w.dataset.hq==="injury")$("#hqInjury").hidden=!HQ.injury;if(w.dataset.hq==="doctor")$("#hqDoctor").hidden=!HQ.doctor}
+});
 $("#fam").addEventListener("click",function(e){var b=e.target.closest("[data-f]");if(!b)return;pick.fam=b.dataset.f;sel=null;if(pick.fam==="passport"){$("#passport").checked=true}fpToggle();drawPlans()});
 function fpToggle(){var on=$("#passport").checked||pick.fam==="passport";$("#fpWrap").hidden=!on;$("#mateWrap").hidden=on;if(on){mate=null;$("#mateSel").textContent=""}}
 $("#freq").addEventListener("click",function(e){var b=e.target.closest("[data-q]");if(!b)return;pick.freq=b.dataset.q;sel=null;drawPlans()});
@@ -2254,7 +2356,7 @@ var mt;$("#mate").addEventListener("input",function(e){clearTimeout(mt);mt=setTi
  if(e.target.value.length<2){$("#mateRes").innerHTML="";return}
  get("/api/members?q="+encodeURIComponent(e.target.value)).then(function(d){$("#mateRes").innerHTML=(d.results||[]).slice(0,6).map(function(m){return '<div class="r" data-m="'+m.id+'" data-n="'+esc(nm(m))+'"><span>'+esc(nm(m))+'</span><span class="pill">'+esc(m.family||"")+'</span></div>'}).join("")});
 },250)});
-$("#mateRes").addEventListener("click",function(e){var r=e.target.closest("[data-m]");if(!r)return;e.stopPropagation();mate=+r.dataset.m;$("#mateSel").textContent="Brought by "+r.dataset.n+". Both get 4 weeks free.";$("#mateRes").innerHTML="";$("#mate").value=""});
+$("#mateRes").addEventListener("click",function(e){var r=e.target.closest("[data-m]");if(!r)return;e.stopPropagation();mate=+r.dataset.m;$("#mateSel").textContent="Brought by "+r.dataset.n+". They get 4 weeks free now; "+r.dataset.n.split(" ")[0]+" gets theirs once the first payment clears.";drawSum();$("#mateRes").innerHTML="";$("#mate").value=""});
 var cv=$("#sig"),cx=cv.getContext("2d"),drawing=false,signed=false;
 function sizeSig(){var r=cv.getBoundingClientRect();if(!r.width)return;cv.width=r.width*2;cv.height=r.height*2;cx.setTransform(2,0,0,2,0,0);cx.lineWidth=2;cx.lineCap="round";cx.strokeStyle="#0A0A0A";signed=false}
 window.addEventListener("resize",function(){if(VIEW==="add"&&!signed)sizeSig()});
@@ -2267,15 +2369,19 @@ function saveMember(force){
  $("#aErr").textContent="";$("#aAnyway").hidden=true;
  if(!sel){$("#aErr").textContent="Pick a membership first.";return}
  if(!$("#aRead").checked){$("#aErr").textContent="They need to read the contract first. Tick \"They've read the contract\".";return}
+ if(["injury","doctor","pregnant"].some(function(k){return HQ[k]===undefined})){$("#aErr").textContent="Answer the three health questions first.";return}
  if(!signed){$("#aErr").textContent="They need to sign first.";return}
  if(!PHOTO&&!$("#aNoPhoto").checked){$("#aErr").textContent="Take their photo, or tick \"Not today\".";return}
  if(($("#passport").checked||sel.family==="passport")&&!$("#fpid").value.trim()){$("#aErr").textContent="Add their Fitness Passport ID. Passport can't pay us for their visits without it.";$("#fpid").focus();return}
- var body={planId:sel.id,planName:sel.name,planPrice:sel.price+" "+(sel.priceDescription||""),first:$("#first").value,last:$("#last").value,email:$("#email").value,mobile:$("#mobile").value,dob:$("#dob").value,gender:$("#gender").value,goal:$("#goal").value,source:$("#source").value,emergencyName:$("#ename").value,emergencyPhone:$("#ephone").value,passport:$("#passport").checked||sel.family==="passport",fpId:$("#fpid").value,referredBy:mate,agreed:$("#agreed").checked||$("#aRead").checked,signature:cv.toDataURL("image/png"),confirmDuplicate:!!force};
- $("#aSave").disabled=true;$("#aSave").textContent="Adding...";
+ var body={planId:sel.id,planName:sel.name,planPrice:sel.price+" "+(sel.priceDescription||""),first:$("#first").value,last:$("#last").value,email:$("#email").value,mobile:$("#mobile").value,dob:$("#dob").value,gender:$("#gender").value,goal:$("#goal").value,source:$("#source").value,emergencyName:$("#ename").value,emergencyPhone:$("#ephone").value,passport:$("#passport").checked||sel.family==="passport",fpId:$("#fpid").value,referredBy:mate,agreed:$("#agreed").checked||$("#aRead").checked,signature:cv.toDataURL("image/png"),confirmDuplicate:!!force,start:$("#aStart").value,health:{injury:!!HQ.injury,injury_detail:$("#hqInjury").value,doctor:!!HQ.doctor,doctor_detail:$("#hqDoctor").value,pregnant:!!HQ.pregnant}};
+ $("#aSave").disabled=true;$("#aSave").textContent="Signing them up...";
  post("/api/members",body).then(function(d){
-  $("#aSave").disabled=false;$("#aSave").textContent="Add member";
+  $("#aSave").disabled=false;$("#aSave").textContent="Sign them up";
   if(!d.ok){$("#aErr").textContent=d.error||"Something went wrong.";if(d.canOverride)$("#aAnyway").hidden=false;return}
-  newId=d.id;$("#a1").hidden=true;$("#a2").hidden=false;window.scrollTo(0,0);
+  newId=d.id;LASTADD=d;
+  $("#dName").textContent=body.first+" "+body.last;$("#dNum").textContent=d.id;$("#dPlan").textContent=pname(sel);
+  $("#dList").innerHTML=(d.done||[]).map(function(x){return '<div class="chk"><i class="'+(x.ok?"y":"n")+'">'+(x.ok?"✓":"!")+'</i><div><b>'+esc(x.t)+'</b><div class="muted">'+esc(x.d||"")+'</div></div></div>'}).join("");
+  goStep(d.needsBilling||d.fpId?4:5);
   if(PHOTO)post("/api/members/"+newId+"/photo",{jpeg:PHOTO}).then(function(r){if(!r.ok)$("#aDone").insertAdjacentHTML("beforeend",'<br><span class="err">Photo not saved: '+esc(r.error)+'. Take it again from their profile.</span>')});
   $("#aDone").innerHTML="<b>"+esc(body.first+" "+body.last)+"</b> is in, on "+esc(sel.name)+"."+(d.warnings&&d.warnings.length?"<br>"+d.warnings.map(esc).join("<br>"):"");
   $("#fpGm").hidden=!d.fpId;$("#fpGmOk").innerHTML="";$("#fpGmDone").hidden=false;
@@ -2286,8 +2392,8 @@ function saveMember(force){
    $("#billNote").textContent=bl.note||bl.error||"";$("#billOpen").hidden=!bl.url;$("#billOpen").dataset.url=bl.url||"";
    if(bl.mode==="ezidebit"&&window.QRCode){$("#qr").hidden=false;$("#qr").innerHTML="";new QRCode($("#qr"),{text:bl.url,width:120,height:120})}
   });
-  setTimeout(function(){$("#tag").focus()},150);
- }).catch(function(e){$("#aSave").disabled=false;$("#aSave").textContent="Add member";$("#aErr").textContent=String(e)});
+  if(STEP===5)setTimeout(function(){$("#tag").focus()},150);
+ }).catch(function(e){$("#aSave").disabled=false;$("#aSave").textContent="Sign them up";$("#aErr").textContent=String(e)});
 }
 $("#aSave").addEventListener("click",function(){saveMember(false)});
 $("#aAnyway").addEventListener("click",function(){saveMember(true)});
@@ -2317,7 +2423,9 @@ $("#aProfile").addEventListener("click",function(){var id=newId;resetAdd();openM
 function resetAdd(){
  ["#first","#last","#email","#mobile","#dob","#ename","#ephone","#tag","#mate"].forEach(function(s){$(s).value=""});
  $("#goal").value="";$("#source").value="";$("#gender").value="";$("#passport").checked=false;$("#fpid").value="";PHOTO=null;$("#aFace").innerHTML="?";$("#aPhotoBtn").textContent="Take photo";$("#aNoPhoto").checked=false;$("#fpWrap").hidden=true;$("#fpGm").hidden=true;$("#billCard").hidden=false;$("#billOpen").hidden=false;$("#agreed").checked=false;$("#billDone").checked=false;$("#mateWrap").hidden=false;
- $("#tagOk").innerHTML="";$("#mateSel").textContent="";$("#qr").hidden=true;$("#finErr").dataset.warned="";sel=null;mate=null;newId=null;if(PL)drawPlans();sizeSig();
+ $("#tagOk").innerHTML="";$("#mateSel").textContent="";$("#qr").hidden=true;$("#finErr").dataset.warned="";sel=null;mate=null;newId=null;
+ HQ={};$$(".yn button").forEach(function(x){x.classList.remove("on")});$("#hqInjury").value="";$("#hqDoctor").value="";$("#hqInjury").hidden=true;$("#hqDoctor").hidden=true;$("#aStart").value="";$("#aRead").checked=false;
+ $$('[data-next="5"]').forEach(function(x){x.dataset.warned="";x.textContent="Next"});pick.fam="perform";if(PL)drawPlans();sizeSig();goStep(1);
 }
 
 /* ---------- M2 App ---------- */
