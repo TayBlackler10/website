@@ -140,9 +140,8 @@ export function makeClub(L) {
         (SELECT max(v.at) FROM visits v WHERE v.member_id = m.id) last
       FROM members m JOIN billing_accounts b ON b.member_id = m.id WHERE b.balance_owing > 0
         AND EXISTS (SELECT 1 FROM visits v WHERE v.member_id = m.id AND v.at >= ?)`, addDays(t, -30));
-    const settle = o => o <= 1500 ? o * 0.5 : o * 0.7;
-    const debt = owe.map(r => ({ id: r.id, name: nm(r), plan: r.plan, owed: r.owed, settle: Math.round(settle(r.owed)),
-      why: "Owes $" + Math.round(r.owed).toLocaleString("en-NZ") + ", settle at $" + Math.round(settle(r.owed)).toLocaleString("en-NZ") + ", last in " + String(r.last || "").slice(0, 10) }));
+    const debt = owe.map(r => ({ id: r.id, name: nm(r), plan: r.plan, owed: r.owed,
+      why: "Owes $" + Math.round(r.owed).toLocaleString("en-NZ") + ", last in " + String(r.last || "").slice(0, 10) }));
 
     // 5. Newer members (90 days) who haven't had their free PT. Recovery memberships don't get one.
     const fresh = await all(env, `SELECT m.id, m.first_name, m.last_name, m.joined_on, ${PLAN} plan FROM members m
@@ -162,9 +161,9 @@ export function makeClub(L) {
       { id: "upgrade", title: "Upgrade Daily members who train like Perform members", n: upg.length, value: r0(upg.length * 0.25 * 20 * 52),
         reason: "They're in 2.5 times a week or more on a Daily or Entry membership. Perform is the natural next step.",
         how: upg.length + " members × 25% take-up × $20 a week more × 52", act: "Open call list", call: true, members: upg },
-      { id: "debt", title: "Collect overdue balances while they still visit", n: debt.length, value: r0(debt.reduce((a, d) => a + d.settle, 0) * 0.6),
-        reason: "They owe money but still come through the door. Settlement offers: 50% off at $1,500 or less, 30% off above that. Never refer anyone under $1,000 to Marshall Freeman.",
-        how: "$" + r0(debt.reduce((a, d) => a + d.settle, 0)).toLocaleString("en-NZ") + " in settlement offers × 60% collected", act: "Open Money owed", go: "collections", members: debt },
+      { id: "debt", title: "Collect overdue balances while they still visit", n: debt.length, value: r0(debt.reduce((a, d) => a + d.owed, 0) * 0.6),
+        reason: "They owe money but still come through the door, so reception can raise it in person. They pay the full amount. Never refer anyone under $1,000 to Marshall Freeman.",
+        how: "$" + r0(debt.reduce((a, d) => a + d.owed, 0)).toLocaleString("en-NZ") + " owed × 60% collected", act: "Open Money owed", go: "collections", members: debt },
       { id: "pt", title: "Fill new trainers with free PT", n: noPt.length, value: r0(noPt.length * 0.15 * 1200),
         reason: "Newer members who haven't had their free PT session. Send them to Tim to hand out, and some become PT clients.",
         how: noPt.length + " members × 15% become clients × about $1,200 a year", act: "Send to Tim", pt: true, members: noPt },

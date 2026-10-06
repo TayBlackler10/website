@@ -23,7 +23,7 @@ function loadHome(){
    if(h.anniversaries)a.push('<div class="alert lime"><b>'+h.anniversaries+' one-year anniversar'+(h.anniversaries>1?"ies":"y")+' this week</b>Passport members are left out.</div>');
    if(h.no_pt)a.push('<div class="alert amber"><b>'+h.no_pt+' newer members haven\'t used their free PT</b>'+(biz?'Send them to Tim from Money on the table.':'Mention it when they come in.')+'</div>');
    (h.events||[]).forEach(function(e){a.push('<div class="alert blue"><b>Coming up</b>'+esc(e)+'</div>')});
-   if(h.big_debts)a.push('<div class="alert red"><b>'+h.big_debts+' members owe more than $1,000</b>Settlement offers first. Never refer anyone under $1,000 to Marshall Freeman.</div>');
+   if(h.big_debts)a.push('<div class="alert red"><b>'+h.big_debts+' members owe more than $1,000</b>They pay the full amount. Never refer anyone under $1,000 to Marshall Freeman.</div>');
    $("#tHeads").hidden=!a.length;$("#tHeadsL").innerHTML=a.join("")}
  });
  get("/api/classes").then(function(c){

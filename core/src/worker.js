@@ -1523,8 +1523,6 @@ async function gmReportProbe(env, q) {
 // The club's rules live in the settings table so they can change without new code.
 const SETTINGS = [
   { key: "block_at_balance", group: "Money owed", label: "Block at the doors, in the app and from classes when a member owes ($)", type: "money" },
-  { key: "settle_pct_upto_1500", group: "Money owed", label: "Settlement offer when owing $1,500 or less (% of the debt)", type: "pct" },
-  { key: "settle_pct_over_1500", group: "Money owed", label: "Settlement offer when owing more than $1,500 (% of the debt)", type: "pct" },
   { key: "referral_min_amount", group: "Money owed", label: "Only refer to Marshall Freeman from ($)", type: "money" },
   { key: "class_capacity", group: "Classes", label: "Spots per class", type: "int" },
   { key: "late_cancel_hours", group: "Classes", label: "Cancel at least this many hours before, or it's a late cancel", type: "int" },

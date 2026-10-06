@@ -238,8 +238,8 @@ export function makeHub(L) {
 
   async function collections(env, can) {
     if (!can.collections) return { error: "Collections are for owners and the manager." };
-    const [p1, p2, refMin, limit] = await Promise.all([setting(env, "settle_pct_upto_1500", 50), setting(env, "settle_pct_over_1500", 30),
-      setting(env, "referral_min_amount", 1000), setting(env, "block_at_balance", 250)]);
+    // No settlement offers (Taylor, 7 Oct 2026): members owe the full balance.
+    const [refMin, limit] = await Promise.all([setting(env, "referral_min_amount", 1000), setting(env, "block_at_balance", 250)]);
     const rows = await all(env, `SELECT m.id, m.first_name, m.last_name, m.mobile, m.email, m.status, b.balance_owing owing,
         bc.checked_at, bc.next_bill, c.id case_id, c.status case_status, c.referred_on, c.opened_on,
         (SELECT a.detail FROM activity a WHERE a.member_id = m.id AND a.kind IN ('call','note') ORDER BY a.at DESC, a.id DESC LIMIT 1) last_note,
@@ -253,7 +253,6 @@ export function makeHub(L) {
       ORDER BY b.balance_owing DESC LIMIT 600`);
     for (const r of rows) {
       r.left = r.status !== "active";
-      r.offer = Math.round(r.owing * (r.owing <= 1500 ? +p1 : +p2)) / 100;
       r.can_refer = r.owing >= +refMin;
       r.blocked = r.owing >= +limit;
     }
@@ -263,10 +262,10 @@ export function makeHub(L) {
                                   FROM members m LEFT JOIN balance_checks bc ON bc.member_id = m.id WHERE m.status = 'active'`);
     return { rows, totals: { current: cur.length, current_sum: sum(cur), left: left.length, left_sum: sum(left), blocked: rows.filter(r => r.blocked && !r.left).length,
              referable: rows.filter(r => r.can_refer && !r.case_status).length },
-             rules: { p1: +p1, p2: +p2, refMin: +refMin, limit: +limit }, coverage: cover };
+             rules: { refMin: +refMin, limit: +limit }, coverage: cover };
   }
 
-  const CASE_ACTIONS = { called: "Called about the balance", promised: "Promised to pay", settled: "Settled", referred: "Referred to Marshall Freeman",
+  const CASE_ACTIONS = { called: "Called about the balance", promised: "Promised to pay", settled: "Paid in full", referred: "Referred to Marshall Freeman",
                          written_off: "Written off", note: "Note" };
   async function collectionAction(env, who, can, b) {
     if (!can.collections) return { ok: false, error: "Collections are for owners and the manager." };
@@ -283,7 +282,6 @@ export function makeHub(L) {
     }
     if ((act === "written_off" || act === "referred") && !can.settings) return { ok: false, error: "Only Taylor and Tim can refer or write off a debt." };
     const note = String(b.note || "").trim().slice(0, 500);
-    const pct = owing <= 1500 ? +(await setting(env, "settle_pct_upto_1500", 50)) : +(await setting(env, "settle_pct_over_1500", 30));
     const open = await one(env, "SELECT id FROM collections_cases WHERE member_id = ? AND status IN ('open','promised','referred') ORDER BY id DESC LIMIT 1", mid);
     const status = { called: "open", note: "open", promised: "promised", settled: "settled", referred: "referred", written_off: "written_off" }[act];
     const closed = ["settled", "written_off"].includes(status);
@@ -291,11 +289,11 @@ export function makeHub(L) {
     if (open) {
       stmts.push(env.DB.prepare(`UPDATE collections_cases SET status = ?, amount_owed = ?, settle_offer = ?, referred_on = CASE WHEN ? = 'referred' THEN date('now') ELSE referred_on END,
                                  closed_on = CASE WHEN ? = 1 THEN date('now') ELSE NULL END WHERE id = ?`)
-        .bind(status, owing, Math.round(owing * pct) / 100, status, closed ? 1 : 0, open.id));
+        .bind(status, owing, null, status, closed ? 1 : 0, open.id));
     } else {
       stmts.push(env.DB.prepare(`INSERT INTO collections_cases(member_id, opened_on, amount_owed, is_former, status, settle_offer, referred_on, closed_on)
                                  VALUES (?, date('now'), ?, ?, ?, ?, CASE WHEN ? = 'referred' THEN date('now') END, CASE WHEN ? = 1 THEN date('now') END)`)
-        .bind(mid, owing, m.status === "active" ? 0 : 1, status, Math.round(owing * pct) / 100, status, closed ? 1 : 0));
+        .bind(mid, owing, m.status === "active" ? 0 : 1, status, null, status, closed ? 1 : 0));
     }
     const amt = b.amount ? " $" + num(b.amount).toFixed(2) : "";
     stmts.push(env.DB.prepare("INSERT INTO activity(member_id, staff_id, kind, detail) VALUES (?, ?, ?, ?)")
