@@ -108,6 +108,12 @@ export function makeJoin(L) {
       await run(env, "INSERT INTO tasks(kind, member_id, owner_role, due_on) VALUES ('missing_billing', ?, 'reception', ?)", id, t);
     if (b.fp_id) { const pr = await passportJoin(env, { gm_id: id, fp_id: b.fp_id, first, last, email, mobile: b.mobile, dob: b.dob, source: b.source }); if (!pr.ok) notes.push(pr.error); }
     const label = clean(b.plan_name) + (price ? " ($" + price.toFixed(2) + ")" : "") + (b.code ? ", code " + clean(b.code, 30) : "");
+    // Health questions from the join page, kept with their consent.
+    if (b.health && typeof b.health === "object") {
+      const h = b.health, note = [h.injury ? "Injury or condition: " + (clean(h.injury_detail, 300) || "yes") : null, h.doctor ? "Told by a doctor to avoid some exercise: " + (clean(h.doctor_detail, 300) || "yes") : null,
+                                  h.pregnant ? "Pregnant or recently had a baby" : null].filter(Boolean).join(". ") || "Nothing to note";
+      await run(env, "INSERT INTO member_health_notes(member_id, note, consent_on) VALUES (?, ?, ?) ON CONFLICT(member_id) DO UPDATE SET note = excluded.note, consent_on = excluded.consent_on", id, note, todayNz());
+    }
     await run(env, "INSERT INTO activity(member_id, kind, detail) VALUES (?, 'sale', ?)", id, "Joined online: " + label + (b.source ? ". Came from " + clean(b.source) : "") + (notes.length ? ". " + notes.join(". ") : ""));
     const to = (await all(env, "SELECT id FROM staff WHERE active = 1 AND role IN ('owner', 'manager', 'reception')")).map(r => r.id);
     if (P) await P.toStaff(env, to, { title: "Joined online: " + first + " " + (last || ""), body: label + (b.paid && !passport ? ". Needs bank details." : ""), url: "/#members", tag: "join" }).catch(() => {});

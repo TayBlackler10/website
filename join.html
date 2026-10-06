@@ -422,8 +422,34 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
               </div>
               <div class="msg">Please add your signature.</div>
             </div>
-            <div class="field">
-              <div class="q">How did you hear about us? <small>(optional)</small></div>
+            <div class="field" data-req="hq_injury">
+              <div class="q">Any injury or medical condition we should know about?</div>
+              <div class="opts three" style="grid-template-columns:1fr 1fr">
+                <label class="opt plain"><input type="radio" name="hq_injury" value="no"><span>No</span></label>
+                <label class="opt plain"><input type="radio" name="hq_injury" value="yes"><span>Yes</span></label>
+              </div>
+              <input type="text" name="hq_injury_detail" id="hqInjuryDetail" placeholder="What is it? (so your trainer knows)" hidden style="margin-top:10px">
+              <div class="msg">Please answer this one.</div>
+            </div>
+            <div class="field" data-req="hq_doctor">
+              <div class="q">Has a doctor told you to avoid any kind of exercise?</div>
+              <div class="opts three" style="grid-template-columns:1fr 1fr">
+                <label class="opt plain"><input type="radio" name="hq_doctor" value="no"><span>No</span></label>
+                <label class="opt plain"><input type="radio" name="hq_doctor" value="yes"><span>Yes</span></label>
+              </div>
+              <input type="text" name="hq_doctor_detail" id="hqDoctorDetail" placeholder="What did they say?" hidden style="margin-top:10px">
+              <div class="msg">Please answer this one.</div>
+            </div>
+            <div class="field" data-req="hq_pregnant">
+              <div class="q">Pregnant, or had a baby in the last 6 months?</div>
+              <div class="opts three" style="grid-template-columns:1fr 1fr">
+                <label class="opt plain"><input type="radio" name="hq_pregnant" value="no"><span>No</span></label>
+                <label class="opt plain"><input type="radio" name="hq_pregnant" value="yes"><span>Yes</span></label>
+              </div>
+              <div class="msg">Please answer this one.</div>
+            </div>
+            <div class="field" data-req="heard">
+              <div class="q">How did you hear about M2?</div>
               <div class="opts three">
                 <label class="opt plain"><input type="radio" name="heard" value="Instagram"><span>Instagram</span></label>
                 <label class="opt plain"><input type="radio" name="heard" value="Facebook"><span>Facebook</span></label>
@@ -432,6 +458,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
                 <label class="opt plain"><input type="radio" name="heard" value="Walked past"><span>Walked past</span></label>
                 <label class="opt plain"><input type="radio" name="heard" value="Other"><span>Other</span></label>
               </div>
+              <div class="msg">Please pick one. It helps us a lot.</div>
             </div>
             <div class="notice" id="billingNotice" hidden>
               <b>Bank or card details come next.</b> Tap Join M2 and you'll get a button to add them straight away. Nothing comes out today. Rather do it in person? We'll do it at reception when you pick up your key tag.
@@ -890,6 +917,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     }
     return ok;
   }
+  form.addEventListener('change', function(e){
+    if (e.target.name === 'hq_injury') document.getElementById('hqInjuryDetail').hidden = e.target.value !== 'yes';
+    if (e.target.name === 'hq_doctor') document.getElementById('hqDoctorDetail').hidden = e.target.value !== 'yes';
+  });
   form.addEventListener('input', function(e){
     if (e.target.name === 'fpid') update();
     var f = e.target.closest('.field[data-req]');
@@ -1044,7 +1075,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       campaign: adCampaign,
       code: chosen._fp ? '' : promoCode,
       fpId: chosen._fp ? fpClean(val('fpid')) : '',
-      photo: selfieData
+      photo: selfieData,
+      health: { injury: val('hq_injury') === 'yes', injury_detail: val('hq_injury_detail'), doctor: val('hq_doctor') === 'yes', doctor_detail: val('hq_doctor_detail'), pregnant: val('hq_pregnant') === 'yes' }
     };
     nextBtn.disabled = true; nextBtn.textContent = 'Signing you up...';
     errEl.style.display = 'none';

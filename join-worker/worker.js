@@ -254,7 +254,9 @@ async function signup(env, b) {
   // M2 Core first: record them as an unfinished sign-up, so nobody is lost if GymMaster then fails.
   const priceNum = Number(String(m.priceValue ?? "").replace(/[^0-9.]/g, "")) || 0;
   const coreBase = { first: f.firstname, last: f.surname, email: f.email, mobile: f.phonecell, plan_name: m.name, plan_id: m.id, code: code || null,
-    source: clean(b.source) || "Online signup", campaign: clean(b.campaign || b.utm_campaign) };
+    source: clean(b.source) || "Online signup", campaign: clean(b.campaign || b.utm_campaign),
+    health: b.health && typeof b.health === "object" ? { injury: !!b.health.injury, injury_detail: clean(b.health.injury_detail).slice(0, 300), doctor: !!b.health.doctor,
+                                                         doctor_detail: clean(b.health.doctor_detail).slice(0, 300), pregnant: !!b.health.pregnant } : null };
   const started = await core(env, { kind: "join_start", ...coreBase });
 
   // When GymMaster has been switched off (JOIN_MODE = core), the Core is the only system.
