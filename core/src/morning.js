@@ -46,7 +46,9 @@ export function makeMorning(L) {
     const nm = r => [r.first_name, r.last_name].filter(Boolean).join(" ");
     return {
       day: y, today: t,
-      joins: joins.map(r => ({ id: r.id, name: nm(r), plan: r.plan, passport: r.family === "passport" })),
+      // Joined means a real membership. Trials and passes (5 Days 5 Bucks, day passes) and staff are counted on their own.
+      joins: joins.filter(r => !["trial", "pass", "staff"].includes(r.family)).map(r => ({ id: r.id, name: nm(r), plan: r.plan, passport: r.family === "passport" })),
+      trials: joins.filter(r => ["trial", "pass"].includes(r.family)).map(r => ({ id: r.id, name: nm(r), plan: r.plan })),
       cancels: cancels.map(r => ({ id: r.id, name: nm(r), plan: r.plan, from: r.cancel_date, reason: r.reason })),
       failed: failed.map(r => ({ id: r.id, name: nm(r), amount: r.amount, reason: r.reason })),
       failed_total: Math.round(failed.reduce((a, r) => a + (+r.amount || 0), 0) * 100) / 100,

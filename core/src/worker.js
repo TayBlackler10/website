@@ -36,6 +36,8 @@ import { makeTimetable } from "./timetable.js";
 import { makeJoin } from "./join.js";
 import { makeClasses } from "./classes.js";
 import { makeVisits } from "./visits.js";
+import { makeClub } from "./club.js";
+import { makeAsk } from "./ask.js";
 
 const TZ = "Pacific/Auckland";
 const H = makeHub({ json, nzDateTime, gmCall, applyBlockRule, passportPay, realMember: () => REAL_MEMBER });
@@ -43,6 +45,8 @@ const R = makeRoster({ nzDateTime });
 const F = makeFeeds({ nzDateTime });
 const H2 = makeHub2({ nzDateTime, gmCall, gmMemberToken, passportPay, normMobile });
 const B = makeBilling({ nzDateTime, E: makeEzidebit() });
+const CLUB = makeClub({ nzDateTime, passportPay, B });
+const ASK = makeAsk({ nzDateTime, CLUB, B });
 const P = makePush();
 const CL = makeClasses({ nzDateTime });
 const PT = makePt({ nzDateTime, normMobile, P });
@@ -111,6 +115,14 @@ export default {
       if (url.pathname === "/api/me") return json({ name: who.name, role: who.role, can });
       if (url.pathname === "/api/summary") return json(await summary(env, can));
       if (url.pathname === "/api/today") return json(await today(env, who, can));
+      if (url.pathname === "/api/home") return json(await CLUB.home(env, who, can));
+      if (url.pathname === "/api/ask") return json(await ASK.ask(env, who, can, url.searchParams.get("q")));
+      if (url.pathname === "/api/plays") return json(await CLUB.plays(env, can, url.searchParams));
+      const plm = url.pathname.match(/^\/api\/plays\/([a-z]+)$/);
+      if (plm) return json(await CLUB.playMembers(env, can, plm[1]));
+      const clm = url.pathname.match(/^\/api\/members\/(\d+)\/(call|to-tim)$/);
+      if (clm && req.method === "POST") return json(clm[2] === "call" ? await CLUB.logCall(env, who, can, +clm[1], await req.json()) : await CLUB.sendToTim(env, who, can, +clm[1]));
+      if (url.pathname === "/api/payments/pull" && req.method === "POST" && can.settings) { const b = await req.json().catch(() => ({})); return json(await CLUB.pullPayments(env, b.from, b.to)); }
       if (url.pathname === "/api/jobs" && req.method === "POST") return json(await recordOutcome(env, who, can, await req.json()));
       if (url.pathname === "/api/staff") return json(await staffList(env, can));
       if (url.pathname === "/api/leads" && req.method === "POST") return json(await addLead(env, who, can, await req.json()));
@@ -289,6 +301,8 @@ export default {
         console.log("gm events", JSON.stringify(await GS.events(env).catch(e => String(e))));
       }
       console.log("billing", JSON.stringify(await B.nightly(env).catch(e => String(e))));
+      if (env.GM_REPORT_KEY) console.log("payments", JSON.stringify(await CLUB.pullPayments(env).catch(e => String(e))));
+      console.log("plays", JSON.stringify(await CLUB.scan(env).then(x => ({ total: x.total })).catch(e => String(e))));
       console.log("email goals", JSON.stringify(await EM.goals(env).catch(e => String(e))));
       if (env.BACKUPS) console.log("backup", JSON.stringify(await F.backup(env).catch(e => String(e))));
       if (env.BACKUPS && nzDateTime(new Date()).slice(8, 10) === "01") console.log("backup drill", JSON.stringify(await F.backupVerify(env).then(r => ({ ok: r.ok, problems: r.problems })).catch(e => String(e))));
@@ -956,7 +970,7 @@ async function today(env, who, can) {
 
   jobs.sort((a, b) => a.order - b.order);
   const doneToday = await one(`SELECT count(*) n FROM tasks WHERE outcome IS NOT NULL AND date(done_at) = date('now') ${own ? "AND done_by = ?" : ""}`, ...(own ? [who.id] : []));
-  const joinedToday = await one("SELECT count(*) n FROM members WHERE joined_on = ?", nzToday);
+  const joinedToday = await one(`SELECT count(*) n FROM members m WHERE m.joined_on = ? AND ${REAL_MEMBER}`, nzToday);
   const out = { date: nzToday, jobs, done_today: doneToday.n, joined_today: joinedToday.n };
   if (!own) {
     out.recent = await all(`SELECT m.id, m.first_name, m.last_name, m.joined_on, p.gm_type_name plan, m.lead_source
