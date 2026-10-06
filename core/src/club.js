@@ -18,7 +18,8 @@ export function makeClub(L) {
   const addDays = (iso, n) => new Date(Date.parse(iso + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
   const daysBetween = (a, b) => Math.round((Date.parse(b + "T12:00:00Z") - Date.parse(a + "T12:00:00Z")) / 864e5);
   const r0 = n => Math.round(+n || 0);
-  const nm = r => [r.first_name, r.last_name].filter(Boolean).join(" ") || "No name";
+  // Old GymMaster habit: Passport numbers typed after the surname. Not part of anyone's name.
+  const nm = r => [r.first_name, r.last_name].filter(Boolean).join(" ").replace(/\s+\d{5,}$/, "") || "No name";
   const setting = async (env, k, d) => { const r = await one(env, "SELECT value FROM settings WHERE key = ?", k); return r ? r.value : d; };
   const setSetting = (env, k, v) => env.DB.prepare("INSERT INTO settings(key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(k, v).run();
 
@@ -89,13 +90,14 @@ export function makeClub(L) {
         (SELECT round(sum(ms.weekly_value), 2) FROM memberships ms WHERE ms.member_id = m.id AND ms.status = 'current') weekly
       FROM members m WHERE ${PAYING} AND coalesce(m.joined_on, '2000-01-01') <= ?`, addDays(t, -60), addDays(t, -21));
     return rows.map(r => {
-      let last = [r.last_visit, r.last_app].filter(Boolean).sort().pop();
-      last = last ? last.slice(0, 10) : r.last_month ? addDays(r.last_month + "-28", 0) : null;
+      let last = [r.last_visit, r.last_app].filter(Boolean).sort().pop(), approx = false;
+      if (last) last = last.slice(0, 10); else if (r.last_month) { last = r.last_month + "-28"; approx = true; }
       const days = last ? Math.max(0, daysBetween(last, t)) : 999;
+      const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const pts = days <= 7 ? 0 : days <= 14 ? 10 : days <= 30 ? 25 : days <= 60 ? 50 : 75;
       const score = pts + (r.failed_on ? 40 : 0);
       const reasons = [];
-      if (days >= 8) reasons.push(days >= 999 ? "No visits on record" : "Last in " + days + " days ago");
+      if (days >= 8) reasons.push(days >= 999 ? "No visits on record" : approx ? "Not in since " + MON[+last.slice(5, 7) - 1] : "Not in for " + days + " days");
       if (r.failed_on) reasons.push("Payment failed " + r.failed_on.slice(8, 10) + "/" + r.failed_on.slice(5, 7));
       return { id: r.id, name: nm(r), mobile: r.mobile, plan: r.plan, score, days, reasons, weekly: r.weekly || 0, called_at: r.called_at };
     }).sort((a, b) => b.score - a.score || b.days - a.days);
@@ -206,10 +208,10 @@ export function makeClub(L) {
       const feed = await all(env, `SELECT x.member_id id, x.at, m.first_name, m.last_name, m.joined_on, ${PLAN} plan,
           (SELECT balance_owing FROM billing_accounts b WHERE b.member_id = m.id) owing
         FROM (SELECT member_id, at FROM visits WHERE at >= ? UNION ALL SELECT member_id, at FROM app_doors WHERE at >= ?) x
-        JOIN members m ON m.id = x.member_id ORDER BY x.at DESC LIMIT 8`, addDays(t, -2), addDays(t, -2));
+        JOIN members m ON m.id = x.member_id ORDER BY x.at DESC LIMIT 14`, addDays(t, -2), addDays(t, -2));
       const md = s => s ? s.slice(5, 10) : "";
       const week = [-3, -2, -1, 0, 1, 2, 3].map(i => md(addDays(t, i)));
-      out.feed = feed.map(r => ({ id: r.id, name: nm(r), plan: r.plan, at: r.at, owes: r.owing > 0 ? r.owing : 0,
+      out.feed = feed.filter((r, i) => !i || feed[i - 1].id !== r.id).slice(0, 6).map(r => ({ id: r.id, name: nm(r), plan: r.plan, at: r.at, owes: r.owing > 0 ? r.owing : 0,
         anniversary: !!(r.joined_on && +r.joined_on.slice(0, 4) === +t.slice(0, 4) - 1 && week.includes(md(r.joined_on))) }));
       const hs = await health(env);
       out.calls = hs.filter(h => h.score >= 70 && !(h.called_at && h.called_at >= addDays(t, -14))).slice(0, 5)
@@ -225,9 +227,9 @@ export function makeClub(L) {
     }
 
     if (can.business) {
-      const dow = (new Date(t + "T12:00:00Z").getUTCDay() + 6) % 7;
-      const monday = dow === 0 ? t : addDays(t, 7 - dow);
-      try { const run = await B.day(env, who, can, monday); out.debit_run = { date: monday, n: run.rows.length, total: r0(run.total) }; } catch (e) { out.debit_run = null; }
+      // M2 debits every day (each member on their own day), so the useful number is the next 7 days.
+      try { const o = await B.overview(env, who, can); const wk = o.days.slice(0, 7);
+            out.debit_run = { from: t, n: wk.reduce((a, d) => a + d.n, 0), total: r0(wk.reduce((a, d) => a + d.total, 0)), tomorrow: o.days[1] ? { n: o.days[1].n, total: r0(o.days[1].total) } : null }; } catch (e) { out.debit_run = null; }
       const d = await cached(env);
       out.money = { total: d.total, at: d.at, plays: d.plays.slice().sort((a, b) => b.value - a.value).slice(0, 4).map(p => ({ id: p.id, title: p.title, n: p.n, value: p.value })) };
       out.weekly = await weeklyRevenue(env);

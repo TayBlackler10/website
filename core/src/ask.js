@@ -13,7 +13,7 @@ export function makeAsk(L) {
   const one = (env, sql, ...a) => env.DB.prepare(sql).bind(...a).first();
   const todayNz = () => nzDateTime(new Date()).slice(0, 10);
   const addDays = (iso, n) => new Date(Date.parse(iso + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
-  const nm = r => [r.first_name, r.last_name].filter(Boolean).join(" ") || "No name";
+  const nm = r => [r.first_name, r.last_name].filter(Boolean).join(" ").replace(/\s+\d{5,}$/, "") || "No name";
   const $ = n => "$" + Math.round(+n || 0).toLocaleString("en-NZ");
   const PLAN = `(SELECT p.gm_type_name FROM memberships ms JOIN plans p ON p.id = ms.plan_id WHERE ms.member_id = m.id AND ms.status = 'current' ORDER BY ms.start_date DESC LIMIT 1)`;
   const LAST = `(SELECT max(at) FROM (SELECT max(v.at) at FROM visits v WHERE v.member_id = m.id UNION ALL SELECT max(d.at) FROM app_doors d WHERE d.member_id = m.id))`;
@@ -21,7 +21,7 @@ export function makeAsk(L) {
 
   const SUGGEST = ["Who owes money but trained this week?", "Perform members who haven't been in 14 days", "Daily members ready for Perform",
     "Passport members under once a week", "How much do overdue members owe?", "Who has a one-year anniversary this week?",
-    "Newer members who haven't used their free PT", "What's Monday's debit run?", "Who's on the red list?", "Trials ending this week", "Birthdays today"];
+    "Newer members who haven't used their free PT", "What's the debit run this week?", "Who's on the red list?", "Trials ending this week", "Birthdays today"];
 
   const out = (answer, members, action, hl) => ({ answer, members: members || [], action: action || null, highlight: hl || [] });
 
@@ -40,10 +40,11 @@ export function makeAsk(L) {
     // Monday's debit run (owners).
     if (/debit run|direct debit|billing run/.test(s)) {
       if (!biz) return out("Only Taylor and Tim see the debit run.");
-      const dow = (new Date(t + "T12:00:00Z").getUTCDay() + 6) % 7, mon = dow === 0 ? t : addDays(t, 7 - dow);
-      const r = await B.day(env, who, can, mon);
-      return out(`Monday ${mon.slice(8, 10)}/${mon.slice(5, 7)}: ${r.rows.length.toLocaleString("en-NZ")} debits for ${$(r.total)}, plus ${r.skipped.length} skipped (holds and cancellations).`,
-        [], { label: "Open Billing", go: "billing" }, [$(r.total), String(r.rows.length)]);
+      // M2 debits every day, each member on their own day.
+      const o = await B.overview(env, who, can), wk = o.days.slice(0, 7), n = wk.reduce((a, d) => a + d.n, 0), tot = wk.reduce((a, d) => a + d.total, 0);
+      const mon = wk.find(d => new Date(d.date + "T12:00:00Z").getUTCDay() === 1);
+      return out(`The next 7 days: ${n.toLocaleString("en-NZ")} debits for ${$(tot)}.` + (mon ? ` Monday alone is ${mon.n} debits for ${$(mon.total)}.` : "") + " M2 debits every day, each member on their own day.",
+        [], { label: "Open Billing", go: "billing" }, [$(tot), n.toLocaleString("en-NZ")]);
     }
 
     // How much is owed in total (owners).

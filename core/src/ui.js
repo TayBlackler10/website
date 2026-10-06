@@ -293,7 +293,7 @@ canvas#sig{width:100%;height:140px;border:1px dashed var(--muted);border-radius:
 <div class="g3" id="tRow2">
 <section class="card" id="tCalls" hidden><div class="chead"><h2>Bekka's calls</h2><p id="tCallsN">Highest risk first</p></div><div id="tCallsL"></div></section>
 <section class="card"><div class="chead"><h2>Next class</h2><button class="btn line sm" data-go="classes">Classes</button></div><div id="tNext"><div class="muted">Loading...</div></div></section>
-<section class="card" id="tRev" hidden><div class="chead"><h2>Weekly revenue</h2><p>12 weeks, all payments</p></div><div id="tRevC"></div></section>
+<section class="card" id="tRev" hidden><div class="chead"><h2>Weekly revenue</h2><p>12 weeks, payments in GymMaster</p></div><div id="tRevC"></div></section>
 </div>
 <div class="g2 even">
 <section class="card" id="tHeads" hidden><h2>Heads up</h2><div style="display:flex;flex-direction:column;gap:8px" id="tHeadsL"></div></section>
@@ -2354,7 +2354,7 @@ function loadMorning(){get("/api/morning").then(function(d){if(d.error)return;va
 function kfmt(n){n=Math.round(+n||0);return n>=1e6?"$"+(n/1e6).toFixed(1)+"m":n>=1e4?"$"+Math.round(n/1e3)+"k":n>=1e3?"$"+(n/1e3).toFixed(1)+"k":"$"+n}
 function ini(n){return String(n||"").split(" ").map(function(x){return x[0]||""}).join("").slice(0,2).toUpperCase()}
 function hm(s){return String(s||"").slice(11,16)}
-var ASKS=["Who owes money but trained this week?","Perform members who haven't been in 14 days","Daily members ready for Perform","Passport members under once a week","How much do overdue members owe?","Who has a one-year anniversary this week?","Newer members who haven't used their free PT","What's Monday's debit run?"];
+var ASKS=["Who owes money but trained this week?","Perform members who haven't been in 14 days","Daily members ready for Perform","Passport members under once a week","How much do overdue members owe?","Who has a one-year anniversary this week?","Newer members who haven't used their free PT","What's the debit run this week?"];
 function loadHome(){
  $("#todayDate").textContent=new Date().toLocaleDateString("en-NZ",{weekday:"long",day:"numeric",month:"long"});
  var biz=ME&&ME.can.business, col=ME&&ME.can.collections;
@@ -2362,7 +2362,7 @@ function loadHome(){
  get("/api/home").then(function(d){
   if(d.error)return;
   var st='<div class="hs"><b>'+d.in_now+'</b><span>In the club now</span><small>Last 90 minutes'+(d.last_checkin?", last tap "+hm(d.last_checkin):"")+'</small></div><div class="hs"><b>'+d.checkins.toLocaleString("en-NZ")+'</b><span>Check-ins today</span><small>Gate and app</small></div>';
-  if(d.debit_run)st+='<div class="hs"><b>'+kfmt(d.debit_run.total)+'</b><span>Monday\'s debit run</span><small>'+d.debit_run.n.toLocaleString("en-NZ")+' debits on '+day(d.debit_run.date)+'</small></div>';
+  if(d.debit_run)st+='<div class="hs"><b>'+kfmt(d.debit_run.total)+'</b><span>Debits next 7 days</span><small>'+d.debit_run.n.toLocaleString("en-NZ")+' debits'+(d.debit_run.tomorrow?", tomorrow "+kfmt(d.debit_run.tomorrow.total):"")+'</small></div>';
   if(d.money)st+='<div class="hs"><b class="l">'+kfmt(d.money.total)+'</b><span>On the table this year</span><small>'+d.money.plays.length+' plays ready to run</small></div>';
   $("#hStats").innerHTML=st;
   if(d.money){$("#tMoney").hidden=false;$("#tMoneyL").innerHTML=d.money.plays.map(function(p){return '<div class="prow" data-play="'+p.id+'" style="cursor:pointer"><div class="g"><div class="t">'+esc(p.title)+'</div><div class="s">'+p.n.toLocaleString("en-NZ")+' members</div></div><span class="pv">'+kfmt(p.value)+'</span></div>'}).join("")}
