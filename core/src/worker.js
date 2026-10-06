@@ -797,6 +797,7 @@ const JOBS = {
   hold_ending:     { label: "Holds ending soon",                one: "hold ending soon",               owner: "reception", order: 6.5 },
   app_hold:        { label: "Hold requests from the app",       one: "hold request from the app",      owner: "reception", order: 2.8 },
   app_cancel:      { label: "Cancel requests from the app",     one: "cancel request from the app",    owner: "manager",   order: 2.9 },
+  app_delete:      { label: "App account deletions to finish",  one: "app account deletion to finish", owner: "reception", order: 2.92 },
   trial_welcome:   { label: "New trials to welcome",            one: "new trial to welcome",           owner: "reception", order: 2.95 },
   trial_call:      { label: "Trials to call on day 2",          one: "trial to call on day 2",         owner: "reception", order: 2.97 },
   at_risk:         { label: "Members who've stopped coming",    one: "member who's stopped coming",    owner: "manager",   order: 3.6 },
@@ -908,10 +909,10 @@ async function today(env, who, can) {
         return { ...r, detail: "Came " + r.before + " days in the 8 weeks before, nothing for " + (days ?? "14+") + " days. On " + r.plan + ". A friendly check-in now saves the cancellation." }; }));
 
     // Holds and cancellations members asked for in the app.
-    for (const [job, kind] of [["app_hold", "hold"], ["app_cancel", "cancel"]])
+    for (const [job, kind] of [["app_hold", "hold"], ["app_cancel", "cancel"], ["app_delete", "delete"]])
       push(job, (await all(`SELECT r.id req_id, m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, r.text, r.at
                             FROM app_requests r JOIN members m ON m.id = r.member_id WHERE r.kind = ? AND r.done_at IS NULL ORDER BY r.id`, kind))
-        .map(r => ({ ...r, detail: r.text + (kind === "hold" ? ". Put the hold on in GymMaster, then tick Hold put on." : ". Call first: a hold or a cheaper plan may keep them. If not, cancel in GymMaster and tick Cancelled.") })));
+        .map(r => ({ ...r, detail: kind === "delete" ? "Asked to delete their M2 account from the app. Their app password, sign-in and Strava link are already gone. If they're on a membership, call about cancelling first. Then email them to confirm it's done and tick Done." : r.text + (kind === "hold" ? ". Put the hold on in GymMaster, then tick Hold put on." : ". Call first: a hold or a cheaper plan may keep them. If not, cancel in GymMaster and tick Cancelled.") })));
     // Holds finishing in the next 3 days: welcome them back.
     push("hold_ending", (await all(`SELECT m.id member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, h.ends, h.reason
                                     FROM gm_holds h JOIN members m ON m.id = h.member_id
@@ -997,8 +998,8 @@ async function recordOutcome(env, who, can, b) {
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`)
       .bind(kind, memberId, leadId, JOBS[kind].owner, who.id, nzToday, outcome, note, who.id));
   }
-  if (memberId && (kind === "app_hold" || kind === "app_cancel") && outcome !== "call_back" && outcome !== "no_answer")
-    stmts.push(db.prepare("UPDATE app_requests SET done_at = datetime('now'), done_by = ? WHERE member_id = ? AND kind = ? AND done_at IS NULL").bind(who.id, memberId, kind === "app_hold" ? "hold" : "cancel"));
+  if (memberId && (kind === "app_hold" || kind === "app_cancel" || kind === "app_delete") && outcome !== "call_back" && outcome !== "no_answer")
+    stmts.push(db.prepare("UPDATE app_requests SET done_at = datetime('now'), done_by = ? WHERE member_id = ? AND kind = ? AND done_at IS NULL").bind(who.id, memberId, kind === "app_hold" ? "hold" : kind === "app_delete" ? "delete" : "cancel"));
   if (leadId) {
     const stage = { joined: "joined", not_interested: "lost", joining_at_desk: "trial" }[outcome] || "contacted";
     stmts.push(db.prepare(`UPDATE leads SET stage = CASE WHEN stage IN ('joined','lost') THEN stage ELSE ? END,

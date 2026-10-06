@@ -2192,9 +2192,9 @@ async function mailReception(subject,body){if(REQ_BUSY)return;const kind=/delete
  try{r=await api({action:'request',session:S.doorSess,kind,text:body})}catch(e){}REQ_BUSY=false;
  if(r&&r.signin)return signOut();
  if(!r||!r.ok){if(r&&r.message){after(()=>toast(r.message));return}return mailTo(subject,body)}
- if(kind==='delete'){after(()=>openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Request sent<span class="od">.</span></h2><p class="muted" style="margin-top:10px">Reception will delete your app account and data and confirm by email, usually within 2 working days. If you have a membership, they'll check with you about cancelling it first.</p>`,`<button class="btn b-dark b-full" onclick="signOut()">Sign out of this phone</button>`));return}
+ if(kind==='delete'){after(()=>{try{Object.keys(localStorage).filter(k=>k.startsWith(LSP)).forEach(k=>localStorage.removeItem(k))}catch(e){}S.doorSess=null;openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Account deleted<span class="od">.</span></h2><p class="muted" style="margin-top:10px">Your app account is deleted and you're signed out. Reception will remove the rest of your M2 account and email you to confirm, usually within 2 working days.</p>`,`<button class="btn b-dark b-full" onclick="location.reload()">Done</button>`)});return}
  after(()=>toast(kind==='upgrade'?"Sent. Tay or Tim will be in touch":"Sent to Tay and Tim. Thanks"))}
-function reqDelete(){openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Delete my account<span class="od">.</span></h2><p class="muted" style="margin-top:10px">We'll remove your app data and close your M2 account. If you still have a membership, we'll talk you through cancelling it first. This goes to reception.</p>`,`<button class="btn b-dark b-full" onclick="mailReception('Please delete my M2 account','Hi team, please delete my M2 app data and account.')">Send the request</button>`)}
+function reqDelete(){openSheet(`<span class="eb">Your account</span><h2 style="margin-top:8px">Delete my account<span class="od">.</span></h2><p class="muted" style="margin-top:10px">This deletes your M2 app account straight away: your app password and sign-in, and your Strava link and the activities we hold. You'll be signed out of this phone.</p><p class="muted" style="margin-top:10px">Reception then removes the rest of your M2 account and emails you once it's done. If you're on a membership, they'll check with you about cancelling it first, as deleting the app doesn't cancel your membership.</p>`,`<button class="btn b-dark b-full" onclick="mailReception('Please delete my M2 account','Please delete my M2 app data and account.')">Delete my account</button><button class="btn b-ghost b-full" onclick="closeSheet()">Keep my account</button>`)}
 function soon(what,txt){openSheet(`<span class="eb">Coming soon</span><h2 style="margin-top:8px">${what}<span class="od">.</span></h2><p class="muted" style="margin-top:10px">${txt||"We're still connecting this part of the app. It'll switch on here as soon as it's ready."}</p>`,`<button class="btn b-dark b-full" onclick="closeSheet()">Got it</button>`)}
 if(LIVE){
  const _book=book,_cancel=cancelBk,_leave=leaveWait,_cap=capOf;
@@ -2246,7 +2246,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-05a';
+const APP_VER='2026-10-06a';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);

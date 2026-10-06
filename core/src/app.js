@@ -349,7 +349,16 @@ export function makeApp(L) {
     await run(env, "INSERT INTO activity(member_id, kind, detail) VALUES (?, 'app', ?)", s.m, KINDS[kind] + " from the app" + (text ? ": " + text.slice(0, 300) : ""));
     const to = (await all(env, "SELECT id FROM staff WHERE active = 1 AND role IN ('owner', 'manager')")).map(r => r.id);
     if (P) await P.toStaff(env, to, { title: KINDS[kind] + ": " + [m.first_name, m.last_name].filter(Boolean).join(" "), body: (text || "Sent from the M2 app.").slice(0, 140), url: "/#app", tag: "app-req" }).catch(() => {});
-    return { ok: true };
+    if (kind === "delete") await deleteAppData(env, s, b);
+    return { ok: true, deleted: kind === "delete" };
+  }
+  // Account deletion from the app: the app side goes straight away (password, sign-in tokens, Strava link and its
+  // activities); the member record and any membership go to reception on Today, since a contract may need cancelling first.
+  async function deleteAppData(env, s, b) {
+    await run(env, "DELETE FROM member_logins WHERE member_id = ?", s.m).catch(() => {});
+    await run(env, "DELETE FROM app_tokens WHERE member_id = ?", s.m).catch(() => {});
+    await forward(env, { action: "strava_off", session: b.session }).catch(() => {});
+    await run(env, "INSERT INTO activity(member_id, kind, detail) VALUES (?, 'app', ?)", s.m, "App account deleted from the app: password, sign-in and Strava link removed. Member record and membership left for reception.");
   }
 
 
