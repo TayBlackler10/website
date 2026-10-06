@@ -107,7 +107,7 @@ export function makeHub(L) {
     let bookingId = null;
     const mine = await gmCall(env, "v2", "/member/bookings", { member: mid });
     const list = [].concat(mine.result?.classbookings || [], mine.result?.classwaitlists || []);
-    const hit = list.find(x => [x.bookingid, x.classid, x.class_id, x.sessionid, x.booking_id, x.classbookingid].map(String).includes(String(classId)));
+    const hit = list.find(x => [x.parentid, x.bookingid, x.classid, x.class_id, x.sessionid, x.booking_id, x.classbookingid].map(String).includes(String(classId)));   // parentid = the class on the timetable
     if (hit) bookingId = hit.id ?? hit.booking_id ?? hit.bookingid;
     if (!bookingId) bookingId = b.booking_id;
     if (!bookingId) return { ok: false, error: "Couldn't find their booking in GymMaster." };
