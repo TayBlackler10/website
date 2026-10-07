@@ -1132,6 +1132,14 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
             if (free) fbq('track', 'StartTrial', {content_name: chosen.name, value: 0, currency: 'NZD'});
           } } catch(e){}
           try { if (window.gtag) gtag('event', 'sign_up', {method: 'website', membership: chosen.name}); } catch(e){}
+          // Paid sign-ups (5 Days for $5, memberships) are purchases, so GA4 and Meta can see which ads bring paying people.
+          // Same id on both so Meta can match it to the server event later, and a reload can't count it twice.
+          if (!free) {
+            var txn = 'join-' + (d.memberid || Date.now()) + '-' + chosen.id;
+            var item = {item_id: String(chosen.id), item_name: chosen.name, item_category: /day|trial|pass/i.test(chosen.name) ? 'Trial' : 'Membership', price: chosen.priceValue, quantity: 1};
+            try { if (window.gtag) gtag('event', 'purchase', {transaction_id: txn, value: chosen.priceValue, currency: 'NZD', coupon: promoCode || undefined, items: [item]}); } catch(e){}
+            try { if (window.fbq) fbq('track', 'Purchase', {value: chosen.priceValue, currency: 'NZD', content_name: chosen.name, content_ids: [String(chosen.id)], content_type: 'product'}, {eventID: txn}); } catch(e){}
+          }
           finish(payload.firstname, free, d.converted);
           return;
         }
@@ -1207,7 +1215,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       });
     }
     if (ptOn && !KIOSK) {
-      var ptUrl = '/free-pt.html?' + new URLSearchParams({name: (val('firstname') + ' ' + val('surname')).trim(), email: val('email'), phone: formatPhone(val('phone')), utm_source: 'join'}).toString();
+      var ptUrl = '/free-pt.html?' + new URLSearchParams({name: (val('firstname') + ' ' + val('surname')).trim(), email: val('email'), phone: formatPhone(val('phone')), src: 'join'}).toString();
       $('ptBtn').href = ptUrl;
       $('ptWrap').hidden = false;
     }

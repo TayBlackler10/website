@@ -1162,7 +1162,7 @@ function passNow(){if(S.tier!=='trial')return null;return S.pass||(M2_API?null:{
 function passLeft(p){if(!p)return '';if(p.visitsLeft!=null)return p.visitsLeft+(p.visitsLeft===1?' visit':' visits')+' left';if(p.left!=null)return p.left<=1?'Last day':p.left+' days left';return ''}
 function passLast(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=1)||(p.left!=null&&p.left<=1))}
 function passSoon(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=3)||(p.left!=null&&p.left<=3))}
-function joinURL(){return 'https://m2club.co.nz/join.html?'+new URLSearchParams({first:MEMBER.first,last:MEMBER.last,email:MEMBER.email||'',phone:MEMBER.phone||'',utm_source:'app'}).toString()}
+function joinURL(){return 'https://m2club.co.nz/join.html?'+new URLSearchParams({first:MEMBER.first,last:MEMBER.last,email:MEMBER.email||'',phone:MEMBER.phone||'',src:'app'}).toString()}
 function passLabel(p){return p.kind==='trial'?'Trial':titleCase(p.name)}
 function renderPass(){const p=passNow(),el=$('hPass'),sl=$('trialSlot');if(!el)return;
  if(S.tier==='trial')TIERS.trial.n=p?titleCase(p.name):'Trial';
@@ -2246,7 +2246,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-06a';
+const APP_VER='2026-10-08a';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
