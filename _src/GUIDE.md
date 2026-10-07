@@ -5,6 +5,13 @@ Styles: `assets/css/m2.css` (read it, use only its classes; add nothing new unle
 and if you must, use a short inline `style=""`). Script: `assets/js/m2.js` (handles menu, reveal
 animations, background videos, campaign date switching, tracking, Web3Forms submit).
 
+## Never edit the built pages directly
+The .html files in the site root are generated. Any change made straight to one of them is
+wiped the next time anyone runs `python3 tools/build.py`. Make every change in `_src/pages/`
+(or the head/footer in `tools/build.py`), then rebuild. Before committing, run the build and
+check `git status`: if a built page you didn't mean to touch shows as changed, the sources
+have drifted from the live site, so fix the source first.
+
 ## How a page is made
 Write ONE file: `_src/pages/<name>.html`. It starts with a JSON header, then the body HTML
 (everything between the site header and footer; the build adds head, header, menu, footer,
