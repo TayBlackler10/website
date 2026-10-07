@@ -1158,7 +1158,7 @@ const tier=()=>TIERS[S.tier]||TIERS.perform;
 /* Trials and limited passes: Perform access for as long as they run. Set TRIAL_OFFER to show a join offer on the last day */
 const TRIAL_OFFER='';
 const titleCase=x=>String(x).toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase());
-function passNow(){if(S.tier!=='trial')return null;return S.pass||(M2_API?null:{kind:'trial',name:'Free 3 Day Trial',left:2,demo:1})}
+function passNow(){if(S.tier!=='trial')return null;return S.pass||(M2_API?null:{kind:'trial',name:'5 Days for $5',left:2,demo:1})}
 function passLeft(p){if(!p)return '';if(p.visitsLeft!=null)return p.visitsLeft+(p.visitsLeft===1?' visit':' visits')+' left';if(p.left!=null)return p.left<=1?'Last day':p.left+' days left';return ''}
 function passLast(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=1)||(p.left!=null&&p.left<=1))}
 function passSoon(p){return !!p&&((p.visitsLeft!=null&&p.visitsLeft<=3)||(p.left!=null&&p.left<=3))}

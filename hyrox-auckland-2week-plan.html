@@ -253,7 +253,7 @@
 /* =========================================================================
    M2 // HYROX AUCKLAND 2-WEEK KICKSTART
    Static beginner program + local tracking. All data stored on-device via
-   localStorage — nothing leaves the phone, no personal data collected here.
+   localStorage: nothing leaves the phone, no personal data collected here.
 ========================================================================= */
 
 function S(period,title,detail,tag){ return {period,title,detail,tag}; }
@@ -263,20 +263,20 @@ const WEEK2_LABEL = 'Apply It & Race Pace';
 
 const WEEK1_DAYS = [
   { name:'Day 1', sub:'Monday', sessions:[
-      S('AM','Easy Run — 20 min','Conversational pace. This is just to open the legs, not a fitness test.','aerobic'),
-      S('PM','Station Walkthrough — All 8 Stations','Technique only, light load, no clock: SkiErg 200m, Sled Push 10m, Sled Pull 10m, 10 Burpee Broad Jumps, Row 200m, Farmers Carry 2x20m, Sandbag Lunge 10m (empty or very light bag), 15 Wall Balls. The goal is just to feel each movement once.','strength') ]},
+      S('AM','Easy Run: 20 min','Conversational pace. This is just to open the legs, not a fitness test.','aerobic'),
+      S('PM','Station Walkthrough: All 8 Stations','Technique only, light load, no clock: SkiErg 200m, Sled Push 10m, Sled Pull 10m, 10 Burpee Broad Jumps, Row 200m, Farmers Carry 2x20m, Sandbag Lunge 10m (empty or very light bag), 15 Wall Balls. The goal is just to feel each movement once.','strength') ]},
   { name:'Day 2', sub:'Tuesday', sessions:[
       S('AM','Rest or Easy Walk','Legs loose, nothing structured.','rest'),
       S('PM','Strength Fundamentals','3 rounds: 10 bodyweight or goblet squats, 10 walking lunges (bodyweight), 10 push-ups (any variation), 10 kettlebell or dumbbell rows, 30 sec plank. Moderate effort, focus on form.','strength') ]},
   { name:'Day 3', sub:'Wednesday', sessions:[
-      S('AM','Easy Run — 20 min','Easy, comfortable pace.','aerobic'),
+      S('AM','Easy Run: 20 min','Easy, comfortable pace.','aerobic'),
       S('PM','Engine Intervals','On Row, Ski Erg or Bike (whichever is free): 30 sec on at moderate effort, 30 sec easy, repeat 10 times. Builds confidence with the machines you'+"'"+'ll use on race day.','aerobic') ]},
   { name:'Day 4', sub:'Thursday', sessions:[
       S('AM','Rest','Full rest day.','rest'),
-      S('PM','Mobility — 15 min','Hips, ankles and shoulders. Nothing intense, just movement.','rest') ]},
+      S('PM','Mobility: 15 min','Hips, ankles and shoulders. Nothing intense, just movement.','rest') ]},
   { name:'Day 5', sub:'Friday', sessions:[
-      S('AM','Easy Run — 20 min','Easy pace, relaxed effort.','aerobic'),
-      S('PM','Weak-Point Primer — Burpees & Lunges','3 rounds: 10 Burpee Broad Jumps, 20m Sandbag or Backpack Lunge. These two trip up almost every beginner, so they get extra attention early. Technique over speed.','weakness') ]},
+      S('AM','Easy Run: 20 min','Easy pace, relaxed effort.','aerobic'),
+      S('PM','Weak-Point Primer: Burpees & Lunges','3 rounds: 10 Burpee Broad Jumps, 20m Sandbag or Backpack Lunge. These two trip up almost every beginner, so they get extra attention early. Technique over speed.','weakness') ]},
   { name:'Day 6', sub:'Saturday', sessions:[
       S('ALL','HYROX Saturdays (Free Class)','Join M2\'s free HYROX-format class, open to everyone. Book your spot via the Technogym app before you come in.','race') ]},
   { name:'Day 7', sub:'Sunday', sessions:[
@@ -286,17 +286,17 @@ const WEEK1_DAYS = [
 
 const WEEK2_DAYS = [
   { name:'Day 8', sub:'Monday', sessions:[
-      S('AM','Easy Run — 20 min','Easy pace, stay relaxed.','aerobic'),
-      S('PM','Mini Simulation Prep — 4 Rounds','4 rounds of: 200m run + 1 station (rotate through Ski, Sled Push, Row, Wall Balls across the 4 rounds). Moderate effort, this is a step up from Week 1\'s technique-only pace.','race') ]},
+      S('AM','Easy Run: 20 min','Easy pace, stay relaxed.','aerobic'),
+      S('PM','Mini Simulation Prep: 4 Rounds','4 rounds of: 200m run + 1 station (rotate through Ski, Sled Push, Row, Wall Balls across the 4 rounds). Moderate effort, this is a step up from Week 1\'s technique-only pace.','race') ]},
   { name:'Day 9', sub:'Tuesday', sessions:[
       S('AM','Rest or Easy Walk','Keep it light.','rest'),
       S('PM','Strength & Grip','4x30m Farmers Carry (heavier than last week if you can), 4x20m Sandbag or Backpack Lunge, core finisher (3x30 sec plank or dead bug).','weakness') ]},
   { name:'Day 10', sub:'Wednesday', sessions:[
-      S('AM','Threshold Touch — 20 min','10 min easy, then 5x1 min at a faster but controlled pace with 1 min easy between, 5 min cool-down.','aerobic'),
-      S('PM','Rest / Mobility — 15 min','Light stretch, hips and shoulders.','rest') ]},
+      S('AM','Threshold Touch: 20 min','10 min easy, then 5x1 min at a faster but controlled pace with 1 min easy between, 5 min cool-down.','aerobic'),
+      S('PM','Rest / Mobility: 15 min','Light stretch, hips and shoulders.','rest') ]},
   { name:'Day 11', sub:'Thursday', sessions:[
-      S('AM','Warm-Up — 15 min','Dynamic warm-up, easy jog, activation drills.','strength'),
-      S('MID','Mini HYROX Simulation — 4x(400m + Station)','Run 400m into a station, four times through, cycling Sled Push, Burpee Broad Jumps, Row and Sandbag Lunge. Race-day effort, this is your benchmark session for the block.','race') ]},
+      S('AM','Warm-Up: 15 min','Dynamic warm-up, easy jog, activation drills.','strength'),
+      S('MID','Mini HYROX Simulation: 4x(400m + Station)','Run 400m into a station, four times through, cycling Sled Push, Burpee Broad Jumps, Row and Sandbag Lunge. Race-day effort, this is your benchmark session for the block.','race') ]},
   { name:'Day 12', sub:'Friday', sessions:[
       S('AM','Rest','Full rest ahead of the weekend.','rest'),
       S('PM','Rest','Full rest, every week, no exceptions.','rest') ]},
@@ -304,7 +304,7 @@ const WEEK2_DAYS = [
       S('ALL','HYROX Saturdays (Free Class)','Second time around, put what you\'ve learned into the group setting. Book via the Technogym app.','race') ]},
   { name:'Day 14', sub:'Sunday', sessions:[
       S('AM','Free HYROX Technique Session','Book via the Technogym app, straight after Saturday\'s class.','strength'),
-      S('PM','Shakeout + Reflect — 15 min','Easy walk or jog. Note which station felt hardest, that\'s exactly what Dave or Bekka will want to know if you take your training further with them.','rest') ]},
+      S('PM','Shakeout + Reflect: 15 min','Easy walk or jog. Note which station felt hardest, that\'s exactly what Dave or Bekka will want to know if you take your training further with them.','rest') ]},
 ];
 
 const PROGRAM = [
