@@ -114,6 +114,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   .selfie .snap{background:var(--black);color:var(--lime);border:0}
   .selfie .skip{background:none;border:0;color:var(--muted);padding:9px 4px!important;font-weight:500!important}
   .selfie.has .skip{display:none}
+  .selfie.err{box-shadow:0 0 0 2px #C0392B inset}
+  .selfie.err .tx p{color:#C0392B}
   .fpbox{background:var(--soft);border-radius:14px;padding:18px 18px 4px;margin-bottom:6px}
   .fpbox p{font-size:15px;margin-bottom:12px;color:var(--body)}
   .fpbox ul{margin:0 0 14px 18px;font-size:14px;color:var(--body)}
@@ -910,6 +912,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       if (!good && ok) { ok = false; first = f; }
     });
     if (i === 0 && ok && !chosen) ok = false;
+    // Reception iPad: a photo is required before moving on
+    if (KIOSK && steps[i].contains($('selfie')) && !selfieData) {
+      $('selfie').classList.add('err');
+      $('selfieText').textContent = 'Please take a quick photo to continue. It goes on your M2 profile so the team knows you at the desk.';
+      if (ok) { ok = false; first = $('selfie'); }
+    }
     if (first) {
       first.scrollIntoView({behavior:'smooth', block:'center'});
       var inp = first.querySelector('input:not([type=radio]):not([type=checkbox])');
@@ -937,6 +945,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   var selfieData = '', selfieSkipped = false;
   var touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
   if (!touch) { $('selfieBtn').textContent = 'Add a photo'; $('selfieTitle').textContent = 'Add a photo for your profile'; }
+  // Reception iPad: photo is compulsory, no skip
+  if (KIOSK) {
+    $('selfieSkip').hidden = true;
+    $('selfieText').textContent = 'So the team knows your face at the desk. Needed to finish signing up.';
+  }
   $('selfieBtn').addEventListener('click', function(){ $('selfieInput').click(); });
   $('selfieSkip').addEventListener('click', function(){
     selfieSkipped = true; selfieData = '';
@@ -954,12 +967,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       selfieData = c.toDataURL('image/jpeg', 0.85);
       URL.revokeObjectURL(url);
       $('selfiePh').style.backgroundImage = 'url(' + selfieData + ')'; $('selfiePh').innerHTML = '';
-      $('selfie').classList.add('has');
+      $('selfie').classList.add('has'); $('selfie').classList.remove('err');
       $('selfieTitle').textContent = 'Looking good';
       $('selfieText').textContent = 'This goes on your M2 profile.';
       $('selfieBtn').textContent = 'Retake';
     };
-    img.onerror = function(){ $('selfieText').textContent = 'That photo didn\'t load. Try again, or skip it.'; };
+    img.onerror = function(){ $('selfieText').textContent = KIOSK ? 'That photo didn\'t load. Please try again.' : 'That photo didn\'t load. Try again, or skip it.'; };
     img.src = url;
     this.value = '';
   });
