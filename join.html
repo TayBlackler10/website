@@ -397,10 +397,10 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
               <div class="ph" id="selfiePh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
               <div class="tx">
                 <b id="selfieTitle">Take a selfie for your profile</b>
-                <p id="selfieText">So the team knows your face at the desk. Optional, you can skip it.</p>
+                <p id="selfieText">So the team knows your face at the desk. Needed to finish signing up.</p>
                 <div class="acts">
                   <button type="button" class="snap" id="selfieBtn">Take a selfie</button>
-                  <button type="button" class="skip" id="selfieSkip">Skip</button>
+                  <button type="button" class="skip" id="selfieSkip" hidden>Skip</button>
                 </div>
               </div>
               <input type="file" id="selfieInput" accept="image/*" capture="user" hidden>
@@ -922,8 +922,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       if (!good && ok) { ok = false; first = f; }
     });
     if (i === 0 && ok && !chosen) ok = false;
-    // Reception iPad: a photo is required before moving on
-    if (KIOSK && steps[i].contains($('selfie')) && !selfieData) {
+    // A photo is required before moving on (online and on the reception iPad)
+    if (steps[i].contains($('selfie')) && !selfieData) {
       $('selfie').classList.add('err');
       $('selfieText').textContent = 'Please take a quick photo to continue. It goes on your M2 profile so the team knows you at the desk.';
       if (ok) { ok = false; first = $('selfie'); }
@@ -956,8 +956,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   var selfieData = '', selfieSkipped = false;
   var touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
   if (!touch) { $('selfieBtn').textContent = 'Add a photo'; $('selfieTitle').textContent = 'Add a photo for your profile'; }
-  // Reception iPad: photo is compulsory, no skip
-  if (KIOSK) {
+  // Photo is compulsory for everyone, no skip
+  if (true) {
     $('selfieSkip').hidden = true;
     $('selfieText').textContent = 'So the team knows your face at the desk. Needed to finish signing up.';
   }
@@ -983,7 +983,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       $('selfieText').textContent = 'This goes on your M2 profile.';
       $('selfieBtn').textContent = 'Retake';
     };
-    img.onerror = function(){ $('selfieText').textContent = KIOSK ? 'That photo didn\'t load. Please try again.' : 'That photo didn\'t load. Try again, or skip it.'; };
+    img.onerror = function(){ $('selfieText').textContent = 'That photo didn\'t load. Please try again.'; };
     img.src = url;
     this.value = '';
   });
