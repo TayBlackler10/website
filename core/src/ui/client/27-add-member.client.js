@@ -15,10 +15,13 @@ var STEP=1,HQ={},LASTADD=null;
 function goStep(n){STEP=n;$$('section[data-view="add"] [data-step]').forEach(function(x){x.hidden=+x.dataset.step!==n});
  $$("#aSteps li").forEach(function(li){var k=+li.dataset.s;li.className=k===n?"on":k<n?"done":""});
  if(n===3)setTimeout(sizeSig,50);window.scrollTo(0,0);drawSum()}
-var GORDER=["perform","classes","daily","recovery","transporter","pif","pool","other","passport","trial"];
-var GNAME={perform:"M2 Perform",classes:"M2 Classes",daily:"M2 Daily",recovery:"M2 Recovery",transporter:"Transporter",pif:"Perform, paid in full",pool:"Pool",other:"Other",passport:"Fitness Passport",trial:"Trials and passes"};
+var GORDER=["perform","classes","daily","recovery","transporter","pif","daily_pif","corporate","pool","other","passport","trial"];
+var GNAME={perform:"M2 Perform",classes:"M2 Classes",daily:"M2 Daily",recovery:"M2 Recovery",transporter:"Transporter",pif:"Perform, paid in full",daily_pif:"Daily, paid in full",corporate:"Corporate",pool:"Pool",other:"Other",passport:"Fitness Passport",trial:"Trials and passes"};
 var PERW={weekly:1,fortnightly:0.5,monthly:12/52,quarterly:4/52};
-function grp(p){return p.family==="perform"&&p.frequency==="upfront"?"pif":p.family}
+// Corporate deals get their own card. Paid in full gets its own card per membership (Perform, Daily).
+function grp(p){if(p.cat&&p.cat.corporate)return "corporate";if(p.frequency==="upfront"&&p.family!=="trial"&&p.family!=="passport")return p.family==="perform"?"pif":p.family+"_pif";return p.family}
+function isPif(k){return k==="pif"||/_pif$/.test(k)}
+function listAll(k){return k==="trial"||k==="passport"||k==="corporate"||isPif(k)}
 function pprice(p){if(p.cat&&p.cat.price!=null)return +p.cat.price;var n=parseFloat(String(p.price||"").replace(/[^0-9.]/g,""));return isNaN(n)?null:n}
 function pweek(p){var v=pprice(p);return v!=null&&PERW[p.frequency]?v*PERW[p.frequency]:null}
 function pname(p){return (p.cat&&p.cat.name)||p.name}
@@ -28,15 +31,15 @@ function drawPlans(){
  var keys=GORDER.filter(function(k){return G[k]}).concat(Object.keys(G).filter(function(k){return GORDER.indexOf(k)<0}));
  $("#mcards").innerHTML=keys.map(function(k){
   var L=G[k],small=k==="trial"||k==="passport";
-  var cand=L.filter(function(p){return p.frequency==="upfront"||p.frequency==="yearly"||p.frequency==="quarterly"||!!p.flexi===fx});if(!cand.length)cand=L;
+  var cand=listAll(k)?L:L.filter(function(p){return p.frequency==="upfront"||p.frequency==="yearly"||p.frequency==="quarterly"||!!p.flexi===fx});if(!cand.length)cand=L;
   var wk=cand.map(pweek).filter(function(x){return x!=null}),lo=wk.length?Math.min.apply(null,wk):null,c=(cand[0]&&cand[0].cat)||{};
-  var price=k==="passport"?'<div class="pr" style="font-size:16px">Paid by Fitness Passport</div>':k==="trial"?'<div class="pr">'+cand.length+' <small>options</small></div>':k==="pif"?'<div class="pr">'+money(pprice(cand[0]))+' <small>once</small></div>':lo!=null?'<div class="pr">$'+lo.toFixed(2).replace(/\.00$/,"")+'<small> a week</small></div>':"";
-  var term=k==="pif"?"12 months, paid once":k==="trial"?"Short trials and visit passes":k==="passport"?"Their Passport ID is compulsory":fx?"Flexi: 30 days' notice":c.lock_in_months?c.lock_in_months+" month lock-in":"No lock-in";
-  var inc=k==="trial"||k==="passport"?[]:["Gym floor"].concat(c.includes_classes?["Classes"]:[]).concat(c.includes_recovery?["Sauna, ice bath and pool"]:[]);
+  var price=k==="passport"?'<div class="pr" style="font-size:16px">Paid by Fitness Passport</div>':k==="trial"?'<div class="pr">'+cand.length+' <small>options</small></div>':isPif(k)?'<div class="pr">'+money(pprice(cand[0]))+' <small>once</small></div>':k==="corporate"?'<div class="pr">'+cand.length+' <small>'+(cand.length===1?"deal":"deals")+'</small></div>':lo!=null?'<div class="pr">$'+lo.toFixed(2).replace(/\.00$/,"")+'<small> a week</small></div>':"";
+  var term=isPif(k)?"12 months, paid once":k==="corporate"?"10+ people from one company. Never sold online":k==="trial"?"Short trials and visit passes":k==="passport"?"Their Passport ID is compulsory":fx?"Flexi: 30 days' notice":c.lock_in_months?c.lock_in_months+" month lock-in":"No lock-in";
+  var inc=k==="trial"||k==="passport"||k==="corporate"?[]:["Gym floor"].concat(c.includes_classes?["Classes"]:[]).concat(c.includes_recovery?["Sauna, ice bath and pool"]:[]);
   return '<button type="button" class="mc'+(small?" small":"")+(pick.fam===k?" on":"")+'" data-grp="'+k+'">'+(k==="perform"?'<span class="pop">Most popular</span>':"")+'<span class="nm">'+esc(GNAME[k]||k)+'</span>'+price+'<span class="tm">'+esc(term)+'</span>'+(inc.length?'<ul>'+inc.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ul>':"")+(c.blurb&&!small?'<span class="tm">'+esc(c.blurb)+'</span>':"")+'</button>'}).join("");
- var L=G[pick.fam]||[],list=L.filter(function(p){return pick.fam==="trial"||pick.fam==="passport"||pick.fam==="pif"||p.frequency==="quarterly"||!!p.flexi===fx});
+ var L=G[pick.fam]||[],list=L.filter(function(p){return listAll(pick.fam)||p.frequency==="quarterly"||!!p.flexi===fx});
  $("#mfreq").hidden=!list.length;
- $("#mfreq").innerHTML=list.map(function(p){var lbl=pick.fam==="trial"||pick.fam==="passport"||pick.fam==="pif"?pname(p):(FREQN[p.frequency]||p.frequency);var pr=pprice(p);
+ $("#mfreq").innerHTML=list.map(function(p){var lbl=listAll(pick.fam)?pname(p):(FREQN[p.frequency]||p.frequency);var pr=pprice(p);
   return '<button type="button" class="chip'+(sel&&sel.id===p.id?" on":"")+'" data-p="'+p.id+'">'+esc(lbl)+(pr!=null&&pick.fam!=="passport"?" · "+money(pr):"")+'</button>'}).join("");
  drawSum();
 }
@@ -69,6 +72,7 @@ document.addEventListener("click",function(e){
    if(need.length){$("#s2Err").textContent="Still needed: "+need.join(", ")+".";return}
    if(!PHOTO&&!$("#aNoPhoto").checked){$("#s2Err").textContent="Take their photo, or tick \"Not today\".";return}
    if(($("#passport").checked||sel.family==="passport")&&!$("#fpid").value.trim()){$("#s2Err").textContent="Add their Fitness Passport ID. Passport can't pay us for their visits without it.";return}
+   if($("#passport").checked&&sel.cat&&sel.cat.corporate){$("#s2Err").textContent="Fitness Passport members can't get a corporate deal. Go back and pick Fitness Passport.";return}
    $("#s2Err").textContent=""}
   if(to===5&&!$("#billDone").checked&&!$("#billCard").hidden&&!$("#billOpen").hidden&&!n.dataset.warned){n.dataset.warned="1";n.textContent="Next anyway (bank details stay on Today)";return}
   goStep(to);return}
