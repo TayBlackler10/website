@@ -28,12 +28,15 @@
 //                          and their ID go to the Core, which puts "type the ID into GymMaster"
 //                          on reception's Today list.
 // Secret:   INTAKE_KEY     same value as M2 Core's INTAKE_KEY
+// Secret:   META_CAPI_TOKEN Conversions API access token for the M2 Pixel (Events Manager > Settings >
+//                          Conversions API > Generate access token). Unset = server purchases off.
+// Vars:     META_PIXEL_ID  default 1173983798207057.  META_TEST_CODE  optional, Events Manager test code.
 
 const CACHE_SECONDS = 300;
 const recent = new Map(); // ip -> [timestamps], simple per-isolate rate limit
 
 export default {
-  async fetch(req, env) {
+  async fetch(req, env, ctx) {
     const url = new URL(req.url);
     const origin = req.headers.get("Origin") || "";
     const cors = corsHeaders(origin, env);
@@ -54,7 +57,15 @@ export default {
         if (!cors["Access-Control-Allow-Origin"]) return out({ ok: false, error: "Not allowed" }, cors, 0, 403);
         const ip = req.headers.get("CF-Connecting-IP") || "?";
         if (limited(ip)) return out({ ok: false, error: "Too many attempts. Please wait a few minutes and try again." }, cors, 0, 429);
-        return out(await signup(env, await req.json()), cors);
+        const body = await req.json();
+        const r = await signup(env, body);
+        // Paid sign-ups also go to Meta from here (Conversions API), so sales still count when the
+        // browser blocks the Pixel. Same event id as the Pixel's Purchase, so Meta counts it once.
+        if (r && r.ok && r.paid && !r.passport && r.memberid && env.META_CAPI_TOKEN) {
+          const job = metaPurchase(env, req, body, r).catch(e => console.log("meta capi", String(e)));
+          if (ctx && ctx.waitUntil) ctx.waitUntil(job); else await job;
+        }
+        return out(r, cors);
       }
       // One-time copy of GymMaster's email automations into the Core, sent from a signed-in
       // GymMaster staff page. The Core checks a one-time code the owners create.
@@ -267,7 +278,7 @@ async function signup(env, b) {
     const r = await core(env, { kind: "online_join", ...coreBase, lead_id: started.lead_id, price: priceNum, paid: m.priceValue > 0, dob: f.dob, gender: f.gender,
       suburb: f.addresssuburb, fp_id: isPassport ? fpId : null, agreed: !!b.agreed, signature: b.signature, photo: b.photo, password: f.password });
     if (!r.ok) return { ok: false, exists: !!r.exists, error: r.error || "Something went wrong. Please try again or pop in to reception." };
-    return { ok: true, memberid: r.member_id, paid: m.priceValue > 0, membership: m.name, code: code || null, passport: isPassport, fpSaved: isPassport, photoSaved: !!b.photo, warnings: [] };
+    return { ok: true, memberid: r.member_id, paid: m.priceValue > 0, membership: m.name, code: code || null, passport: isPassport, fpSaved: isPassport, photoSaved: !!b.photo, warnings: [], value: priceNum, membershipTypeId: m.id };
   }
 
   // Already in GymMaster? Trial members joining properly, and past members coming back, keep their
@@ -357,7 +368,7 @@ async function signup(env, b) {
     } catch (e) { /* never fail a signup because the notification didn't send */ }
   }
 
-  return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, passport: isPassport, fpSaved, photoSaved, warnings };
+  return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, passport: isPassport, fpSaved, photoSaved, warnings, value: priceNum, membershipTypeId: m.id };
 }
 
 // Someone already in GymMaster (a trial, a pass, or a past member) joins online.
@@ -424,7 +435,7 @@ async function existingJoin(env, memberid, f, m, b, o) {
     converted: wasTrial ? "trial" : "returning", notes: warnings });
   if (!cr.ok) warnings.push("core: " + (cr.error || "no reply"));
   console.log("existing join ok", memberid, membershipid, warnings);
-  return { ok: true, memberid, membershipid, paid: m.priceValue > 0, membership: m.name, code: o.code || null, passport: o.isPassport,
+  return { ok: true, memberid, membershipid, paid: m.priceValue > 0, membership: m.name, code: o.code || null, passport: o.isPassport, value: o.priceNum, membershipTypeId: m.id,
            fpSaved: o.isPassport && cr.ok, photoSaved, converted: wasTrial ? "trial" : "returning", warnings };
 }
 
@@ -547,4 +558,62 @@ async function chase(env, offset) {
   }
   const next = offset + slice.length;
   return { ok: true, today, cutoff, total: recentJoins.length, checked: slice.length, next_offset: next < recentJoins.length ? next : null, items };
+}
+
+
+/* ---------------- Meta Conversions API ---------------- */
+
+async function sha256(v) {
+  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v));
+  return [...new Uint8Array(d)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+function nzPhone(p) {
+  let d = String(p || "").replace(/\D/g, "");
+  if (!d) return "";
+  if (d.startsWith("0")) d = "64" + d.slice(1);
+  else if (!d.startsWith("64")) d = "64" + d;
+  return d;
+}
+
+// One Purchase per paid online sign-up. event_id matches the Pixel's eventID on join.html
+// ("join-<member id>-<membership type id>"), so Meta keeps whichever arrives first and drops the other.
+async function metaPurchase(env, req, b, r) {
+  const pixel = env.META_PIXEL_ID || "1173983798207057";
+  const typeId = String(b.membershipId || r.membershipTypeId || "");
+  const norm = v => String(v || "").trim().toLowerCase();
+  const hashed = async v => (v ? [await sha256(v)] : undefined);
+  const phone = nzPhone(b.phone);
+  const fbc = clean(b.fbc) || (clean(b.fbclid) ? "fb.1." + Date.now() + "." + clean(b.fbclid) : "");
+  const user_data = {
+    em: await hashed(norm(b.email)),
+    ph: await hashed(phone),
+    fn: await hashed(norm(b.firstname)),
+    ln: await hashed(norm(b.surname)),
+    ct: await hashed(norm(b.city).replace(/\s+/g, "")),
+    zp: await hashed(norm(b.postcode).replace(/\s+/g, "")),
+    country: await hashed("nz"),
+    external_id: await hashed(String(r.memberid)),
+    client_ip_address: req.headers.get("CF-Connecting-IP") || undefined,
+    client_user_agent: req.headers.get("User-Agent") || undefined,
+    fbc: fbc || undefined,
+    fbp: clean(b.fbp) || undefined
+  };
+  const body = {
+    data: [{
+      event_name: "Purchase",
+      event_time: Math.floor(Date.now() / 1000),
+      event_id: "join-" + r.memberid + "-" + typeId,
+      action_source: "website",
+      event_source_url: clean(b.pageUrl) || "https://m2club.co.nz/join.html",
+      user_data,
+      custom_data: { value: Number(r.value) || 0, currency: "NZD", content_name: r.membership, content_ids: [typeId], content_type: "product" }
+    }]
+  };
+  if (env.META_TEST_CODE) body.test_event_code = env.META_TEST_CODE;
+  const ver = env.META_API_VERSION || "v23.0";
+  const res = await fetch(`https://graph.facebook.com/${ver}/${pixel}/events?access_token=${encodeURIComponent(env.META_CAPI_TOKEN)}`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
+  });
+  if (!res.ok) console.log("meta capi failed", res.status, (await res.text()).slice(0, 300));
 }

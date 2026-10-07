@@ -1069,6 +1069,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); nextBtn.click(); }
   });
 
+  function cookie(n){ try { var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)'); return m ? decodeURIComponent(m[1]) : ''; } catch(e){ return ''; } }
   function formatPhone(p){
     var d = p.replace(/[^\d+]/g,'');
     if (d.indexOf('+64') === 0) d = '0' + d.slice(3);
@@ -1108,6 +1109,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       fpId: chosen._fp ? fpClean(val('fpid')) : '',
       photo: selfieData,
       mate: $('mateField').hidden ? '' : val('mate'),
+      fbp: cookie('_fbp'), fbc: cookie('_fbc'), fbclid: qs.get('fbclid') || attr.fbclid || '',
+      pageUrl: location.origin + location.pathname,
       health: { injury: val('hq_injury') === 'yes', injury_detail: val('hq_injury_detail'), doctor: val('hq_doctor') === 'yes', doctor_detail: val('hq_doctor_detail'), pregnant: val('hq_pregnant') === 'yes' }
     };
     nextBtn.disabled = true; nextBtn.textContent = 'Signing you up...';
