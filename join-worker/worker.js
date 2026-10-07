@@ -12,7 +12,8 @@
 //                              with next_offset until done. Used by the daily reception email.
 //
 // Secrets:  GM_API_KEY     GymMaster "Low Permission API Key" (Settings > Integrations)
-//           GM_STAFF_KEY   GymMaster "High Permission API Key" (only used by /chase)
+//           GM_STAFF_KEY   GymMaster "High Permission API Key" (used by /chase, and to add a membership to
+//                          someone already in GymMaster, like a trial member joining properly)
 //           CHASE_KEY      shared secret the daily email task sends as ?key=
 // Vars:     GM_BASE        https://m2trainingclub.gymmasteronline.com/portal/api
 //           COMPANY_ID     4
@@ -237,6 +238,7 @@ async function signup(env, b) {
   if (missing.length) return { ok: false, error: "Please fill in all the required details." };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) return { ok: false, error: "That email address doesn't look right." };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f.dob)) return { ok: false, error: "Please check your date of birth." };
+  if (ageOn(f.dob, nzToday()) < 18) return { ok: false, under18: true, error: "Sorry, M2 memberships are for adults 18 and over." };
   if (f.password.length < 6) return { ok: false, error: "Your password needs to be at least 6 characters." };
   if (!b.agreed) return { ok: false, error: "Please agree to the terms and conditions." };
   if (isPassport && (fpId.length < 5 || fpId.length > 12)) return { ok: false, error: "Please enter your Fitness Passport ID. It's the number on your Fitness Passport card or in the app." };
@@ -255,6 +257,7 @@ async function signup(env, b) {
   const priceNum = Number(String(m.priceValue ?? "").replace(/[^0-9.]/g, "")) || 0;
   const coreBase = { first: f.firstname, last: f.surname, email: f.email, mobile: f.phonecell, plan_name: m.name, plan_id: m.id, code: code || null,
     source: clean(b.source) || "Online signup", campaign: clean(b.campaign || b.utm_campaign),
+    mate: isPassport ? "" : clean(b.mate).slice(0, 80),
     health: b.health && typeof b.health === "object" ? { injury: !!b.health.injury, injury_detail: clean(b.health.injury_detail).slice(0, 300), doctor: !!b.health.doctor,
                                                          doctor_detail: clean(b.health.doctor_detail).slice(0, 300), pregnant: !!b.health.pregnant } : null };
   const started = await core(env, { kind: "join_start", ...coreBase });
@@ -267,11 +270,11 @@ async function signup(env, b) {
     return { ok: true, memberid: r.member_id, paid: m.priceValue > 0, membership: m.name, code: code || null, passport: isPassport, fpSaved: isPassport, photoSaved: !!b.photo, warnings: [] };
   }
 
-  // Already in GymMaster?
+  // Already in GymMaster? Trial members joining properly, and past members coming back, keep their
+  // record and just get the new membership added. Current members are sent to reception.
   const ex = await gmGet(env, "/v2/member/exists", { email: f.email });
   if (ex && ex.result && ex.result.id) {
-    return { ok: false, exists: true, current: !!ex.result.current,
-      error: "You're already in our system with that email." };
+    return existingJoin(env, Number(ex.result.id), f, m, b, { code, isPassport, fpId, coreBase, started, priceNum });
   }
 
   // Create member + membership
@@ -357,18 +360,100 @@ async function signup(env, b) {
   return { ok: true, memberid, membershipid, paid, membership: m.name, code: code || null, passport: isPassport, fpSaved, photoSaved, warnings };
 }
 
+// Someone already in GymMaster (a trial, a pass, or a past member) joins online.
+// Their identity is checked against the record (date of birth, plus mobile or name) before
+// anything is added, so nobody can put a membership on someone else's account with just an email.
+async function existingJoin(env, memberid, f, m, b, o) {
+  const no = (error, extra = {}) => ({ ok: false, exists: true, error, ...extra });
+  const desk = "You're already in our system with that email. Pop in and see us at reception and we'll get you sorted in a couple of minutes.";
+  if (!env.GM_STAFF_KEY) return no(desk);
+
+  const lg = await staffPost(env, "/v1/login", { memberid: String(memberid) });
+  const token = lg && lg.result && lg.result.token;
+  if (!token) return no(desk);
+
+  // Same person? Date of birth must match, plus the mobile or the full name.
+  const pr = await staffGet(env, "/v1/member/profile", { token });
+  const p = (pr && (pr.result || pr)) || {};
+  const digits = s => String(s || "").replace(/\D/g, "").slice(-8);
+  const low = s => clean(s).toLowerCase();
+  const dobOk = String(p.dob || "").slice(0, 10) === f.dob;
+  const phoneOk = digits(p.phonecell) && digits(p.phonecell) === digits(f.phonecell);
+  const nameOk = low(p.firstname) === low(f.firstname) && low(p.surname) === low(f.surname);
+  if (!dobOk || !(phoneOk || nameOk)) {
+    console.log("existing join: details don't match", memberid, { dobOk, phoneOk, nameOk });
+    return no("You're already in our system with that email, but some of your details don't match what we have. Pop in and see us at reception and we'll sort it.");
+  }
+
+  // Already on a real membership (anything open ended, or ending more than a month away)? Reception handles changes.
+  const today = nzToday(), monthOut = addDays(today, 31);
+  const ms = await staffGet(env, "/v1/member/memberships", { token });
+  const live = (ms.result || []).filter(x => !x.enddate || x.enddate === "Open Ended" || x.enddate >= today);
+  const ongoing = live.filter(x => !x.enddate || x.enddate === "Open Ended" || x.enddate > monthOut);
+  if (ongoing.length) return no("You're already a member with us (" + clean(ongoing[0].name) + "). To change your membership, pop in and see us at reception.", { current: true });
+  const wasTrial = live.length > 0 || (ms.result || []).some(x => /trial|day|pass/i.test(x.name || ""));
+
+  // Add the new membership to their existing record.
+  const add = { token, membershiptypeid: f.membershiptypeid, startdate: today };
+  let res = await staffPost(env, "/v1/memberships", o.code ? { ...add, discount_code: o.code } : add);
+  let codeApplied = !!o.code;
+  if ((res.error || !res.membershipid) && o.code) { res = await staffPost(env, "/v1/memberships", add); codeApplied = false; }
+  if (res.error || !res.membershipid) {
+    console.log("existing join: add membership failed", memberid, res);
+    return no("We couldn't add that membership to your account online. Pop in and see us at reception and we'll do it in a couple of minutes.");
+  }
+  const membershipid = res.membershipid, warnings = [];
+  if (o.code) warnings.push("code " + o.code + (codeApplied ? " sent with the membership, check the price in GymMaster" : " not applied, apply it at reception"));
+
+  const a = await staffPost(env, `/v2/member/membership/${membershipid}/agreement`, { token });
+  if (a.error) warnings.push("agreement: " + a.error);
+  if (b.signature && /^data:image\/png;base64,/.test(b.signature)) {
+    const s = await staffPost(env, "/v2/member/signature", { token, membershipid, file: b.signature, source: "m2club.co.nz online signup" });
+    if (s.error) warnings.push("signature: " + s.error);
+  }
+  let photoSaved = false;
+  if (typeof b.photo === "string" && /^data:image\/(jpeg|png);base64,/.test(b.photo) && b.photo.length < 2_000_000) {
+    const ph = await savePhoto(env, token, b.photo, env.GM_STAFF_KEY);
+    photoSaved = ph.ok;
+    if (!ph.ok) warnings.push("photo: not saved");
+  }
+
+  const cr = await core(env, { kind: "online_join", ...o.coreBase, gm_id: memberid, lead_id: o.started.lead_id, price: o.priceNum, paid: m.priceValue > 0,
+    dob: f.dob, gender: f.gender, suburb: f.addresssuburb, fp_id: o.isPassport ? o.fpId : null, agreed: !!b.agreed, signature: b.signature,
+    photo: typeof b.photo === "string" && /^data:image\/jpeg/.test(b.photo) ? b.photo : null, password: f.password,
+    converted: wasTrial ? "trial" : "returning", notes: warnings });
+  if (!cr.ok) warnings.push("core: " + (cr.error || "no reply"));
+  console.log("existing join ok", memberid, membershipid, warnings);
+  return { ok: true, memberid, membershipid, paid: m.priceValue > 0, membership: m.name, code: o.code || null, passport: o.isPassport,
+           fpSaved: o.isPassport && cr.ok, photoSaved, converted: wasTrial ? "trial" : "returning", warnings };
+}
+
+function ageOn(dob, today) {
+  const [y, mo, d] = dob.split("-").map(Number), [ty, tm, td] = today.split("-").map(Number);
+  return ty - y - (tm < mo || (tm === mo && td < d) ? 1 : 0);
+}
+
+async function staffPost(env, path, fields) {
+  const body = new URLSearchParams({ api_key: env.GM_STAFF_KEY });
+  for (const [k, v] of Object.entries(fields)) if (v !== undefined && v !== null && v !== "") body.set(k, v);
+  const r = await fetch(env.GM_BASE + path, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body });
+  const text = await r.text();
+  try { return JSON.parse(text); } catch { return { error: "Unexpected reply from GymMaster (" + r.status + ")" }; }
+}
+
 // GymMaster takes the photo on the member's profile (POST /v1/member/profile, multipart,
 // field memberphoto: a file or a base64 string). GymMaster can answer "ok" without
 // storing the photo, so after each attempt we read the profile back and only call it
 // saved once memberphoto has a URL. Every attempt is logged (Cloudflare, m2-join, Logs).
-async function savePhoto(env, token, dataUrl) {
+async function savePhoto(env, token, dataUrl, apiKey) {
+  const key = apiKey || env.GM_API_KEY;
   const type = dataUrl.slice(5, dataUrl.indexOf(";"));
   const b64 = dataUrl.split(",")[1];
   const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
   const url = env.GM_BASE + "/v1/member/profile";
   const photoNow = async () => {
     try {
-      const u = new URL(url); u.searchParams.set("api_key", env.GM_API_KEY); u.searchParams.set("token", token);
+      const u = new URL(url); u.searchParams.set("api_key", key); u.searchParams.set("token", token);
       const j = await (await fetch(u.toString())).json();
       const m = j.result || j;
       return String((m && m.memberphoto) || "");
@@ -376,10 +461,10 @@ async function savePhoto(env, token, dataUrl) {
   };
   const before = await photoNow();
   const attempts = [
-    ["file", () => { const fd = new FormData(); fd.set("api_key", env.GM_API_KEY); fd.set("token", token);
+    ["file", () => { const fd = new FormData(); fd.set("api_key", key); fd.set("token", token);
                      fd.set("memberphoto", new Blob([bytes], { type }), type === "image/png" ? "selfie.png" : "selfie.jpg"); return fd; }],
-    ["base64", () => { const fd = new FormData(); fd.set("api_key", env.GM_API_KEY); fd.set("token", token); fd.set("memberphoto", b64); return fd; }],
-    ["dataurl", () => { const fd = new FormData(); fd.set("api_key", env.GM_API_KEY); fd.set("token", token); fd.set("memberphoto", dataUrl); return fd; }],
+    ["base64", () => { const fd = new FormData(); fd.set("api_key", key); fd.set("token", token); fd.set("memberphoto", b64); return fd; }],
+    ["dataurl", () => { const fd = new FormData(); fd.set("api_key", key); fd.set("token", token); fd.set("memberphoto", dataUrl); return fd; }],
   ];
   const log = [];
   for (const [name, body] of attempts) {

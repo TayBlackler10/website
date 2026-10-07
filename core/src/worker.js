@@ -877,6 +877,7 @@ const JOBS = {
   app_delete:      { label: "App account deletions to finish",  one: "app account deletion to finish", owner: "reception", order: 2.92 },
   trial_welcome:   { label: "New trials to welcome",            one: "new trial to welcome",           owner: "reception", order: 2.95 },
   trial_call:      { label: "Trials to call on day 2",          one: "trial to call on day 2",         owner: "reception", order: 2.97 },
+  bring_mate:      { label: "Bring a Mate to apply",            one: "Bring a Mate to apply",          owner: "reception", order: 2.3 },
   at_risk:         { label: "Members who've stopped coming",    one: "member who's stopped coming",    owner: "manager",   order: 3.6 },
 };
 const OUTCOMES = ["joined", "joining_at_desk", "call_back", "no_answer", "not_interested", "paid", "billing_in", "tag_given", "fp_in_gm", "done", "hold_set", "cancel_set", "kept"];
@@ -903,6 +904,17 @@ async function today(env, who, can) {
                                         FROM tasks t JOIN members m ON m.id = t.member_id
                                         WHERE t.kind = 'missing_billing' AND t.outcome IS NULL ORDER BY t.due_on`))
       .map(r => ({ ...r, detail: "Joined " + r.due_on + ". Get their bank details in." })));
+
+    // Bring a Mate from the join page: find the member who sent them and give both 4 weeks free.
+    const mates = await all(`SELECT t.id task_id, t.member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, t.outcome_note mate, t.due_on
+                             FROM tasks t JOIN members m ON m.id = t.member_id WHERE t.kind = 'bring_mate' AND t.outcome IS NULL ORDER BY t.due_on`);
+    for (const r of mates) {
+      const hits = await all(`SELECT m.id, m.first_name || ' ' || coalesce(m.last_name,'') name FROM members m
+                              WHERE m.status IN ('active','frozen') AND m.id <> ? AND lower(trim(m.first_name || ' ' || coalesce(m.last_name,''))) = lower(trim(?)) LIMIT 3`, r.member_id, r.mate || "");
+      r.detail = "Says " + (r.mate || "a member") + " sent them" + (hits.length === 1 ? " (that's member #" + hits[0].id + ")" : hits.length ? " (" + hits.length + " members with that name, check which)" : " (no exact name match, check with them)")
+        + ". Apply 4 weeks free to both, no joining fee or key tag for the new member. Not for Fitness Passport members.";
+    }
+    push("bring_mate", mates);
 
     // Anyone handled for this job in the last week drops off the list.
     const handled = kind => `NOT EXISTS (SELECT 1 FROM tasks t WHERE t.kind = '${kind}' AND t.member_id = m.id AND t.outcome IS NOT NULL AND t.done_at >= datetime('now','-7 days'))`;

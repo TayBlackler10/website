@@ -355,7 +355,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
               <div class="field" data-req="dob">
                 <label for="dob">Date of birth</label>
                 <input type="date" id="dob" name="dob" autocomplete="bday" max="">
-                <div class="msg">Enter your date of birth.</div>
+                <div class="msg" id="dobMsg">Enter your date of birth.</div>
               </div>
             </div>
             <div class="field">
@@ -461,6 +461,11 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
                 <label class="opt plain"><input type="radio" name="heard" value="Other"><span>Other</span></label>
               </div>
               <div class="msg">Please pick one. It helps us a lot.</div>
+            </div>
+            <div class="field" id="mateField" hidden>
+              <label for="mate">Who's your mate? <small>(the M2 member who sent you)</small></label>
+              <input type="text" id="mate" name="mate" autocomplete="off" autocapitalize="words" placeholder="Their first and last name">
+              <p style="font-size:13px;color:var(--muted);margin-top:8px">Bring a Mate: you both get 4 weeks free. We'll sort it at reception.</p>
             </div>
             <div class="notice" id="billingNotice" hidden>
               <b>Bank or card details come next.</b> Tap Join M2 and you'll get a button to add them straight away. Nothing comes out today. Rather do it in person? We'll do it at reception when you pick up your key tag.
@@ -896,7 +901,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     if (name === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
     if (name === 'phone') return v.replace(/\D/g,'').length >= 7;
     if (name === 'password') return v.length >= 6;
-    if (name === 'dob') return /^\d{4}-\d{2}-\d{2}$/.test(v) && age(v) >= 0 && age(v) < 110;
+    if (name === 'dob') {
+      var okDate = /^\d{4}-\d{2}-\d{2}$/.test(v) && age(v) >= 0 && age(v) < 110;
+      // Adults only: M2 memberships are 18 and over
+      $('dobMsg').textContent = okDate && age(v) < 18 ? 'Sorry, M2 memberships are for adults 18 and over.' : 'Enter your date of birth.';
+      return okDate && age(v) >= 18;
+    }
     if (name === 'signature') return sigDrawn;
     if (name === 'tier' || name === 'term' || name === 'freq') return mode !== 'members' || v.length > 0;
     if (name === 'trial') return mode !== 'trials' || v.length > 0;
@@ -928,6 +938,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
   form.addEventListener('change', function(e){
     if (e.target.name === 'hq_injury') document.getElementById('hqInjuryDetail').hidden = e.target.value !== 'yes';
     if (e.target.name === 'hq_doctor') document.getElementById('hqDoctorDetail').hidden = e.target.value !== 'yes';
+    if (e.target.name === 'heard') mateToggle();
   });
   form.addEventListener('input', function(e){
     if (e.target.name === 'fpid') update();
@@ -1028,6 +1039,13 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     return c.toDataURL('image/png');
   }
 
+  // Bring a Mate: ask for the mate's name when they heard from a friend. Not for Passport or trials.
+  function mateToggle(){
+    var on = val('heard') === 'Friend or member' && chosen && !chosen._fp && chosen.priceValue > 5 && !/trial|pass|hour|day/i.test(chosen.name);
+    $('mateField').hidden = !on;
+    if (!on) $('mate').value = '';
+  }
+
   /* ---------- steps ---------- */
   function show(i){
     steps.forEach(function(s,j){ s.classList.toggle('active', j===i); });
@@ -1037,7 +1055,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     nextBtn.textContent = i === steps.length-1 ? finalLabel() : 'Next';
     current = i;
     errEl.style.display = 'none';
-    if (i === 2) { loadTerms(); setTimeout(sizeCanvas, 30); $('billingNotice').hidden = !(chosen && chosen.priceValue > 0); }
+    if (i === 2) { mateToggle(); loadTerms(); setTimeout(sizeCanvas, 30); $('billingNotice').hidden = !(chosen && chosen.priceValue > 0); }
     document.querySelector('.progress').scrollIntoView({behavior:'smooth', block:'start'});
   }
   backBtn.addEventListener('click', function(){ if (current > 0) show(current-1); });
@@ -1089,6 +1107,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       code: chosen._fp ? '' : promoCode,
       fpId: chosen._fp ? fpClean(val('fpid')) : '',
       photo: selfieData,
+      mate: $('mateField').hidden ? '' : val('mate'),
       health: { injury: val('hq_injury') === 'yes', injury_detail: val('hq_injury_detail'), doctor: val('hq_doctor') === 'yes', doctor_detail: val('hq_doctor_detail'), pregnant: val('hq_pregnant') === 'yes' }
     };
     nextBtn.disabled = true; nextBtn.textContent = 'Signing you up...';
@@ -1113,11 +1132,12 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
             if (free) fbq('track', 'StartTrial', {content_name: chosen.name, value: 0, currency: 'NZD'});
           } } catch(e){}
           try { if (window.gtag) gtag('event', 'sign_up', {method: 'website', membership: chosen.name}); } catch(e){}
-          finish(payload.firstname, free);
+          finish(payload.firstname, free, d.converted);
           return;
         }
         if (d.exists) {
-          fail('You\'re already in our system with that email. <a href="' + PORTAL + '">Log in to the member portal</a> to add a membership, or pop in and see us at reception. Forgotten your password? Use "Forgot password" on the login page.');
+          fail(KIOSK ? esc(d.current ? 'You\'re already a member with us. Have a quick chat with the team at the desk.' : 'You\'re already in our system. Have a quick chat with the team at the desk and we\'ll sort it.')
+                     : esc(d.error || 'You\'re already in our system with that email. Pop in and see us at reception.'));
           return;
         }
         fail(esc(d.error || 'Something went wrong. Please try again or call reception.'));
@@ -1160,7 +1180,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     tick();
   }
 
-  function finish(first, free){
+  function finish(first, free, converted){
     var name = chosen._fp ? 'M2 with Fitness Passport' : chosen._p ? 'M2 ' + chosen._p.tier + (chosen._p.flexi ? ' Flexi' : '') : titleCase(chosen.name);
     $('doneTitle').textContent = 'Welcome to M2' + (first ? ', ' + first : '') + '.';
     $('doneLead').textContent = 'You\'re signed up to ' + name + '. Here\'s what happens next.';
@@ -1172,7 +1192,7 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
       free ? '<b>Your trial starts today,</b> so make the most of it. Classes, pool, sauna and ice bath are all yours.'
            : KIOSK ? '<b>Bank or card details next.</b> Let the team at the desk know you\'re done and we\'ll pop them in with you. Nothing comes out today.'
            : '<b>Add your bank or card details.</b> Do it now with the button below, or bring them to reception and we\'ll pop them in. Nothing comes out today.',
-      '<b>Open the <a href="/m2-app.html" style="color:inherit">M2 app</a></b> and sign in with the email and password you just made. That\'s where you check in, open the doors and see your trial.'
+      '<b>Open the <a href="/m2-app.html" style="color:inherit">M2 app</a></b> and sign in with the email and password you just made. That\'s where you check in, open the doors and book classes.'
     ];
     var ptOn = !/recovery/i.test(chosen.name) && !/24 hour/i.test(chosen.name);
     if (ptOn) steps.push(KIOSK ? '<b>Grab your free PT session.</b> Ask the team at the desk and we\'ll match you with the right coach.'
@@ -1180,6 +1200,8 @@ src="https://www.facebook.com/tr?id=1173983798207057&ev=PageView&noscript=1"
     $('doneNext').innerHTML = steps.map(function(s){ return '<li>' + s + '</li>'; }).join('');
     if (!KIOSK && !chosen._fp && chosen.priceValue > 0) {
       $('billWrap').hidden = false;
+      // Already had a GymMaster login (trial or past member): the portal still uses their old password
+      if (converted) $('billWrap').querySelector('p').innerHTML = 'Save time at the desk. Sign in with your email and the password from when you first joined us (forgotten it? tap <b>Forgot password</b>), then tap <b>Account</b> and <b>Update Billing Info</b>. Nothing comes out today.';
       $('billBtn').addEventListener('click', function(){
         try { if (window.gtag) gtag('event', 'add_billing_click', {membership: chosen.name}); } catch(e){}
       });

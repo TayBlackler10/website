@@ -106,6 +106,11 @@ export function makeJoin(L) {
       id, +b.lead_id || 0, email, email, mobile, mobile);
     if (b.paid && !passport && !(await one(env, "SELECT 1 FROM tasks WHERE kind = 'missing_billing' AND member_id = ? AND outcome IS NULL", id)))
       await run(env, "INSERT INTO tasks(kind, member_id, owner_role, due_on) VALUES ('missing_billing', ?, 'reception', ?)", id, t);
+    // Bring a Mate: the mate's name goes to reception to apply 4 weeks free to both people.
+    const mate = passport ? "" : clean(b.mate, 80);
+    if (mate && !(await one(env, "SELECT 1 FROM tasks WHERE kind = 'bring_mate' AND member_id = ? AND outcome IS NULL", id)))
+      await run(env, "INSERT INTO tasks(kind, member_id, owner_role, due_on, outcome_note) VALUES ('bring_mate', ?, 'reception', ?, ?)", id, t, mate);
+    if (Array.isArray(b.notes)) for (const n of b.notes.slice(0, 5)) notes.push(clean(n, 200));
     if (b.fp_id) { const pr = await passportJoin(env, { gm_id: id, fp_id: b.fp_id, first, last, email, mobile: b.mobile, dob: b.dob, source: b.source }); if (!pr.ok) notes.push(pr.error); }
     const label = clean(b.plan_name) + (price ? " ($" + price.toFixed(2) + ")" : "") + (b.code ? ", code " + clean(b.code, 30) : "");
     // Health questions from the join page, kept with their consent.
@@ -114,9 +119,10 @@ export function makeJoin(L) {
                                   h.pregnant ? "Pregnant or recently had a baby" : null].filter(Boolean).join(". ") || "Nothing to note";
       await run(env, "INSERT INTO member_health_notes(member_id, note, consent_on) VALUES (?, ?, ?) ON CONFLICT(member_id) DO UPDATE SET note = excluded.note, consent_on = excluded.consent_on", id, note, todayNz());
     }
-    await run(env, "INSERT INTO activity(member_id, kind, detail) VALUES (?, 'sale', ?)", id, "Joined online: " + label + (b.source ? ". Came from " + clean(b.source) : "") + (notes.length ? ". " + notes.join(". ") : ""));
+    const how = b.converted === "trial" ? "Joined online after their trial: " : b.converted === "returning" ? "Rejoined online: " : "Joined online: ";
+    await run(env, "INSERT INTO activity(member_id, kind, detail) VALUES (?, 'sale', ?)", id, how + label + (b.source ? ". Came from " + clean(b.source) : "") + (mate ? ". Bring a Mate, mate: " + mate : "") + (notes.length ? ". " + notes.join(". ") : ""));
     const to = (await all(env, "SELECT id FROM staff WHERE active = 1 AND role IN ('owner', 'manager', 'reception')")).map(r => r.id);
-    if (P) await P.toStaff(env, to, { title: "Joined online: " + first + " " + (last || ""), body: label + (b.paid && !passport ? ". Needs bank details." : ""), url: "/#members", tag: "join" }).catch(() => {});
+    if (P) await P.toStaff(env, to, { title: how + first + " " + (last || ""), body: label + (b.paid && !passport ? ". Needs bank details." : "") + (mate ? " Bring a Mate: " + mate + "." : ""), url: "/#members", tag: "join" }).catch(() => {});
     return { ok: true, member_id: id, plan: plan ? plan.gm_type_name : null };
   }
 
