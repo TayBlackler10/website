@@ -330,6 +330,12 @@ body.menu-open .mobile-menu { transform: none; visibility: visible; }
 .footer-cols a:hover { color: var(--lime); }
 .footer-brand img { height: 24px; width: auto; margin-bottom: 16px; }
 .footer-brand p { font-size: 14px; line-height: 1.6; color: #A8A8A0; }
+/* App store buttons (shown by m2.js once links are set in app-links.js) */
+.app-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.store-btn { display: inline-flex; flex-direction: column; justify-content: center; min-height: 48px; padding: 7px 18px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,.55); color: var(--white); line-height: 1.15; transition: border-color .2s ease, transform .2s ease; }
+.store-btn small { font-size: 11px; color: #C8C8C0; }
+.store-btn b { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+.store-btn:hover { border-color: var(--lime); transform: translateY(-2px); }
 .footer-base { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; color: #8A8A82; }
 .footer-base a:hover { color: var(--lime); }
 

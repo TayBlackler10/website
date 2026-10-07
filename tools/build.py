@@ -255,7 +255,7 @@ def footer(meta):
 {meta_cta(meta, 'btn btn-lime btn-lg', 'footer')}
 </div>
 <div class="footer-cols">
-<div class="footer-brand"><img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="226" height="24" loading="lazy"><p>8 Nugent Street, Grafton<br>Auckland 1023<br>Mon to Fri 5am to 10pm<br>Sat and Sun 7am to 7pm</p></div>
+<div class="footer-brand"><img src="/assets/img/m2-logo-lime.png" alt="M2 Training Club" width="226" height="24" loading="lazy"><p>8 Nugent Street, Grafton<br>Auckland 1023<br>Mon to Fri 5am to 10pm<br>Sat and Sun 7am to 7pm</p><div class="app-badges" data-app-block hidden><a class="store-btn" data-app-store="ios" data-track="app_download_ios" href="/app.html" rel="noopener" hidden><small>Download on the</small><b>App Store</b></a><a class="store-btn" data-app-store="android" data-track="app_download_android" href="/app.html" rel="noopener" hidden><small>Get it on</small><b>Google Play</b></a></div></div>
 {''.join(cols)}{contact}
 </div>
 <div class="footer-base"><span>&copy; {year} M2 Training Club · Grafton, Auckland</span><a href="/privacy-policy.html">Privacy policy</a></div>
@@ -265,6 +265,7 @@ def footer(meta):
 {meta_cta(meta, 'btn btn-lime', 'sticky-mobile')}
 <a class="call" href="tel:095581408" aria-label="Call M2 on 09 558 1408">{PHONE}</a>
 </div>
+<script src="/assets/js/app-links.js?v={VERSION}" defer></script>
 <script src="/assets/js/m2.js?v={VERSION}" defer></script>
 {meta.get('body_end', '')}</body>
 </html>

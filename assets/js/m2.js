@@ -40,6 +40,23 @@
     });
   }
 
+  /* ---------- App store buttons ----------
+     Links live in /assets/js/app-links.js. Each [data-app-store="ios|android"] button
+     shows only once its link is filled in; [data-app-block] shows once either is. */
+  function applyAppLinks() {
+    var L = window.M2_APP || {};
+    var preview = /[?&]m2apps=1/.test(location.search);
+    var any = false;
+    document.querySelectorAll('[data-app-store]').forEach(function (a) {
+      var url = L[a.getAttribute('data-app-store')] || (preview ? '#' : '');
+      if (url) { a.setAttribute('href', url); a.removeAttribute('hidden'); any = true; }
+      else a.setAttribute('hidden', '');
+    });
+    document.querySelectorAll('[data-app-block]').forEach(function (el) {
+      if (any) el.removeAttribute('hidden'); else el.setAttribute('hidden', '');
+    });
+  }
+
   /* ---------- Tracking ----------
      Every trial, join, free PT, call, email and directions click is sent to
      GA4 (as its own event) and to the Meta pixel. Clicks go to Meta as custom
@@ -95,6 +112,7 @@
   /* ---------- Header, menu, motion ---------- */
   function onReady() {
     applyCampaigns();
+    applyAppLinks();
 
     var body = document.body;
     document.querySelectorAll('[data-menu-open]').forEach(function (b) {

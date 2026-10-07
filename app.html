@@ -5,11 +5,13 @@
 <meta property="og:title" content="Get the M2 app"><meta property="og:image" content="https://m2club.co.nz/assets/email-app.jpg"><meta name="robots" content="noindex">
 <link rel="icon" href="/assets/favicon.ico">
 <style>html,body{margin:0;height:100%;background:#0A0A0A;color:#fff;font:16px/1.5 -apple-system,system-ui,'Helvetica Neue',Arial,sans-serif}main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 20px;box-sizing:border-box}svg{width:84px;fill:#DFFF00;margin-bottom:24px}h1{font-size:28px;margin:0 0 10px;letter-spacing:-.02em}p{color:#A3A3A3;margin:0 0 26px;max-width:340px}.b{display:block;width:260px;max-width:100%;box-sizing:border-box;margin:0 auto 12px;padding:15px 20px;border-radius:999px;font-weight:700;text-decoration:none}.l{background:#DFFF00;color:#0A0A0A}.o{border:1px solid #3a3a3a;color:#fff}</style></head>
-<body><main><svg viewBox="0 0 203 135.11" aria-label="M2"><polygon points="95.06 106.22 85.92 121.71 69.12 121.71 34.94 65.39 34.94 135.02 0 135.02 0 0 31.12 0 66.72 59.05 68.45 61.93 95.06 106.22"/><path d="M202.52,105.45v29.67l-61.33-.09-20.52-.03-12.68.02v-21.37l13.49-15.75,30.47-32.23c.28-.29.57-.58.86-.85.86-.81,1.65-1.6,2.4-2.36,8.020-8.24,9.25-13.64,9.25-18.58,0-6.3-3.11-10.74-9.34-12.61-2.17-.66-4.73-1-7.67-1h-.07c-3.95,0-7.59,2.12-9.670,5.49l-7.59,12.33-9.84,15.37-8.97,15.19-.02.04-3.31,5.62-7.26,12.29-16.99-28.28,21.07-35.83,3.19-5.41,12.27-20.88L123.89.04l.02-.04h31.12v.14c28.15,1.38,47.23,16.72,47.23,40.15,0,12.85-3.59,24.57-22.480,41.95l-24.44,22.59-.51.47h.52l47.18.15Z"/></svg><h1>Get the M2 app</h1><p id="t">Open the doors, book classes, follow your plan and track your recovery.</p><div id="btns"></div></main>
+<body><script src="/assets/js/app-links.js"></script><main><svg viewBox="0 0 203 135.11" aria-label="M2"><polygon points="95.06 106.22 85.92 121.71 69.12 121.71 34.94 65.39 34.94 135.02 0 135.02 0 0 31.12 0 66.72 59.05 68.45 61.93 95.06 106.22"/><path d="M202.52,105.45v29.67l-61.33-.09-20.52-.03-12.68.02v-21.37l13.49-15.75,30.47-32.23c.28-.29.57-.58.86-.85.86-.81,1.65-1.6,2.4-2.36,8.020-8.24,9.25-13.64,9.25-18.58,0-6.3-3.11-10.74-9.34-12.61-2.17-.66-4.73-1-7.67-1h-.07c-3.95,0-7.59,2.12-9.670,5.49l-7.59,12.33-9.84,15.37-8.97,15.19-.02.04-3.31,5.62-7.26,12.29-16.99-28.28,21.07-35.83,3.19-5.41,12.27-20.88L123.89.04l.02-.04h31.12v.14c28.15,1.38,47.23,16.72,47.23,40.15,0,12.85-3.59,24.57-22.480,41.95l-24.44,22.59-.51.47h.52l47.18.15Z"/></svg><h1>Get the M2 app</h1><p id="t">Open the doors, book classes, follow your plan and track your recovery.</p><div id="btns"></div></main>
 <script>
-/* Paste the store links in here once the app is live. Until then everyone goes to the web app. */
-var IOS_URL = '';      // e.g. https://apps.apple.com/nz/app/m2-training-club/id1234567890
-var ANDROID_URL = '';  // e.g. https://play.google.com/store/apps/details?id=nz.co.m2club.app
+/* Store links live in /assets/js/app-links.js (one place for the whole site).
+   Until they're filled in, everyone goes to the web app. */
+var A = window.M2_APP || {};
+var IOS_URL = A.ios || '';
+var ANDROID_URL = A.android || '';
 var WEB_URL = '/m2-app.html';
 var ua = navigator.userAgent || '', ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document), android = /Android/.test(ua);
 var go = ios && IOS_URL ? IOS_URL : android && ANDROID_URL ? ANDROID_URL : (!IOS_URL && !ANDROID_URL) ? WEB_URL : null;
