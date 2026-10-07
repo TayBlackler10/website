@@ -2,9 +2,9 @@
 var BIL={day:null,data:null,ready:null,rk:"all"};
 var BMODE={preview:["Preview","Not connected to Ezidebit yet. GymMaster still takes every debit. This page shows exactly what the Core would take, so the two can be compared before anyone moves."],sandbox:["Sandbox","Connected to Ezidebit's test system. Only members moved to the Core get test debits. No real money moves."],ready:["Live key in","The live Ezidebit key is in. Debits start once BILLING_MODE is switched to ezidebit in Cloudflare."],live:["Live","The Core sends real debits to Ezidebit for members moved across. Everyone else is still billed by GymMaster."]};
 var BKIND={regular:"Debit",one_off:"One-off",retry:"Retry",fee:"Fee",arrangement:"Payment plan"};
-var BSTAT={preview:"Would debit",planned:"Planned",sent:"With Ezidebit",paid:"Paid",failed:"Failed",cancelled:"Cancelled",waived:"Waived",due:"Due"};
+var BSTAT={preview:"Would debit",planned:"Planned",sending:"Sending",sent:"With Ezidebit",paid:"Paid",failed:"Failed",unknown:"Check in Ezidebit",reversed:"Taken back",cancelled:"Cancelled",waived:"Waived",due:"Due"};
 var FREQ={weekly:"weekly",fortnightly:"fortnightly",monthly:"monthly",quarterly:"quarterly",yearly:"yearly"};
-var RKIND={no_method:"No bank details",amount:"Amount differs, unexplained",arrears:"Collecting money owed",credit:"Credit or free weeks",no_plan:"No plan in the Core",no_price:"No price",no_freq:"How often unknown",no_date:"No date"};
+var RKIND={no_method:"No bank details",amount:"Amount differs, unexplained",arrears:"Collecting money owed",credit:"Credit or free weeks",no_plan:"No plan in the Core",no_price:"No price",no_freq:"How often unknown",no_date:"No date",ezi_stopped:"Ezidebit stopped debiting",ezi_unchecked:"Not confirmed in Ezidebit"};
 function wd(iso){return new Date(iso+"T12:00:00").toLocaleDateString("en-NZ",{weekday:"short",day:"numeric",month:"short"})}
 function loadBill(){
  get("/api/billing").then(function(d){
@@ -84,7 +84,7 @@ function drawMemberBill(id,b){
  box.innerHTML=h;box.dataset.id=id;BIL.cur=b;
 }
 function billHist(b){
- var rows=(b.items||[]).map(function(x){return '<div><span>'+esc(day(x.debit_date))+'</span><span>'+esc(BKIND[x.kind]||x.kind)+' '+money(x.amount)+' <span class="pill'+(x.status==="paid"?" ok":x.status==="failed"?" warn":"")+'">'+esc(BSTAT[x.status]||x.status)+'</span>'+(x.failure_reason?' <span class="muted">'+esc(x.failure_reason)+'</span>':"")+(x.status==="failed"&&b.can_act?' <a href="#" data-bi="'+x.id+'" data-bia="retry">Retry</a> &middot; <a href="#" data-bi="'+x.id+'" data-bia="fee">Add fee</a> &middot; <a href="#" data-bi="'+x.id+'" data-bia="waive">Waive</a>':"")+'</span></div>'}).join("");
+ var rows=(b.items||[]).map(function(x){return '<div><span>'+esc(day(x.debit_date))+'</span><span>'+esc(BKIND[x.kind]||x.kind)+' '+money(x.amount)+' <span class="pill'+(x.status==="paid"?" ok":x.status==="failed"?" warn":"")+'">'+esc(BSTAT[x.status]||x.status)+'</span>'+(x.failure_reason?' <span class="muted">'+esc(x.failure_reason)+'</span>':"")+((x.status==="failed"||x.status==="reversed")&&b.can_act?' <a href="#" data-bi="'+x.id+'" data-bia="retry">Retry</a> &middot; <a href="#" data-bi="'+x.id+'" data-bia="fee">Add fee</a> &middot; <a href="#" data-bi="'+x.id+'" data-bia="waive">Waive</a>':"")+'</span></div>'}).join("");
  var ev=(b.events||[]).map(function(e){return '<div><span>'+esc(day(e.at))+'</span><span>'+esc(e.detail)+(e.staff?' <span class="muted">'+esc(e.staff)+'</span>':"")+'</span></div>'}).join("");
  return (rows||ev)?'<details><summary class="muted" style="cursor:pointer">Debits and changes</summary><div class="hist">'+rows+ev+'</div></details>':"";
 }
@@ -98,13 +98,23 @@ var BFORM={
  fee:'<label class="fld">Fee ($)<input id="bf1" inputmode="decimal"></label>',
  waive:'<label class="fld">Why<input id="bf3"></label>'
 };
-function billGo(id,body,form){post("/api/billing/member/"+id,body).then(function(r){if(!r.ok){var e=$("#bfErr");if(e)e.textContent=r.error;else alert(r.error);return}loadMemberBill(id)})}
+function billGo(id,body,form){post("/api/billing/member/"+id,body).then(function(r){if(!r.ok){var e=$("#bfErr");if(e)e.textContent=r.error;else alert(r.error);return}if(r.warning)alert(r.warning);loadMemberBill(id)})}
+// Moving to the Core: the server looks the member up in Ezidebit first. If it can't find them, ask for their Ezidebit customer ID;
+// if the name on the Ezidebit record differs, ask staff to confirm.
+function billSwitch(id,extra){
+ var body={action:"switch",to:"core"};for(var k in extra)body[k]=extra[k];
+ post("/api/billing/member/"+id,body).then(function(r){
+  if(r.ok){if(r.warning)alert(r.warning);loadMemberBill(id);return}
+  if(r.confirm_name){if(confirm(r.error))billSwitch(id,{ezidebit_id:body.ezidebit_id,name_ok:1});return}
+  if(r.ask_id){var v=prompt(r.error+"\n\nEzidebit customer ID:");if(v&&v.trim())billSwitch(id,{ezidebit_id:v.trim()});return}
+  alert(r.error)})
+}
 document.addEventListener("click",function(e){
  var t=e.target.closest("[data-ba]"),u=e.target.closest("[data-bia]");if(!t&&!u)return;e.preventDefault();
  var box=$("#billBox"),id=+box.dataset.id,a=t?t.dataset.ba:u.dataset.bia,item=u?+u.dataset.bi:null;
  if(a==="resume"||a==="restart"){billGo(id,{action:a});return}
- if(a==="method"){post("/api/billing/member/"+id,{action:"method"}).then(function(r){alert(r.ok?"Ezidebit: "+r.method+(r.status?", status "+r.status:""):r.error);loadMemberBill(id)});return}
- if(a==="switch"){if(!confirm("Move this member's billing to the Core? Turn their billing off in GymMaster straight after, or they'll be charged twice."))return;billGo(id,{action:"switch",to:"core"});return}
+ if(a==="method"){post("/api/billing/member/"+id,{action:"method"}).then(function(r){alert(r.ok?"Ezidebit: "+r.method+(r.status?", "+r.status:"")+(r.processing===false?". Ezidebit won't debit them until their details are fixed.":""):r.error);loadMemberBill(id)});return}
+ if(a==="switch"){if(!confirm("Move this member's billing to the Core? The Core checks them in Ezidebit first. Turn their billing off in GymMaster straight after, or they'll be charged twice."))return;billSwitch(id,{});return}
  if(a==="back"){if(!confirm("Move billing back to GymMaster? Anything already sent to Ezidebit for them is pulled back."))return;billGo(id,{action:"switch",to:"gymmaster"});return}
  if(a==="fee"&&BIL.data&&BIL.data.rules)BFORM.fee='<label class="fld">Fee ($)<input id="bf1" inputmode="decimal" value="'+(BIL.data.rules.failed_fee||"")+'"></label>';
  $("#billForm").innerHTML='<div class="bform">'+BFORM[a]+'<button class="btn dark sm" id="bfGo">Save</button><button class="btn line sm" id="bfNo">Cancel</button><div class="err" id="bfErr" style="width:100%"></div></div>';

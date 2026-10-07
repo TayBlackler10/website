@@ -15,7 +15,7 @@
 // up in the staff table to get the person's role.
 
 import { APP_HTML } from "./ui.js";
-import { SCHEMA, STAFF_SEED, SCHEMA_VERSION } from "./schema_sql.js";
+import { SCHEMA, STAFF_SEED, SCHEMA_VERSION, SCHEMA_COLUMNS } from "./schema_sql.js";
 import { makeHub } from "./hub.js";
 import { makeHub2 } from "./hub2.js";
 import { makeRoster } from "./roster.js";
@@ -80,7 +80,11 @@ export default {
     try {
       if (url.pathname === "/health") return json({ ok: true });
       // Public: the member lands here on their own phone after Ezidebit's form.
-      if (url.pathname === "/billing-done") return html(BILLING_DONE_HTML);
+      if (url.pathname === "/billing-done") {
+        // Ezidebit adds uref (our reference) and cref (their customer ID). Saved only once Ezidebit confirms them.
+        if (url.searchParams.get("cref")) { await ensureSchema(env); await B.signedUp(env, url.searchParams).catch(e => console.log("billing-done", String(e))); }
+        return html(BILLING_DONE_HTML);
+      }
       // Public: website forms post leads here with the shared intake key.
       if (url.pathname === "/api/intake") return intake(req, env);
       await ensureSchema(env);
@@ -808,15 +812,15 @@ async function billingLink(env, can, id, origin) {
              note: "Opens their GymMaster profile. Go to Billing and enter the bank or card details with the member." };
   }
   if (!env.EZIDEBIT_EDDR_BASE || !env.EZIDEBIT_PUBLIC_KEY) return { error: "Ezidebit form not set up yet" };
-  const ms = await env.DB.prepare(`SELECT ms.price, p.frequency FROM memberships ms JOIN plans p ON p.id = ms.plan_id
-                                   WHERE ms.member_id = ? AND ms.status = 'current' ORDER BY ms.id DESC LIMIT 1`).bind(id).first();
-  const FREQ = { weekly: 1, fortnightly: 2, monthly: 4, quarterly: 16 };
+  // The Core sends every debit itself, so the form only takes the authority (debits=4, triggered) and never
+  // sets up a repeating schedule in Ezidebit, which would charge the member a second time.
+  // The reference is fixed (no ed=1) so Ezidebit's record always matches this member.
   const u = new URL(env.EZIDEBIT_EDDR_BASE);
   const set = (k, v) => { if (v !== undefined && v !== null && v !== "") u.searchParams.set(k, String(v)); };
   set("a", env.EZIDEBIT_PUBLIC_KEY); set("uRef", "M2-" + m.id); set("businessOrPerson", 1);
   set("fName", m.first_name); set("lName", m.last_name); set("email", m.email); set("mobile", m.mobile);
-  set("debits", 2); set("rAmount", ms && ms.price); set("freq", ms && FREQ[ms.frequency]); set("rDate", 0);
-  set("callback", (env.PUBLIC_URL || "https://m2-join.taylor-3e5.workers.dev").replace(/\/$/, "") + "/billing-done?member=" + m.id); set("ed", 1);
+  set("debits", 4); set("dishonAction", "DISHONOUR");
+  set("callback", (env.PUBLIC_URL || "https://m2-join.taylor-3e5.workers.dev").replace(/\/$/, "") + "/billing-done?member=" + m.id); set("cMethod", "GET");
   return { mode: "ezidebit", url: u.toString(), note: "Hand the screen to the member, or scan the code with their phone." };
 }
 
@@ -1714,11 +1718,31 @@ async function ensureSchema(env) {
   let current = null;
   try { current = (await env.DB.prepare("SELECT value FROM settings WHERE key = 'schema_version'").first())?.value; } catch { current = null; }
   if (current !== SCHEMA_VERSION) {
+    await addMissingColumns(env);
     const all = SCHEMA.concat(STAFF_SEED);
     for (let i = 0; i < all.length; i += 40) await env.DB.batch(all.slice(i, i + 40).map(x => env.DB.prepare(x)));
     await env.DB.prepare("INSERT INTO settings(key, value) VALUES ('schema_version', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(SCHEMA_VERSION).run();
   }
   schemaReady = true;
+}
+
+// CREATE TABLE IF NOT EXISTS leaves an existing table alone, so columns added to schema.sql later are
+// added here first (before the indexes that may use them). Only plain columns: ALTER TABLE ADD COLUMN can't
+// add NOT NULL without a default, so those get their default or are left nullable. Safe to run again.
+async function addMissingColumns(env) {
+  const have = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all().then(r => new Set((r.results || []).map(x => x.name)));
+  const adds = [];
+  for (const [table, cols] of Object.entries(SCHEMA_COLUMNS)) {
+    if (!have.has(table)) continue;   // new table: the CREATE makes it whole
+    const got = await env.DB.prepare("PRAGMA table_info(" + table + ")").all().then(r => new Set((r.results || []).map(x => x.name)));
+    for (const [name, type, notnull, dflt] of cols) {
+      if (got.has(name)) continue;
+      const def = dflt != null && !/^\(/.test(String(dflt)) ? " DEFAULT " + dflt : "";
+      adds.push("ALTER TABLE " + table + " ADD COLUMN " + name + (type ? " " + type : "") + (notnull && def ? " NOT NULL" : "") + def);
+    }
+  }
+  // One bad column must never stop the Core starting, so each add is tried on its own and logged.
+  for (const sql of adds) { try { await env.DB.prepare(sql).run(); } catch (e) { console.log("schema add column failed", sql, String(e.message || e)); } }
 }
 
 /* ---------------- importing a GymMaster export ---------------- */

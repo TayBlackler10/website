@@ -145,7 +145,11 @@ CREATE INDEX IF NOT EXISTS memberships_status ON memberships(status);
 
 CREATE TABLE IF NOT EXISTS billing_accounts (
   member_id         INTEGER PRIMARY KEY REFERENCES members(id) ON DELETE CASCADE,
-  ezidebit_ref      TEXT,                       -- Ezidebit customer reference only
+  ezidebit_ref      TEXT,                       -- Ezidebit's customer ID (EziDebitCustomerID), never bank details
+  ezidebit_status   TEXT,                       -- Ezidebit's customer status code when last checked (A, H, F after a fatal dishonour, ...)
+  ezidebit_checked_at TEXT,                     -- when the Core last confirmed this member in Ezidebit
+  switched_at       TEXT,                       -- day billing moved to the Core
+  gm_clear_at       TEXT,                       -- when the Core confirmed GymMaster left no debits waiting in Ezidebit
   billed_by_system  TEXT NOT NULL DEFAULT 'gymmaster',  -- gymmaster or core. Never both.
   next_debit_date   TEXT,
   next_debit_amount REAL,
@@ -192,10 +196,15 @@ CREATE TABLE IF NOT EXISTS billing_items (
   debit_date     TEXT NOT NULL,
   amount         REAL NOT NULL,
   kind           TEXT NOT NULL DEFAULT 'regular',  -- regular, one_off, retry, fee, arrangement
-  status         TEXT NOT NULL DEFAULT 'planned',  -- preview, planned, sent, paid, failed, cancelled, waived
+  status         TEXT NOT NULL DEFAULT 'planned',  -- preview, planned, sending, sent, paid, failed, unknown, reversed, cancelled, waived
   note           TEXT,
   retry_of       INTEGER REFERENCES billing_items(id),
-  ezi_ref        TEXT,                             -- Ezidebit payment reference
+  ezi_ref        TEXT,                             -- PaymentReference sent to Ezidebit (shared by items combined into one debit)
+  send_date      TEXT,                             -- the date Ezidebit was asked to debit (one debit per member per day)
+  ezi_payment_id TEXT,                             -- Ezidebit's PaymentID once processed
+  ezi_invoice    TEXT,                             -- Ezidebit's InvoiceID: the settlement batch it was paid out in
+  fee_client     REAL,                             -- Ezidebit's fee to M2 for this debit
+  fee_customer   REAL,                             -- any Ezidebit fee the member paid on top
   failure_reason TEXT,
   sent_at        TEXT,
   settled_at     TEXT,
@@ -205,6 +214,7 @@ CREATE TABLE IF NOT EXISTS billing_items (
 CREATE UNIQUE INDEX IF NOT EXISTS billing_items_once ON billing_items(member_id, debit_date, kind) WHERE kind IN ('regular','fee');
 CREATE INDEX IF NOT EXISTS billing_items_date ON billing_items(debit_date, status);
 CREATE INDEX IF NOT EXISTS billing_items_member ON billing_items(member_id, debit_date);
+CREATE INDEX IF NOT EXISTS billing_items_ref ON billing_items(ezi_ref);
 
 -- Every billing change, who made it, and whether Ezidebit has it.
 CREATE TABLE IF NOT EXISTS billing_events (
