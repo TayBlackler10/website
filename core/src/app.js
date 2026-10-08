@@ -627,7 +627,17 @@ export function makeApp(L) {
   async function door(env, s, b) {
     const no = await doorNo(env, b.door); if (!no) return null;
     const radius = +(await setting(env, "app_geo_radius", "150")) || 150;
-    const dist = distM(+b.lat, +b.lng, GYM.lat, GYM.lng), slack = Math.min(+b.acc || 0, 150);
+    let dist = distM(+b.lat, +b.lng, GYM.lat, GYM.lng);
+    const slack = Math.min(+b.acc || 0, 150);
+    // Inside doors (recovery) when the phone can't get a fix indoors: fine if the member came through the gate
+    // or opened a door from the app in the last 3 hours.
+    if (b.nofix && b.door !== "front" && !Number.isFinite(dist)) {
+      const appIn = await one(env, "SELECT 1 x FROM app_doors WHERE member_id = ? AND opened = 1 AND at >= datetime('now', '-3 hours')", s.m);
+      const nzAgo = new Date(Date.now() - 3 * 36e5).toLocaleString("sv-SE", { timeZone: "Pacific/Auckland" });
+      const gateIn = appIn ? null : await one(env, "SELECT 1 x FROM visits WHERE member_id = ? AND at >= ?", s.m, nzAgo);
+      if (!appIn && !gateIn) return { ok: false, message: "We couldn't find your location. Try again in a few seconds, or reception can help." };
+      dist = 0;
+    }
     if (!Number.isFinite(dist) || dist - slack > radius) return { ok: false, message: "You need to be at the club to open doors." };
     if (await tooMany(env, "door:" + s.m, 6, 60)) return { ok: false, message: "Easy, give it a few seconds and try again." };
     const tok = await memberToken(env, s.m); if (!tok) return { ok: false, message: "We couldn't reach GymMaster. Reception can let you in." };

@@ -9,7 +9,10 @@ function loadHome(){
  $("#tAsk").innerHTML=ASKS.filter(function(q){return biz||!/debit run|how much/i.test(q)}).slice(0,5).map(function(q){return '<button class="chipq" data-ask="'+esc(q)+'">'+esc(q)+'</button>'}).join("");
  get("/api/home").then(function(d){
   if(d.error)return;
-  var st='<div class="hs"><b>'+d.in_now+'</b><span>In the club now</span><small>Last 90 minutes'+(d.last_checkin?", last tap "+hhmm(d.last_checkin):"")+'</small></div><div class="hs"><b>'+d.checkins.toLocaleString("en-NZ")+'</b><span>Check-ins today</span><small>Gate and app</small></div>';
+  // GymMaster's gate log sometimes arrives hours late (the gate uploads its backlog later). Say so, rather than show an empty club.
+  var gGap=d.last_gate&&d.now?(Date.parse(d.now.replace(" ","T")+"Z")-Date.parse(d.last_gate.replace(" ","T")+"Z"))/6e4:0, gHr=d.now?+d.now.slice(11,13):0;
+  var gLate=gGap>45&&gHr>=6&&gHr<21;
+  var st='<div class="hs"><b>'+d.in_now+'</b><span>In the club now</span><small>'+(gLate?'<span style="color:#FF8A7A">GymMaster gate data running late, last gate tap '+hhmm(d.last_gate)+'</span>':'Last 90 minutes'+(d.last_checkin?", last tap "+hhmm(d.last_checkin):""))+'</small></div><div class="hs"><b>'+d.checkins.toLocaleString("en-NZ")+'</b><span>Check-ins today</span><small>Gate and app</small></div>';
   if(d.debit_run)st+='<div class="hs"><b>'+kfmt(d.debit_run.total)+'</b><span>Debits next 7 days</span><small>'+d.debit_run.n.toLocaleString("en-NZ")+' debits'+(d.debit_run.tomorrow?", tomorrow "+kfmt(d.debit_run.tomorrow.total):"")+'</small></div>';
   if(d.money)st+='<div class="hs"><b class="l">'+kfmt(d.money.total)+'</b><span>On the table this year</span><small>'+d.money.plays.length+' plays ready to run</small></div>';
   $("#hStats").innerHTML=st;

@@ -198,10 +198,16 @@ export function makeClub(L) {
     const t = todayNz(), now = nzDateTime(new Date());
     const ago90 = nzDateTime(new Date(Date.now() - 90 * 60000));
     const own = can.members === "own";
-    const inNow = (await one(env, `SELECT count(DISTINCT member_id) n FROM (SELECT member_id FROM visits WHERE at >= ? UNION ALL SELECT member_id FROM app_doors WHERE at >= ?)`, ago90, ago90)).n;
-    const today = (await one(env, `SELECT count(DISTINCT member_id) n FROM (SELECT member_id FROM visits WHERE at >= ? UNION ALL SELECT member_id FROM app_doors WHERE at >= ?)`, t, t)).n;
-    const lastSeen = (await one(env, "SELECT max(at) a FROM (SELECT max(at) at FROM visits UNION ALL SELECT max(at) FROM app_doors)")).a;
-    const out = { today: t, now, in_now: inNow, checkins: today, last_checkin: lastSeen };
+    // Gate visits are stored in NZ time, app door opens in UTC, so convert before comparing.
+    const off = Math.round((Date.parse(now.replace(" ", "T") + "Z") - Date.now()) / 60000) * 60000;
+    const toUtc = nz => new Date(Date.parse(nz.replace(" ", "T") + "Z") - off).toISOString().slice(0, 19).replace("T", " ");
+    const toNz = utc => utc ? new Date(Date.parse(utc.replace(" ", "T") + "Z") + off).toISOString().slice(0, 19).replace("T", " ") : null;
+    const inNow = (await one(env, `SELECT count(DISTINCT member_id) n FROM (SELECT member_id FROM visits WHERE at >= ? UNION ALL SELECT member_id FROM app_doors WHERE opened = 1 AND at >= ?)`, ago90, toUtc(ago90))).n;
+    const today = (await one(env, `SELECT count(DISTINCT member_id) n FROM (SELECT member_id FROM visits WHERE at >= ? UNION ALL SELECT member_id FROM app_doors WHERE opened = 1 AND at >= ?)`, t, toUtc(t + " 00:00:00"))).n;
+    const lastGate = (await one(env, "SELECT max(at) a FROM visits WHERE via = 'gymmaster'")).a;
+    const lastApp = toNz((await one(env, "SELECT max(at) a FROM app_doors WHERE opened = 1")).a);
+    const lastSeen = [lastGate, lastApp].filter(Boolean).sort().pop() || null;
+    const out = { today: t, now, in_now: inNow, checkins: today, last_checkin: lastSeen, last_gate: lastGate };
 
     if (!own) {
       const feed = await all(env, `SELECT x.member_id id, x.at, m.first_name, m.last_name, m.joined_on, ${PLAN} plan,

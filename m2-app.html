@@ -1493,15 +1493,16 @@ function whereOnce(opts){
   navigator.geolocation.getCurrentPosition(p=>{const c=p.coords,m=distM(c.latitude,c.longitude,GYM.lat,GYM.lng),slack=Math.min(c.accuracy||0,150);
    if(m-slack<=GYM.r)res({ok:true,lat:c.latitude,lng:c.longitude,acc:Math.round(c.accuracy||0)});
    else res({ok:false,msg:`You're about ${m>=1000?(m/1000).toFixed(1)+' km':Math.round(m/10)*10+' m'} from the club. Doors open once you're at 8 Nugent St.`})},
-  e=>res({ok:false,msg:e.code===1?"Turn on location for the M2 app so we know you're at the club. It's only used for opening doors.":"We couldn't find your location. Try again in a few seconds."}),opts)})}
+  e=>res({ok:false,nofix:e.code!==1,msg:e.code===1?"Turn on location for the M2 app so we know you're at the club. It's only used for opening doors.":"We couldn't find your location. Try again in a few seconds."}),opts)})}
 async function openDoor(k){const row=$('dr-'+k),d=DOORS.find(x=>x.k===k);
  if(!row||row.classList.contains('locked')){dMsg(d?`${d.n} isn't on ${tier().n}. Tap Add to see options, or reception can help.`:"We don't know that door. Try the buttons above.");return}
  if(D.busy)return;D.busy=k;dMsg('');row.classList.remove('open');row.classList.add('busy');
  const st=$('ds-'+k),btn=row.querySelector('.go');btn.innerHTML='<span class="spin"></span>';st.textContent="Checking you're at the club";
- const loc=await doorLoc();
+ let loc=await doorLoc(k);
+ if(!loc.ok&&loc.nofix&&k!=='front'&&DOOR_API)loc={ok:true,nofix:1};
  if(!loc.ok)return doorFail(k,loc.msg,1);
  st.textContent='Opening';let r;
- if(DOOR_API){try{r=await(await fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'door',session:S.doorSess,door:k,lat:loc.lat,lng:loc.lng,acc:loc.acc})})).json()}catch(e){r={ok:false,message:"Couldn't reach the door. Check your signal and try again."}}
+ if(DOOR_API){try{r=await(await fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'door',session:S.doorSess,door:k,lat:loc.lat,lng:loc.lng,acc:loc.acc,nofix:loc.nofix?1:0})})).json()}catch(e){r={ok:false,message:"Couldn't reach the door. Check your signal and try again."}}
   if(r&&r.signin){S.doorSess=null;save('doorSess');D.busy=null;return after(()=>openDoorSignIn(k))}}
  else{await wait(800);r={ok:true}}
  if(!r||!r.ok)return doorFail(k,(r&&r.message)||"That door didn't open. Try again, or reception can help.");
@@ -2246,7 +2247,7 @@ if(LIVE){
 }
 /* UPDATES. The website lets phones keep a copy of this page for up to 10 minutes.
    On open and on return to the app, check for a newer version and reload straight away. */
-const APP_VER='2026-10-08a';
+const APP_VER='2026-10-09a';
 async function checkUpdate(){if(!LIVE)return;try{const t=await (await fetch(location.pathname+'?vcheck='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const APP_VER='([^']+)'/);
  if(m&&m[1]!==APP_VER&&sessionStorage.getItem('m2upd')!==m[1]){sessionStorage.setItem('m2upd',m[1]);location.replace(location.pathname+'?v='+encodeURIComponent(m[1])+location.hash)}}catch(e){}}
 setTimeout(checkUpdate,1200);
@@ -2267,7 +2268,7 @@ let PRELOC=null,WARMED=0;
 function warmDoors(){if(!DOOR_API||!S.doorSess||Date.now()-WARMED<9e4)return;WARMED=Date.now();
  try{fetch(DOOR_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'warm',session:S.doorSess})}).catch(()=>{})}catch(e){}}
 function prewarmDoors(){if(!DOOR_API||!S.doorSess)return;warmDoors();if(!PRELOC||Date.now()-PRELOC.t>6e4)PRELOC={t:Date.now(),p:whereAmI()}}
-async function doorLoc(){if(PRELOC&&Date.now()-PRELOC.t<6e4){const r=await PRELOC.p;if(r&&r.ok)return r;PRELOC=null}let r=await whereAmI();if(r&&!r.ok&&/couldn't find/i.test(r.msg||''))r=await whereAmI();return r}
+async function doorLoc(k){if(PRELOC&&Date.now()-PRELOC.t<6e4){const r=await PRELOC.p;if(r&&r.ok)return r;PRELOC=null}let r=await whereAmI();if(r&&!r.ok&&(k==='front'||!DOOR_API)&&/couldn't find/i.test(r.msg||''))r=await whereAmI();if(r&&!r.ok&&/couldn't find/i.test(r.msg||''))r.nofix=true;return r}
 {const _op=openPass;openPass=function(){const r=_op.apply(this,arguments);try{prewarmDoors()}catch(e){}return r}}
 if(LIVE)setTimeout(()=>{try{warmDoors();if(navigator.permissions&&S.doorSess)navigator.permissions.query({name:'geolocation'}).then(p=>{if(p.state==='granted')prewarmDoors()}).catch(()=>{})}catch(e){}},2500);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')try{warmDoors()}catch(e){}});
@@ -2285,15 +2286,21 @@ if(NATIVE){document.documentElement.classList.add('native');
   const judge=c=>{const m=distM(c.latitude,c.longitude,GYM.lat,GYM.lng),slack=Math.min(c.accuracy||0,150);
    if(m-slack<=GYM.r)return{ok:true,lat:c.latitude,lng:c.longitude,acc:Math.round(c.accuracy||0)};
    return{ok:false,msg:`You're about ${m>=1000?(m/1000).toFixed(1)+' km':Math.round(m/10)*10+' m'} from the club. Doors open once you're at 8 Nugent St.`}};
-  /* reuse a fix from the last 2 minutes, so opening a second door straight after the first doesn't need a new reading */
-  if(window._m2fix&&Date.now()-window._m2fix.t<12e4){const r=judge(window._m2fix.c);if(r.ok)return r}
+  /* reuse a fix that placed you at the club in the last 3 hours, so inside doors (recovery) open straight away.
+     GPS barely works inside the building, so waiting for a fresh one there is what made recovery doors slow. */
+  try{if(!window._m2fix){const f=JSON.parse(localStorage.getItem('m2fix')||'null');if(f)window._m2fix=f}}catch(e){}
+  if(window._m2fix&&Date.now()-window._m2fix.t<108e5){const r=judge(window._m2fix.c);if(r.ok)return r}
   try{let pm=await GEO.checkPermissions();if(pm.location!=='granted')pm=await GEO.requestPermissions({permissions:['location']});
    if(pm.location==='denied')return{ok:false,msg:"Turn on location for M2 in your phone's Settings so we know you're at the club. It's only used for opening doors."}}catch(e){}
   const get=o=>Promise.race([GEO.getCurrentPosition(o),new Promise((_,rj)=>setTimeout(()=>rj(new Error('timeout')),(o.timeout||9000)+1500))]);
-  for(const o of [{enableHighAccuracy:true,timeout:9000,maximumAge:15000},{enableHighAccuracy:false,timeout:9000,maximumAge:60000}]){
-   try{const p=await get(o);if(p&&p.coords){window._m2fix={t:Date.now(),c:{latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy}};return judge(p.coords)}}catch(e){}}
+  const keep=c=>{window._m2fix={t:Date.now(),c};try{localStorage.setItem('m2fix',JSON.stringify(window._m2fix))}catch(e){}};
+  /* quick wifi or cell fix first (usually under a second), GPS only if that can't place you at the club */
+  let far=null;
+  for(const o of [{enableHighAccuracy:false,timeout:4000,maximumAge:600000},{enableHighAccuracy:true,timeout:7000,maximumAge:15000}]){
+   try{const p=await get(o);if(p&&p.coords){const c={latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy},r=judge(c);if(r.ok){keep(c);return r}far=r}}catch(e){}}
+  if(far)return far;
   /* last resort: the phone's web location, same as Safari */
-  const r=await _where();if(r&&r.ok)window._m2fix={t:Date.now(),c:{latitude:r.lat,longitude:r.lng,accuracy:r.acc||0}};return r}}
+  const r=await _where();if(r&&r.ok)keep({latitude:r.lat,longitude:r.lng,accuracy:r.acc||0});return r}}
  /* local notifications: class reminders, waitlist spots, and a nudge if we haven't seen you */
  const NID=s=>{let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)%2000000000+1};
  const NUDGE_ID=99;let askedN=LS.get('askedN',false),prevWait=LS.get('prevWait',[]);
