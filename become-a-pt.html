@@ -202,6 +202,7 @@ if(/[?&](fbclid|gclid|utm_)/.test(location.search)){go();}else{addEventListener(
         <input type="hidden" name="subject" value="New PT Course Enquiry via M2 Website">
         <input type="hidden" name="to" value="tim@m2club.co.nz">
         <input type="hidden" name="redirect" value="false">
+        <input type="hidden" name="source" id="pt-source" value="">
         <div class="field"><label for="pt-name">Full name</label><input type="text" id="pt-name" name="name" autocomplete="name" required></div>
         <div class="row">
           <div class="field"><label for="pt-email">Email</label><input type="email" id="pt-email" name="email" autocomplete="email" required></div>
@@ -223,6 +224,22 @@ if(/[?&](fbclid|gclid|utm_)/.test(location.search)){go();}else{addEventListener(
         </div>
         <p class="form-status" role="status" aria-live="polite"></p>
       </form>
+      <script>
+      // Where this enquiry came from, shown in Tim's enquiry email. Links in our own emails use ?src=email (never utm tags).
+      (function(){
+        var f=document.getElementById('pt-source'); if(!f) return;
+        var q=new URLSearchParams(location.search), v='';
+        var src=(q.get('src')||'').toLowerCase();
+        var names={email:'M2 email',app:'M2 App',ig:'Instagram',instagram:'Instagram',fb:'Facebook',qr:'QR code in the gym',sms:'Text message'};
+        if(src) v=names[src]||src;
+        else if(q.get('fbclid')) v='Meta ad or Facebook/Instagram link';
+        else if(q.get('utm_source')) v=q.get('utm_source');
+        else if(q.get('gclid')) v='Google ad';
+        else { var r=document.referrer||''; if(/google\./i.test(r)) v='Google search'; else if(/instagram|facebook|fb\.com/i.test(r)) v='Instagram/Facebook'; else if(r && r.indexOf(location.host)<0) v='Link from '+r.split('/')[2]; else if(r) v='Browsing the M2 website'; else v='Direct (typed in or bookmark)'; }
+        try{ var k='m2_pt_source'; var saved=sessionStorage.getItem(k); if(saved && v.indexOf('Browsing')===0) v=saved; else sessionStorage.setItem(k,v); }catch(e){}
+        f.value=v;
+      })();
+      </script>
     </div>
   </div>
 </section>
