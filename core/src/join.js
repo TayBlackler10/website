@@ -73,7 +73,9 @@ export function makeJoin(L) {
     const plan = await planFor(env, b);
     const price = Number.isFinite(+b.price) ? Math.round(+b.price * 100) / 100 : null;
     const passport = !!b.fp_id || (plan && plan.family === "passport");
-    const billedBy = passport ? "passport" : b.paid ? "ezidebit" : "none";
+    // Trials, passes and paid-in-full are paid upfront: no ongoing debit, so no bank details to chase.
+    const upfront = !!plan && (["trial", "pass", "pool"].includes(plan.family) || !!plan.paid_in_full);
+    const billedBy = passport ? "passport" : b.paid && !upfront ? "ezidebit" : "none";
     const stmts = [
       env.DB.prepare(`INSERT INTO members(id, gm_id, first_name, last_name, email, mobile, dob, gender, suburb, lead_source, lead_campaign, status, joined_on, terms_signed_on)
                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?)
@@ -104,7 +106,7 @@ export function makeJoin(L) {
     // The lead they came from (or their unfinished sign-up) becomes joined.
     await run(env, `UPDATE leads SET stage = 'joined', member_id = ? WHERE stage NOT IN ('joined', 'lost') AND (id = ? OR (? IS NOT NULL AND lower(email) = ?) OR (? IS NOT NULL AND mobile = ?))`,
       id, +b.lead_id || 0, email, email, mobile, mobile);
-    if (b.paid && !passport && !(await one(env, "SELECT 1 FROM tasks WHERE kind = 'missing_billing' AND member_id = ? AND outcome IS NULL", id)))
+    if (billedBy === "ezidebit" && !(await one(env, "SELECT 1 FROM tasks WHERE kind = 'missing_billing' AND member_id = ? AND outcome IS NULL", id)))
       await run(env, "INSERT INTO tasks(kind, member_id, owner_role, due_on) VALUES ('missing_billing', ?, 'reception', ?)", id, t);
     // Bring a Mate: the mate's name goes to reception to apply 4 weeks free to both people.
     const mate = passport ? "" : clean(b.mate, 80);

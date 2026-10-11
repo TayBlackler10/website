@@ -723,7 +723,8 @@ async function addMember(env, who, can, b) {
             f.planId, ["perform", "classes", "trial", "passport"].includes(plan.family) ? 1 : 0, ["perform", "recovery", "trial", "passport"].includes(plan.family) ? 1 : 0).first();
     planDbId = p.id;
   }
-  const billedBy = plan.family === "trial" ? "none" : plan.family === "passport" ? "passport" : "ezidebit";
+  // Trials, passes and paid-in-full are paid upfront, so there's no debit to set up.
+  const billedBy = plan.family === "passport" ? "passport" : (["trial", "pass", "pool"].includes(plan.family) || plan.paid_in_full || plan.frequency === "upfront") ? "none" : "ezidebit";
   const stmts = [
     db.prepare(`INSERT INTO members(id, gm_id, first_name, last_name, email, mobile, dob, gender, goal, lead_source, lead_campaign,
                 referred_by, emergency_name, emergency_phone, status, joined_on, terms_signed_on, fp_id)
@@ -906,7 +907,11 @@ async function today(env, who, can) {
   if (!own) {
     push("missing_billing", (await all(`SELECT t.id task_id, t.member_id, m.first_name || ' ' || coalesce(m.last_name,'') name, m.mobile, t.due_on
                                         FROM tasks t JOIN members m ON m.id = t.member_id
-                                        WHERE t.kind = 'missing_billing' AND t.outcome IS NULL ORDER BY t.due_on`))
+                                        WHERE t.kind = 'missing_billing' AND t.outcome IS NULL
+                                          AND EXISTS (SELECT 1 FROM memberships ms JOIN plans p ON p.id = ms.plan_id
+                                                      WHERE ms.member_id = t.member_id AND ms.status = 'current' AND p.paid_in_full = 0
+                                                        AND p.family NOT IN ('trial', 'pass', 'pool', 'passport'))
+                                        ORDER BY t.due_on`))
       .map(r => ({ ...r, detail: "Joined " + r.due_on + ". Get their bank details in." })));
 
     // Bring a Mate from the join page: find the member who sent them and give both 4 weeks free.
